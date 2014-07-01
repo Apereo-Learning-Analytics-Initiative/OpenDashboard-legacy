@@ -14,6 +14,8 @@
  */
 package ltistarter.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +25,14 @@ import java.util.Date;
 @Controller
 public class HomeController {
 
+    @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    CounterService counterService;
+
     @RequestMapping("/")
     public String home(Model model) {
         model.addAttribute("today", new Date());
+        counterService.increment("home");
         return "home"; // name of the template
     }
 
