@@ -12,20 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ltistarter;
+package ltistarter.controllers;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
-public class Application {
+import java.util.Date;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+@Controller
+public class HomeController {
+
+    @RequestMapping("/")
+    public String home(Model model) {
+        model.addAttribute("today", new Date());
+        return "home"; // name of the template
     }
 
 }
