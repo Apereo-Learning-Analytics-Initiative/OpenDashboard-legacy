@@ -102,7 +102,71 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <!-- Used to replace the headers of files with proper licenses -
+          http://code.google.com/p/maven-license-plugin -
+          Run mvn license:format to fix up licenses on all files in the project -->
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>1.10.b1</version>
+        <configuration>
+          <strictCheck>true</strictCheck>
+          <header>${basedir}/LICENSE_HEADER</header>
+          <properties>
+            <name>${project.name}</name>
+            <year>${project.inceptionYear}</year>
+            <holder>Unicon (R)</holder>
+          </properties>
+          <excludes>
+            <exclude>.gitignore</exclude>
+            <exclude>target/**</exclude>
+            <exclude>bin/**</exclude>
+            <exclude>.idea/**</exclude>
+            <exclude>**/*.iml</exclude>
+            <exclude>LICENSE*</exclude>
+            <exclude>**/*.properties</exclude>
+            <exclude>**/*.csv</exclude>
+            <exclude>**/*.txt</exclude>
+            <exclude>**/*.md</exclude>
+            <exclude>**/*.sql</exclude>
+            <exclude>**/js/jquery/**</exclude>
+          </excludes>
+          <mapping>
+            <tag>DYNASCRIPT_STYLE</tag>
+          </mapping>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <developers>
+    <developer>
+      <id>azeckoski</id>
+      <name>Aaron Zeckoski</name>
+      <email>azeckoski@vt.edu</email>
+      <url>http://tinyurl.com/azprofile</url>
+      <roles>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <distribution>repo</distribution>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
 
 </project>
