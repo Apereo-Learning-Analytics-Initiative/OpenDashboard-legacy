@@ -16,7 +16,9 @@ package ltistarter.repository;
 
 import ltistarter.model.LtiUserEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface LtiUserRepository extends PagingAndSortingRepository<LtiUserEntity, Long> {
     /* Add custom crud methods here
      * If you need a custom implementation of the methods then see docs for steps to add it

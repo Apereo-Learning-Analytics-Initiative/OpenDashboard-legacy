@@ -16,11 +16,24 @@ package ltistarter.repository;
 
 import ltistarter.model.LtiKeyEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface LtiKeyRepository extends PagingAndSortingRepository<LtiKeyEntity, Long> {
     /* Add custom crud methods here
      * If you need a custom implementation of the methods then see docs for steps to add it
      * http://docs.spring.io/spring-data/data-commons/docs/current/reference/html/repositories.html
      */
+
+    /**
+     * @param key the unique key
+     * @return the LtiKeyEntity OR null if there is no entity matching this key
+     */
     LtiKeyEntity findByKeyKey(String key);
+
+    /**
+     * @param key the unique key
+     * @return the number of keys removed (0 or 1)
+     */
+    int deleteByKeyKey(String key);
 }
