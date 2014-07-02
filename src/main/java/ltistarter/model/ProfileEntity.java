@@ -16,6 +16,7 @@ package ltistarter.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "profile")
@@ -30,6 +31,20 @@ public class ProfileEntity extends BaseEntity {
     private Short subscribe;
     private String json;
     private Timestamp loginAt;
+
+    ProfileEntity() {
+    }
+
+    public ProfileEntity(String profileKey, int keyId, Date loginAt) {
+        assert profileKey != null;
+        if (loginAt == null) {
+            loginAt = new Date();
+        }
+        this.profileKey = profileKey;
+        this.profileSha256 = makeSHA256(profileKey);
+        this.keyId = keyId;
+        this.loginAt = new Timestamp(loginAt.getTime());
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

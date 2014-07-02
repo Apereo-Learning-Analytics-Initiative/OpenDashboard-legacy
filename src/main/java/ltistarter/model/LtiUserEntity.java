@@ -14,8 +14,11 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "lti_user")
@@ -23,6 +26,9 @@ public class LtiUserEntity extends BaseEntity {
     private int userId;
     private String userSha256;
     private String userKey;
+    /**
+     * FK LtiKeyEntity
+     */
     private int keyId;
     private int profileId;
     private String displayname;
@@ -33,6 +39,27 @@ public class LtiUserEntity extends BaseEntity {
     private Timestamp loginAt;
 
     private LtiKeyEntity ltiKeyByKeyId;
+
+    protected LtiUserEntity() {
+    }
+
+    /**
+     * @param userKey   user identifier
+     * @param keyId     FK LtiKeyEntity
+     * @param profileId associate profile FK (not constrained)
+     * @param loginAt   date of user login
+     */
+    public LtiUserEntity(String userKey, int keyId, int profileId, Date loginAt) {
+        assert StringUtils.isNotBlank(userKey);
+        if (loginAt == null) {
+            loginAt = new Date();
+        }
+        this.userKey = userKey;
+        this.userSha256 = makeSHA256(userKey);
+        this.keyId = keyId;
+        this.profileId = profileId;
+        this.loginAt = new Timestamp(loginAt.getTime());
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

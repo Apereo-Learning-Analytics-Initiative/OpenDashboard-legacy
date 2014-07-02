@@ -14,6 +14,8 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -65,6 +67,14 @@ public class BaseEntity {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public String makeSHA256(String text) {
+        String encode = null;
+        if (StringUtils.isNotBlank(text)) {
+            encode = org.apache.commons.codec.digest.DigestUtils.sha256Hex(text);
+        }
+        return encode;
     }
 
 }

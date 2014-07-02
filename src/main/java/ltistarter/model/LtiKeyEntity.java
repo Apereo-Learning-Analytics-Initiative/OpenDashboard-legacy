@@ -14,6 +14,8 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -30,6 +32,22 @@ public class LtiKeyEntity extends BaseEntity {
     private Collection<LtiContextEntity> ltiContextsByKeyId;
     private Collection<LtiServiceEntity> ltiServicesByKeyId;
     private Collection<LtiUserEntity> ltiUsersByKeyId;
+
+    LtiKeyEntity() {
+    }
+
+    /**
+     * @param key    the key
+     * @param secret [OPTIONAL] secret (can be null)
+     */
+    public LtiKeyEntity(String key, String secret) {
+        assert StringUtils.isNotBlank(key);
+        this.keyKey = key;
+        this.keySha256 = makeSHA256(key);
+        if (StringUtils.isNotBlank(secret)) {
+            this.secret = secret;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

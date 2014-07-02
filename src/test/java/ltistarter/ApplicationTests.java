@@ -14,8 +14,9 @@
  */
 package ltistarter;
 
-import ltistarter.model.LtiUserEntity;
-import ltistarter.repository.LtiUserRepository;
+import ltistarter.model.LtiKeyEntity;
+import ltistarter.repository.LtiKeyRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -38,7 +38,7 @@ public class ApplicationTests {
 
     @Autowired
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
-    LtiUserRepository ltiUserRepository;
+    LtiKeyRepository ltiKeyRepository;
 
     // A few tests here just to verify that things are wired up correctly
 
@@ -49,9 +49,16 @@ public class ApplicationTests {
 
     @Test
     public void testJPA() {
-        assertNotNull(ltiUserRepository);
-        Iterable<LtiUserEntity> users = ltiUserRepository.findAll();
-        assertFalse(users.iterator().hasNext());
+        Iterable<LtiKeyEntity> keys;
+        assertNotNull(ltiKeyRepository);
+        keys = ltiKeyRepository.findAll();
+        assertFalse(keys.iterator().hasNext());
+
+        ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
+        ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
+        keys = ltiKeyRepository.findAll();
+        assertTrue(keys.iterator().hasNext());
+        assertEquals(2, CollectionUtils.size(keys.iterator()));
     }
 
 }

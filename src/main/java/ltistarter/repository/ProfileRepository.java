@@ -14,10 +14,10 @@
  */
 package ltistarter.repository;
 
-import ltistarter.model.LtiUserEntity;
+import ltistarter.model.ProfileEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface LtiUserRepository extends PagingAndSortingRepository<LtiUserEntity, Long> {
+public interface ProfileRepository extends PagingAndSortingRepository<ProfileEntity, Long> {
     /* Add custom crud methods here
      * If you need a custom implementation of the methods then see docs for steps to add it
      * http://docs.spring.io/spring-data/data-commons/docs/current/reference/html/repositories.html
