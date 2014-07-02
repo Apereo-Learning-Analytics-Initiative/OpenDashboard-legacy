@@ -28,6 +28,7 @@ public class LtiMembershipEntity extends BaseEntity {
     private LtiUserEntity ltiUserByUserId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "membership_id", nullable = false, insertable = true, updatable = true)
     public int getMembershipId() {
         return membershipId;

@@ -26,6 +26,7 @@ public class LmsPluginsEntity extends BaseEntity {
     private String json;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "plugin_id", nullable = false, insertable = true, updatable = true)
     public int getPluginId() {
         return pluginId;

@@ -32,6 +32,7 @@ public class ProfileEntity extends BaseEntity {
     private Timestamp loginAt;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
     public int getProfileId() {
         return profileId;

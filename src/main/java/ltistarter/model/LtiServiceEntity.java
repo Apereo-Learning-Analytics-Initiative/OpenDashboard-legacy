@@ -31,6 +31,7 @@ public class LtiServiceEntity extends BaseEntity {
     private LtiKeyEntity ltiKeyByKeyId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "service_id", nullable = false, insertable = true, updatable = true)
     public int getServiceId() {
         return serviceId;

@@ -32,6 +32,7 @@ public class LtiKeyEntity extends BaseEntity {
     private Collection<LtiUserEntity> ltiUsersByKeyId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
     public int getKeyId() {
         return keyId;

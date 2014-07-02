@@ -31,6 +31,7 @@ public class LtiLinkEntity extends BaseEntity {
     private Collection<LtiResultEntity> ltiResultsByLinkId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "link_id", nullable = false, insertable = true, updatable = true)
     public int getLinkId() {
         return linkId;

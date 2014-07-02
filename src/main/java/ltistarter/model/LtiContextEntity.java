@@ -32,6 +32,7 @@ public class LtiContextEntity extends BaseEntity {
     private Collection<LtiMembershipEntity> ltiMembershipsByContextId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "context_id", nullable = false, insertable = true, updatable = true)
     public int getContextId() {
         return contextId;

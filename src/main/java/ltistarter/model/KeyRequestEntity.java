@@ -31,6 +31,7 @@ public class KeyRequestEntity extends BaseEntity {
     private LtiUserEntity ltiUserByUserId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "request_id", nullable = false, insertable = true, updatable = true)
     public int getRequestId() {
         return requestId;

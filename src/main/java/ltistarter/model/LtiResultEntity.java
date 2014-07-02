@@ -37,6 +37,7 @@ public class LtiResultEntity extends BaseEntity {
     private LtiServiceEntity ltiServiceByServiceId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "result_id", nullable = false, insertable = true, updatable = true)
     public int getResultId() {
         return resultId;

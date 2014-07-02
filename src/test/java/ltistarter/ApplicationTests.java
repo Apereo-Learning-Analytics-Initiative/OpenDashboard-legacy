@@ -14,19 +14,44 @@
  */
 package ltistarter;
 
+import ltistarter.model.LtiUserEntity;
+import ltistarter.repository.LtiUserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 public class ApplicationTests {
 
+    @Autowired
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    ConfigurableWebApplicationContext context;
+
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiUserRepository ltiUserRepository;
+
+    // A few tests here just to verify that things are wired up correctly
+
     @Test
     public void contextLoads() {
+        assertNotNull(context);
+    }
+
+    @Test
+    public void testJPA() {
+        assertNotNull(ltiUserRepository);
+        Iterable<LtiUserEntity> users = ltiUserRepository.findAll();
+        assertFalse(users.iterator().hasNext());
     }
 
 }
