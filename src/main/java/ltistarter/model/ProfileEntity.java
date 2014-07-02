@@ -154,17 +154,10 @@ public class ProfileEntity extends BaseEntity {
 
         ProfileEntity that = (ProfileEntity) o;
 
-        if (keyId != that.keyId) return false;
         if (profileId != that.profileId) return false;
-        if (displayname != null ? !displayname.equals(that.displayname) : that.displayname != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
-        if (locale != null ? !locale.equals(that.locale) : that.locale != null) return false;
-        if (loginAt != null ? !loginAt.equals(that.loginAt) : that.loginAt != null) return false;
         if (profileKey != null ? !profileKey.equals(that.profileKey) : that.profileKey != null) return false;
         if (profileSha256 != null ? !profileSha256.equals(that.profileSha256) : that.profileSha256 != null)
             return false;
-        if (subscribe != null ? !subscribe.equals(that.subscribe) : that.subscribe != null) return false;
 
         return true;
     }
@@ -174,13 +167,7 @@ public class ProfileEntity extends BaseEntity {
         int result = (int) profileId;
         result = 31 * result + (profileSha256 != null ? profileSha256.hashCode() : 0);
         result = 31 * result + (profileKey != null ? profileKey.hashCode() : 0);
-        result = 31 * result + (int) keyId;
-        result = 31 * result + (displayname != null ? displayname.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (locale != null ? locale.hashCode() : 0);
-        result = 31 * result + (subscribe != null ? subscribe.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
-        result = 31 * result + (loginAt != null ? loginAt.hashCode() : 0);
         return result;
     }
+
 }

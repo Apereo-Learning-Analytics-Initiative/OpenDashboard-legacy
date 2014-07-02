@@ -29,6 +29,7 @@ public class LtiKeyEntity extends BaseEntity {
     private Integer userId;
     private String json;
 
+    // NON_PERSISTENT fields
     private Collection<LtiContextEntity> ltiContextsByKeyId;
     private Collection<LtiServiceEntity> ltiServicesByKeyId;
     private Collection<LtiUserEntity> ltiUsersByKeyId;
@@ -110,34 +111,6 @@ public class LtiKeyEntity extends BaseEntity {
         this.json = json;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LtiKeyEntity that = (LtiKeyEntity) o;
-
-        if (keyId != that.keyId) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
-        if (keyKey != null ? !keyKey.equals(that.keyKey) : that.keyKey != null) return false;
-        if (keySha256 != null ? !keySha256.equals(that.keySha256) : that.keySha256 != null) return false;
-        if (secret != null ? !secret.equals(that.secret) : that.secret != null) return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) keyId;
-        result = 31 * result + (keySha256 != null ? keySha256.hashCode() : 0);
-        result = 31 * result + (keyKey != null ? keyKey.hashCode() : 0);
-        result = 31 * result + (secret != null ? secret.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
-        return result;
-    }
-
     @OneToMany(mappedBy = "ltiKeyByKeyId")
     public Collection<LtiContextEntity> getLtiContextsByKeyId() {
         return ltiContextsByKeyId;
@@ -164,4 +137,27 @@ public class LtiKeyEntity extends BaseEntity {
     public void setLtiUsersByKeyId(Collection<LtiUserEntity> ltiUsersByKeyId) {
         this.ltiUsersByKeyId = ltiUsersByKeyId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LtiKeyEntity that = (LtiKeyEntity) o;
+
+        if (keyId != that.keyId) return false;
+        if (keyKey != null ? !keyKey.equals(that.keyKey) : that.keyKey != null) return false;
+        if (keySha256 != null ? !keySha256.equals(that.keySha256) : that.keySha256 != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) keyId;
+        result = 31 * result + (keySha256 != null ? keySha256.hashCode() : 0);
+        result = 31 * result + (keyKey != null ? keyKey.hashCode() : 0);
+        return result;
+    }
+
 }
