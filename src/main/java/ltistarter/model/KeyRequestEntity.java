@@ -19,8 +19,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "key_request")
 public class KeyRequestEntity extends BaseEntity {
-    private int requestId;
-    private int userId;
+    private long requestId;
+    private long userId;
     private String title;
     private String notes;
     private String admin;
@@ -33,21 +33,21 @@ public class KeyRequestEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "request_id", nullable = false, insertable = true, updatable = true)
-    public int getRequestId() {
+    public long getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(int requestId) {
+    public void setRequestId(long requestId) {
         this.requestId = requestId;
     }
 
     @Basic
     @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -132,8 +132,8 @@ public class KeyRequestEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = requestId;
-        result = 31 * result + userId;
+        int result = (int) requestId;
+        result = 31 * result + (int) userId;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
         result = 31 * result + (admin != null ? admin.hashCode() : 0);

@@ -23,14 +23,14 @@ import java.util.Date;
 @Entity
 @Table(name = "lti_user")
 public class LtiUserEntity extends BaseEntity {
-    private int userId;
+    private long userId;
     private String userSha256;
     private String userKey;
     /**
      * FK LtiKeyEntity
      */
-    private int keyId;
-    private int profileId;
+    private long keyId;
+    private long profileId;
     private String displayname;
     private String email;
     private String locale;
@@ -49,7 +49,7 @@ public class LtiUserEntity extends BaseEntity {
      * @param profileId associate profile FK (not constrained)
      * @param loginAt   date of user login
      */
-    public LtiUserEntity(String userKey, int keyId, int profileId, Date loginAt) {
+    public LtiUserEntity(String userKey, long keyId, long profileId, Date loginAt) {
         assert StringUtils.isNotBlank(userKey);
         if (loginAt == null) {
             loginAt = new Date();
@@ -64,11 +64,11 @@ public class LtiUserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -94,21 +94,21 @@ public class LtiUserEntity extends BaseEntity {
 
     @Basic
     @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public int getKeyId() {
+    public long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(int keyId) {
+    public void setKeyId(long keyId) {
         this.keyId = keyId;
     }
 
     @Basic
     @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
-    public int getProfileId() {
+    public long getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(int profileId) {
+    public void setProfileId(long profileId) {
         this.profileId = profileId;
     }
 
@@ -196,11 +196,11 @@ public class LtiUserEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = userId;
+        int result = (int) userId;
         result = 31 * result + (userSha256 != null ? userSha256.hashCode() : 0);
         result = 31 * result + (userKey != null ? userKey.hashCode() : 0);
-        result = 31 * result + keyId;
-        result = 31 * result + profileId;
+        result = 31 * result + (int) keyId;
+        result = 31 * result + (int) profileId;
         result = 31 * result + (displayname != null ? displayname.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);

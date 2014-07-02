@@ -21,10 +21,10 @@ import java.util.Date;
 @Entity
 @Table(name = "profile")
 public class ProfileEntity extends BaseEntity {
-    private int profileId;
+    private long profileId;
     private String profileSha256;
     private String profileKey;
-    private int keyId;
+    private long keyId;
     private String displayname;
     private String email;
     private String locale;
@@ -49,11 +49,11 @@ public class ProfileEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
-    public int getProfileId() {
+    public long getProfileId() {
         return profileId;
     }
 
-    public void setProfileId(int profileId) {
+    public void setProfileId(long profileId) {
         this.profileId = profileId;
     }
 
@@ -79,11 +79,11 @@ public class ProfileEntity extends BaseEntity {
 
     @Basic
     @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public int getKeyId() {
+    public long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(int keyId) {
+    public void setKeyId(long keyId) {
         this.keyId = keyId;
     }
 
@@ -171,10 +171,10 @@ public class ProfileEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = profileId;
+        int result = (int) profileId;
         result = 31 * result + (profileSha256 != null ? profileSha256.hashCode() : 0);
         result = 31 * result + (profileKey != null ? profileKey.hashCode() : 0);
-        result = 31 * result + keyId;
+        result = 31 * result + (int) keyId;
         result = 31 * result + (displayname != null ? displayname.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);

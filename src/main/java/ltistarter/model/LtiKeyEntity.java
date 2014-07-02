@@ -22,7 +22,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "lti_key")
 public class LtiKeyEntity extends BaseEntity {
-    private int keyId;
+    private long keyId;
     private String keySha256;
     private String keyKey;
     private String secret;
@@ -52,16 +52,16 @@ public class LtiKeyEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public int getKeyId() {
+    public long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(int keyId) {
+    public void setKeyId(long keyId) {
         this.keyId = keyId;
     }
 
     @Basic
-    @Column(name = "key_sha256", nullable = false, insertable = true, updatable = true, length = 64)
+    @Column(name = "key_sha256", unique = true, nullable = false, insertable = true, updatable = true, length = 64)
     public String getKeySha256() {
         return keySha256;
     }
@@ -71,7 +71,7 @@ public class LtiKeyEntity extends BaseEntity {
     }
 
     @Basic
-    @Column(name = "key_key", nullable = false, insertable = true, updatable = true, length = 4096)
+    @Column(name = "key_key", unique = true, nullable = false, insertable = true, updatable = true, length = 4096)
     public String getKeyKey() {
         return keyKey;
     }
@@ -129,7 +129,7 @@ public class LtiKeyEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = keyId;
+        int result = (int) keyId;
         result = 31 * result + (keySha256 != null ? keySha256.hashCode() : 0);
         result = 31 * result + (keyKey != null ? keyKey.hashCode() : 0);
         result = 31 * result + (secret != null ? secret.hashCode() : 0);

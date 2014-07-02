@@ -19,9 +19,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "lti_membership")
 public class LtiMembershipEntity extends BaseEntity {
-    private int membershipId;
-    private int contextId;
-    private int userId;
+    private long membershipId;
+    private long contextId;
+    private long userId;
     private Short role;
     private Short roleOverride;
     private LtiContextEntity ltiContextByContextId;
@@ -30,31 +30,31 @@ public class LtiMembershipEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "membership_id", nullable = false, insertable = true, updatable = true)
-    public int getMembershipId() {
+    public long getMembershipId() {
         return membershipId;
     }
 
-    public void setMembershipId(int membershipId) {
+    public void setMembershipId(long membershipId) {
         this.membershipId = membershipId;
     }
 
     @Basic
     @Column(name = "context_id", nullable = false, insertable = true, updatable = true)
-    public int getContextId() {
+    public long getContextId() {
         return contextId;
     }
 
-    public void setContextId(int contextId) {
+    public void setContextId(long contextId) {
         this.contextId = contextId;
     }
 
     @Basic
     @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -96,9 +96,9 @@ public class LtiMembershipEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = membershipId;
-        result = 31 * result + contextId;
-        result = 31 * result + userId;
+        int result = (int) membershipId;
+        result = 31 * result + (int) contextId;
+        result = 31 * result + (int) userId;
         result = 31 * result + (role != null ? role.hashCode() : 0);
         result = 31 * result + (roleOverride != null ? roleOverride.hashCode() : 0);
         return result;

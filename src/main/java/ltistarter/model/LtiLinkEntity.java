@@ -20,7 +20,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "lti_link")
 public class LtiLinkEntity extends BaseEntity {
-    private int linkId;
+    private long linkId;
     private String linkSha256;
     private String linkKey;
     private int contextId;
@@ -33,11 +33,11 @@ public class LtiLinkEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "link_id", nullable = false, insertable = true, updatable = true)
-    public int getLinkId() {
+    public long getLinkId() {
         return linkId;
     }
 
-    public void setLinkId(int linkId) {
+    public void setLinkId(long linkId) {
         this.linkId = linkId;
     }
 
@@ -110,7 +110,7 @@ public class LtiLinkEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = linkId;
+        int result = (int) linkId;
         result = 31 * result + (linkSha256 != null ? linkSha256.hashCode() : 0);
         result = 31 * result + (linkKey != null ? linkKey.hashCode() : 0);
         result = 31 * result + contextId;

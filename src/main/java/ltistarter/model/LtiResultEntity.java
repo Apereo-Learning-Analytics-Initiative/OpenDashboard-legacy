@@ -20,9 +20,9 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "lti_result")
 public class LtiResultEntity extends BaseEntity {
-    private int resultId;
-    private int linkId;
-    private int userId;
+    private long resultId;
+    private long linkId;
+    private long userId;
     private String sourcedid;
     private String sourcedidSha256;
     private Integer serviceId;
@@ -39,31 +39,31 @@ public class LtiResultEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "result_id", nullable = false, insertable = true, updatable = true)
-    public int getResultId() {
+    public long getResultId() {
         return resultId;
     }
 
-    public void setResultId(int resultId) {
+    public void setResultId(long resultId) {
         this.resultId = resultId;
     }
 
     @Basic
     @Column(name = "link_id", nullable = false, insertable = true, updatable = true)
-    public int getLinkId() {
+    public long getLinkId() {
         return linkId;
     }
 
-    public void setLinkId(int linkId) {
+    public void setLinkId(long linkId) {
         this.linkId = linkId;
     }
 
     @Basic
     @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -172,9 +172,9 @@ public class LtiResultEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = resultId;
-        result = 31 * result + linkId;
-        result = 31 * result + userId;
+        int result = (int) resultId;
+        result = 31 * result + (int) linkId;
+        result = 31 * result + (int) userId;
         result = 31 * result + (sourcedid != null ? sourcedid.hashCode() : 0);
         result = 31 * result + (sourcedidSha256 != null ? sourcedidSha256.hashCode() : 0);
         result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);

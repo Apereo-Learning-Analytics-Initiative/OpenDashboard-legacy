@@ -20,7 +20,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "lti_context")
 public class LtiContextEntity extends BaseEntity {
-    private int contextId;
+    private long contextId;
     private String contextSha256;
     private String contextKey;
     private int keyId;
@@ -34,11 +34,11 @@ public class LtiContextEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "context_id", nullable = false, insertable = true, updatable = true)
-    public int getContextId() {
+    public long getContextId() {
         return contextId;
     }
 
-    public void setContextId(int contextId) {
+    public void setContextId(long contextId) {
         this.contextId = contextId;
     }
 
@@ -112,7 +112,7 @@ public class LtiContextEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = contextId;
+        int result = (int) contextId;
         result = 31 * result + (contextSha256 != null ? contextSha256.hashCode() : 0);
         result = 31 * result + (contextKey != null ? contextKey.hashCode() : 0);
         result = 31 * result + keyId;

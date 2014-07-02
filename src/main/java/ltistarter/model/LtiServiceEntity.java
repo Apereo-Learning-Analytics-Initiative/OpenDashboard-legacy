@@ -20,10 +20,10 @@ import java.util.Collection;
 @Entity
 @Table(name = "lti_service")
 public class LtiServiceEntity extends BaseEntity {
-    private int serviceId;
+    private long serviceId;
     private String serviceSha256;
     private String serviceKey;
-    private int keyId;
+    private long keyId;
     private String format;
     private String json;
 
@@ -33,11 +33,11 @@ public class LtiServiceEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "service_id", nullable = false, insertable = true, updatable = true)
-    public int getServiceId() {
+    public long getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(int serviceId) {
+    public void setServiceId(long serviceId) {
         this.serviceId = serviceId;
     }
 
@@ -63,11 +63,11 @@ public class LtiServiceEntity extends BaseEntity {
 
     @Basic
     @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public int getKeyId() {
+    public long getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(int keyId) {
+    public void setKeyId(long keyId) {
         this.keyId = keyId;
     }
 
@@ -111,10 +111,10 @@ public class LtiServiceEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = serviceId;
+        int result = (int) serviceId;
         result = 31 * result + (serviceSha256 != null ? serviceSha256.hashCode() : 0);
         result = 31 * result + (serviceKey != null ? serviceKey.hashCode() : 0);
-        result = 31 * result + keyId;
+        result = 31 * result + (int) keyId;
         result = 31 * result + (format != null ? format.hashCode() : 0);
         result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;

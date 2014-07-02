@@ -50,6 +50,7 @@ public class ApplicationTests {
     @Test
     public void testJPA() {
         Iterable<LtiKeyEntity> keys;
+        LtiKeyEntity key;
         assertNotNull(ltiKeyRepository);
         keys = ltiKeyRepository.findAll();
         assertFalse(keys.iterator().hasNext());
@@ -59,6 +60,14 @@ public class ApplicationTests {
         keys = ltiKeyRepository.findAll();
         assertTrue(keys.iterator().hasNext());
         assertEquals(2, CollectionUtils.size(keys.iterator()));
+        key = ltiKeyRepository.findByKeyKey("not_real_key");
+        assertNull(key);
+        key = ltiKeyRepository.findByKeyKey("key");
+        assertNotNull(key);
+        assertEquals("secret", key.getSecret());
+        LtiKeyEntity key2 = ltiKeyRepository.findOne(key.getKeyId());
+        assertNotNull(key2);
+        assertEquals(key, key2);
     }
 
 }

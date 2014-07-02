@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "lms_plugins")
 public class LmsPluginsEntity extends BaseEntity {
-    private int pluginId;
+    private long pluginId;
     private String pluginPath;
     private long pluginVersion;
     private String title;
@@ -28,11 +28,11 @@ public class LmsPluginsEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "plugin_id", nullable = false, insertable = true, updatable = true)
-    public int getPluginId() {
+    public long getPluginId() {
         return pluginId;
     }
 
-    public void setPluginId(int pluginId) {
+    public void setPluginId(long pluginId) {
         this.pluginId = pluginId;
     }
 
@@ -94,7 +94,7 @@ public class LmsPluginsEntity extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = pluginId;
+        int result = (int) pluginId;
         result = 31 * result + (pluginPath != null ? pluginPath.hashCode() : 0);
         result = 31 * result + (int) (pluginVersion ^ (pluginVersion >>> 32));
         result = 31 * result + (title != null ? title.hashCode() : 0);

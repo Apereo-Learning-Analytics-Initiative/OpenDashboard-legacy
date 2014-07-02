@@ -22,4 +22,5 @@ public interface LtiKeyRepository extends PagingAndSortingRepository<LtiKeyEntit
      * If you need a custom implementation of the methods then see docs for steps to add it
      * http://docs.spring.io/spring-data/data-commons/docs/current/reference/html/repositories.html
      */
+    LtiKeyEntity findByKeyKey(String key);
 }
