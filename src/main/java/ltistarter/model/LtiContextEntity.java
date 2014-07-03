@@ -15,25 +15,36 @@
 package ltistarter.model;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "lti_context")
 public class LtiContextEntity extends BaseEntity {
-    private long contextId;
-    private String contextSha256;
-    private String contextKey;
-    private int keyId;
-    private String title;
-    private String json;
-
-    private LtiKeyEntity ltiKeyByKeyId;
-    private Collection<LtiLinkEntity> ltiLinksByContextId;
-    private Collection<LtiMembershipEntity> ltiMembershipsByContextId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "context_id", nullable = false, insertable = true, updatable = true)
+    private long contextId;
+    @Basic
+    @Column(name = "context_sha256", nullable = false, insertable = true, updatable = true, length = 64)
+    private String contextSha256;
+    @Basic
+    @Column(name = "context_key", nullable = false, insertable = true, updatable = true, length = 4096)
+    private String contextKey;
+    @Basic
+    @Column(name = "title", nullable = true, insertable = true, updatable = true, length = 4096)
+    private String title;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String json;
+
+    @ManyToOne
+    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
+    private LtiKeyEntity ltiKey;
+    @OneToMany(mappedBy = "linkId")
+    private Set<LtiLinkEntity> links;
+    @OneToMany(mappedBy = "membershipId")
+    private Set<LtiMembershipEntity> memberships;
+
     public long getContextId() {
         return contextId;
     }
@@ -42,8 +53,6 @@ public class LtiContextEntity extends BaseEntity {
         this.contextId = contextId;
     }
 
-    @Basic
-    @Column(name = "context_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     public String getContextSha256() {
         return contextSha256;
     }
@@ -52,8 +61,6 @@ public class LtiContextEntity extends BaseEntity {
         this.contextSha256 = contextSha256;
     }
 
-    @Basic
-    @Column(name = "context_key", nullable = false, insertable = true, updatable = true, length = 4096)
     public String getContextKey() {
         return contextKey;
     }
@@ -62,18 +69,6 @@ public class LtiContextEntity extends BaseEntity {
         this.contextKey = contextKey;
     }
 
-    @Basic
-    @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public int getKeyId() {
-        return keyId;
-    }
-
-    public void setKeyId(int keyId) {
-        this.keyId = keyId;
-    }
-
-    @Basic
-    @Column(name = "title", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getTitle() {
         return title;
     }
@@ -82,14 +77,36 @@ public class LtiContextEntity extends BaseEntity {
         this.title = title;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public LtiKeyEntity getLtiKey() {
+        return ltiKey;
+    }
+
+    public void setLtiKey(LtiKeyEntity ltiKey) {
+        this.ltiKey = ltiKey;
+    }
+
+    public Set<LtiLinkEntity> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Set<LtiLinkEntity> links) {
+        this.links = links;
+    }
+
+    public Set<LtiMembershipEntity> getMemberships() {
+        return memberships;
+    }
+
+    public void setMemberships(Set<LtiMembershipEntity> memberships) {
+        this.memberships = memberships;
     }
 
     @Override
@@ -100,12 +117,9 @@ public class LtiContextEntity extends BaseEntity {
         LtiContextEntity that = (LtiContextEntity) o;
 
         if (contextId != that.contextId) return false;
-        if (keyId != that.keyId) return false;
         if (contextKey != null ? !contextKey.equals(that.contextKey) : that.contextKey != null) return false;
         if (contextSha256 != null ? !contextSha256.equals(that.contextSha256) : that.contextSha256 != null)
             return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
 
         return true;
     }
@@ -115,38 +129,7 @@ public class LtiContextEntity extends BaseEntity {
         int result = (int) contextId;
         result = 31 * result + (contextSha256 != null ? contextSha256.hashCode() : 0);
         result = 31 * result + (contextKey != null ? contextKey.hashCode() : 0);
-        result = 31 * result + keyId;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
-    public LtiKeyEntity getLtiKeyByKeyId() {
-        return ltiKeyByKeyId;
-    }
-
-    public void setLtiKeyByKeyId(LtiKeyEntity ltiKeyByKeyId) {
-        this.ltiKeyByKeyId = ltiKeyByKeyId;
-    }
-
-    @OneToMany(mappedBy = "ltiContextByContextId")
-    public Collection<LtiLinkEntity> getLtiLinksByContextId() {
-        return ltiLinksByContextId;
-    }
-
-    public void setLtiLinksByContextId(Collection<LtiLinkEntity> ltiLinksByContextId) {
-        this.ltiLinksByContextId = ltiLinksByContextId;
-    }
-
-    @OneToMany(mappedBy = "ltiContextByContextId")
-    public Collection<LtiMembershipEntity> getLtiMembershipsByContextId() {
-        return ltiMembershipsByContextId;
-    }
-
-    public void setLtiMembershipsByContextId(Collection<LtiMembershipEntity> ltiMembershipsByContextId) {
-        this.ltiMembershipsByContextId = ltiMembershipsByContextId;
     }
 
 }

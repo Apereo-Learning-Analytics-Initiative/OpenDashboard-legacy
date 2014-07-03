@@ -19,15 +19,23 @@ import javax.persistence.*;
 @Entity
 @Table(name = "lms_plugins")
 public class LmsPluginsEntity extends BaseEntity {
-    private long pluginId;
-    private String pluginPath;
-    private long pluginVersion;
-    private String title;
-    private String json;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "plugin_id", nullable = false, insertable = true, updatable = true)
+    private long pluginId;
+    @Basic
+    @Column(name = "plugin_path", nullable = false, insertable = true, updatable = true, length = 255)
+    private String pluginPath;
+    @Basic
+    @Column(name = "plugin_version", nullable = false, insertable = true, updatable = true)
+    private long pluginVersion;
+    @Basic
+    @Column(name = "title", nullable = true, insertable = true, updatable = true, length = 4096)
+    private String title;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String json;
+
     public long getPluginId() {
         return pluginId;
     }
@@ -36,8 +44,6 @@ public class LmsPluginsEntity extends BaseEntity {
         this.pluginId = pluginId;
     }
 
-    @Basic
-    @Column(name = "plugin_path", nullable = false, insertable = true, updatable = true, length = 255)
     public String getPluginPath() {
         return pluginPath;
     }
@@ -46,8 +52,6 @@ public class LmsPluginsEntity extends BaseEntity {
         this.pluginPath = pluginPath;
     }
 
-    @Basic
-    @Column(name = "plugin_version", nullable = false, insertable = true, updatable = true)
     public long getPluginVersion() {
         return pluginVersion;
     }
@@ -56,8 +60,6 @@ public class LmsPluginsEntity extends BaseEntity {
         this.pluginVersion = version;
     }
 
-    @Basic
-    @Column(name = "title", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getTitle() {
         return title;
     }
@@ -66,8 +68,6 @@ public class LmsPluginsEntity extends BaseEntity {
         this.title = title;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
@@ -85,9 +85,7 @@ public class LmsPluginsEntity extends BaseEntity {
 
         if (pluginId != that.pluginId) return false;
         if (pluginVersion != that.pluginVersion) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
         if (pluginPath != null ? !pluginPath.equals(that.pluginPath) : that.pluginPath != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
 
         return true;
     }
@@ -97,8 +95,6 @@ public class LmsPluginsEntity extends BaseEntity {
         int result = (int) pluginId;
         result = 31 * result + (pluginPath != null ? pluginPath.hashCode() : 0);
         result = 31 * result + (int) (pluginVersion ^ (pluginVersion >>> 32));
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;
     }
 }

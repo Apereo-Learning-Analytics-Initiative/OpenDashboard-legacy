@@ -34,10 +34,13 @@ public class LtiUserEntity extends BaseEntity {
     @Column(name = "user_key", nullable = false, insertable = true, updatable = true, length = 4096)
     private String userKey;
     @Basic
-    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
+    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 4096)
     private String displayname;
+    /**
+     * Actual max for emails is 254 chars
+     */
     @Basic
-    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
+    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 255)
     private String email;
     @Basic
     @Column(name = "locale", nullable = true, insertable = true, updatable = true, length = 63)

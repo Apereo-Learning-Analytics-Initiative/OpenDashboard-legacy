@@ -20,25 +20,41 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "lti_result")
 public class LtiResultEntity extends BaseEntity {
-    private long resultId;
-    private long linkId;
-    private long userId;
-    private String sourcedid;
-    private String sourcedidSha256;
-    private Integer serviceId;
-    private Float grade;
-    private String note;
-    private Float serverGrade;
-    private String json;
-    private Timestamp retrievedAt;
-
-    private LtiLinkEntity ltiLinkByLinkId;
-    private LtiUserEntity ltiUserByUserId;
-    private LtiServiceEntity ltiServiceByServiceId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "result_id", nullable = false, insertable = true, updatable = true)
+    private long resultId;
+    @Basic
+    @Column(name = "sourcedid", nullable = false, insertable = true, updatable = true, length = 4096)
+    private String sourcedid;
+    @Basic
+    @Column(name = "sourcedid_sha256", nullable = false, insertable = true, updatable = true, length = 64)
+    private String sourcedidSha256;
+    @Basic
+    @Column(name = "grade", nullable = true, insertable = true, updatable = true, precision = 0)
+    private Float grade;
+    @Basic
+    @Column(name = "note", nullable = true, insertable = true, updatable = true, length = 4096)
+    private String note;
+    @Basic
+    @Column(name = "server_grade", nullable = true, insertable = true, updatable = true, precision = 0)
+    private Float serverGrade;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String json;
+    @Basic
+    @Column(name = "retrieved_at", nullable = false, insertable = true, updatable = true)
+    private Timestamp retrievedAt;
+    @ManyToOne
+    @JoinColumn(name = "link_id", referencedColumnName = "link_id", nullable = false, insertable = false, updatable = false)
+    private LtiLinkEntity link;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    private LtiUserEntity user;
+    @ManyToOne
+    @JoinColumn(name = "service_id", referencedColumnName = "service_id", insertable = false, updatable = false)
+    private LtiServiceEntity service;
+
     public long getResultId() {
         return resultId;
     }
@@ -47,28 +63,6 @@ public class LtiResultEntity extends BaseEntity {
         this.resultId = resultId;
     }
 
-    @Basic
-    @Column(name = "link_id", nullable = false, insertable = true, updatable = true)
-    public long getLinkId() {
-        return linkId;
-    }
-
-    public void setLinkId(long linkId) {
-        this.linkId = linkId;
-    }
-
-    @Basic
-    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Basic
-    @Column(name = "sourcedid", nullable = false, insertable = true, updatable = true, length = 2048)
     public String getSourcedid() {
         return sourcedid;
     }
@@ -77,8 +71,6 @@ public class LtiResultEntity extends BaseEntity {
         this.sourcedid = sourcedid;
     }
 
-    @Basic
-    @Column(name = "sourcedid_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     public String getSourcedidSha256() {
         return sourcedidSha256;
     }
@@ -87,18 +79,6 @@ public class LtiResultEntity extends BaseEntity {
         this.sourcedidSha256 = sourcedidSha256;
     }
 
-    @Basic
-    @Column(name = "service_id", nullable = true, insertable = true, updatable = true)
-    public Integer getServiceId() {
-        return serviceId;
-    }
-
-    public void setServiceId(Integer serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    @Basic
-    @Column(name = "grade", nullable = true, insertable = true, updatable = true, precision = 0)
     public Float getGrade() {
         return grade;
     }
@@ -107,8 +87,6 @@ public class LtiResultEntity extends BaseEntity {
         this.grade = grade;
     }
 
-    @Basic
-    @Column(name = "note", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getNote() {
         return note;
     }
@@ -117,8 +95,6 @@ public class LtiResultEntity extends BaseEntity {
         this.note = note;
     }
 
-    @Basic
-    @Column(name = "server_grade", nullable = true, insertable = true, updatable = true, precision = 0)
     public Float getServerGrade() {
         return serverGrade;
     }
@@ -127,8 +103,6 @@ public class LtiResultEntity extends BaseEntity {
         this.serverGrade = serverGrade;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
@@ -137,14 +111,36 @@ public class LtiResultEntity extends BaseEntity {
         this.json = json;
     }
 
-    @Basic
-    @Column(name = "retrieved_at", nullable = false, insertable = true, updatable = true)
     public Timestamp getRetrievedAt() {
         return retrievedAt;
     }
 
     public void setRetrievedAt(Timestamp retrievedAt) {
         this.retrievedAt = retrievedAt;
+    }
+
+    public LtiLinkEntity getLink() {
+        return link;
+    }
+
+    public void setLink(LtiLinkEntity link) {
+        this.link = link;
+    }
+
+    public LtiUserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(LtiUserEntity user) {
+        this.user = user;
+    }
+
+    public LtiServiceEntity getService() {
+        return service;
+    }
+
+    public void setService(LtiServiceEntity service) {
+        this.service = service;
     }
 
     @Override
@@ -154,15 +150,7 @@ public class LtiResultEntity extends BaseEntity {
 
         LtiResultEntity that = (LtiResultEntity) o;
 
-        if (linkId != that.linkId) return false;
         if (resultId != that.resultId) return false;
-        if (userId != that.userId) return false;
-        if (grade != null ? !grade.equals(that.grade) : that.grade != null) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
-        if (note != null ? !note.equals(that.note) : that.note != null) return false;
-        if (retrievedAt != null ? !retrievedAt.equals(that.retrievedAt) : that.retrievedAt != null) return false;
-        if (serverGrade != null ? !serverGrade.equals(that.serverGrade) : that.serverGrade != null) return false;
-        if (serviceId != null ? !serviceId.equals(that.serviceId) : that.serviceId != null) return false;
         if (sourcedid != null ? !sourcedid.equals(that.sourcedid) : that.sourcedid != null) return false;
         if (sourcedidSha256 != null ? !sourcedidSha256.equals(that.sourcedidSha256) : that.sourcedidSha256 != null)
             return false;
@@ -173,46 +161,9 @@ public class LtiResultEntity extends BaseEntity {
     @Override
     public int hashCode() {
         int result = (int) resultId;
-        result = 31 * result + (int) linkId;
-        result = 31 * result + (int) userId;
         result = 31 * result + (sourcedid != null ? sourcedid.hashCode() : 0);
         result = 31 * result + (sourcedidSha256 != null ? sourcedidSha256.hashCode() : 0);
-        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
-        result = 31 * result + (grade != null ? grade.hashCode() : 0);
-        result = 31 * result + (note != null ? note.hashCode() : 0);
-        result = 31 * result + (serverGrade != null ? serverGrade.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
-        result = 31 * result + (retrievedAt != null ? retrievedAt.hashCode() : 0);
         return result;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "link_id", referencedColumnName = "link_id", nullable = false, insertable = false, updatable = false)
-    public LtiLinkEntity getLtiLinkByLinkId() {
-        return ltiLinkByLinkId;
-    }
-
-    public void setLtiLinkByLinkId(LtiLinkEntity ltiLinkByLinkId) {
-        this.ltiLinkByLinkId = ltiLinkByLinkId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
-    public LtiUserEntity getLtiUserByUserId() {
-        return ltiUserByUserId;
-    }
-
-    public void setLtiUserByUserId(LtiUserEntity ltiUserByUserId) {
-        this.ltiUserByUserId = ltiUserByUserId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "service_id", referencedColumnName = "service_id", insertable = false, updatable = false)
-    public LtiServiceEntity getLtiServiceByServiceId() {
-        return ltiServiceByServiceId;
-    }
-
-    public void setLtiServiceByServiceId(LtiServiceEntity ltiServiceByServiceId) {
-        this.ltiServiceByServiceId = ltiServiceByServiceId;
-    }
 }

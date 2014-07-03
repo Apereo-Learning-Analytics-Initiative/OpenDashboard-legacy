@@ -19,20 +19,33 @@ import javax.persistence.*;
 @Entity
 @Table(name = "key_request")
 public class KeyRequestEntity extends BaseEntity {
-    private long requestId;
-    private long userId;
-    private String title;
-    private String notes;
-    private String admin;
-    private Short state;
-    private Byte lti;
-    private String json;
-
-    private LtiUserEntity ltiUserByUserId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "request_id", nullable = false, insertable = true, updatable = true)
+    private long requestId;
+    @Basic
+    @Column(name = "title", nullable = false, insertable = true, updatable = true, length = 4096)
+    private String title;
+    @Basic
+    @Column(name = "notes", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String notes;
+    @Basic
+    @Column(name = "admin", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String admin;
+    @Basic
+    @Column(name = "state", nullable = true, insertable = true, updatable = true)
+    private Short state;
+    @Basic
+    @Column(name = "lti", nullable = true, insertable = true, updatable = true)
+    private Byte lti;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String json;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    private LtiUserEntity user;
+
     public long getRequestId() {
         return requestId;
     }
@@ -41,18 +54,6 @@ public class KeyRequestEntity extends BaseEntity {
         this.requestId = requestId;
     }
 
-    @Basic
-    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Basic
-    @Column(name = "title", nullable = false, insertable = true, updatable = true, length = 512)
     public String getTitle() {
         return title;
     }
@@ -61,8 +62,6 @@ public class KeyRequestEntity extends BaseEntity {
         this.title = title;
     }
 
-    @Basic
-    @Column(name = "notes", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getNotes() {
         return notes;
     }
@@ -71,8 +70,6 @@ public class KeyRequestEntity extends BaseEntity {
         this.notes = notes;
     }
 
-    @Basic
-    @Column(name = "admin", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getAdmin() {
         return admin;
     }
@@ -81,8 +78,6 @@ public class KeyRequestEntity extends BaseEntity {
         this.admin = admin;
     }
 
-    @Basic
-    @Column(name = "state", nullable = true, insertable = true, updatable = true)
     public Short getState() {
         return state;
     }
@@ -91,8 +86,6 @@ public class KeyRequestEntity extends BaseEntity {
         this.state = state;
     }
 
-    @Basic
-    @Column(name = "lti", nullable = true, insertable = true, updatable = true)
     public Byte getLti() {
         return lti;
     }
@@ -101,14 +94,20 @@ public class KeyRequestEntity extends BaseEntity {
         this.lti = lti;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public LtiUserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(LtiUserEntity user) {
+        this.user = user;
     }
 
     @Override
@@ -119,12 +118,6 @@ public class KeyRequestEntity extends BaseEntity {
         KeyRequestEntity that = (KeyRequestEntity) o;
 
         if (requestId != that.requestId) return false;
-        if (userId != that.userId) return false;
-        if (admin != null ? !admin.equals(that.admin) : that.admin != null) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
-        if (lti != null ? !lti.equals(that.lti) : that.lti != null) return false;
-        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
-        if (state != null ? !state.equals(that.state) : that.state != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
 
         return true;
@@ -133,23 +126,8 @@ public class KeyRequestEntity extends BaseEntity {
     @Override
     public int hashCode() {
         int result = (int) requestId;
-        result = 31 * result + (int) userId;
         result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (notes != null ? notes.hashCode() : 0);
-        result = 31 * result + (admin != null ? admin.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (lti != null ? lti.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
-    public LtiUserEntity getLtiUserByUserId() {
-        return ltiUserByUserId;
-    }
-
-    public void setLtiUserByUserId(LtiUserEntity ltiUserByUserId) {
-        this.ltiUserByUserId = ltiUserByUserId;
-    }
 }

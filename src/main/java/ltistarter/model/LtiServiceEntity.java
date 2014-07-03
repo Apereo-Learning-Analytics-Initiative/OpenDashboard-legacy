@@ -15,24 +15,34 @@
 package ltistarter.model;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "lti_service")
 public class LtiServiceEntity extends BaseEntity {
-    private long serviceId;
-    private String serviceSha256;
-    private String serviceKey;
-    private long keyId;
-    private String format;
-    private String json;
-
-    private Collection<LtiResultEntity> ltiResultsByServiceId;
-    private LtiKeyEntity ltiKeyByKeyId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "service_id", nullable = false, insertable = true, updatable = true)
+    private long serviceId;
+    @Basic
+    @Column(name = "service_sha256", nullable = false, insertable = true, updatable = true, length = 64)
+    private String serviceSha256;
+    @Basic
+    @Column(name = "service_key", nullable = false, insertable = true, updatable = true, length = 4096)
+    private String serviceKey;
+    @Basic
+    @Column(name = "format", nullable = true, insertable = true, updatable = true, length = 1024)
+    private String format;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    private String json;
+
+    @OneToMany(mappedBy = "resultId")
+    private Set<LtiResultEntity> results;
+    @ManyToOne
+    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
+    private LtiKeyEntity ltiKey;
+
     public long getServiceId() {
         return serviceId;
     }
@@ -41,8 +51,6 @@ public class LtiServiceEntity extends BaseEntity {
         this.serviceId = serviceId;
     }
 
-    @Basic
-    @Column(name = "service_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     public String getServiceSha256() {
         return serviceSha256;
     }
@@ -51,8 +59,6 @@ public class LtiServiceEntity extends BaseEntity {
         this.serviceSha256 = serviceSha256;
     }
 
-    @Basic
-    @Column(name = "service_key", nullable = false, insertable = true, updatable = true, length = 4096)
     public String getServiceKey() {
         return serviceKey;
     }
@@ -61,18 +67,6 @@ public class LtiServiceEntity extends BaseEntity {
         this.serviceKey = serviceKey;
     }
 
-    @Basic
-    @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public long getKeyId() {
-        return keyId;
-    }
-
-    public void setKeyId(long keyId) {
-        this.keyId = keyId;
-    }
-
-    @Basic
-    @Column(name = "format", nullable = true, insertable = true, updatable = true, length = 1024)
     public String getFormat() {
         return format;
     }
@@ -81,14 +75,28 @@ public class LtiServiceEntity extends BaseEntity {
         this.format = format;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public Set<LtiResultEntity> getResults() {
+        return results;
+    }
+
+    public void setResults(Set<LtiResultEntity> results) {
+        this.results = results;
+    }
+
+    public LtiKeyEntity getLtiKey() {
+        return ltiKey;
+    }
+
+    public void setLtiKey(LtiKeyEntity ltiKey) {
+        this.ltiKey = ltiKey;
     }
 
     @Override
@@ -98,10 +106,7 @@ public class LtiServiceEntity extends BaseEntity {
 
         LtiServiceEntity that = (LtiServiceEntity) o;
 
-        if (keyId != that.keyId) return false;
         if (serviceId != that.serviceId) return false;
-        if (format != null ? !format.equals(that.format) : that.format != null) return false;
-        if (json != null ? !json.equals(that.json) : that.json != null) return false;
         if (serviceKey != null ? !serviceKey.equals(that.serviceKey) : that.serviceKey != null) return false;
         if (serviceSha256 != null ? !serviceSha256.equals(that.serviceSha256) : that.serviceSha256 != null)
             return false;
@@ -114,28 +119,7 @@ public class LtiServiceEntity extends BaseEntity {
         int result = (int) serviceId;
         result = 31 * result + (serviceSha256 != null ? serviceSha256.hashCode() : 0);
         result = 31 * result + (serviceKey != null ? serviceKey.hashCode() : 0);
-        result = 31 * result + (int) keyId;
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;
     }
 
-    @OneToMany(mappedBy = "ltiServiceByServiceId")
-    public Collection<LtiResultEntity> getLtiResultsByServiceId() {
-        return ltiResultsByServiceId;
-    }
-
-    public void setLtiResultsByServiceId(Collection<LtiResultEntity> ltiResultsByServiceId) {
-        this.ltiResultsByServiceId = ltiResultsByServiceId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
-    public LtiKeyEntity getLtiKeyByKeyId() {
-        return ltiKeyByKeyId;
-    }
-
-    public void setLtiKeyByKeyId(LtiKeyEntity ltiKeyByKeyId) {
-        this.ltiKeyByKeyId = ltiKeyByKeyId;
-    }
 }
