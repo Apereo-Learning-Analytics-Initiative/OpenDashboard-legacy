@@ -23,47 +23,55 @@ import java.util.Date;
 @Entity
 @Table(name = "lti_user")
 public class LtiUserEntity extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
     private long userId;
+    @Basic
+    @Column(name = "user_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     private String userSha256;
+    @Basic
+    @Column(name = "user_key", nullable = false, insertable = true, updatable = true, length = 4096)
     private String userKey;
-    /**
-     * FK LtiKeyEntity
-     */
-    private long keyId;
-    private long profileId;
+    @Basic
+    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
     private String displayname;
+    @Basic
+    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
     private String email;
+    @Basic
+    @Column(name = "locale", nullable = true, insertable = true, updatable = true, length = 63)
     private String locale;
+    @Basic
+    @Column(name = "subscribe", nullable = true, insertable = true, updatable = true)
     private Short subscribe;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
+    @Basic
+    @Column(name = "login_at", nullable = false, insertable = true, updatable = true)
     private Timestamp loginAt;
 
-    private LtiKeyEntity ltiKeyByKeyId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    private ProfileEntity profile;
 
     protected LtiUserEntity() {
     }
 
     /**
      * @param userKey   user identifier
-     * @param keyId     FK LtiKeyEntity
-     * @param profileId associate profile FK (not constrained)
      * @param loginAt   date of user login
      */
-    public LtiUserEntity(String userKey, long keyId, long profileId, Date loginAt) {
+    public LtiUserEntity(String userKey, Date loginAt) {
         assert StringUtils.isNotBlank(userKey);
         if (loginAt == null) {
             loginAt = new Date();
         }
         this.userKey = userKey;
         this.userSha256 = makeSHA256(userKey);
-        this.keyId = keyId;
-        this.profileId = profileId;
         this.loginAt = new Timestamp(loginAt.getTime());
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
     public long getUserId() {
         return userId;
     }
@@ -72,8 +80,6 @@ public class LtiUserEntity extends BaseEntity {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "user_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     public String getUserSha256() {
         return userSha256;
     }
@@ -82,8 +88,6 @@ public class LtiUserEntity extends BaseEntity {
         this.userSha256 = userSha256;
     }
 
-    @Basic
-    @Column(name = "user_key", nullable = false, insertable = true, updatable = true, length = 4096)
     public String getUserKey() {
         return userKey;
     }
@@ -92,28 +96,6 @@ public class LtiUserEntity extends BaseEntity {
         this.userKey = userKey;
     }
 
-    @Basic
-    @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public long getKeyId() {
-        return keyId;
-    }
-
-    public void setKeyId(long keyId) {
-        this.keyId = keyId;
-    }
-
-    @Basic
-    @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
-    public long getProfileId() {
-        return profileId;
-    }
-
-    public void setProfileId(long profileId) {
-        this.profileId = profileId;
-    }
-
-    @Basic
-    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getDisplayname() {
         return displayname;
     }
@@ -122,8 +104,6 @@ public class LtiUserEntity extends BaseEntity {
         this.displayname = displayname;
     }
 
-    @Basic
-    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getEmail() {
         return email;
     }
@@ -132,8 +112,6 @@ public class LtiUserEntity extends BaseEntity {
         this.email = email;
     }
 
-    @Basic
-    @Column(name = "locale", nullable = true, insertable = true, updatable = true, length = 63)
     public String getLocale() {
         return locale;
     }
@@ -142,8 +120,6 @@ public class LtiUserEntity extends BaseEntity {
         this.locale = locale;
     }
 
-    @Basic
-    @Column(name = "subscribe", nullable = true, insertable = true, updatable = true)
     public Short getSubscribe() {
         return subscribe;
     }
@@ -152,8 +128,6 @@ public class LtiUserEntity extends BaseEntity {
         this.subscribe = subscribe;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
@@ -162,14 +136,20 @@ public class LtiUserEntity extends BaseEntity {
         this.json = json;
     }
 
-    @Basic
-    @Column(name = "login_at", nullable = false, insertable = true, updatable = true)
     public Timestamp getLoginAt() {
         return loginAt;
     }
 
     public void setLoginAt(Timestamp loginAt) {
         this.loginAt = loginAt;
+    }
+
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
     }
 
     @Override
@@ -194,17 +174,6 @@ public class LtiUserEntity extends BaseEntity {
         result = 31 * result + (userKey != null ? userKey.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
-    }
-
-
-    @ManyToOne
-    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
-    public LtiKeyEntity getLtiKeyByKeyId() {
-        return ltiKeyByKeyId;
-    }
-
-    public void setLtiKeyByKeyId(LtiKeyEntity ltiKeyByKeyId) {
-        this.ltiKeyByKeyId = ltiKeyByKeyId;
     }
 
 }

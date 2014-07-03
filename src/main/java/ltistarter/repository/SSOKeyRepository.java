@@ -14,15 +14,32 @@
  */
 package ltistarter.repository;
 
-import ltistarter.model.ProfileEntity;
+import ltistarter.model.SSOKeyEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface ProfileRepository extends PagingAndSortingRepository<ProfileEntity, Long> {
+public interface SSOKeyRepository extends PagingAndSortingRepository<SSOKeyEntity, Long> {
     /* Add custom crud methods here
      * If you need a custom implementation of the methods then see docs for steps to add it
      * http://docs.spring.io/spring-data/data-commons/docs/current/reference/html/repositories.html
+     * Can also write a custom query like so:
+     * @Query("SELECT u FROM User u WHERE u.alias IS NOT NULL")
+     * List<User> findAliased();
+     * OR:
+     * @Query("SELECT u FROM User u WHERE u.alias = ?1")
+     * List<User> findWithAlias(String alias);
      */
-    ProfileEntity findByProfileKey(String profileKey);
+
+    /**
+     * @param key the unique key
+     * @return the SSOKeyEntity OR null if there is no entity matching this key
+     */
+    SSOKeyEntity findByKeyKey(String key);
+
+    /**
+     * @param key the unique key
+     * @return the number of keys removed (0 or 1)
+     */
+    int deleteByKeyKey(String key);
 }

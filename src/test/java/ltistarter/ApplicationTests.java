@@ -15,7 +15,13 @@
 package ltistarter;
 
 import ltistarter.model.LtiKeyEntity;
+import ltistarter.model.LtiUserEntity;
+import ltistarter.model.ProfileEntity;
+import ltistarter.model.SSOKeyEntity;
 import ltistarter.repository.LtiKeyRepository;
+import ltistarter.repository.LtiUserRepository;
+import ltistarter.repository.ProfileRepository;
+import ltistarter.repository.SSOKeyRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import static org.junit.Assert.*;
@@ -32,20 +39,20 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 public class ApplicationTests {
 
+    // A few tests here just to verify that things are wired up correctly
+
     @Autowired
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     ConfigurableWebApplicationContext context;
-
-    @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
-    LtiKeyRepository ltiKeyRepository;
-
-    // A few tests here just to verify that things are wired up correctly
 
     @Test
     public void contextLoads() {
         assertNotNull(context);
     }
+
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiKeyRepository ltiKeyRepository;
 
     @Test
     public void testJPA() {
@@ -86,6 +93,73 @@ public class ApplicationTests {
         keys = ltiKeyRepository.findAll();
         assertFalse(keys.iterator().hasNext());
         assertEquals(0, CollectionUtils.size(keys.iterator()));
+    }
+
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiUserRepository ltiUserRepository;
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    ProfileRepository profileRepository;
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    SSOKeyRepository ssoKeyRepository;
+
+    @Test
+    @Transactional
+    public void testJPARelations() {
+        Iterable<ProfileEntity> profiles;
+        Iterable<LtiUserEntity> users;
+        Iterable<SSOKeyEntity> ssoKeys;
+        ProfileEntity profile;
+        LtiUserEntity user;
+        SSOKeyEntity ssoKey;
+        int result;
+
+        assertNotNull(profileRepository);
+        assertNotNull(ltiUserRepository);
+        assertNotNull(ssoKeyRepository);
+
+        profiles = profileRepository.findAll();
+        assertFalse(profiles.iterator().hasNext());
+        users = ltiUserRepository.findAll();
+        assertFalse(users.iterator().hasNext());
+        ssoKeys = ssoKeyRepository.findAll();
+        assertFalse(ssoKeys.iterator().hasNext());
+
+        profileRepository.save(new ProfileEntity("AaronZeckoski", null, "azeckoski@test.com"));
+        profileRepository.save(new ProfileEntity("BeckyZeckoski", null, "rzeckoski@test.com"));
+        profiles = profileRepository.findAll();
+        assertTrue(profiles.iterator().hasNext());
+        assertEquals(2, CollectionUtils.size(profiles.iterator()));
+        profile = profileRepository.findOne(91919l);
+        assertNull(profile);
+        profile = profileRepository.findByProfileKey("AaronZeckoski");
+        assertNotNull(profile);
+        assertTrue(profile.getSsoKeys().isEmpty());
+
+        ssoKeyRepository.save(new SSOKeyEntity("random_GOOGLEKEY", "google.com"));
+        ssoKeyRepository.save(new SSOKeyEntity("AZ_google_key", "google.com"));
+        ssoKeys = ssoKeyRepository.findAll();
+        assertTrue(ssoKeys.iterator().hasNext());
+        assertEquals(2, CollectionUtils.size(ssoKeys.iterator()));
+        ssoKey = ssoKeyRepository.findByKeyKey("AZ_google_key");
+        assertNotNull(ssoKey);
+        assertNull(ssoKey.getProfile());
+
+        // now add profile to the ssoKey
+        ssoKey.setProfile(profile);
+        profile.getSsoKeys().add(ssoKey);
+        ssoKeyRepository.save(ssoKey);
+        ssoKey = ssoKeyRepository.findByKeyKey("AZ_google_key");
+        assertNotNull(ssoKey);
+        assertNotNull(ssoKey.getProfile());
+        profile = ssoKey.getProfile();
+        assertFalse(profile.getSsoKeys().isEmpty());
+        assertEquals(1, profile.getSsoKeys().size());
+
+        // now remove the ssoKey and make sure things worked
+        // TODO more tests
     }
 
 }

@@ -19,11 +19,15 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "lti_key")
-public class LtiKeyEntity extends BaseEntity {
+@Table(name = "sso_key")
+public class SSOKeyEntity extends BaseEntity {
+    public static String SOURCE_FACEBOOK = "Facebook";
+    public static String SOURCE_GOOGLE = "Google";
+    public static String SOURCE_LINKEDIN = "LinkedIn";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "key_id", nullable = false)
+    @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
     private long keyId;
     @Basic
     @Column(name = "key_sha256", unique = true, nullable = false, insertable = true, updatable = true, length = 64)
@@ -32,26 +36,27 @@ public class LtiKeyEntity extends BaseEntity {
     @Column(name = "key_key", unique = true, nullable = false, insertable = true, updatable = true, length = 4096)
     private String keyKey;
     @Basic
-    @Column(name = "secret", nullable = false, insertable = true, updatable = true, length = 4096)
-    private String secret;
+    @Column(name = "source", nullable = false, insertable = true, updatable = true, length = 255)
+    private String source;
     @Basic
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
 
-    LtiKeyEntity() {
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    private ProfileEntity profile;
+
+    SSOKeyEntity() {
     }
 
     /**
-     * @param key    the key
-     * @param secret [OPTIONAL] secret (can be null)
+     * @param key    the SSO key (from google, facebook, linkedin, etc.)
+     * @param source the source of this key (google, facebook, linkedin, etc.)
      */
-    public LtiKeyEntity(String key, String secret) {
+    public SSOKeyEntity(String key, String source) {
         assert StringUtils.isNotBlank(key);
         this.keyKey = key;
         this.keySha256 = makeSHA256(key);
-        if (StringUtils.isNotBlank(secret)) {
-            this.secret = secret;
-        }
+        this.source = source;
     }
 
     public long getKeyId() {
@@ -78,14 +83,6 @@ public class LtiKeyEntity extends BaseEntity {
         this.keyKey = keyKey;
     }
 
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
     public String getJson() {
         return json;
     }
@@ -94,12 +91,28 @@ public class LtiKeyEntity extends BaseEntity {
         this.json = json;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LtiKeyEntity that = (LtiKeyEntity) o;
+        SSOKeyEntity that = (SSOKeyEntity) o;
 
         if (keyId != that.keyId) return false;
         if (keyKey != null ? !keyKey.equals(that.keyKey) : that.keyKey != null) return false;

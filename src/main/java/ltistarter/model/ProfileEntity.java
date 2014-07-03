@@ -17,38 +17,60 @@ package ltistarter.model;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "profile")
 public class ProfileEntity extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
     private long profileId;
+    @Basic
+    @Column(name = "profile_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     private String profileSha256;
+    @Basic
+    @Column(name = "profile_key", nullable = false, insertable = true, updatable = true, length = 4096)
     private String profileKey;
-    private long keyId;
+    @Basic
+    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
     private String displayname;
+    @Basic
+    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
     private String email;
+    @Basic
+    @Column(name = "locale", nullable = true, insertable = true, updatable = true, length = 63)
     private String locale;
+    @Basic
+    @Column(name = "subscribe", nullable = true, insertable = true, updatable = true)
     private Short subscribe;
+    @Basic
+    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
+    @Basic
+    @Column(name = "login_at", nullable = false, insertable = true, updatable = true)
     private Timestamp loginAt;
+
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private Set<SSOKeyEntity> ssoKeys = new HashSet<>();
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private Set<LtiUserEntity> users = new HashSet<>();
 
     ProfileEntity() {
     }
 
-    public ProfileEntity(String profileKey, int keyId, Date loginAt) {
+    public ProfileEntity(String profileKey, Date loginAt, String email) {
         assert profileKey != null;
         if (loginAt == null) {
             loginAt = new Date();
         }
         this.profileKey = profileKey;
         this.profileSha256 = makeSHA256(profileKey);
-        this.keyId = keyId;
         this.loginAt = new Timestamp(loginAt.getTime());
+        this.email = email;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "profile_id", nullable = false, insertable = true, updatable = true)
     public long getProfileId() {
         return profileId;
     }
@@ -57,8 +79,6 @@ public class ProfileEntity extends BaseEntity {
         this.profileId = profileId;
     }
 
-    @Basic
-    @Column(name = "profile_sha256", nullable = false, insertable = true, updatable = true, length = 64)
     public String getProfileSha256() {
         return profileSha256;
     }
@@ -67,8 +87,6 @@ public class ProfileEntity extends BaseEntity {
         this.profileSha256 = profileSha256;
     }
 
-    @Basic
-    @Column(name = "profile_key", nullable = false, insertable = true, updatable = true, length = 4096)
     public String getProfileKey() {
         return profileKey;
     }
@@ -77,18 +95,6 @@ public class ProfileEntity extends BaseEntity {
         this.profileKey = profileKey;
     }
 
-    @Basic
-    @Column(name = "key_id", nullable = false, insertable = true, updatable = true)
-    public long getKeyId() {
-        return keyId;
-    }
-
-    public void setKeyId(long keyId) {
-        this.keyId = keyId;
-    }
-
-    @Basic
-    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getDisplayname() {
         return displayname;
     }
@@ -97,8 +103,6 @@ public class ProfileEntity extends BaseEntity {
         this.displayname = displayname;
     }
 
-    @Basic
-    @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
     public String getEmail() {
         return email;
     }
@@ -107,8 +111,6 @@ public class ProfileEntity extends BaseEntity {
         this.email = email;
     }
 
-    @Basic
-    @Column(name = "locale", nullable = true, insertable = true, updatable = true, length = 63)
     public String getLocale() {
         return locale;
     }
@@ -117,8 +119,6 @@ public class ProfileEntity extends BaseEntity {
         this.locale = locale;
     }
 
-    @Basic
-    @Column(name = "subscribe", nullable = true, insertable = true, updatable = true)
     public Short getSubscribe() {
         return subscribe;
     }
@@ -127,8 +127,6 @@ public class ProfileEntity extends BaseEntity {
         this.subscribe = subscribe;
     }
 
-    @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     public String getJson() {
         return json;
     }
@@ -137,14 +135,28 @@ public class ProfileEntity extends BaseEntity {
         this.json = json;
     }
 
-    @Basic
-    @Column(name = "login_at", nullable = false, insertable = true, updatable = true)
     public Timestamp getLoginAt() {
         return loginAt;
     }
 
     public void setLoginAt(Timestamp loginAt) {
         this.loginAt = loginAt;
+    }
+
+    public Set<SSOKeyEntity> getSsoKeys() {
+        return ssoKeys;
+    }
+
+    public void setSsoKeys(Set<SSOKeyEntity> ssoKeys) {
+        this.ssoKeys = ssoKeys;
+    }
+
+    public Set<LtiUserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<LtiUserEntity> users) {
+        this.users = users;
     }
 
     @Override
