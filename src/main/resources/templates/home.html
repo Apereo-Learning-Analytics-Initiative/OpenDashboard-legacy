@@ -23,8 +23,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p>Hello Spring Boot!</p>
+<p>Hello Spring Boot! (<span th:text="${name}"/>)</p>
 
 <p th:text="|Today: ${today}!|"/>
+
+<div>Request URI: <span th:text="${reqURI}"/></div>
+
+<h2>Oauth 1.0 endpoint</h2>
+
+<div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
+<div><a th:href="@{/oauth}">/oauth</a></div>
+
+<h2>LTI 1.0 provider endpoint</h2>
+
+<div><a th:href="@{/lti1p}">/lti1p</a></div>
+
 </body>
 </html>

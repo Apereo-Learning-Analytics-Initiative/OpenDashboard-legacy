@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Controller
@@ -30,10 +31,28 @@ public class HomeController {
     CounterService counterService;
 
     @RequestMapping("/")
-    public String home(Model model) {
-        model.addAttribute("today", new Date());
+    public String home(HttpServletRequest req, Model model) {
+        commonModelPopulate(req, model);
+        model.addAttribute("name", "HOME");
         counterService.increment("home");
         return "home"; // name of the template
+    }
+
+    /**
+     * Just populate some common model stuff for less repeating
+     *
+     * @param req   the request
+     * @param model the model
+     */
+    void commonModelPopulate(HttpServletRequest req, Model model) {
+        model.addAttribute("today", new Date());
+        // TODO real key and secret?
+        model.addAttribute("oauthKey", "key");
+        model.addAttribute("oauthSecret", "secret");
+        // a little extra request handling stuff
+        model.addAttribute("req", req);
+        model.addAttribute("reqURI", req.getMethod() + " " + req.getRequestURI());
+
     }
 
 }
