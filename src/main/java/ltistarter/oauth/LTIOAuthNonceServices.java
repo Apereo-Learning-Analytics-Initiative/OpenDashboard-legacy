@@ -12,22 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ltistarter;
+package ltistarter.oauth;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.security.oauth.provider.nonce.InMemoryNonceServices;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@ComponentScan("ltistarter")
-@EnableAutoConfiguration
-@EnableTransactionManagement
-public class Application {
+@Component
+public class LTIOAuthNonceServices extends InMemoryNonceServices {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    @Override
+    public long getValidityWindowSeconds() {
+        return 1200;
     }
 
 }
