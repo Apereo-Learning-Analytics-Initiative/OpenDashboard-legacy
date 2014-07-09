@@ -22,3 +22,12 @@ You can run the app in place to try it out without having to install and deploy 
 Then go to the following default URL:
 
     http://localhost:8080/
+
+You can access the H2 console for default in-memory DB (JDBC URL: **jdbc:h2:mem:AZ**) at:
+
+    http://localhost:8080/console
+
+Customizing
+-----------
+Use the application.properties to control various aspects of the Spring Boot application (like setup your own database connection).
+Use the logback.xml to adjust and control logging.

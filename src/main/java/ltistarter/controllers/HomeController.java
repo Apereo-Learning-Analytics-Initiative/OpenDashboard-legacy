@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
+/**
+ * This is the default home controller which should be wide open
+ * (no security)
+ */
 @Controller
 public class HomeController {
 

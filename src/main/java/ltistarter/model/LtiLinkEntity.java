@@ -36,8 +36,7 @@ public class LtiLinkEntity extends BaseEntity {
     @Basic
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
-    @ManyToOne
-    @JoinColumn(name = "context_id", referencedColumnName = "context_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private LtiContextEntity context;
     @OneToMany(mappedBy = "resultId")
     private Set<LtiResultEntity> results;
@@ -88,6 +87,14 @@ public class LtiLinkEntity extends BaseEntity {
 
     public void setContext(LtiContextEntity context) {
         this.context = context;
+    }
+
+    public Set<LtiResultEntity> getResults() {
+        return results;
+    }
+
+    public void setResults(Set<LtiResultEntity> results) {
+        this.results = results;
     }
 
     @Override

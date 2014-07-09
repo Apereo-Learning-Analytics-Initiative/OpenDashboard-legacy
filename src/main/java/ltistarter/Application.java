@@ -14,20 +14,62 @@
  */
 package ltistarter;
 
+import org.h2.server.web.WebServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@Configuration
 @ComponentScan("ltistarter")
+@Configuration
 @EnableAutoConfiguration
-@EnableTransactionManagement
-public class Application {
+@EnableTransactionManagement // enables TX management and @Transaction
+@EnableCaching // enables caching and @Cache* tags
+@EnableWebMvcSecurity // enable spring security and web mvc hooks
+public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+
+    /**
+     * Creates a CacheManager which allows the spring caching annotations to work
+     * Annotations: Cacheable, CachePut and CacheEvict
+     * http://spring.io/guides/gs/caching/
+     */
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager(); // not appropriate for production, try JCacheCacheManager or HazelcastCacheManager instead
+    }
+
+    @Bean
+    public ServletRegistrationBean h2servletRegistration() {
+        ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());
+        registration.addUrlMappings("/console/*");
+        return registration;
+    }
+
+    // Spring Security
+
+    /*
+    extends WebSecurityConfigurerAdapter {
+@EnableWebMvc
+@EnableWebMvcSecurity // enable spring security and web mvc hooks
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // 0-Legged OAuth on the /oauth and /lti paths only
+        http.requestMatchers().antMatchers("/oauth"); // .and().... what?
+        // ??? something must be missing here - provider?
+    }
+    */
 
 }

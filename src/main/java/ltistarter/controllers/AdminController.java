@@ -21,17 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This controller should be protected by OAuth 1.0a
- * Key "key" and secret "secret"
+ * This controller should be protected by basic auth authentication (on the /admin path)
+ * Username and password controlled in application.properties
  */
 @Controller
-@RequestMapping("/oauth")
-public class OAuthController extends HomeController {
+@RequestMapping("/admin")
+public class AdminController extends HomeController {
 
-    @RequestMapping({"","/"})
+    @RequestMapping({"", "/"})
     public String root(HttpServletRequest req, Model model) {
         commonModelPopulate(req, model);
-        model.addAttribute("name", "oauth");
+        model.addAttribute("name", "admin");
         return "home"; // name of the template
     }
 
