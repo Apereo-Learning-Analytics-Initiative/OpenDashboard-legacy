@@ -19,19 +19,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 /**
  * This controller should be protected by basic auth authentication (on the /admin path)
  * Username and password controlled in application.properties
  */
 @Controller
-@RequestMapping("/admin")
-public class AdminController extends HomeController {
+@RequestMapping("/open")
+public class OpenController extends HomeController {
 
     @RequestMapping({"", "/"})
-    public String root(HttpServletRequest req, Model model) {
-        commonModelPopulate(req, model);
-        model.addAttribute("name", "admin");
+    public String home(HttpServletRequest req, Principal principal, Model model) {
+        commonModelPopulate(req, principal, model);
+        model.addAttribute("name", "open (no auth)");
         return "home"; // name of the template
     }
 

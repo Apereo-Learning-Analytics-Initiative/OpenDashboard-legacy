@@ -17,23 +17,30 @@ package ltistarter.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /**
- * This controller should be protected by OAuth 1.0a
- * Key "key" and secret "secret"
+ * This controller should be protected by basic auth authentication (on the /admin path)
+ * Username and password controlled in application.properties
  */
 @Controller
-@RequestMapping("/oauth")
-public class OAuthController extends HomeController {
+@RequestMapping("/basic")
+public class BasicController extends HomeController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "oauth");
+        model.addAttribute("name", "basic");
         return "home"; // name of the template
+    }
+
+    @RequestMapping("/logout")
+    public ModelAndView logout() {
+        // should be handled by spring security
+        return new ModelAndView("home");
     }
 
 }

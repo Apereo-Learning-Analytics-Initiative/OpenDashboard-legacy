@@ -23,11 +23,18 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p>Hello Spring Boot! (<span th:text="${name}"/>)</p>
+<p>Hello Spring Boot User <span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
 
 <p th:text="|Today: ${today}!|"/>
 
+<div>No auth: <a th:href="@{/}">HOME</a> | <a th:href="@{/open}">OPEN</a></div>
+
 <div>Request URI: <span th:text="${reqURI}"/></div>
+
+<h2>Basic Auth endpoint</h2>
+
+<div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
+<div><a th:href="@{/basic}">/basic</a></div>
 
 <h2>Oauth 1.0 endpoint</h2>
 
