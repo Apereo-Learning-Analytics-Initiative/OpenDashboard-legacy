@@ -15,9 +15,9 @@
 package ltistarter;
 
 import org.h2.server.web.WebServlet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
@@ -68,32 +67,30 @@ public class Application extends WebMvcConfigurerAdapter {
 
     // Spring Security
 
-    @Bean
-    public MyApplicationSecurity applicationSecurity() {
-        return new MyApplicationSecurity();
-    }
-
-    @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-    static class MyApplicationSecurity extends WebSecurityConfigurerAdapter {
+    @Configuration
+    @Order(1) // HIGHEST
+    public static class OAuthSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/open").permitAll();
-            http.authorizeRequests().antMatchers("/oauth").denyAll(); // Block it for now
-            http.authorizeRequests().antMatchers("/basic").authenticated().and().httpBasic().and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
+            http.antMatcher("/oauth").authorizeRequests().anyRequest().denyAll();
         }
     }
 
-    @Bean
-    public MyAuthenticationSecurity authenticationSecurity() {
-        return new MyAuthenticationSecurity();
-    }
-
-    @Order(Ordered.HIGHEST_PRECEDENCE + 10)
-    protected static class MyAuthenticationSecurity extends GlobalAuthenticationConfigurerAdapter {
+    @Configuration
+    public static class BasicAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
-        public void init(AuthenticationManagerBuilder auth) throws Exception {
-            auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN", "USER");
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/basic").authorizeRequests().anyRequest().authenticated().and().httpBasic();
+            //http.authorizeRequests().antMatchers("/basic").authenticated().and().httpBasic().and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
         }
+    }
+
+    @Autowired
+    @Order(Ordered.HIGHEST_PRECEDENCE + 10)
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    public void configureSimpleAuthUsers(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN", "USER")
+                .and().withUser("user").password("user").roles("USER");
     }
 
     @Bean
