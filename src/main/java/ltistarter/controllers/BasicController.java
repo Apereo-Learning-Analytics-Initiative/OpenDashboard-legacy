@@ -17,7 +17,6 @@ package ltistarter.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -38,9 +37,9 @@ public class BasicController extends HomeController {
     }
 
     @RequestMapping("/logout")
-    public ModelAndView logout() {
+    public String logout() {
         // should be handled by spring security
-        return new ModelAndView("home");
+        return "redirect:/"; // go home
     }
 
 }
