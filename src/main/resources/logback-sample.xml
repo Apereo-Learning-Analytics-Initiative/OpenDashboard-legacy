@@ -15,6 +15,7 @@
     limitations under the License.
 
 -->
+<!-- needs to be named logback.xml to have an effect -->
 <configuration>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
   <logger name="org.springframework" level="INFO"/>
