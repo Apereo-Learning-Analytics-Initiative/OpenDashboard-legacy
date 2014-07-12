@@ -36,10 +36,11 @@ public class BasicController extends HomeController {
         return "home"; // name of the template
     }
 
+    /*
     @RequestMapping("/logout")
     public String logout() {
         // should be handled by spring security
         return "redirect:/"; // go home
-    }
+    }*/
 
 }

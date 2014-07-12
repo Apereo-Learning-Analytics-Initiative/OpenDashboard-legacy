@@ -16,8 +16,8 @@
 -->
 <!DOCTYPE html>
 <!--suppress CheckEmptyScriptTag -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org ">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
 <head>
     <title>LTI Starter</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -26,6 +26,23 @@
 <p>Hello Spring Boot User <span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
 
 <p th:text="|Today: ${today}!|"/>
+
+<div sec:authorize="isAuthenticated()">
+    <form th:action="@{/logout}" method="post"><input type="submit" value="Logout"/></form>
+    <br/>
+    User: <span sec:authentication="name">AZ</span>
+    <br/>
+    Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+</div>
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+    This content is only shown to administrators (ROLE_ADMIN).
+</div>
+<div sec:authorize="hasRole('ROLE_USER')">
+    This content is only shown to users (ROLE_USER).
+</div>
+<div th:if="${param.logout}">
+    You have been logged out.
+</div>
 
 <div>No auth: <a th:href="@{/}">HOME</a> | <a th:href="@{/open}">OPEN</a></div>
 
