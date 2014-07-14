@@ -14,55 +14,42 @@
  */
 package ltistarter.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.Date;
 
 /**
- * This is the default home controller which should be wide open
+ * This is the default home (i.e. root or "/") controller which should be wide open
  * (no security)
  */
 @Controller
-public class HomeController {
+public class HomeController extends BaseController {
 
-    @Autowired
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    CounterService counterService;
-
-    @RequestMapping("/")
-    public String home(HttpServletRequest req, Principal principal, Model model) {
+    @RequestMapping(method = RequestMethod.GET)
+    public String index(HttpServletRequest req, Principal principal, Model model) {
+        log.info("HOME: " + req);
         commonModelPopulate(req, principal, model);
         model.addAttribute("name", "HOME");
         counterService.increment("home");
         return "home"; // name of the template
     }
 
-    /**
-     * Just populate some common model stuff for less repeating
-     *
-     * @param req   the request
-     * @param principal the current security principal (if there is one)
-     * @param model the model
-     */
-    void commonModelPopulate(HttpServletRequest req, Principal principal, Model model) {
-        model.addAttribute("today", new Date());
-        // TODO real user and pass
-        model.addAttribute("basicUser", "admin");
-        model.addAttribute("basicPass", "admin");
-        // TODO real key and secret?
-        model.addAttribute("oauthKey", "key");
-        model.addAttribute("oauthSecret", "secret");
-        // a little extra request handling stuff
-        model.addAttribute("req", req);
-        model.addAttribute("reqURI", req.getMethod() + " " + req.getRequestURI());
-        // current user
-        model.addAttribute("username", principal != null ? principal.getName() : "ANONYMOUS");
+    @RequestMapping("/login")
+    public String login(HttpServletRequest req) {
+        log.info("login: " + req);
+        return "login";
+    }
+
+    // Login form with error
+    @RequestMapping(value = "/login", params = "error=true")
+    public String loginError(HttpServletRequest req, Model model) {
+        log.info("login-error: " + req);
+        model.addAttribute("loginError", true);
+        return "login.html";
     }
 
 }

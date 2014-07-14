@@ -143,6 +143,25 @@
 
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>debug</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <jvmArguments><!-- debug on port 8000 -->
+                -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+              </jvmArguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <finalName>starter</finalName>
     <plugins>

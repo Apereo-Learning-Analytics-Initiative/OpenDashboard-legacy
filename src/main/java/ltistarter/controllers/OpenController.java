@@ -26,7 +26,7 @@ import java.security.Principal;
  */
 @Controller
 @RequestMapping("/open")
-public class OpenController extends HomeController {
+public class OpenController extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {

@@ -32,8 +32,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.oauth.provider.DefaultAuthenticationHandler;
-import org.springframework.security.oauth.provider.OAuthAuthenticationHandler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -87,8 +85,8 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class FormLoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated().and().formLogin();
-            http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
+            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated().and().formLogin().permitAll().loginPage("/login");
+            //http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
             //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
         }
     }
@@ -110,11 +108,12 @@ public class Application extends WebMvcConfigurerAdapter {
                 .and().withUser("user").password("user").roles("USER");
     }
 
+    /*
     @Bean
     public OAuthAuthenticationHandler authenticationHandler() {
         return new DefaultAuthenticationHandler();
         // OAuthProcessingFilterEntryPoint?
-    }
+    }*/
 
     /*
     extends WebSecurityConfigurerAdapter {

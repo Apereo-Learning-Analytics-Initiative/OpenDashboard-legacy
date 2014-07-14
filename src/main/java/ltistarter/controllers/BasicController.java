@@ -27,7 +27,7 @@ import java.security.Principal;
  */
 @Controller
 @RequestMapping("/basic")
-public class BasicController extends HomeController {
+public class BasicController extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
