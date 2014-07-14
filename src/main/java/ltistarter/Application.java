@@ -59,7 +59,8 @@ import java.io.IOException;
 @EnableTransactionManagement // enables TX management and @Transaction
 @EnableCaching // enables caching and @Cache* tags
 @EnableWebMvcSecurity // enable spring security and web mvc hooks
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // allows @Secured flag
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+// allows @Secured flag - proxyTargetClass = true causes this to die
 public class Application extends WebMvcConfigurerAdapter {
 
     final static Logger log = LoggerFactory.getLogger(Application.class);
