@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /**
- * This controller should be protected by basic auth authentication (on the /admin path)
- * Username and password controlled in application.properties
+ * This controller should be protected by no auth (it is public access)
  */
 @Controller
 @RequestMapping("/open")

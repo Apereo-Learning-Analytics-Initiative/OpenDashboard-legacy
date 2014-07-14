@@ -26,14 +26,14 @@ import java.security.Principal;
  * Username and password controlled in application.properties
  */
 @Controller
-@RequestMapping("/basic")
-public class BasicController extends HomeController {
+@RequestMapping("/form")
+public class FormController extends HomeController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "basic");
-        req.getSession().setAttribute("login", "basic");
+        model.addAttribute("name", "form");
+        req.getSession().setAttribute("login", "form");
         return "home"; // name of the template
     }
 

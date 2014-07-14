@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
@@ -42,6 +43,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableTransactionManagement // enables TX management and @Transaction
 @EnableCaching // enables caching and @Cache* tags
 @EnableWebMvcSecurity // enable spring security and web mvc hooks
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // allows @Secured flag
 public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) {
@@ -58,6 +60,10 @@ public class Application extends WebMvcConfigurerAdapter {
         return new ConcurrentMapCacheManager(); // not appropriate for production, try JCacheCacheManager or HazelcastCacheManager instead
     }
 
+    /**
+     * Allows access to the H2 console at: {server}/console/
+     * Enter this as the JDBC URL: jdbc:h2:mem:AZ
+     */
     @Bean
     public ServletRegistrationBean h2servletRegistration() {
         ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());
@@ -76,13 +82,23 @@ public class Application extends WebMvcConfigurerAdapter {
         }
     }
 
+    @Order(23) // MED
+    @Configuration
+    public static class FormLoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated().and().formLogin();
+            http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
+            //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
+        }
+    }
+
+    @Order(45) // LOW
     @Configuration
     public static class BasicAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/basic").authorizeRequests().anyRequest().authenticated().and().httpBasic();
-            http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
-            //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
         }
     }
 

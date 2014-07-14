@@ -25,14 +25,14 @@
 <body>
 <p>Hello Spring Boot User <span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
 
+<div>Request URI: <span th:text="${reqURI}"/></div>
 <p th:text="|Today: ${today}!|"/>
 
 <div sec:authorize="isAuthenticated()">
     <form th:action="@{/logout}" method="post"><input type="submit" value="Logout"/></form>
-    <br/>
-    User: <span sec:authentication="name">AZ</span>
-    <br/>
-    Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+    <div>User: <span sec:authentication="name">AZ</span></div>
+    <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
+    <div>Login: <span th:text="${session.login}"/></div>
 </div>
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     This content is only shown to administrators (ROLE_ADMIN).
@@ -46,7 +46,10 @@
 
 <div>No auth: <a th:href="@{/}">HOME</a> | <a th:href="@{/open}">OPEN</a></div>
 
-<div>Request URI: <span th:text="${reqURI}"/></div>
+<h2>Form Login endpoint</h2>
+
+<div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
+<div><a th:href="@{/login}">/login</a></div>
 
 <h2>Basic Auth endpoint</h2>
 

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /**
- * This controller should be protected by OAuth 1.0a
+ * This controller should be protected by OAuth 1.0a (on the /oauth path)
  * Key "key" and secret "secret"
  */
 @Controller
@@ -33,6 +33,7 @@ public class OAuthController extends HomeController {
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
         model.addAttribute("name", "oauth");
+        req.getSession().setAttribute("login", "basic");
         return "home"; // name of the template
     }
 

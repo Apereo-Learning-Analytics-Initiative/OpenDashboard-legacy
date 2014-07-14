@@ -18,6 +18,9 @@ import ltistarter.model.LtiKeyEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * NOTE: use of this interface magic makes all subclass-based (CGLIB) proxies fail
+ */
 @Transactional
 public interface LtiKeyRepository extends PagingAndSortingRepository<LtiKeyEntity, Long> {
     /* Add custom crud methods here
