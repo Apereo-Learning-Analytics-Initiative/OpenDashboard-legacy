@@ -17,6 +17,7 @@ package ltistarter.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -33,8 +34,29 @@ public class FormController extends BaseController {
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
         model.addAttribute("name", "form");
+        model.addAttribute("canLogout", true);
         req.getSession().setAttribute("login", "form");
         return "home"; // name of the template
     }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(HttpServletRequest req) {
+        log.info("login: " + req);
+        return "login";
+    }
+
+    // Login form with error
+    @RequestMapping(value = "/login", params = "error=true")
+    public String loginError(HttpServletRequest req, Model model) {
+        log.info("login-error: " + req);
+        model.addAttribute("loginError", true);
+        return "login";
+    }
+
+    /*
+    @RequestMapping("/logout")
+    public void logout(HttpServletRequest req) {
+        log.info("logout: " + req);
+    }*/
 
 }

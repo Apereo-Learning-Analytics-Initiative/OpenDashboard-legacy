@@ -29,7 +29,7 @@ import java.util.Date;
  */
 public class BaseController {
 
-    Logger log = LoggerFactory.getLogger(BaseController.class);
+    final static Logger log = LoggerFactory.getLogger(BaseController.class);
 
     @Autowired
     @SuppressWarnings("SpringJavaAutowiringInspection")

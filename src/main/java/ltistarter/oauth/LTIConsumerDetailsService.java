@@ -14,6 +14,7 @@
  */
 package ltistarter.oauth;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth.common.OAuthException;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecretImpl;
 import org.springframework.security.oauth.provider.BaseConsumerDetails;
@@ -21,7 +22,7 @@ import org.springframework.security.oauth.provider.ConsumerDetails;
 import org.springframework.security.oauth.provider.ConsumerDetailsService;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("oauthConsumerDetailsService")
 public class LTIConsumerDetailsService implements ConsumerDetailsService {
 
     @Override
@@ -29,6 +30,7 @@ public class LTIConsumerDetailsService implements ConsumerDetailsService {
         BaseConsumerDetails cd;
         // TODO really lookup the key and related consumer details, for sample here we just hardcoded
         if ("key".equals(consumerKey)) {
+            // allow this oauth request
             cd = new BaseConsumerDetails();
             cd.setConsumerKey(consumerKey);
             cd.setSignatureSecret(new SharedConsumerSecretImpl("secret"));
@@ -36,7 +38,9 @@ public class LTIConsumerDetailsService implements ConsumerDetailsService {
             cd.setRequiredToObtainAuthenticatedToken(false); // no token required (0-legged)
             cd.setResourceDescription("Sample consumer details - AZ");
             cd.setResourceName("Sample resourceName");
+            cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_OAUTH")); // add the ROLE_OAUTH (can add others as well)
         } else {
+            // deny - failed to match
             throw new OAuthException("For this example, key must be 'key'");
         }
         return cd;

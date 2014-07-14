@@ -38,18 +38,4 @@ public class HomeController extends BaseController {
         return "home"; // name of the template
     }
 
-    @RequestMapping("/login")
-    public String login(HttpServletRequest req) {
-        log.info("login: " + req);
-        return "login";
-    }
-
-    // Login form with error
-    @RequestMapping(value = "/login", params = "error=true")
-    public String loginError(HttpServletRequest req, Model model) {
-        log.info("login-error: " + req);
-        model.addAttribute("loginError", true);
-        return "login.html";
-    }
-
 }
