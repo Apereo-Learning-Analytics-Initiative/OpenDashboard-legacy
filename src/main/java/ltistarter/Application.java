@@ -106,7 +106,8 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             // filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
-            http.antMatcher("/oauth").authorizeRequests().anyRequest().hasRole("OAUTH").and().addFilterBefore(oauthProviderProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+            http.antMatcher("/oauth").authorizeRequests().anyRequest().hasRole("OAUTH")
+                    .and().addFilterBefore(oauthProviderProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
         }
     }
 
@@ -115,7 +116,9 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class FormLoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated().and().formLogin().permitAll().loginPage("/form/login").and().logout().logoutUrl("/form/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
+            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated()
+                    .and().formLogin().permitAll().loginPage("/form/login")
+                    .and().logout().logoutUrl("/form/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
             //http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
             //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
         }
@@ -126,7 +129,8 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class BasicAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/basic").authorizeRequests().anyRequest().authenticated().and().httpBasic();
+            http.antMatcher("/basic").authorizeRequests().anyRequest().authenticated()
+                    .and().httpBasic();
         }
     }
 

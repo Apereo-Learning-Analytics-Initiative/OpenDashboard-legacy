@@ -29,7 +29,9 @@
 <p th:text="|Today: ${today}!|"/>
 
 <div sec:authorize="isAuthenticated()">
-    <form th:if="${canLogout}" th:action="@{/form/logout}" method="post"><input type="submit" value="Logout"/></form>
+    <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
+        <input type="submit" value="Logout"/>
+    </form>
     <div>User: <span sec:authentication="name">AZ</span></div>
     <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
     <div>Login: <span th:text="${session.login}"/></div>
