@@ -31,3 +31,9 @@ Customizing
 -----------
 Use the application.properties to control various aspects of the Spring Boot application (like setup your own database connection).
 Use the logback.xml to adjust and control logging.
+
+Debugging
+---------
+To enable the debugging port (localhost:8000) when using spring-boot:run, use the main profile: -Pdebug. Then you can attach any remote debugger (eclipse, intellij, etc.) to localhost:8000. NOTE that the application will pause until you connect the debugger to it.
+
+    mvn clean install spring-boot:run -Pdebug
