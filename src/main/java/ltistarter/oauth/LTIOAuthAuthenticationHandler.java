@@ -98,8 +98,8 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
         public String toString() {
             return "NamedOAuthPrincipal{" +
                     "name='" + name + '\'' +
-                    "key='" + getConsumerKey() + '\'' +
-                    "base='" + getSignatureBaseString() + '\'' +
+                    ", key='" + getConsumerKey() + '\'' +
+                    ", base='" + getSignatureBaseString() + '\'' +
                     "}";
         }
     }

@@ -34,7 +34,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.AuthenticationException;
@@ -47,7 +46,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -57,7 +60,6 @@ import java.io.IOException;
 @EnableAutoConfiguration
 @EnableTransactionManagement // enables TX management and @Transaction
 @EnableCaching // enables caching and @Cache* tags
-@EnableWebSecurity // needed along with the one below for security
 @EnableWebMvcSecurity // enable spring security and web mvc hooks
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 // allows @Secured flag - proxyTargetClass = true causes this to die
@@ -104,13 +106,27 @@ public class Application extends WebMvcConfigurerAdapter {
     @Configuration
     @Order(1) // HIGHEST
     public static class OAuthSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+        private ZeroLeggedOAuthProviderProcessingFilter zeroLeggedOAuthProviderProcessingFilter;
         @Autowired
-        ZeroLeggedOAuthProviderProcessingFilter oauthProviderProcessingFilter;
+        LTIConsumerDetailsService oauthConsumerDetailsService;
+        @Autowired
+        LTIOAuthNonceServices oauthNonceServices;
+        @Autowired
+        OAuthAuthenticationHandler oauthAuthenticationHandler;
+        @Autowired
+        OAuthProcessingFilterEntryPoint oauthProcessingFilterEntryPoint;
+        @Autowired
+        OAuthProviderTokenServices oauthProviderTokenServices;
+
+        @PostConstruct
+        public void init() {
+            zeroLeggedOAuthProviderProcessingFilter = new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
+        }
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            // filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
-            http.antMatcher("/oauth")
-                    .addFilterBefore(oauthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+            // added filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
+            http.antMatcher("/oauth/**")
+                    .addFilterBefore(zeroLeggedOAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests().anyRequest().hasRole("OAUTH");
         }
     }
@@ -120,7 +136,7 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class FormLoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/form").authorizeRequests().anyRequest().authenticated()
+            http.antMatcher("/form/**").authorizeRequests().anyRequest().authenticated()
                     .and().formLogin().permitAll().loginPage("/form/login").loginProcessingUrl("/form/login")
                     .and().logout().logoutUrl("/form/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
             //http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
@@ -133,21 +149,12 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class BasicAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/basic").authorizeRequests().anyRequest().authenticated()
+            http.antMatcher("/basic/**").authorizeRequests().anyRequest().authenticated()
                     .and().httpBasic();
         }
     }
 
     // OAuth beans
-
-    @Autowired
-    public LTIConsumerDetailsService oauthConsumerDetailsService;
-
-    @Autowired
-    public LTIOAuthNonceServices oauthNonceServices;
-
-    @Autowired
-    public OAuthAuthenticationHandler oauthAuthenticationHandler;
 
     public static class OAuthProcessingFilterEntryPointImpl extends OAuthProcessingFilterEntryPoint {
         @Override
@@ -186,11 +193,19 @@ public class Application extends WebMvcConfigurerAdapter {
             setTokenServices(oauthProviderTokenServices);
             //setIgnoreMissingCredentials(false); // die if OAuth params are not included
         }
+
+        @Override
+        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+            log.info("Apply OAuth Filter: " + chain);
+            super.doFilter(servletRequest, servletResponse, chain);
+        }
     }
 
-    @Bean(name = "zeroLeggedOAuthProviderProcessingFilter")
-    public ZeroLeggedOAuthProviderProcessingFilter oauthProviderProcessingFilter() {
-        return new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthAuthenticationEntryPoint(), oauthAuthenticationHandler, oauthProviderTokenServices());
-    }
+    /*
+    @Bean
+    public ZeroLeggedOAuthProviderProcessingFilter zeroLeggedOAuthProviderProcessingFilter() {
+        ZeroLeggedOAuthProviderProcessingFilter filter = new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthAuthenticationEntryPoint(), oauthAuthenticationHandler, oauthProviderTokenServices());
+        return filter;
+    }*/
 
 }
