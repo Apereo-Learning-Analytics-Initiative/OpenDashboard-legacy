@@ -187,14 +187,14 @@ public class Application extends WebMvcConfigurerAdapter {
     }
 
     public static class ZeroLeggedOAuthProviderProcessingFilter extends ProtectedResourceProcessingFilter {
-        ZeroLeggedOAuthProviderProcessingFilter(LTIConsumerDetailsService ltiConsumerDetailsService, LTIOAuthNonceServices ltioAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, OAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oauthProviderTokenServices) {
+        ZeroLeggedOAuthProviderProcessingFilter(LTIConsumerDetailsService oAuthConsumerDetailsService, LTIOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, OAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
             super();
             log.info("CONSTRUCT Zero Legged OAuth provider");
             setAuthenticationEntryPoint(oAuthProcessingFilterEntryPoint);
             setAuthHandler(oAuthAuthenticationHandler);
-            setConsumerDetailsService(ltiConsumerDetailsService);
-            setNonceServices(ltioAuthNonceServices);
-            setTokenServices(oauthProviderTokenServices);
+            setConsumerDetailsService(oAuthConsumerDetailsService);
+            setNonceServices(oAuthNonceServices);
+            setTokenServices(oAuthProviderTokenServices);
             //setIgnoreMissingCredentials(false); // die if OAuth params are not included
         }
     }
