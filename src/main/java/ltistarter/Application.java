@@ -107,8 +107,9 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             // filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
-            http.antMatcher("/oauth").authorizeRequests().anyRequest().hasRole("OAUTH")
-                    .and().addFilterBefore(oauthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class);
+            http.antMatcher("/oauth")
+                    .addFilterBefore(oauthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                    .authorizeRequests().anyRequest().hasRole("OAUTH");
         }
     }
 
@@ -181,7 +182,7 @@ public class Application extends WebMvcConfigurerAdapter {
             setConsumerDetailsService(ltiConsumerDetailsService);
             setNonceServices(ltioAuthNonceServices);
             setTokenServices(oauthProviderTokenServices);
-            setIgnoreMissingCredentials(false); // die if OAuth params are not included
+            //setIgnoreMissingCredentials(false); // die if OAuth params are not included
         }
     }
 
