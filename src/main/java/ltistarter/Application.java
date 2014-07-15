@@ -15,6 +15,7 @@
 package ltistarter;
 
 import ltistarter.oauth.LTIConsumerDetailsService;
+import ltistarter.oauth.LTIOAuthAuthenticationHandler;
 import ltistarter.oauth.LTIOAuthNonceServices;
 import org.h2.server.web.WebServlet;
 import org.slf4j.Logger;
@@ -109,7 +110,7 @@ public class Application extends WebMvcConfigurerAdapter {
         @Autowired
         LTIOAuthNonceServices oauthNonceServices;
         @Autowired
-        OAuthAuthenticationHandler oauthAuthenticationHandler;
+        LTIOAuthAuthenticationHandler oauthAuthenticationHandler;
         @Autowired
         OAuthProcessingFilterEntryPoint oauthProcessingFilterEntryPoint;
         @Autowired
@@ -121,8 +122,8 @@ public class Application extends WebMvcConfigurerAdapter {
         }
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            // added filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
             http.antMatcher("/oauth/**")
+                    // added filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
                     .addFilterBefore(zeroLeggedOAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests().anyRequest().hasRole("OAUTH");
         }
@@ -144,6 +145,7 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class BasicAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            // basic auth protection for the /basic path
             http.antMatcher("/basic/**").authorizeRequests().anyRequest().authenticated()
                     .and().httpBasic();
         }
@@ -154,6 +156,7 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class NoAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            // this ensures security context info (Principal, sec:authorize, etc.) is accessible on all paths
             http.antMatcher("/**").authorizeRequests().anyRequest().permitAll();
         }
     }

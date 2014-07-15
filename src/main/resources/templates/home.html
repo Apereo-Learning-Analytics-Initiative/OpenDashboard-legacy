@@ -30,24 +30,6 @@
 
 <div>OPEN: <a th:href="@{/}">Home(/)</a> | <a th:href="@{/open}">/open</a></div>
 
-<!-- <TAG sec:authorize="KEY"...>
-KEY                         DESCRIPTION
-hasRole([role])             Returns true if the current principal has the specified role.
-hasAnyRole([role1,role2])   Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
-principal                   Allows direct access to the principal object representing the current user
-authentication              Allows direct access to the current Authentication object obtained from the SecurityContext
-permitAll                   Always evaluates to true
-denyAll                     Always evaluates to false
-isAnonymous()               Returns true if the current principal is an anonymous user
-isRememberMe()              Returns true if the current principal is a remember-me user
-isAuthenticated()           Returns true if the user is not anonymous
-isFullyAuthenticated()      Returns true if the user is not an anonymous or a remember-me user
--->
-<div sec:authorize="isAnonymous()">isAnonymous</div>
-<div sec:authorize="isRememberMe()">isRememberMe</div>
-<div sec:authorize="isAuthenticated()">isAuthenticated</div>
-<div sec:authorize="isFullyAuthenticated()">isFullyAuthenticated</div>
-
 <div sec:authorize="isAuthenticated()"><!-- only show this when user IS logged in -->
     <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
         <input type="submit" value="Logout"/>
@@ -67,26 +49,40 @@ isFullyAuthenticated()      Returns true if the user is not an anonymous or a re
     You have been logged out.
 </div>
 
+<!-- <TAG sec:authorize="KEY"...>
+KEY                         DESCRIPTION
+hasRole([role])             Returns true if the current principal has the specified role.
+hasAnyRole([role1,role2])   Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
+principal                   Allows direct access to the principal object representing the current user
+authentication              Allows direct access to the current Authentication object obtained from the SecurityContext
+permitAll                   Always evaluates to true
+denyAll                     Always evaluates to false
+isAnonymous()               Returns true if the current principal is an anonymous user
+isRememberMe()              Returns true if the current principal is a remember-me user
+isAuthenticated()           Returns true if the user is not anonymous
+isFullyAuthenticated()      Returns true if the user is not an anonymous or a remember-me user
+-->
+<div sec:authorize="isAnonymous()"><!-- only show this when user is NOT logged in -->
+    <h2>Form Login endpoint</h2>
 
-<h2>Form Login endpoint</h2>
+    <div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
+    <div><a th:href="@{/form}">/form</a></div>
 
-<div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
-<div><a th:href="@{/form}">/form</a></div>
+    <h2>Basic Auth endpoint</h2>
 
-<h2>Basic Auth endpoint</h2>
+    <div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
+    <div><a th:href="@{/basic}">/basic</a></div>
 
-<div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
-<div><a th:href="@{/basic}">/basic</a></div>
+    <h2>Oauth 1.0 endpoint</h2>
 
-<h2>Oauth 1.0 endpoint</h2>
+    <div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
+    <div><a th:href="@{/oauth}">/oauth</a></div>
 
-<div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
-<div><a th:href="@{/oauth}">/oauth</a></div>
+    <h2>LTI 1.0 provider endpoint</h2>
 
-<h2>LTI 1.0 provider endpoint</h2>
-
-<div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
-<div><a th:href="@{/lti1p}">/lti1p</a></div>
+    <div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
+    <div><a th:href="@{/lti1p}">/lti1p</a></div>
+</div>
 
 </body>
 </html>
