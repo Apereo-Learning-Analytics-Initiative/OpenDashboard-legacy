@@ -14,6 +14,8 @@
  */
 package ltistarter.oauth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth.common.OAuthException;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecretImpl;
@@ -21,24 +23,36 @@ import org.springframework.security.oauth.provider.BaseConsumerDetails;
 import org.springframework.security.oauth.provider.ConsumerDetails;
 import org.springframework.security.oauth.provider.ConsumerDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-@Component("oauthConsumerDetailsService")
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * Sample consumer details service which verifies the key and secret,
+ * In our case the key is "key" and secret is "secret"
+ */
+@Component
 public class LTIConsumerDetailsService implements ConsumerDetailsService {
+
+    final static Logger log = LoggerFactory.getLogger(LTIConsumerDetailsService.class);
 
     @Override
     public ConsumerDetails loadConsumerByConsumerKey(String consumerKey) throws OAuthException {
         BaseConsumerDetails cd;
-        // TODO really lookup the key and related consumer details, for sample here we just hardcoded
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest req = sra.getRequest();
+        log.info("Check OAuth consumer key: " + consumerKey + ", req=" + req);
+        // NOTE: really lookup the key and secret, for the sample here we just hardcoded
         if ("key".equals(consumerKey)) {
             // allow this oauth request
             cd = new BaseConsumerDetails();
             cd.setConsumerKey(consumerKey);
             cd.setSignatureSecret(new SharedConsumerSecretImpl("secret"));
-            cd.setConsumerName("Sample consumerName");
+            cd.setConsumerName("Sample");
             cd.setRequiredToObtainAuthenticatedToken(false); // no token required (0-legged)
-            cd.setResourceDescription("Sample consumer details - AZ");
-            cd.setResourceName("Sample resourceName");
             cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_OAUTH")); // add the ROLE_OAUTH (can add others as well)
+            log.info("OAuth check SUCCESS, consumer key: " + consumerKey);
         } else {
             // deny - failed to match
             throw new OAuthException("For this example, key must be 'key'");

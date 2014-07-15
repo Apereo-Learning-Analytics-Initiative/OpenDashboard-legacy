@@ -31,14 +31,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth.provider.DefaultAuthenticationHandler;
 import org.springframework.security.oauth.provider.OAuthAuthenticationHandler;
 import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint;
 import org.springframework.security.oauth.provider.filter.ProtectedResourceProcessingFilter;
@@ -104,11 +102,13 @@ public class Application extends WebMvcConfigurerAdapter {
     @Configuration
     @Order(1) // HIGHEST
     public static class OAuthSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+        @Autowired
+        ZeroLeggedOAuthProviderProcessingFilter oauthProviderProcessingFilter;
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             // filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
             http.antMatcher("/oauth").authorizeRequests().anyRequest().hasRole("OAUTH")
-                    .and().addFilterBefore(oauthProviderProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+                    .and().addFilterBefore(oauthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class);
         }
     }
 
@@ -137,35 +137,37 @@ public class Application extends WebMvcConfigurerAdapter {
 
     // OAuth beans
 
+    @Autowired
+    public LTIConsumerDetailsService oauthConsumerDetailsService;
+
+    @Autowired
+    public LTIOAuthNonceServices oauthNonceServices;
+
+    @Autowired
+    public OAuthAuthenticationHandler oauthAuthenticationHandler;
+
     public static class OAuthProcessingFilterEntryPointImpl extends OAuthProcessingFilterEntryPoint {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            log.info("OAuth FILTER Failure (commence), req=" + request + ", ex=" + authException);
             // Called when there is an OAuth Auth failure, authException may be InsufficientAuthenticationException
+            super.commence(request, response, authException);
+            /*
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON.getType());
             response.getWriter().println("{\"Unauthorized\":\"" + authException + "\"}");
+            */
         }
     }
 
-    @Autowired
-    public static LTIConsumerDetailsService oauthConsumerDetailsService;
-
-    @Autowired
-    public static LTIOAuthNonceServices oauthNonceServices;
-
     @Bean(name = "oauthAuthenticationEntryPoint")
-    public static OAuthProcessingFilterEntryPoint oauthAuthenticationEntryPoint() {
-        return new OAuthProcessingFilterEntryPoint();
-    }
-
-    @Bean(name = "oauthAuthenticationHandler")
-    public static OAuthAuthenticationHandler oauthAuthenticationHandler() {
-        return new DefaultAuthenticationHandler();
+    public OAuthProcessingFilterEntryPoint oauthAuthenticationEntryPoint() {
+        return new OAuthProcessingFilterEntryPointImpl();
     }
 
     @Bean(name = "oauthProviderTokenServices")
-    public static OAuthProviderTokenServices oauthProviderTokenServices() {
+    public OAuthProviderTokenServices oauthProviderTokenServices() {
         // NOTE: we don't use the OAuthProviderTokenServices for 0-legged but it cannot be null
         return new InMemoryProviderTokenServices();
     }
@@ -173,18 +175,19 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class ZeroLeggedOAuthProviderProcessingFilter extends ProtectedResourceProcessingFilter {
         ZeroLeggedOAuthProviderProcessingFilter(LTIConsumerDetailsService ltiConsumerDetailsService, LTIOAuthNonceServices ltioAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, OAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oauthProviderTokenServices) {
             super();
-            log.info("Loading Zero Legged OAuth provider");
+            log.info("CONSTRUCT Zero Legged OAuth provider");
             setAuthenticationEntryPoint(oAuthProcessingFilterEntryPoint);
             setAuthHandler(oAuthAuthenticationHandler);
             setConsumerDetailsService(ltiConsumerDetailsService);
             setNonceServices(ltioAuthNonceServices);
             setTokenServices(oauthProviderTokenServices);
+            setIgnoreMissingCredentials(false); // die if OAuth params are not included
         }
     }
 
     @Bean(name = "zeroLeggedOAuthProviderProcessingFilter")
-    public static ZeroLeggedOAuthProviderProcessingFilter oauthProviderProcessingFilter() {
-        return new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthAuthenticationEntryPoint(), oauthAuthenticationHandler(), oauthProviderTokenServices());
+    public ZeroLeggedOAuthProviderProcessingFilter oauthProviderProcessingFilter() {
+        return new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthAuthenticationEntryPoint(), oauthAuthenticationHandler, oauthProviderTokenServices());
     }
 
 }
