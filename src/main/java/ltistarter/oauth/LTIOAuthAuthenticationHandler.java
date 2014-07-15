@@ -14,15 +14,15 @@
  */
 package ltistarter.oauth;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth.provider.ConsumerAuthentication;
-import org.springframework.security.oauth.provider.OAuthAuthenticationDetails;
+import org.springframework.security.oauth.provider.ConsumerCredentials;
 import org.springframework.security.oauth.provider.OAuthAuthenticationHandler;
 import org.springframework.security.oauth.provider.token.OAuthAccessProviderToken;
 import org.springframework.stereotype.Component;
@@ -46,25 +46,62 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
         log.info("INIT");
     }
 
-    public OAuthAuthenticationDetails makeDetails(OAuthAuthenticationDetails details) {
-        // attempt to create a user Authority
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "admin";
-            }
-        };
-        Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(userGA);
-        authorities.add(adminGA);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return details;
-    }
-
     @Override
     public Authentication createAuthentication(HttpServletRequest request, ConsumerAuthentication authentication, OAuthAccessProviderToken authToken) {
-        // TODO implement this
-        return null;
+        Collection<GrantedAuthority> authorities = new HashSet<>(authentication.getAuthorities());
+        // attempt to create a user Authority
+        String username = request.getParameter("username");
+        if (StringUtils.isBlank(username)) {
+            username = authentication.getName();
+        }
+
+        // NOTE: you should replace this block with your real rules for determining OAUTH ADMIN roles
+        if (username.equals("admin")) {
+            authorities.add(userGA);
+            authorities.add(adminGA);
+        } else {
+            authorities.add(userGA);
+        }
+
+        Principal principal = new NamedOAuthPrincipal(username, authorities,
+                authentication.getConsumerCredentials().getConsumerKey(),
+                authentication.getConsumerCredentials().getSignature(),
+                authentication.getConsumerCredentials().getSignatureMethod(),
+                authentication.getConsumerCredentials().getSignatureBaseString(),
+                authentication.getConsumerCredentials().getToken()
+        );
+        Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        log.info("createAuthentication generated auth principal (" + principal + "): req=" + request);
+        return auth;
     }
+
+    public static class NamedOAuthPrincipal extends ConsumerCredentials implements Principal {
+        public String name;
+        public Collection<GrantedAuthority> authorities;
+
+        public NamedOAuthPrincipal(String name, Collection<GrantedAuthority> authorities, String consumerKey, String signature, String signatureMethod, String signatureBaseString, String token) {
+            super(consumerKey, signature, signatureMethod, signatureBaseString, token);
+            this.name = name;
+            this.authorities = authorities;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return authorities;
+        }
+
+        @Override
+        public String toString() {
+            return "NamedOAuthPrincipal{" +
+                    "name='" + name + '\'' +
+                    "key='" + getConsumerKey() + '\'' +
+                    "base='" + getSignatureBaseString() + '\'' +
+                    "}";
+        }
+    }
+
 }
