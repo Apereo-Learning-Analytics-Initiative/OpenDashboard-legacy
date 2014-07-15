@@ -118,7 +118,7 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/form").authorizeRequests().anyRequest().authenticated()
-                    .and().formLogin().permitAll().loginPage("/form/login")
+                    .and().formLogin().permitAll().loginPage("/form/login").loginProcessingUrl("/form/login")
                     .and().logout().logoutUrl("/form/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
             //http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
             //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
