@@ -47,10 +47,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -117,9 +114,9 @@ public class Application extends WebMvcConfigurerAdapter {
         OAuthProcessingFilterEntryPoint oauthProcessingFilterEntryPoint;
         @Autowired
         OAuthProviderTokenServices oauthProviderTokenServices;
-
         @PostConstruct
         public void init() {
+            // NOTE: have to build the filter here: http://stackoverflow.com/questions/24761194/how-do-i-stop-spring-filterregistrationbean-from-registering-my-filter-on/24762970
             zeroLeggedOAuthProviderProcessingFilter = new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
         }
         @Override
@@ -139,8 +136,6 @@ public class Application extends WebMvcConfigurerAdapter {
             http.antMatcher("/form/**").authorizeRequests().anyRequest().authenticated()
                     .and().formLogin().permitAll().loginPage("/form/login").loginProcessingUrl("/form/login")
                     .and().logout().logoutUrl("/form/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
-            //http.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true);
-            //.and().logout().logoutUrl("/basic/logout").invalidateHttpSession(true).logoutSuccessUrl("/");
         }
     }
 
@@ -193,19 +188,6 @@ public class Application extends WebMvcConfigurerAdapter {
             setTokenServices(oauthProviderTokenServices);
             //setIgnoreMissingCredentials(false); // die if OAuth params are not included
         }
-
-        @Override
-        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-            log.info("Apply OAuth Filter: " + chain);
-            super.doFilter(servletRequest, servletResponse, chain);
-        }
     }
-
-    /*
-    @Bean
-    public ZeroLeggedOAuthProviderProcessingFilter zeroLeggedOAuthProviderProcessingFilter() {
-        ZeroLeggedOAuthProviderProcessingFilter filter = new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthAuthenticationEntryPoint(), oauthAuthenticationHandler, oauthProviderTokenServices());
-        return filter;
-    }*/
 
 }

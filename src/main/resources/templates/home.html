@@ -28,7 +28,27 @@
 <div>Request URI: <span th:text="${reqURI}"/></div>
 <p th:text="|Today: ${today}!|"/>
 
-<div sec:authorize="isAuthenticated()">
+<div>OPEN: <a th:href="@{/}">Home(/)</a> | <a th:href="@{/open}">/open</a></div>
+
+<!-- <TAG sec:authorize="KEY"...>
+KEY                         DESCRIPTION
+hasRole([role])             Returns true if the current principal has the specified role.
+hasAnyRole([role1,role2])   Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
+principal                   Allows direct access to the principal object representing the current user
+authentication              Allows direct access to the current Authentication object obtained from the SecurityContext
+permitAll                   Always evaluates to true
+denyAll                     Always evaluates to false
+isAnonymous()               Returns true if the current principal is an anonymous user
+isRememberMe()              Returns true if the current principal is a remember-me user
+isAuthenticated()           Returns true if the user is not anonymous
+isFullyAuthenticated()      Returns true if the user is not an anonymous or a remember-me user
+-->
+<div sec:authorize="isAnonymous()">isAnonymous</div>
+<div sec:authorize="isRememberMe()">isRememberMe</div>
+<div sec:authorize="isAuthenticated()">isAuthenticated</div>
+<div sec:authorize="isFullyAuthenticated()">isFullyAuthenticated</div>
+
+<div sec:authorize="isAuthenticated()"><!-- only show this when user IS logged in -->
     <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
         <input type="submit" value="Logout"/>
     </form>
@@ -36,6 +56,7 @@
     <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
     <div>Login: <span th:text="${session.login}"/></div>
 </div>
+
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     This content is only shown to administrators (ROLE_ADMIN).
 </div>
@@ -46,7 +67,6 @@
     You have been logged out.
 </div>
 
-<div>No auth: <a th:href="@{/}">HOME</a> | <a th:href="@{/open}">OPEN</a></div>
 
 <h2>Form Login endpoint</h2>
 
@@ -65,6 +85,7 @@
 
 <h2>LTI 1.0 provider endpoint</h2>
 
+<div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
 <div><a th:href="@{/lti1p}">/lti1p</a></div>
 
 </body>
