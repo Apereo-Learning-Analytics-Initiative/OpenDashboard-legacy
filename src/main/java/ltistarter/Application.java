@@ -149,6 +149,15 @@ public class Application extends WebMvcConfigurerAdapter {
         }
     }
 
+    @Order(67) // LOWEST
+    @Configuration
+    public static class NoAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/**").authorizeRequests().anyRequest().permitAll();
+        }
+    }
+
     // OAuth beans
 
     public static class OAuthProcessingFilterEntryPointImpl extends OAuthProcessingFilterEntryPoint {
