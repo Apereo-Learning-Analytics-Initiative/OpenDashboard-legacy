@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ltistarter.oauth;
+package ltistarter.lti;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +42,11 @@ public class LTIConsumerDetailsService implements ConsumerDetailsService {
             cd = new BaseConsumerDetails();
             cd.setConsumerKey(consumerKey);
             cd.setSignatureSecret(new SharedConsumerSecretImpl("secret"));
-            cd.setConsumerName("Sample");
+            cd.setConsumerName("LTIname");
             cd.setRequiredToObtainAuthenticatedToken(false); // no token required (0-legged)
             cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_OAUTH")); // add the ROLE_OAUTH (can add others as well)
-            log.info("OAuth check SUCCESS, consumer key: " + consumerKey);
+            cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_LTI"));
+            log.info("LTI check SUCCESS, consumer key: " + consumerKey);
         } else {
             // deny - failed to match
             throw new OAuthException("For this example, key must be 'key'");

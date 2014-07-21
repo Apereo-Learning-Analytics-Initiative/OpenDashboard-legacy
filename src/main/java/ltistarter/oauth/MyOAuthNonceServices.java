@@ -18,7 +18,7 @@ import org.springframework.security.oauth.provider.nonce.InMemoryNonceServices;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LTIOAuthNonceServices extends InMemoryNonceServices {
+public class MyOAuthNonceServices extends InMemoryNonceServices {
 
     @Override
     public long getValidityWindowSeconds() {

@@ -34,12 +34,12 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Component
-public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler {
+public class MyOAuthAuthenticationHandler implements OAuthAuthenticationHandler {
 
-    final static Logger log = LoggerFactory.getLogger(LTIOAuthAuthenticationHandler.class);
+    final static Logger log = LoggerFactory.getLogger(MyOAuthAuthenticationHandler.class);
 
-    static SimpleGrantedAuthority userGA = new SimpleGrantedAuthority("ROLE_USER");
-    static SimpleGrantedAuthority adminGA = new SimpleGrantedAuthority("ROLE_ADMIN");
+    public static SimpleGrantedAuthority userGA = new SimpleGrantedAuthority("ROLE_USER");
+    public static SimpleGrantedAuthority adminGA = new SimpleGrantedAuthority("ROLE_ADMIN");
 
     @PostConstruct
     public void init() {
