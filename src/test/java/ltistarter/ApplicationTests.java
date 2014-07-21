@@ -14,41 +14,19 @@
  */
 package ltistarter;
 
-import ltistarter.model.LtiKeyEntity;
-import ltistarter.model.LtiUserEntity;
-import ltistarter.model.ProfileEntity;
-import ltistarter.model.SSOKeyEntity;
-import ltistarter.repository.LtiKeyRepository;
-import ltistarter.repository.LtiUserRepository;
-import ltistarter.repository.ProfileRepository;
-import ltistarter.repository.SSOKeyRepository;
+import ltistarter.model.*;
+import ltistarter.repository.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-public class ApplicationTests {
-
-    // A few tests here just to verify that things are wired up correctly
-
-    @Autowired
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-    ConfigurableWebApplicationContext context;
-
-    @Test
-    public void contextLoads() {
-        assertNotNull(context);
-    }
+public class ApplicationTests extends BaseApplicationTest {
 
     @Autowired
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
@@ -97,6 +75,18 @@ public class ApplicationTests {
 
     @Autowired
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    ConfigRepository configRepository;
+
+    @Test
+    @Transactional
+    public void testConfig() {
+        assertNotNull(applicationConfig);
+        assertNotNull(configRepository);
+        configRepository.save(new ConfigEntity("test.thing", "Value"));
+    }
+
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiUserRepository ltiUserRepository;
     @Autowired
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
@@ -112,9 +102,7 @@ public class ApplicationTests {
         Iterable<LtiUserEntity> users;
         Iterable<SSOKeyEntity> ssoKeys;
         ProfileEntity profile;
-        LtiUserEntity user;
         SSOKeyEntity ssoKey;
-        int result;
 
         assertNotNull(profileRepository);
         assertNotNull(ltiUserRepository);
