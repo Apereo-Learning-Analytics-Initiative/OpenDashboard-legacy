@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth.provider.ConsumerAuthentication;
 import org.springframework.security.oauth.provider.OAuthAuthenticationHandler;
 import org.springframework.security.oauth.provider.token.OAuthAccessProviderToken;
@@ -33,9 +34,12 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Component
-public class LTIOAuthAuthenticationHandler extends MyOAuthAuthenticationHandler implements OAuthAuthenticationHandler {
+public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler {
 
     final static Logger log = LoggerFactory.getLogger(LTIOAuthAuthenticationHandler.class);
+
+    public static SimpleGrantedAuthority userGA = new SimpleGrantedAuthority("ROLE_USER");
+    public static SimpleGrantedAuthority adminGA = new SimpleGrantedAuthority("ROLE_ADMIN");
 
     @PostConstruct
     public void init() {
@@ -62,7 +66,7 @@ public class LTIOAuthAuthenticationHandler extends MyOAuthAuthenticationHandler 
             authorities.add(userGA);
         }
 
-        Principal principal = new NamedOAuthPrincipal(username, authorities,
+        Principal principal = new MyOAuthAuthenticationHandler.NamedOAuthPrincipal(username, authorities,
                 authentication.getConsumerCredentials().getConsumerKey(),
                 authentication.getConsumerCredentials().getSignature(),
                 authentication.getConsumerCredentials().getSignatureMethod(),
