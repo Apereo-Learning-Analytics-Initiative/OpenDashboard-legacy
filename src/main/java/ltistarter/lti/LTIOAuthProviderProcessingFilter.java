@@ -43,6 +43,7 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         if (!LTIUtils.isLTIRequest(servletRequest)) {
+            // NOTE: tsugi handles this by just allowing the request to continue - since we have a dedicated endpoint for launches I am killing it -AZ
             throw new IllegalStateException("Request is not a well formed LTI request (invalid lti_version or lti_message_type)");
         }
         super.doFilter(servletRequest, servletResponse, chain);

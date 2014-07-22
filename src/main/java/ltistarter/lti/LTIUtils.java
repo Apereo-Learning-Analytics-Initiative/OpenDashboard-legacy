@@ -14,10 +14,13 @@
  */
 package ltistarter.lti;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * LTI utilities
@@ -44,4 +47,20 @@ public class LTIUtils {
         return valid;
     }
 
+    /**
+     * Creates an LTI composite key which can be used to identify a user session consistently
+     *
+     * @param request     the incoming request
+     * @param sessionSalt the salt (defaults to a big random string)
+     * @return the composite string (md5)
+     */
+    public static String makeLTICompositeKey(HttpServletRequest request, String sessionSalt) {
+        if (StringUtils.isBlank(sessionSalt)) {
+            sessionSalt = "A7k254A0itEuQ9ndKJuZ";
+        }
+        String composite = sessionSalt + "::" + request.getParameter("key") + "::" + request.getParameter("context_id") + "::" +
+                request.getParameter("link_id") + "::" + request.getParameter("user_id") + "::" + (System.currentTimeMillis() / 1800) +
+                request.getHeader("User-Agent") + "::" + request.getContextPath();
+        return DigestUtils.md5Hex(composite);
+    }
 }

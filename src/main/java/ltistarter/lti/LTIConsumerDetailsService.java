@@ -14,8 +14,12 @@
  */
 package ltistarter.lti;
 
+import ltistarter.model.LtiKeyEntity;
+import ltistarter.repository.LtiKeyRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth.common.OAuthException;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecretImpl;
@@ -25,31 +29,37 @@ import org.springframework.security.oauth.provider.ConsumerDetailsService;
 import org.springframework.stereotype.Component;
 
 /**
- * Sample consumer details service which verifies the key and secret,
- * In our case the key is "key" and secret is "secret"
+ * Sample consumer details service which verifies the key and secret using the LTI key DB.
+ * Populates the ConsumerDetails.consumerName with the ID of the LtiKeyEntity if a match is found
+ * and grants the OAUTH and LTI Authority Roles
  */
 @Component
 public class LTIConsumerDetailsService implements ConsumerDetailsService {
 
     final static Logger log = LoggerFactory.getLogger(LTIConsumerDetailsService.class);
 
+    @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    LtiKeyRepository ltiKeyRepository;
+
     @Override
     public ConsumerDetails loadConsumerByConsumerKey(String consumerKey) throws OAuthException {
+        consumerKey = StringUtils.trimToNull(consumerKey);
+        assert StringUtils.isNotEmpty(consumerKey) : "consumerKey must be set and not null";
         BaseConsumerDetails cd;
-        // NOTE: really lookup the key and secret, for the sample here we just hardcoded
-        if ("key".equals(consumerKey)) {
-            // allow this oauth request
+        LtiKeyEntity ltiKey = ltiKeyRepository.findByKeyKey(consumerKey);
+        if (ltiKey == null) {
+            // no matching key found
+            throw new OAuthException("No matching lti key record was found for " + consumerKey);
+        } else {
             cd = new BaseConsumerDetails();
             cd.setConsumerKey(consumerKey);
-            cd.setSignatureSecret(new SharedConsumerSecretImpl("secret"));
-            cd.setConsumerName("LTIname");
+            cd.setSignatureSecret(new SharedConsumerSecretImpl(ltiKey.getSecret()));
+            cd.setConsumerName(String.valueOf(ltiKey.getKeyId()));
             cd.setRequiredToObtainAuthenticatedToken(false); // no token required (0-legged)
             cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_OAUTH")); // add the ROLE_OAUTH (can add others as well)
             cd.getAuthorities().add(new SimpleGrantedAuthority("ROLE_LTI"));
             log.info("LTI check SUCCESS, consumer key: " + consumerKey);
-        } else {
-            // deny - failed to match
-            throw new OAuthException("For this example, key must be 'key'");
         }
         return cd;
     }
