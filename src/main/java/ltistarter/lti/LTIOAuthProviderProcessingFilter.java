@@ -19,6 +19,12 @@ import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoi
 import org.springframework.security.oauth.provider.filter.ProtectedResourceProcessingFilter;
 import org.springframework.security.oauth.provider.token.OAuthProviderTokenServices;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.IOException;
+
 /**
  * LTI compatible Zero Legged OAuth processing servlet filter
  */
@@ -32,5 +38,13 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
         setNonceServices(oAuthNonceServices);
         setTokenServices(oAuthProviderTokenServices);
         //setIgnoreMissingCredentials(false); // die if OAuth params are not included
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+        if (!LTIUtils.isLTIRequest(servletRequest)) {
+            throw new IllegalStateException("Request is not a well formed LTI request (invalid lti_version or lti_message_type)");
+        }
+        super.doFilter(servletRequest, servletResponse, chain);
     }
 }

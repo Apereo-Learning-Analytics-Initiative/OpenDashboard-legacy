@@ -48,9 +48,6 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
 
     @Override
     public Authentication createAuthentication(HttpServletRequest request, ConsumerAuthentication authentication, OAuthAccessProviderToken authToken) {
-        if (!LTIUtils.isLTIRequest(request)) {
-            throw new IllegalStateException("Request is not a well formed LTI request (invalid lti_version or lti_message_type)");
-        }
         Collection<GrantedAuthority> authorities = new HashSet<>(authentication.getAuthorities());
         // attempt to create a user Authority
         String username = request.getParameter("username");

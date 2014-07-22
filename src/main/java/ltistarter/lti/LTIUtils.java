@@ -17,7 +17,7 @@ package ltistarter.lti;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletRequest;
 
 /**
  * LTI utilities
@@ -30,7 +30,7 @@ public class LTIUtils {
      * @param request the incoming request
      * @return true if this is a valid LTI request
      */
-    public static boolean isLTIRequest(HttpServletRequest request) {
+    public static boolean isLTIRequest(ServletRequest request) {
         boolean valid = false;
         String ltiVersion = request.getParameter("lti_version");
         String ltiMessageType = request.getParameter("lti_message_type");
