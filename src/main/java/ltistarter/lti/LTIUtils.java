@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -63,4 +64,51 @@ public class LTIUtils {
                 request.getHeader("User-Agent") + "::" + request.getContextPath();
         return DigestUtils.md5Hex(composite);
     }
+
+    public static Object loadLTIDataFromDB(EntityManager entityManager, HttpServletRequest request, boolean includeProfile) {
+        String sql = "SELECT k.key_id, k.key_key, k.secret, c.context_id, c.title AS context_title, l.link_id, l.title AS link_title, u.user_id, u.displayname AS user_displayname, u.email AS user_email, u.subscribe AS subscribe, u.user_sha256 AS user_sha256, m.membership_id, m.role, m.role_override";
+
+        if (includeProfile) {
+            sql += ", p.profile_id, p.displayname AS profile_displayname, p.email AS profile_email, p.subscribe AS profile_subscribe";
+        }
+
+        if (request.getParameter("service") != null) {
+            sql += ", s.service_id, s.service_key AS service";
+        }
+
+        if (request.getParameter("sourcedid") != null) {
+            sql += ", r.result_id, r.sourcedid, r.grade";
+        }
+
+        sql += "\nFROM LtiKeyEntity AS k LEFT JOIN LtiContextEntity AS c ON k.key_id = c.key_id AND c.context_sha256 = :context LEFT JOIN LtiLinkEntity AS l ON c.context_id = l.context_id AND l.link_sha256 = :link LEFT JOIN LtiUserEntity AS u ON k.key_id = u.key_id AND u.user_sha256 = :user LEFT JOIN LtiMembershipEntity AS m ON u.user_id = m.user_id AND c.context_id = m.context_id";
+
+        if (includeProfile) {
+            sql += " LEFT JOIN ProfileEntity AS p ON u.profile_id = p.profile_id";
+        }
+
+        if (request.getParameter("service") != null) {
+            sql += " LEFT JOIN LtiServiceEntity AS s ON k.key_id = s.key_id AND s.service_sha256 = :service";
+        }
+        if (request.getParameter("sourcedid") != null) {
+            sql += " LEFT JOIN LtiResultEntity AS r ON u.user_id = r.user_id AND l.link_id = r.link_id";
+        }
+        sql += " WHERE k.key_sha256 = :key LIMIT 1";
+
+        /*
+        // echo(sql);
+        $parms = array(
+                ':key' => lti_sha256(request.getParameter("key")),
+                ':context' => lti_sha256(request.getParameter("context_id")),
+                ':link' => lti_sha256(request.getParameter("link_id")),
+                ':user' => lti_sha256(request.getParameter("user_id")));
+
+        if ( request.getParameter("service") ) {
+            $parms[':service") = lti_sha256(request.getParameter("service"));
+        }
+
+        $row = pdoRowDie($pdo, sql, $parms);
+        */
+        return null; // TODO
+    }
+
 }

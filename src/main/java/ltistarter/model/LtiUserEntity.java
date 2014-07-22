@@ -56,14 +56,15 @@ public class LtiUserEntity extends BaseEntity {
     private Timestamp loginAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "profile_id", nullable = true)
     private ProfileEntity profile;
 
     protected LtiUserEntity() {
     }
 
     /**
-     * @param userKey   user identifier
-     * @param loginAt   date of user login
+     * @param userKey user identifier
+     * @param loginAt date of user login
      */
     public LtiUserEntity(String userKey, Date loginAt) {
         assert StringUtils.isNotBlank(userKey);

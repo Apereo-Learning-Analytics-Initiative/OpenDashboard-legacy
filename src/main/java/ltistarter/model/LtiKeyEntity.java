@@ -17,6 +17,8 @@ package ltistarter.model;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "lti_key")
@@ -37,6 +39,9 @@ public class LtiKeyEntity extends BaseEntity {
     @Basic
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
+
+    @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
+    private Set<LtiContextEntity> contexts = new HashSet<>();
 
     LtiKeyEntity() {
     }
