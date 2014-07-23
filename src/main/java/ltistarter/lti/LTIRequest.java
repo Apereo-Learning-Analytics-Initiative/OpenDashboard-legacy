@@ -17,6 +17,7 @@ package ltistarter.lti;
 import ltistarter.model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import javax.persistence.Query;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * LTI Request object holds all the details for a valid LTI request
@@ -39,13 +41,31 @@ public class LTIRequest {
 
     final static Logger log = LoggerFactory.getLogger(LTIRequest.class);
 
+    static final String LIS_PERSON_PREFIX = "lis_person_name_";
     public static final String LTI_CONSUMER_KEY = "oauth_consumer_key";
     public static final String LTI_CONTEXT_ID = "context_id";
+    public static final String LTI_CONTEXT_TITLE = "context_title";
+    public static final String LTI_CONTEXT_LABEL = "context_label";
     public static final String LTI_LINK_ID = "resource_link_id";
+    public static final String LTI_LINK_TITLE = "resource_link_title";
+    public static final String LTI_LINK_DESC = "resource_link_description";
     public static final String LTI_MESSAGE_TYPE = "lti_message_type";
-    public static final String LTI_SERVICE = "service";
-    public static final String LTI_SOURCEDID = "sourcedid";
+    public static final String LTI_PRES_LOCALE = "launch_presentation_locale";
+    public static final String LTI_PRES_TARGET = "launch_presentation_document_target";
+    public static final String LTI_PRES_WIDTH = "launch_presentation_width";
+    public static final String LTI_PRES_HEIGHT = "launch_presentation_height";
+    public static final String LTI_PRES_RETURN_URL = "launch_presentation_return_url";
+    public static final String LTI_SERVICE = "lis_outcome_service_url";
+    public static final String LTI_SOURCEDID = "lis_result_sourcedid";
+    public static final String LTI_TOOL_CONSUMER_CODE = "tool_consumer_info_product_family_code";
+    public static final String LTI_TOOL_CONSUMER_VERSION = "tool_consumer_info_version";
+    public static final String LTI_TOOL_CONSUMER_NAME = "tool_consumer_instance_name";
+    public static final String LTI_TOOL_CONSUMER_EMAIL = "tool_consumer_instance_contact_email";
     public static final String LTI_USER_ID = "user_id";
+    public static final String LTI_USER_EMAIL = "lis_person_contact_email_primary";
+    public static final String LTI_USER_NAME_FULL = LIS_PERSON_PREFIX + "full";
+    public static final String LTI_USER_IMAGE_URL = "user_image";
+    public static final String LTI_USER_ROLES = "roles";
     public static final String LTI_VERSION = "lti_version";
 
     public static final String LTI_MESSAGE_TYPE_BASIC = "basic-lti-launch-request";
@@ -53,7 +73,7 @@ public class LTIRequest {
     public static final String LTI_VERSION_1P0 = "LTI-1p0";
     public static final String LTI_VERSION_2P0 = "LTI-2p0";
 
-    private HttpServletRequest httpServletRequest;
+    HttpServletRequest httpServletRequest;
 
     // these are populated by the loadLTIDataFromDB operation
     LtiKeyEntity key;
@@ -69,12 +89,29 @@ public class LTIRequest {
 
     // these are populated on construct
     String ltiContext;
+    String ltiContextTitle;
+    String ltiContextLabel;
     String ltiConsumerKey;
     String ltiLink;
+    String ltiLinkTitle;
+    String ltiLinkDescription;
+    Locale ltiPresLocale;
+    String ltiPresTarget;
+    int ltiPresWidth;
+    int ltiPresHeight;
+    String ltiPresReturnUrl;
     String ltiMessageType;
     String ltiService;
     String ltiSourcedid;
+    String ltiToolConsumerCode;
+    String ltiToolConsumerVersion;
+    String ltiToolConsumerName;
+    String ltiToolConsumerEmail;
     String ltiUser;
+    String ltiUserEmail;
+    String ltiUserDisplayName;
+    String ltiUserImageUrl;
+    String ltiUserRoles;
     String ltiVersion;
 
     /**
@@ -88,18 +125,50 @@ public class LTIRequest {
         if (!isLTIRequest(request)) {
             throw new IllegalStateException("Request is not an LTI request");
         }
+        ltiMessageType = getParam(LTI_MESSAGE_TYPE);
+        ltiVersion = getParam(LTI_VERSION);
         // These 4 really need to be populated for this LTI request to make any sense...
-        ltiConsumerKey = StringUtils.trimToNull(request.getParameter(LTI_CONSUMER_KEY));
-        ltiContext = StringUtils.trimToNull(request.getParameter(LTI_CONTEXT_ID));
-        ltiLink = StringUtils.trimToNull(request.getParameter(LTI_LINK_ID));
-        ltiUser = StringUtils.trimToNull(request.getParameter(LTI_USER_ID));
+        ltiConsumerKey = getParam(LTI_CONSUMER_KEY);
+        ltiContext = getParam(LTI_CONTEXT_ID);
+        ltiLink = getParam(LTI_LINK_ID);
+        ltiUser = getParam(LTI_USER_ID);
         if (ltiConsumerKey != null && ltiContext != null && ltiLink != null && ltiUser != null) {
             complete = true;
         }
-        ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
-        ltiService = StringUtils.trimToNull(request.getParameter(LTI_SERVICE));
-        ltiSourcedid = StringUtils.trimToNull(request.getParameter(LTI_SOURCEDID));
-        ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
+        // OPTIONAL fields below
+        ltiService = getParam(LTI_SERVICE);
+        ltiSourcedid = getParam(LTI_SOURCEDID);
+        ltiUserEmail = getParam(LTI_USER_EMAIL);
+        ltiUserImageUrl = getParam(LTI_USER_IMAGE_URL);
+        ltiLinkTitle = getParam(LTI_LINK_TITLE);
+        ltiLinkDescription = getParam(LTI_LINK_DESC);
+        ltiContextTitle = getParam(LTI_CONTEXT_TITLE);
+        ltiContextLabel = getParam(LTI_CONTEXT_LABEL);
+        String localeStr = getParam(LTI_PRES_LOCALE);
+        if (localeStr == null) {
+            ltiPresLocale = Locale.getDefault();
+        } else {
+            ltiPresLocale = Locale.forLanguageTag(localeStr);
+        }
+        ltiPresTarget = getParam(LTI_PRES_TARGET);
+        ltiPresWidth = NumberUtils.toInt(getParam(LTI_PRES_WIDTH), 0);
+        ltiPresHeight = NumberUtils.toInt(getParam(LTI_PRES_HEIGHT), 0);
+        ltiPresReturnUrl = getParam(LTI_PRES_RETURN_URL);
+        ltiToolConsumerCode = getParam(LTI_TOOL_CONSUMER_CODE);
+        ltiToolConsumerVersion = getParam(LTI_TOOL_CONSUMER_VERSION);
+        ltiToolConsumerName = getParam(LTI_TOOL_CONSUMER_NAME);
+        ltiToolConsumerEmail = getParam(LTI_TOOL_CONSUMER_EMAIL);
+        ltiUserRoles = getParam(LTI_USER_ROLES);
+        // user displayName requires some trickyness
+        if (request.getParameter(LTI_USER_NAME_FULL) != null) {
+            ltiUserDisplayName = getParam(LTI_USER_NAME_FULL);
+        } else if (request.getParameter(LIS_PERSON_PREFIX + "given") != null && request.getParameter(LIS_PERSON_PREFIX + "family") != null) {
+            ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "given") + " " + getParam(LIS_PERSON_PREFIX + "family");
+        } else if (request.getParameter(LIS_PERSON_PREFIX + "given") != null) {
+            ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "given");
+        } else if (request.getParameter(LIS_PERSON_PREFIX + "family") != null) {
+            ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "family");
+        }
     }
 
     /**
@@ -113,43 +182,24 @@ public class LTIRequest {
         this.loadLTIDataFromDB(entityManager);
     }
 
-    public HttpServletRequest getHttpServletRequest() {
-        return httpServletRequest;
+    /**
+     * @param paramName the request parameter name
+     * @return the value of the parameter OR null if there is none
+     */
+    public String getParam(String paramName) {
+        String value = null;
+        if (paramName != null) {
+            value = StringUtils.trimToNull(this.httpServletRequest.getParameter(paramName));
+        }
+        return value;
     }
 
-    /**
-     * @param request the incoming request
-     * @return true if this is a valid LTI request
-     */
-    public static boolean isLTIRequest(ServletRequest request) {
-        boolean valid = false;
-        String ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
-        String ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
-        if (ltiMessageType != null && ltiVersion != null) {
-            boolean goodMessageType = LTI_MESSAGE_TYPE_BASIC.equals(ltiMessageType)
-                    || LTI_MESSAGE_TYPE_PROXY_REG.equals(ltiMessageType);
-            boolean goodLTIVersion = LTI_VERSION_1P0.equals(ltiVersion)
-                    || LTI_VERSION_2P0.equals(ltiVersion);
-            valid = goodMessageType && goodLTIVersion;
-        }
-        return valid;
+    public boolean isRoleAdministrator() {
+        return (ltiUserRoles != null && ltiUserRoles.toLowerCase().contains("administrator"));
     }
 
-    /**
-     * Creates an LTI composite key which can be used to identify a user session consistently
-     *
-     * @param request     the incoming request
-     * @param sessionSalt the salt (defaults to a big random string)
-     * @return the composite string (md5)
-     */
-    public static String makeLTICompositeKey(HttpServletRequest request, String sessionSalt) {
-        if (StringUtils.isBlank(sessionSalt)) {
-            sessionSalt = "A7k254A0itEuQ9ndKJuZ";
-        }
-        String composite = sessionSalt + "::" + request.getParameter(LTI_CONSUMER_KEY) + "::" + request.getParameter(LTI_CONTEXT_ID) + "::" +
-                request.getParameter(LTI_LINK_ID) + "::" + request.getParameter(LTI_USER_ID) + "::" + (System.currentTimeMillis() / 1800) +
-                request.getHeader("User-Agent") + "::" + request.getContextPath();
-        return DigestUtils.md5Hex(composite);
+    public boolean isRoleInstructor() {
+        return (ltiUserRoles != null && ltiUserRoles.toLowerCase().contains("instructor"));
     }
 
     /**
@@ -214,10 +264,10 @@ public class LTIRequest {
         q.setParameter("link", BaseEntity.makeSHA256(ltiLink));
         q.setParameter("user", BaseEntity.makeSHA256(ltiUser));
         if (includesService) {
-            q.setParameter(LTI_SERVICE, BaseEntity.makeSHA256(ltiService));
+            q.setParameter("service", BaseEntity.makeSHA256(ltiService));
         }
         if (includesSourcedid) {
-            q.setParameter(LTI_SOURCEDID, BaseEntity.makeSHA256(ltiSourcedid));
+            q.setParameter("sourcedid", BaseEntity.makeSHA256(ltiSourcedid));
         }
         @SuppressWarnings("unchecked")
         List<Object[]> rows = q.getResultList();
@@ -241,6 +291,50 @@ public class LTIRequest {
             return true;
         }
         return false;
+    }
+
+    // STATICS
+
+    /**
+     * @param request the incoming request
+     * @return true if this is a valid LTI request
+     */
+    public static boolean isLTIRequest(ServletRequest request) {
+        boolean valid = false;
+        String ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
+        String ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
+        if (ltiMessageType != null && ltiVersion != null) {
+            boolean goodMessageType = LTI_MESSAGE_TYPE_BASIC.equals(ltiMessageType)
+                    || LTI_MESSAGE_TYPE_PROXY_REG.equals(ltiMessageType);
+            boolean goodLTIVersion = LTI_VERSION_1P0.equals(ltiVersion)
+                    || LTI_VERSION_2P0.equals(ltiVersion);
+            valid = goodMessageType && goodLTIVersion;
+        }
+        // resource_link_id is also required
+        return valid;
+    }
+
+    /**
+     * Creates an LTI composite key which can be used to identify a user session consistently
+     *
+     * @param request     the incoming request
+     * @param sessionSalt the salt (defaults to a big random string)
+     * @return the composite string (md5)
+     */
+    public static String makeLTICompositeKey(HttpServletRequest request, String sessionSalt) {
+        if (StringUtils.isBlank(sessionSalt)) {
+            sessionSalt = "A7k254A0itEuQ9ndKJuZ";
+        }
+        String composite = sessionSalt + "::" + request.getParameter(LTI_CONSUMER_KEY) + "::" + request.getParameter(LTI_CONTEXT_ID) + "::" +
+                request.getParameter(LTI_LINK_ID) + "::" + request.getParameter(LTI_USER_ID) + "::" + (System.currentTimeMillis() / 1800) +
+                request.getHeader("User-Agent") + "::" + request.getContextPath();
+        return DigestUtils.md5Hex(composite);
+    }
+
+    // GETTERS
+
+    public HttpServletRequest getHttpServletRequest() {
+        return httpServletRequest;
     }
 
     public String getLtiContext() {
