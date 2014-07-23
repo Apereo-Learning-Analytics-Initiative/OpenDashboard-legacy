@@ -202,8 +202,8 @@ public class JPATests extends BaseApplicationTest {
         Query q;
         List rows;
 
-        LtiKeyEntity key1 = ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
-        LtiKeyEntity key2 = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
+        LtiKeyEntity key1 = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
+        LtiKeyEntity key2 = ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
         LtiKeyEntity key3 = ltiKeyRepository.save(new LtiKeyEntity("3key", "secret"));
         LtiKeyEntity key4 = ltiKeyRepository.save(new LtiKeyEntity("4key", "secret"));
         LtiKeyEntity key5 = ltiKeyRepository.save(new LtiKeyEntity("5key", "secret"));
@@ -213,7 +213,7 @@ public class JPATests extends BaseApplicationTest {
         LtiUserEntity user3 = ltiUserRepository.save(new LtiUserEntity("czeckoski", null));
         LtiUserEntity user4 = ltiUserRepository.save(new LtiUserEntity("dzeckoski", null));
 
-        LtiContextEntity context1 = ltiContextRepository.save(new LtiContextEntity("AZcontext", key2, "AZCtitle", null));
+        LtiContextEntity context1 = ltiContextRepository.save(new LtiContextEntity("AZcontext", key1, "AZCtitle", null));
         LtiContextEntity context2 = ltiContextRepository.save(new LtiContextEntity("3context", key3, "3Ctitle", null));
         LtiContextEntity context3 = ltiContextRepository.save(new LtiContextEntity("5context", key5, "5Ctitle", null));
 
@@ -230,17 +230,20 @@ public class JPATests extends BaseApplicationTest {
         assertNotNull(keys);
         assertEquals(5, keys.size());
 
-        /*
         q = entityManager.createQuery("SELECT k, c, l, m, u FROM LtiKeyEntity k " +
             "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
             "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
+                        "LEFT JOIN c.memberships m " + // LtiMembershipEntity
             "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
-            "LEFT JOIN c.memberships m ON u.userId = m.userId AND c.contextId = m.contextId" // LtiMembershipEntity
+                        "WHERE k.keySha256 = :key"
         );
+        q.setParameter("context", BaseEntity.makeSHA256(context1.getContextSha256()));
+        q.setParameter("link", BaseEntity.makeSHA256(link1.getLinkSha256()));
+        q.setParameter("user", BaseEntity.makeSHA256(user1.getUserSha256()));
+        q.setParameter("key", BaseEntity.makeSHA256(key1.getKeySha256()));
         rows = q.getResultList();
         assertNotNull(rows);
-        assertEquals(2, rows.size());
-        */
+        assertEquals(1, rows.size());
     }
 
 }
