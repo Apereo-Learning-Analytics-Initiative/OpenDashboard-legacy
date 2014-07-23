@@ -14,6 +14,8 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -37,11 +39,25 @@ public class LtiServiceEntity extends BaseEntity {
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
 
-    @OneToMany(mappedBy = "resultId")
-    private Set<LtiResultEntity> results;
-    @ManyToOne
-    @JoinColumn(name = "key_id", referencedColumnName = "key_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "key_id")
     private LtiKeyEntity ltiKey;
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
+    private Set<LtiResultEntity> results;
+
+    protected LtiServiceEntity() {
+    }
+
+    /**
+     * @param serviceKey the unique external key
+     * @param format     [OPTIONAL] format or null if there is none
+     */
+    public LtiServiceEntity(String serviceKey, String format) {
+        assert StringUtils.isNotBlank(serviceKey);
+        this.serviceKey = serviceKey;
+        this.serviceSha256 = makeSHA256(serviceKey);
+        this.format = format;
+    }
 
     public long getServiceId() {
         return serviceId;

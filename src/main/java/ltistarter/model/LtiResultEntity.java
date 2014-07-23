@@ -14,8 +14,11 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "lti_result")
@@ -52,11 +55,34 @@ public class LtiResultEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private LtiUserEntity user;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.DETACH)
     @JoinColumn(name = "service_id")
     private LtiServiceEntity service;
 
     protected LtiResultEntity() {
+    }
+
+    /**
+     * @param sourcedid   the external key sourcedid
+     * @param user        the user for this grade result
+     * @param link        the link which this is a grade for
+     * @param retrievedAt the date the grade was retrieved (null indicates now)
+     * @param grade       [OPTIONAL] the grade value
+     */
+    public LtiResultEntity(String sourcedid, LtiUserEntity user, LtiLinkEntity link, Date retrievedAt, Float grade) {
+        assert StringUtils.isNotBlank(sourcedid);
+        assert user != null;
+        assert link != null;
+        if (retrievedAt == null) {
+            retrievedAt = new Date();
+        }
+        this.sourcedid = sourcedid;
+        this.sourcedidSha256 = makeSHA256(sourcedid);
+        this.retrievedAt = new Timestamp(retrievedAt.getTime());
+        this.user = user;
+        this.link = link;
+        this.grade = grade;
     }
 
     public long getResultId() {

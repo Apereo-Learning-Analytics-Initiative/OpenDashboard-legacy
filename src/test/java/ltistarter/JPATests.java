@@ -222,25 +222,30 @@ public class JPATests extends BaseApplicationTest {
         LtiMembershipEntity member1 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user1, LtiMembershipEntity.ROLE_STUDENT));
         LtiMembershipEntity member2 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user2, LtiMembershipEntity.ROLE_STUDENT));
         LtiMembershipEntity member3 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user3, LtiMembershipEntity.ROLE_INTRUCTOR));
-        LtiMembershipEntity member4 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user1, LtiMembershipEntity.ROLE_STUDENT));
-        LtiMembershipEntity member5 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user3, LtiMembershipEntity.ROLE_INTRUCTOR));
+        LtiMembershipEntity member4 = ltiMembershipRepository.save(new LtiMembershipEntity(context2, user1, LtiMembershipEntity.ROLE_STUDENT));
+        LtiMembershipEntity member5 = ltiMembershipRepository.save(new LtiMembershipEntity(context2, user3, LtiMembershipEntity.ROLE_INTRUCTOR));
 
-        q = entityManager.createQuery("SELECT k FROM LtiKeyEntity k ORDER BY k.keyId");
-        List keys = q.getResultList();
-        assertNotNull(keys);
-        assertEquals(5, keys.size());
+        // make sure encoding worked
+        assertEquals(key1.getKeySha256(), BaseEntity.makeSHA256(key1.getKeyKey()));
+
+        q = entityManager.createQuery("SELECT k FROM LtiKeyEntity k WHERE k.keySha256 = :key");
+        q.setParameter("key", key1.getKeySha256());
+        LtiKeyEntity lke = (LtiKeyEntity) q.getSingleResult();
+        assertNotNull(lke);
+        assertEquals(key1, lke);
 
         q = entityManager.createQuery("SELECT k, c, l, m, u FROM LtiKeyEntity k " +
             "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
             "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
                         "LEFT JOIN c.memberships m " + // LtiMembershipEntity
             "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
-                        "WHERE k.keySha256 = :key"
+                        "WHERE m.context = c AND m.user = u AND k.keySha256 = :key"
         );
-        q.setParameter("context", BaseEntity.makeSHA256(context1.getContextSha256()));
-        q.setParameter("link", BaseEntity.makeSHA256(link1.getLinkSha256()));
-        q.setParameter("user", BaseEntity.makeSHA256(user1.getUserSha256()));
-        q.setParameter("key", BaseEntity.makeSHA256(key1.getKeySha256()));
+        // BaseEntity.makeSHA256 is used to be closer to real use but we could have just used the SHA fields like getKeySha256()
+        q.setParameter("context", BaseEntity.makeSHA256(context1.getContextKey()));
+        q.setParameter("link", BaseEntity.makeSHA256(link1.getLinkKey()));
+        q.setParameter("user", BaseEntity.makeSHA256(user1.getUserKey()));
+        q.setParameter("key", BaseEntity.makeSHA256(key1.getKeyKey()));
         rows = q.getResultList();
         assertNotNull(rows);
         assertEquals(1, rows.size());

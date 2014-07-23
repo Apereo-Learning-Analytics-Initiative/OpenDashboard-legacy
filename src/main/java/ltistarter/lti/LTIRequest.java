@@ -125,21 +125,21 @@ public class LTIRequest {
         sb.append("FROM LtiKeyEntity k " +
                 "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
                 "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
-                "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
-                "LEFT JOIN c.memberships m ON u.userId = m.userId AND c.contextId = m.contextId" // LtiMembershipEntity
+                "LEFT JOIN c.memberships m ON m.context = c " + // LtiMembershipEntity
+                "LEFT JOIN m.user u ON u.userSha256 = :user AND u = m.user " // LtiUserEntity
         );
 
         if (includeProfile) {
-            sb.append(" LEFT JOIN ProfileEntity AS p ON u.profileId = p.profileId"); // ProfileEntity
+            sb.append(" LEFT JOIN u.profile p ON u.profileId = p.profileId"); // ProfileEntity
         }
         if (includesService) {
-            sb.append(" LEFT JOIN LtiServiceEntity AS s ON k.key_id = s.key_id AND s.service_sha256 = :service"); // LtiServiceEntity
+            sb.append(" LEFT JOIN k.services s ON s.serviceSha256 = :service"); // LtiServiceEntity
         }
         if (includesSourcedid) {
-            sb.append(" LEFT JOIN LtiResultEntity AS r ON u.user_id = r.user_id AND l.link_id = r.link_id"); // LtiResultEntity
+            sb.append(" LEFT JOIN u.results r ON r.user = u AND r.link = l "); // LtiResultEntity
         }
+        sb.append(" WHERE m.context = c AND m.user = u AND k.keySha256 = :key");
 
-        sb.append(" WHERE k.keySha256 = :key");
         String sql = sb.toString();
         Query q = entityManager.createQuery(sql);
         q.setMaxResults(1);

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "lti_user")
@@ -58,6 +59,8 @@ public class LtiUserEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "profile_id", nullable = true)
     private ProfileEntity profile;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<LtiResultEntity> results;
 
     protected LtiUserEntity() {
     }
@@ -154,6 +157,14 @@ public class LtiUserEntity extends BaseEntity {
 
     public void setProfile(ProfileEntity profile) {
         this.profile = profile;
+    }
+
+    public Set<LtiResultEntity> getResults() {
+        return results;
+    }
+
+    public void setResults(Set<LtiResultEntity> results) {
+        this.results = results;
     }
 
     @Override

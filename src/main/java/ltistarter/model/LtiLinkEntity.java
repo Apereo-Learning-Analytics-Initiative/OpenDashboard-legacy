@@ -42,7 +42,7 @@ public class LtiLinkEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "context_id")
     private LtiContextEntity context;
-    @OneToMany(mappedBy = "link")
+    @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
     private Set<LtiResultEntity> results;
 
     protected LtiLinkEntity() {

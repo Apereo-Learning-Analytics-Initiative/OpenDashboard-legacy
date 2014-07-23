@@ -17,7 +17,6 @@ package ltistarter.model;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -41,7 +40,9 @@ public class LtiKeyEntity extends BaseEntity {
     private String json;
 
     @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
-    private Set<LtiContextEntity> contexts = new HashSet<>();
+    private Set<LtiContextEntity> contexts;
+    @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
+    private Set<LtiServiceEntity> services;
 
     protected LtiKeyEntity() {
     }
@@ -97,6 +98,22 @@ public class LtiKeyEntity extends BaseEntity {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public Set<LtiContextEntity> getContexts() {
+        return contexts;
+    }
+
+    public void setContexts(Set<LtiContextEntity> contexts) {
+        this.contexts = contexts;
+    }
+
+    public Set<LtiServiceEntity> getServices() {
+        return services;
+    }
+
+    public void setServices(Set<LtiServiceEntity> services) {
+        this.services = services;
     }
 
     @Override
