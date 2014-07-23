@@ -19,22 +19,38 @@ import javax.persistence.*;
 @Entity
 @Table(name = "lti_membership")
 public class LtiMembershipEntity extends BaseEntity {
+
+    public final static int ROLE_STUDENT = 0;
+    public final static int ROLE_INTRUCTOR = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "membership_id", nullable = false, insertable = true, updatable = true)
     private long membershipId;
     @Basic
     @Column(name = "role", nullable = true, insertable = true, updatable = true)
-    private Short role;
+    private Integer role;
     @Basic
     @Column(name = "role_override", nullable = true, insertable = true, updatable = true)
-    private Short roleOverride;
-    @ManyToOne
-    @JoinColumn(name = "context_id", referencedColumnName = "context_id", nullable = false, insertable = false, updatable = false)
+    private Integer roleOverride;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "context_id")
     private LtiContextEntity context;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private LtiUserEntity user;
+
+    protected LtiMembershipEntity() {
+    }
+
+    public LtiMembershipEntity(LtiContextEntity context, LtiUserEntity user, Integer role) {
+        assert user != null;
+        assert context != null;
+        this.user = user;
+        this.context = context;
+        this.role = role;
+    }
 
     public long getMembershipId() {
         return membershipId;
@@ -44,19 +60,19 @@ public class LtiMembershipEntity extends BaseEntity {
         this.membershipId = membershipId;
     }
 
-    public Short getRole() {
+    public Integer getRole() {
         return role;
     }
 
-    public void setRole(Short role) {
+    public void setRole(Integer role) {
         this.role = role;
     }
 
-    public Short getRoleOverride() {
+    public Integer getRoleOverride() {
         return roleOverride;
     }
 
-    public void setRoleOverride(Short roleOverride) {
+    public void setRoleOverride(Integer roleOverride) {
         this.roleOverride = roleOverride;
     }
 

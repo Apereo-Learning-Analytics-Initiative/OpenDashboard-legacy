@@ -124,9 +124,9 @@ public class LTIRequest {
 
         sb.append("FROM LtiKeyEntity k " +
                 "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
-                "LEFT JOIN LtiLinkEntity l ON c.context_id = l.context_id AND l.linkSha256 = :link " + // LtiLinkEntity
-                "LEFT JOIN LtiUserEntity u ON k.key_id = u.key_id AND u.userSha256 = :user " + // LtiUserEntity
-                "LEFT JOIN LtiMembershipEntity m ON u.user_id = m.user_id AND c.context_id = m.context_id" // LtiMembershipEntity
+                "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
+                "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
+                "LEFT JOIN c.memberships m ON u.userId = m.userId AND c.contextId = m.contextId" // LtiMembershipEntity
         );
 
         if (includeProfile) {

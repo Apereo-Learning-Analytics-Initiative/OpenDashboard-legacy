@@ -14,6 +14,8 @@
  */
 package ltistarter.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -36,10 +38,29 @@ public class LtiLinkEntity extends BaseEntity {
     @Basic
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "context_id")
     private LtiContextEntity context;
-    @OneToMany(mappedBy = "resultId")
+    @OneToMany(mappedBy = "link")
     private Set<LtiResultEntity> results;
+
+    protected LtiLinkEntity() {
+    }
+
+    /**
+     * @param linkKey the external id for this link
+     * @param context the LTI context
+     * @param title   OPTIONAL title of this link (null for none)
+     */
+    public LtiLinkEntity(String linkKey, LtiContextEntity context, String title) {
+        assert StringUtils.isNotBlank(linkKey);
+        assert context != null;
+        this.linkKey = linkKey;
+        this.linkSha256 = makeSHA256(linkKey);
+        this.context = context;
+        this.title = title;
+    }
 
     public long getLinkId() {
         return linkId;

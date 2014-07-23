@@ -45,12 +45,19 @@ public class LtiResultEntity extends BaseEntity {
     @Basic
     @Column(name = "retrieved_at", nullable = false, insertable = true, updatable = true)
     private Timestamp retrievedAt;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "link_id")
     private LtiLinkEntity link;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private LtiUserEntity user;
     @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "service_id")
     private LtiServiceEntity service;
+
+    protected LtiResultEntity() {
+    }
 
     public long getResultId() {
         return resultId;

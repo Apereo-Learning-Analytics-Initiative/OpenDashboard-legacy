@@ -182,5 +182,65 @@ public class JPATests extends BaseApplicationTest {
         assertEquals("AZCtitle", row1[2]);
     }
 
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiLinkRepository ltiLinkRepository;
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiMembershipRepository ltiMembershipRepository;
+
+    @SuppressWarnings("JpaQlInspection")
+    @Test
+    @Transactional
+    public void testJPAJoinsQuery() {
+        assertNotNull(entityManager);
+        assertNotNull(ltiKeyRepository);
+        assertNotNull(ltiContextRepository);
+        assertNotNull(ltiLinkRepository);
+        assertNotNull(ltiUserRepository);
+        assertNotNull(ltiMembershipRepository);
+        Query q;
+        List rows;
+
+        LtiKeyEntity key1 = ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
+        LtiKeyEntity key2 = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
+        LtiKeyEntity key3 = ltiKeyRepository.save(new LtiKeyEntity("3key", "secret"));
+        LtiKeyEntity key4 = ltiKeyRepository.save(new LtiKeyEntity("4key", "secret"));
+        LtiKeyEntity key5 = ltiKeyRepository.save(new LtiKeyEntity("5key", "secret"));
+
+        LtiUserEntity user1 = ltiUserRepository.save(new LtiUserEntity("azeckoski", null));
+        LtiUserEntity user2 = ltiUserRepository.save(new LtiUserEntity("bzeckoski", null));
+        LtiUserEntity user3 = ltiUserRepository.save(new LtiUserEntity("czeckoski", null));
+        LtiUserEntity user4 = ltiUserRepository.save(new LtiUserEntity("dzeckoski", null));
+
+        LtiContextEntity context1 = ltiContextRepository.save(new LtiContextEntity("AZcontext", key2, "AZCtitle", null));
+        LtiContextEntity context2 = ltiContextRepository.save(new LtiContextEntity("3context", key3, "3Ctitle", null));
+        LtiContextEntity context3 = ltiContextRepository.save(new LtiContextEntity("5context", key5, "5Ctitle", null));
+
+        LtiLinkEntity link1 = ltiLinkRepository.save(new LtiLinkEntity("AZlink", context1, "linkTitle"));
+
+        LtiMembershipEntity member1 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user1, LtiMembershipEntity.ROLE_STUDENT));
+        LtiMembershipEntity member2 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user2, LtiMembershipEntity.ROLE_STUDENT));
+        LtiMembershipEntity member3 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user3, LtiMembershipEntity.ROLE_INTRUCTOR));
+        LtiMembershipEntity member4 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user1, LtiMembershipEntity.ROLE_STUDENT));
+        LtiMembershipEntity member5 = ltiMembershipRepository.save(new LtiMembershipEntity(context1, user3, LtiMembershipEntity.ROLE_INTRUCTOR));
+
+        q = entityManager.createQuery("SELECT k FROM LtiKeyEntity k ORDER BY k.keyId");
+        List keys = q.getResultList();
+        assertNotNull(keys);
+        assertEquals(5, keys.size());
+
+        /*
+        q = entityManager.createQuery("SELECT k, c, l, m, u FROM LtiKeyEntity k " +
+            "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
+            "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
+            "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
+            "LEFT JOIN c.memberships m ON u.userId = m.userId AND c.contextId = m.contextId" // LtiMembershipEntity
+        );
+        rows = q.getResultList();
+        assertNotNull(rows);
+        assertEquals(2, rows.size());
+        */
+    }
 
 }
