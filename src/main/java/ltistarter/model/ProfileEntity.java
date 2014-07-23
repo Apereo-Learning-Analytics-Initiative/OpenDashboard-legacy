@@ -34,8 +34,8 @@ public class ProfileEntity extends BaseEntity {
     @Column(name = "profile_key", nullable = false, insertable = true, updatable = true, length = 4096)
     private String profileKey;
     @Basic
-    @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 2048)
-    private String displayname;
+    @Column(name = "displayName", nullable = true, insertable = true, updatable = true, length = 2048)
+    private String displayName;
     @Basic
     @Column(name = "email", nullable = true, insertable = true, updatable = true, length = 2048)
     private String email;
@@ -57,7 +57,7 @@ public class ProfileEntity extends BaseEntity {
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
     private Set<LtiUserEntity> users = new HashSet<>();
 
-    ProfileEntity() {
+    public ProfileEntity() {
     }
 
     public ProfileEntity(String profileKey, Date loginAt, String email) {
@@ -95,12 +95,12 @@ public class ProfileEntity extends BaseEntity {
         this.profileKey = profileKey;
     }
 
-    public String getDisplayname() {
-        return displayname;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplayname(String displayname) {
-        this.displayname = displayname;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getEmail() {

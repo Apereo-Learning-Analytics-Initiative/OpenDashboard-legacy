@@ -69,7 +69,7 @@ public class BaseEntity {
         this.version = version;
     }
 
-    public String makeSHA256(String text) {
+    public static String makeSHA256(String text) {
         String encode = null;
         if (StringUtils.isNotBlank(text)) {
             encode = org.apache.commons.codec.digest.DigestUtils.sha256Hex(text);

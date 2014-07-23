@@ -43,7 +43,7 @@ public class LtiKeyEntity extends BaseEntity {
     @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
     private Set<LtiContextEntity> contexts = new HashSet<>();
 
-    LtiKeyEntity() {
+    public LtiKeyEntity() {
     }
 
     /**

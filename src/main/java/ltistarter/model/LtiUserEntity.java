@@ -35,7 +35,7 @@ public class LtiUserEntity extends BaseEntity {
     private String userKey;
     @Basic
     @Column(name = "displayname", nullable = true, insertable = true, updatable = true, length = 4096)
-    private String displayname;
+    private String displayName;
     /**
      * Actual max for emails is 254 chars
      */
@@ -100,12 +100,12 @@ public class LtiUserEntity extends BaseEntity {
         this.userKey = userKey;
     }
 
-    public String getDisplayname() {
-        return displayname;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplayname(String displayname) {
-        this.displayname = displayname;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getEmail() {
