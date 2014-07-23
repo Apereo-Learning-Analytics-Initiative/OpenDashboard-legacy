@@ -397,6 +397,74 @@ public class LTIRequest {
         return result;
     }
 
+    public String getLtiContextTitle() {
+        return ltiContextTitle;
+    }
+
+    public String getLtiContextLabel() {
+        return ltiContextLabel;
+    }
+
+    public String getLtiLinkTitle() {
+        return ltiLinkTitle;
+    }
+
+    public String getLtiLinkDescription() {
+        return ltiLinkDescription;
+    }
+
+    public Locale getLtiPresLocale() {
+        return ltiPresLocale;
+    }
+
+    public String getLtiPresTarget() {
+        return ltiPresTarget;
+    }
+
+    public int getLtiPresWidth() {
+        return ltiPresWidth;
+    }
+
+    public int getLtiPresHeight() {
+        return ltiPresHeight;
+    }
+
+    public String getLtiPresReturnUrl() {
+        return ltiPresReturnUrl;
+    }
+
+    public String getLtiToolConsumerCode() {
+        return ltiToolConsumerCode;
+    }
+
+    public String getLtiToolConsumerVersion() {
+        return ltiToolConsumerVersion;
+    }
+
+    public String getLtiToolConsumerName() {
+        return ltiToolConsumerName;
+    }
+
+    public String getLtiToolConsumerEmail() {
+        return ltiToolConsumerEmail;
+    }
+
+    public String getLtiUserEmail() {
+        return ltiUserEmail;
+    }
+
+    public String getLtiUserDisplayName() {
+        return ltiUserDisplayName;
+    }
+
+    public String getLtiUserImageUrl() {
+        return ltiUserImageUrl;
+    }
+
+    public String getLtiUserRoles() {
+        return ltiUserRoles;
+    }
+
     public boolean isLoaded() {
         return loaded;
     }
