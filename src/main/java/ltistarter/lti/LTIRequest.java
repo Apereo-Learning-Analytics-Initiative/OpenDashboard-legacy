@@ -14,11 +14,12 @@
  */
 package ltistarter.lti;
 
-import ltistarter.model.BaseEntity;
+import ltistarter.model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -35,8 +36,34 @@ public class LTIRequest {
 
     final static Logger log = LoggerFactory.getLogger(LTIRequest.class);
 
+    public static final String LTI_KEY = "key";
+    public static final String LTI_CONTEXT_ID = "context_id";
+    public static final String LTI_LINK_ID = "link_id";
+    public static final String LTI_MESSAGE_TYPE = "lti_message_type";
+    public static final String LTI_SERVICE = "service";
+    public static final String LTI_SOURCEDID = "sourcedid";
+    public static final String LTI_USER_ID = "user_id";
+    public static final String LTI_VERSION = "lti_version";
+
+    public static final String LTI_MESSAGE_TYPE_BASIC = "basic-lti-launch-request";
+    public static final String LTI_MESSAGE_TYPE_PROXY_REG = "ToolProxyReregistrationRequest";
+    public static final String LTI_VERSION_1P0 = "LTI-1p0";
+    public static final String LTI_VERSION_2P0 = "LTI-2p0";
+
     private HttpServletRequest httpServletRequest;
 
+    // these are populated by the loadLTIDataFromDB operation
+    LtiKeyEntity key;
+    LtiContextEntity context;
+    LtiLinkEntity link;
+    LtiMembershipEntity membership;
+    LtiUserEntity user;
+    LtiServiceEntity service;
+    LtiResultEntity result;
+    //ProfileEntity profile;
+    boolean loaded = false;
+
+    // these are populated on construct
     String ltiContext;
     String ltiKey;
     String ltiLink;
@@ -46,20 +73,36 @@ public class LTIRequest {
     String ltiUser;
     String ltiVersion;
 
+    /**
+     * @param request an http servlet request
+     * @throws IllegalStateException if this is not an LTI request
+     */
     public LTIRequest(HttpServletRequest request) {
+        assert request != null : "cannot make an LtiRequest without a request";
         this.httpServletRequest = request;
         // extract the typical LTI data from the request
         if (!isLTIRequest(request)) {
             throw new IllegalStateException("Request is not an LTI request");
         }
-        ltiContext = request.getParameter("context_id");
-        ltiKey = request.getParameter("key");
-        ltiLink = request.getParameter("link_id");
-        ltiMessageType = request.getParameter("lti_message_type");
-        ltiService = request.getParameter("service");
-        ltiSourcedid = request.getParameter("sourcedid");
-        ltiUser = request.getParameter("user_id");
-        ltiVersion = request.getParameter("lti_version");
+        ltiContext = StringUtils.trimToNull(request.getParameter(LTI_CONTEXT_ID));
+        ltiKey = StringUtils.trimToNull(request.getParameter(LTI_KEY));
+        ltiLink = StringUtils.trimToNull(request.getParameter(LTI_LINK_ID));
+        ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
+        ltiService = StringUtils.trimToNull(request.getParameter(LTI_SERVICE));
+        ltiSourcedid = StringUtils.trimToNull(request.getParameter(LTI_SOURCEDID));
+        ltiUser = StringUtils.trimToNull(request.getParameter(LTI_USER_ID));
+        ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
+    }
+
+    /**
+     * @param request       an http servlet request
+     * @param entityManager the EM which will be used to load DB data (if possible) for this request
+     * @throws IllegalStateException if this is not an LTI request
+     */
+    public LTIRequest(HttpServletRequest request, EntityManager entityManager) {
+        this(request);
+        assert entityManager != null : "entityManager cannot be null";
+        this.loadLTIDataFromDB(entityManager);
     }
 
     public HttpServletRequest getHttpServletRequest() {
@@ -72,13 +115,13 @@ public class LTIRequest {
      */
     public static boolean isLTIRequest(ServletRequest request) {
         boolean valid = false;
-        String ltiVersion = request.getParameter("lti_version");
-        String ltiMessageType = request.getParameter("lti_message_type");
+        String ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
+        String ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
         if (ltiMessageType != null && ltiVersion != null) {
-            boolean goodMessageType = "basic-lti-launch-request".equals(ltiMessageType)
-                    || "ToolProxyReregistrationRequest".equals(ltiMessageType);
-            boolean goodLTIVersion = "LTI-1p0".equals(ltiVersion)
-                    || "LTI-2p0".equals(ltiVersion);
+            boolean goodMessageType = LTI_MESSAGE_TYPE_BASIC.equals(ltiMessageType)
+                    || LTI_MESSAGE_TYPE_PROXY_REG.equals(ltiMessageType);
+            boolean goodLTIVersion = LTI_VERSION_1P0.equals(ltiVersion)
+                    || LTI_VERSION_2P0.equals(ltiVersion);
             valid = goodMessageType && goodLTIVersion;
         }
         return valid;
@@ -95,76 +138,94 @@ public class LTIRequest {
         if (StringUtils.isBlank(sessionSalt)) {
             sessionSalt = "A7k254A0itEuQ9ndKJuZ";
         }
-        String composite = sessionSalt + "::" + request.getParameter("key") + "::" + request.getParameter("context_id") + "::" +
-                request.getParameter("link_id") + "::" + request.getParameter("user_id") + "::" + (System.currentTimeMillis() / 1800) +
+        String composite = sessionSalt + "::" + request.getParameter(LTI_KEY) + "::" + request.getParameter(LTI_CONTEXT_ID) + "::" +
+                request.getParameter(LTI_LINK_ID) + "::" + request.getParameter(LTI_USER_ID) + "::" + (System.currentTimeMillis() / 1800) +
                 request.getHeader("User-Agent") + "::" + request.getContextPath();
         return DigestUtils.md5Hex(composite);
     }
 
-    public Object loadLTIDataFromDB(EntityManager entityManager, HttpServletRequest request, boolean includeProfile) {
+    @Transactional
+    public boolean loadLTIDataFromDB(EntityManager entityManager) {
+        loaded = false;
+        if (ltiKey == null) {
+            // don't even attempt this without a key, it's pointless
+            return false;
+        }
         boolean includesService = (ltiService != null);
         boolean includesSourcedid = (ltiSourcedid != null);
-        assert StringUtils.isNotBlank(ltiKey) : "LTI request must contain key";
-        assert StringUtils.isNotBlank(ltiContext) : "LTI request must contain context_id";
-        assert StringUtils.isNotBlank(ltiLink) : "LTI request must contain link_id";
-        assert StringUtils.isNotBlank(ltiUser) : "LTI request must contain user_id";
 
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT k.keyId, k.keyKey, k.secret, c.contextId, c.title AS contextTitle, l.linkId, l.title AS linkTitle, u.userId, u.displayName AS userDisplayName, u.email AS userEmail, u.subscribe, u.userSha256, m.membershipId, m.role, m.roleOverride");
+        sb.append("SELECT k, c, l, m, u"); //k.keyId, k.keyKey, k.secret, c.contextId, c.title AS contextTitle, l.linkId, l.title AS linkTitle, u.userId, u.displayName AS userDisplayName, u.email AS userEmail, u.subscribe, u.userSha256, m.membershipId, m.role, m.roleOverride"); // 15
 
-        if (includeProfile) {
-            sb.append(", p.profileId, p.displayName AS profileDisplayName, p.email AS profileEmail, p.subscribe AS profileSubscribe");
-        }
         if (includesService) {
-            sb.append(", s.serviceId, s.serviceKey AS service");
+            sb.append(", s"); //, s.serviceId, s.serviceKey AS service"); // 2
         }
         if (includesSourcedid) {
-            sb.append(", r.resultId, r.sourcedid, r.grade");
+            sb.append(", r"); //, r.resultId, r.sourcedid, r.grade"); // 3
         }
+        /*
+        if (includeProfile) {
+            sb.append(", p"); //", p.profileId, p.displayName AS profileDisplayName, p.email AS profileEmail, p.subscribe AS profileSubscribe"); // 4
+        }*/
 
-        sb.append("FROM LtiKeyEntity k " +
+        sb.append(" FROM LtiKeyEntity k " +
                 "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
                 "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
-                "LEFT JOIN c.memberships m ON m.context = c " + // LtiMembershipEntity
-                "LEFT JOIN m.user u ON u.userSha256 = :user AND u = m.user " // LtiUserEntity
+                "LEFT JOIN c.memberships m " + // LtiMembershipEntity
+                "LEFT JOIN m.user u ON u.userSha256 = :user " // LtiUserEntity
         );
 
-        if (includeProfile) {
-            sb.append(" LEFT JOIN u.profile p ON u.profileId = p.profileId"); // ProfileEntity
-        }
         if (includesService) {
             sb.append(" LEFT JOIN k.services s ON s.serviceSha256 = :service"); // LtiServiceEntity
         }
         if (includesSourcedid) {
-            sb.append(" LEFT JOIN u.results r ON r.user = u AND r.link = l "); // LtiResultEntity
+            sb.append(" LEFT JOIN u.results r ON r.sourcedidSha256 = :sourcedid"); // LtiResultEntity
         }
-        sb.append(" WHERE m.context = c AND m.user = u AND k.keySha256 = :key");
+        /*
+        if (includeProfile) {
+            sb.append(" LEFT JOIN u.profile p"); // ProfileEntity
+        }*/
+        sb.append(" WHERE k.keySha256 = :key AND (m IS NULL OR (m.context = c AND m.user = u))");
+        /*
+        if (includeProfile) {
+            sb.append(" AND (u IS NULL OR u.profile = p)");
+        }*/
 
         String sql = sb.toString();
         Query q = entityManager.createQuery(sql);
         q.setMaxResults(1);
+        q.setParameter("key", BaseEntity.makeSHA256(ltiKey));
         q.setParameter("context", BaseEntity.makeSHA256(ltiContext));
         q.setParameter("link", BaseEntity.makeSHA256(ltiLink));
         q.setParameter("user", BaseEntity.makeSHA256(ltiUser));
-        q.setParameter("key", BaseEntity.makeSHA256(ltiKey));
-        // TODO set optional params
-        List<Object[]> rows = q.getResultList();
-
-        /*
-        // echo(sql);
-        $parms = array(
-                ':key' => lti_sha256(request.getParameter("key")),
-                ':context' => lti_sha256(request.getParameter("context_id")),
-                ':link' => lti_sha256(request.getParameter("link_id")),
-                ':user' => lti_sha256(request.getParameter("user_id")));
-
-        if ( request.getParameter("service") ) {
-            $parms[':service") = lti_sha256(request.getParameter("service"));
+        if (includesService) {
+            q.setParameter(LTI_SERVICE, BaseEntity.makeSHA256(ltiService));
         }
-
-        $row = pdoRowDie($pdo, sql, $parms);
-        */
-        return null; // TODO
+        if (includesSourcedid) {
+            q.setParameter(LTI_SOURCEDID, BaseEntity.makeSHA256(ltiSourcedid));
+        }
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = q.getResultList();
+        if (rows != null && !rows.isEmpty()) {
+            // k, c, l, m, u, s, r
+            Object[] row = rows.get(0);
+            if (row.length > 0) key = (LtiKeyEntity) row[0];
+            if (row.length > 1) context = (LtiContextEntity) row[1];
+            if (row.length > 2) link = (LtiLinkEntity) row[2];
+            if (row.length > 3) membership = (LtiMembershipEntity) row[3];
+            if (row.length > 4) user = (LtiUserEntity) row[4];
+            if (includesService && includesSourcedid) {
+                if (row.length > 5) service = (LtiServiceEntity) row[5];
+                if (row.length > 6) result = (LtiResultEntity) row[6];
+            } else if (includesService) {
+                if (row.length > 5) service = (LtiServiceEntity) row[5];
+            } else if (includesSourcedid) {
+                if (row.length > 5) result = (LtiResultEntity) row[5];
+            }
+            loaded = true;
+            return true;
+        }
+        return false;
     }
 
     public String getLtiContext() {
@@ -197,6 +258,38 @@ public class LTIRequest {
 
     public String getLtiVersion() {
         return ltiVersion;
+    }
+
+    public LtiKeyEntity getKey() {
+        return key;
+    }
+
+    public LtiContextEntity getContext() {
+        return context;
+    }
+
+    public LtiLinkEntity getLink() {
+        return link;
+    }
+
+    public LtiMembershipEntity getMembership() {
+        return membership;
+    }
+
+    public LtiUserEntity getUser() {
+        return user;
+    }
+
+    public LtiServiceEntity getService() {
+        return service;
+    }
+
+    public LtiResultEntity getResult() {
+        return result;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
     }
 
 }

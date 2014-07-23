@@ -50,12 +50,15 @@ public class LtiServiceEntity extends BaseEntity {
 
     /**
      * @param serviceKey the unique external key
+     * @param key the key which this service is part of
      * @param format     [OPTIONAL] format or null if there is none
      */
-    public LtiServiceEntity(String serviceKey, String format) {
+    public LtiServiceEntity(String serviceKey, LtiKeyEntity key, String format) {
         assert StringUtils.isNotBlank(serviceKey);
+        assert key != null;
         this.serviceKey = serviceKey;
         this.serviceSha256 = makeSHA256(serviceKey);
+        this.ltiKey = key;
         this.format = format;
     }
 

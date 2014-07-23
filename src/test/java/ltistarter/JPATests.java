@@ -201,6 +201,7 @@ public class JPATests extends BaseApplicationTest {
         assertNotNull(ltiMembershipRepository);
         Query q;
         List rows;
+        Object[] row;
 
         LtiKeyEntity key1 = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
         LtiKeyEntity key2 = ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
@@ -234,13 +235,13 @@ public class JPATests extends BaseApplicationTest {
         assertNotNull(lke);
         assertEquals(key1, lke);
 
-        q = entityManager.createQuery("SELECT k, c, l, m, u FROM LtiKeyEntity k " +
-            "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
-            "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
-                        "LEFT JOIN c.memberships m " + // LtiMembershipEntity
-            "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
-                        "WHERE m.context = c AND m.user = u AND k.keySha256 = :key"
-        );
+        String jpql = "SELECT k, c, l, m, u FROM LtiKeyEntity k " +
+                "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
+                "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
+                "LEFT JOIN c.memberships m " + // LtiMembershipEntity
+                "LEFT JOIN m.user u ON u.userSha256 = :user " + // LtiUserEntity
+                "WHERE k.keySha256 = :key AND (m IS NULL OR (m.context = c AND m.user = u))";
+        q = entityManager.createQuery(jpql);
         // BaseEntity.makeSHA256 is used to be closer to real use but we could have just used the SHA fields like getKeySha256()
         q.setParameter("context", BaseEntity.makeSHA256(context1.getContextKey()));
         q.setParameter("link", BaseEntity.makeSHA256(link1.getLinkKey()));
@@ -249,6 +250,65 @@ public class JPATests extends BaseApplicationTest {
         rows = q.getResultList();
         assertNotNull(rows);
         assertEquals(1, rows.size());
+        row = ((Object[]) rows.get(0));
+        assertEquals(5, row.length);
+        assertNotNull(row[0]);
+        assertNotNull(row[1]);
+        assertNotNull(row[2]);
+        assertNotNull(row[3]);
+        assertNotNull(row[4]);
+
+        // no link
+        q = entityManager.createQuery(jpql);
+        // BaseEntity.makeSHA256 is used to be closer to real use but we could have just used the SHA fields like getKeySha256()
+        q.setParameter("context", BaseEntity.makeSHA256(context1.getContextKey()));
+        q.setParameter("link", ""); // empty link id
+        q.setParameter("user", BaseEntity.makeSHA256(user1.getUserKey()));
+        q.setParameter("key", BaseEntity.makeSHA256(key1.getKeyKey()));
+        rows = q.getResultList();
+        assertNotNull(rows);
+        assertEquals(1, rows.size());
+        row = ((Object[]) rows.get(0));
+        assertEquals(5, row.length);
+        assertNotNull(row[0]);
+        assertNotNull(row[1]);
+        assertNull(row[2]);
+        assertNotNull(row[3]);
+        assertNotNull(row[4]);
+
+        // no link, user, or memberships
+        q = entityManager.createQuery(jpql);
+        q.setParameter("context", BaseEntity.makeSHA256(context3.getContextKey()));
+        q.setParameter("link", null); // empty link id
+        q.setParameter("user", null);
+        q.setParameter("key", BaseEntity.makeSHA256(key5.getKeyKey()));
+        rows = q.getResultList();
+        assertNotNull(rows);
+        assertEquals(1, rows.size());
+        row = ((Object[]) rows.get(0));
+        assertEquals(5, row.length);
+        assertNotNull(row[0]);
+        assertNotNull(row[1]);
+        assertNull(row[2]);
+        assertNull(row[3]);
+        assertNull(row[4]);
+
+        // only the key
+        q = entityManager.createQuery(jpql);
+        q.setParameter("context", null);
+        q.setParameter("link", null);
+        q.setParameter("user", null);
+        q.setParameter("key", BaseEntity.makeSHA256(key5.getKeyKey()));
+        rows = q.getResultList();
+        assertNotNull(rows);
+        assertEquals(1, rows.size());
+        row = ((Object[]) rows.get(0));
+        assertEquals(5, row.length);
+        assertNotNull(row[0]);
+        assertNull(row[1]);
+        assertNull(row[2]);
+        assertNull(row[3]);
+        assertNull(row[4]);
     }
 
 }
