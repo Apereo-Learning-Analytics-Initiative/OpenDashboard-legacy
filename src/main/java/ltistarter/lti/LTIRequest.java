@@ -30,15 +30,18 @@ import java.util.List;
 /**
  * LTI Request object holds all the details for a valid LTI request
  * (including data populated on the validated launch)
+ *
+ * This basically does everything in lti_db.php from tsugi (except the OAuth stuff, that is handled by spring security)
+ *
  */
 @SuppressWarnings("deprecation")
 public class LTIRequest {
 
     final static Logger log = LoggerFactory.getLogger(LTIRequest.class);
 
-    public static final String LTI_KEY = "key";
+    public static final String LTI_CONSUMER_KEY = "oauth_consumer_key";
     public static final String LTI_CONTEXT_ID = "context_id";
-    public static final String LTI_LINK_ID = "link_id";
+    public static final String LTI_LINK_ID = "resource_link_id";
     public static final String LTI_MESSAGE_TYPE = "lti_message_type";
     public static final String LTI_SERVICE = "service";
     public static final String LTI_SOURCEDID = "sourcedid";
@@ -62,10 +65,11 @@ public class LTIRequest {
     LtiResultEntity result;
     //ProfileEntity profile;
     boolean loaded = false;
+    boolean complete = false;
 
     // these are populated on construct
     String ltiContext;
-    String ltiKey;
+    String ltiConsumerKey;
     String ltiLink;
     String ltiMessageType;
     String ltiService;
@@ -84,13 +88,17 @@ public class LTIRequest {
         if (!isLTIRequest(request)) {
             throw new IllegalStateException("Request is not an LTI request");
         }
+        // These 4 really need to be populated for this LTI request to make any sense...
+        ltiConsumerKey = StringUtils.trimToNull(request.getParameter(LTI_CONSUMER_KEY));
         ltiContext = StringUtils.trimToNull(request.getParameter(LTI_CONTEXT_ID));
-        ltiKey = StringUtils.trimToNull(request.getParameter(LTI_KEY));
         ltiLink = StringUtils.trimToNull(request.getParameter(LTI_LINK_ID));
+        ltiUser = StringUtils.trimToNull(request.getParameter(LTI_USER_ID));
+        if (ltiConsumerKey != null && ltiContext != null && ltiLink != null && ltiUser != null) {
+            complete = true;
+        }
         ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
         ltiService = StringUtils.trimToNull(request.getParameter(LTI_SERVICE));
         ltiSourcedid = StringUtils.trimToNull(request.getParameter(LTI_SOURCEDID));
-        ltiUser = StringUtils.trimToNull(request.getParameter(LTI_USER_ID));
         ltiVersion = StringUtils.trimToNull(request.getParameter(LTI_VERSION));
     }
 
@@ -138,16 +146,23 @@ public class LTIRequest {
         if (StringUtils.isBlank(sessionSalt)) {
             sessionSalt = "A7k254A0itEuQ9ndKJuZ";
         }
-        String composite = sessionSalt + "::" + request.getParameter(LTI_KEY) + "::" + request.getParameter(LTI_CONTEXT_ID) + "::" +
+        String composite = sessionSalt + "::" + request.getParameter(LTI_CONSUMER_KEY) + "::" + request.getParameter(LTI_CONTEXT_ID) + "::" +
                 request.getParameter(LTI_LINK_ID) + "::" + request.getParameter(LTI_USER_ID) + "::" + (System.currentTimeMillis() / 1800) +
                 request.getHeader("User-Agent") + "::" + request.getContextPath();
         return DigestUtils.md5Hex(composite);
     }
 
+    /**
+     * Loads up the data which is referenced in this LTI request (assuming it can be found in the DB)
+     *
+     * @param entityManager the EM used to load the data (must be set)
+     * @return true if any data was loaded OR false if none could be loaded (because no matching data was found or the input keys are not set)
+     */
     @Transactional
     public boolean loadLTIDataFromDB(EntityManager entityManager) {
+        assert entityManager != null;
         loaded = false;
-        if (ltiKey == null) {
+        if (ltiConsumerKey == null) {
             // don't even attempt this without a key, it's pointless
             return false;
         }
@@ -194,7 +209,7 @@ public class LTIRequest {
         String sql = sb.toString();
         Query q = entityManager.createQuery(sql);
         q.setMaxResults(1);
-        q.setParameter("key", BaseEntity.makeSHA256(ltiKey));
+        q.setParameter("key", BaseEntity.makeSHA256(ltiConsumerKey));
         q.setParameter("context", BaseEntity.makeSHA256(ltiContext));
         q.setParameter("link", BaseEntity.makeSHA256(ltiLink));
         q.setParameter("user", BaseEntity.makeSHA256(ltiUser));
@@ -232,8 +247,8 @@ public class LTIRequest {
         return ltiContext;
     }
 
-    public String getLtiKey() {
-        return ltiKey;
+    public String getLtiConsumerKey() {
+        return ltiConsumerKey;
     }
 
     public String getLtiLink() {
@@ -290,6 +305,10 @@ public class LTIRequest {
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    public boolean isComplete() {
+        return complete;
     }
 
 }

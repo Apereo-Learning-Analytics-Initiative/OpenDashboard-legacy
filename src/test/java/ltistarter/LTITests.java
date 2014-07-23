@@ -110,11 +110,12 @@ public class LTITests extends BaseApplicationTest {
         request = new MockHttpServletRequest(); // LTI request (minimal)
         request.setParameter(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0);
         request.setParameter(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC);
-        request.setParameter(LTIRequest.LTI_KEY, key1.getKeyKey());
+        request.setParameter(LTIRequest.LTI_CONSUMER_KEY, key1.getKeyKey());
         ltiRequest = new LTIRequest(request);
+        assertFalse(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
         assertNotNull(ltiRequest.getLtiMessageType());
-        assertNotNull(ltiRequest.getLtiKey());
+        assertNotNull(ltiRequest.getLtiConsumerKey());
         assertNull(ltiRequest.getKey()); // not loaded yet
         boolean loaded = ltiRequest.loadLTIDataFromDB(entityManager); // load up the data
         assertTrue(loaded);
@@ -124,15 +125,16 @@ public class LTITests extends BaseApplicationTest {
         request = new MockHttpServletRequest(); // LTI request (full)
         request.setParameter(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0);
         request.setParameter(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC);
-        request.setParameter(LTIRequest.LTI_KEY, key1.getKeyKey());
+        request.setParameter(LTIRequest.LTI_CONSUMER_KEY, key1.getKeyKey());
         request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
         request.setParameter(LTIRequest.LTI_LINK_ID, link1.getLinkKey());
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
         ltiRequest = new LTIRequest(request, entityManager);
         assertTrue(ltiRequest.isLoaded());
+        assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
         assertNotNull(ltiRequest.getLtiMessageType());
-        assertNotNull(ltiRequest.getLtiKey());
+        assertNotNull(ltiRequest.getLtiConsumerKey());
         assertNotNull(ltiRequest.getKey());
         assertEquals(key1, ltiRequest.getKey());
         assertNotNull(ltiRequest.getContext());
@@ -145,7 +147,7 @@ public class LTITests extends BaseApplicationTest {
         request = new MockHttpServletRequest(); // LTI request (gaps)
         request.setParameter(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0);
         request.setParameter(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC);
-        request.setParameter(LTIRequest.LTI_KEY, key1.getKeyKey());
+        request.setParameter(LTIRequest.LTI_CONSUMER_KEY, key1.getKeyKey());
         request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
         request.setParameter(LTIRequest.LTI_LINK_ID, "invalid_link");
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
@@ -153,9 +155,10 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
         ltiRequest = new LTIRequest(request, entityManager);
         assertTrue(ltiRequest.isLoaded());
+        assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
         assertNotNull(ltiRequest.getLtiMessageType());
-        assertNotNull(ltiRequest.getLtiKey());
+        assertNotNull(ltiRequest.getLtiConsumerKey());
         assertNotNull(ltiRequest.getKey());
         assertNotNull(ltiRequest.getContext());
         assertNull(ltiRequest.getLink());
