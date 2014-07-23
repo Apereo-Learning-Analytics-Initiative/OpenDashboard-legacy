@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("UnusedAssignment")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LTITests extends BaseApplicationTest {
 
