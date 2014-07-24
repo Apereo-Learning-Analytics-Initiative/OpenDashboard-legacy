@@ -15,6 +15,7 @@
 package ltistarter.lti;
 
 import ltistarter.model.*;
+import ltistarter.repository.AllRepositories;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -22,12 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * LTI Request object holds all the details for a valid LTI request
@@ -88,11 +87,11 @@ public class LTIRequest {
     boolean complete = false;
 
     // these are populated on construct
-    String ltiContext;
+    String ltiContextId;
     String ltiContextTitle;
     String ltiContextLabel;
     String ltiConsumerKey;
-    String ltiLink;
+    String ltiLinkId;
     String ltiLinkTitle;
     String ltiLinkDescription;
     Locale ltiPresLocale;
@@ -101,17 +100,18 @@ public class LTIRequest {
     int ltiPresHeight;
     String ltiPresReturnUrl;
     String ltiMessageType;
-    String ltiService;
+    String ltiServiceId;
     String ltiSourcedid;
     String ltiToolConsumerCode;
     String ltiToolConsumerVersion;
     String ltiToolConsumerName;
     String ltiToolConsumerEmail;
-    String ltiUser;
+    String ltiUserId;
     String ltiUserEmail;
     String ltiUserDisplayName;
     String ltiUserImageUrl;
-    String ltiUserRoles;
+    String rawUserRoles;
+    Set<String> ltiUserRoles;
     String ltiVersion;
 
     /**
@@ -129,14 +129,14 @@ public class LTIRequest {
         ltiVersion = getParam(LTI_VERSION);
         // These 4 really need to be populated for this LTI request to make any sense...
         ltiConsumerKey = getParam(LTI_CONSUMER_KEY);
-        ltiContext = getParam(LTI_CONTEXT_ID);
-        ltiLink = getParam(LTI_LINK_ID);
-        ltiUser = getParam(LTI_USER_ID);
-        if (ltiConsumerKey != null && ltiContext != null && ltiLink != null && ltiUser != null) {
+        ltiContextId = getParam(LTI_CONTEXT_ID);
+        ltiLinkId = getParam(LTI_LINK_ID);
+        ltiUserId = getParam(LTI_USER_ID);
+        if (ltiConsumerKey != null && ltiContextId != null && ltiLinkId != null && ltiUserId != null) {
             complete = true;
         }
         // OPTIONAL fields below
-        ltiService = getParam(LTI_SERVICE);
+        ltiServiceId = getParam(LTI_SERVICE);
         ltiSourcedid = getParam(LTI_SOURCEDID);
         ltiUserEmail = getParam(LTI_USER_EMAIL);
         ltiUserImageUrl = getParam(LTI_USER_IMAGE_URL);
@@ -158,7 +158,9 @@ public class LTIRequest {
         ltiToolConsumerVersion = getParam(LTI_TOOL_CONSUMER_VERSION);
         ltiToolConsumerName = getParam(LTI_TOOL_CONSUMER_NAME);
         ltiToolConsumerEmail = getParam(LTI_TOOL_CONSUMER_EMAIL);
-        ltiUserRoles = getParam(LTI_USER_ROLES);
+        rawUserRoles = getParam(LTI_USER_ROLES);
+        String[] splitRoles = StringUtils.split(StringUtils.trimToEmpty(rawUserRoles), ",");
+        ltiUserRoles = new HashSet<>(Arrays.asList(splitRoles));
         // user displayName requires some trickyness
         if (request.getParameter(LTI_USER_NAME_FULL) != null) {
             ltiUserDisplayName = getParam(LTI_USER_NAME_FULL);
@@ -173,13 +175,13 @@ public class LTIRequest {
 
     /**
      * @param request       an http servlet request
-     * @param entityManager the EM which will be used to load DB data (if possible) for this request
+     * @param repos the repos accessor which will be used to load DB data (if possible) for this request
      * @throws IllegalStateException if this is not an LTI request
      */
-    public LTIRequest(HttpServletRequest request, EntityManager entityManager) {
+    public LTIRequest(HttpServletRequest request, AllRepositories repos) {
         this(request);
-        assert entityManager != null : "entityManager cannot be null";
-        this.loadLTIDataFromDB(entityManager);
+        assert repos != null : "AllRepositories cannot be null";
+        this.loadLTIDataFromDB(repos);
     }
 
     /**
@@ -195,28 +197,28 @@ public class LTIRequest {
     }
 
     public boolean isRoleAdministrator() {
-        return (ltiUserRoles != null && ltiUserRoles.toLowerCase().contains("administrator"));
+        return (rawUserRoles != null && rawUserRoles.toLowerCase().contains("administrator"));
     }
 
     public boolean isRoleInstructor() {
-        return (ltiUserRoles != null && ltiUserRoles.toLowerCase().contains("instructor"));
+        return (rawUserRoles != null && rawUserRoles.toLowerCase().contains("instructor"));
     }
 
     /**
      * Loads up the data which is referenced in this LTI request (assuming it can be found in the DB)
      *
-     * @param entityManager the EM used to load the data (must be set)
+     * @param repos the repos accessor used to load the data (must be set)
      * @return true if any data was loaded OR false if none could be loaded (because no matching data was found or the input keys are not set)
      */
     @Transactional
-    public boolean loadLTIDataFromDB(EntityManager entityManager) {
-        assert entityManager != null;
+    public boolean loadLTIDataFromDB(AllRepositories repos) {
+        assert repos != null;
         loaded = false;
         if (ltiConsumerKey == null) {
             // don't even attempt this without a key, it's pointless
             return false;
         }
-        boolean includesService = (ltiService != null);
+        boolean includesService = (ltiServiceId != null);
         boolean includesSourcedid = (ltiSourcedid != null);
 
         StringBuilder sb = new StringBuilder();
@@ -257,14 +259,14 @@ public class LTIRequest {
         }*/
 
         String sql = sb.toString();
-        Query q = entityManager.createQuery(sql);
+        Query q = repos.entityManager.createQuery(sql);
         q.setMaxResults(1);
         q.setParameter("key", BaseEntity.makeSHA256(ltiConsumerKey));
-        q.setParameter("context", BaseEntity.makeSHA256(ltiContext));
-        q.setParameter("link", BaseEntity.makeSHA256(ltiLink));
-        q.setParameter("user", BaseEntity.makeSHA256(ltiUser));
+        q.setParameter("context", BaseEntity.makeSHA256(ltiContextId));
+        q.setParameter("link", BaseEntity.makeSHA256(ltiLinkId));
+        q.setParameter("user", BaseEntity.makeSHA256(ltiUserId));
         if (includesService) {
-            q.setParameter("service", BaseEntity.makeSHA256(ltiService));
+            q.setParameter("service", BaseEntity.makeSHA256(ltiServiceId));
         }
         if (includesSourcedid) {
             q.setParameter("sourcedid", BaseEntity.makeSHA256(ltiSourcedid));
@@ -291,6 +293,182 @@ public class LTIRequest {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void updateLTIDataInDB(AllRepositories repos) {
+        assert repos != null : "access to the repos is required";
+        assert loaded : "Data must be loaded before it can be updated";
+        assert key != null : "Key data must not be null to update data";
+        repos.entityManager.merge(key); // reconnect the key object for this transaction
+
+        //$actions = array();
+        if (context == null && ltiContextId != null) {
+            LtiContextEntity newContext = new LtiContextEntity(ltiContextId, key, ltiContextTitle, null);
+            context = repos.contexts.save(newContext);
+            log.info("LTIupdate: Inserted context id=" + ltiContextId);
+        } else if (context != null) {
+            repos.entityManager.merge(context); // reconnect object for this transaction
+            log.info("LTIupdate: Reconnected existing context id=" + ltiContextId);
+        }
+
+        if (link == null && ltiLinkId != null) {
+            LtiLinkEntity newLink = new LtiLinkEntity(ltiLinkId, context, ltiLinkTitle);
+            link = repos.links.save(newLink);
+            log.info("LTIupdate: Inserted link id=" + ltiLinkId);
+        } else if (link != null) {
+            repos.entityManager.merge(link); // reconnect object for this transaction
+            log.info("LTIupdate: Reconnected existing link id=" + ltiLinkId);
+        }
+
+        /*
+        $user_displayname = isset($post['user_displayname']) ? $post['user_displayname'] : null;
+        $user_email = isset($post['user_email']) ? $post['user_email'] : null;
+        if ( user_id === null && isset($post['user_id']) ) {
+            String sql = "INSERT INTO {$p}lti_user
+            ( user_key, user_sha256, displayname, email, key_id, created_at, updated_at ) VALUES
+                    ( :user_key, :user_sha256, :displayname, :email, :key_id, NOW(), NOW() )";
+            pdoQueryDie($pdo, $sql, array(
+                            ':user_key' => $post['user_id'],
+                    ':user_sha256' => lti_sha256($post['user_id']),
+                    ':displayname' => $user_displayname,
+                    ':email' => $user_email,
+                    ':key_id' => key_id']));
+            user_id = $pdo->lastInsertId();
+            user_email = $user_email;
+            user_sha256 = lti_sha256($post['user_id']);
+            user_displayname = $user_displayname;
+            $actions[] = "=== Inserted user id=".user_id']." ".user_email'];
+        }
+
+        if ( membership_id === null && context_id'] !== null && user_id'] !== null ) {
+            String sql = "INSERT INTO {$p}lti_membership
+            ( context_id, user_id, role, created_at, updated_at ) VALUES
+                    ( :context_id, :user_id, :role, NOW(), NOW() )";
+            pdoQueryDie($pdo, $sql, array(
+                            ':context_id' => context_id'],
+                    ':user_id' => user_id'],
+                    ':role' => $post['role']));
+            membership_id = $pdo->lastInsertId();
+            role = $post['role'];
+            $actions[] = "=== Inserted membership id=".membership_id']." role=".role'].
+            " user=".user_id']." context=".context_id'];
+        }
+
+        // We need to handle the case where the service URL changes but we already have a sourcedid
+        $oldserviceid = service_id'];
+        if ( service_id === null && $post['service'] && $post['sourcedid'] ) {
+            String sql = "INSERT INTO {$p}lti_service
+            ( service_key, service_sha256, key_id, created_at, updated_at ) VALUES
+                    ( :service_key, :service_sha256, :key_id, NOW(), NOW() )";
+            pdoQueryDie($pdo, $sql, array(
+                            ':service_key' => $post['service'],
+                    ':service_sha256' => lti_sha256($post['service']),
+                    ':key_id' => key_id']));
+            service_id = $pdo->lastInsertId();
+            service = $post['service'];
+            $actions[] = "=== Inserted service id=".service_id']." ".$post['service'];
+        }
+
+        // If we just created a new service entry but we already had a result entry, update it
+        if ( $oldserviceid === null && result_id'] !== null && service_id'] !== null && $post['service'] && $post['sourcedid'] ) {
+            String sql = "UPDATE {$p}lti_result SET service_id = :service_id WHERE result_id = :result_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':service_id' => service_id'],
+                    ':result_id' => result_id']));
+            $actions[] = "=== Updated result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        }
+
+        // If we don'have a result but do have a service - link them together
+        if ( result_id === null && service_id'] !== null && $post['service'] && $post['sourcedid'] ) {
+            String sql = "INSERT INTO {$p}lti_result
+            ( sourcedid, sourcedid_sha256, service_id, link_id, user_id, created_at, updated_at ) VALUES
+                    ( :sourcedid, :sourcedid_sha256, :service_id, :link_id, :user_id, NOW(), NOW() )";
+            pdoQueryDie($pdo, $sql, array(
+                            ':sourcedid' => $post['sourcedid'],
+                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
+                    ':service_id' => service_id'],
+                    ':link_id' => link_id'],
+                    ':user_id' => user_id']));
+            result_id = $pdo->lastInsertId();
+            sourcedid = $post['sourcedid'];
+            $actions[] = "=== Inserted result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        }
+
+        // If we don'have a result and do not have a service - just store the result (prep for LTI 2.0)
+        if ( result_id === null && service_id === null && ! $post['service'] && $post['sourcedid'] ) {
+            String sql = "INSERT INTO {$p}lti_result
+            ( sourcedid, sourcedid_sha256, link_id, user_id, created_at, updated_at ) VALUES
+                    ( :sourcedid, :sourcedid_sha256, :link_id, :user_id, NOW(), NOW() )";
+            pdoQueryDie($pdo, $sql, array(
+                            ':sourcedid' => $post['sourcedid'],
+                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
+                    ':link_id' => link_id'],
+                    ':user_id' => user_id']));
+            result_id = $pdo->lastInsertId();
+            $actions[] = "=== Inserted LTI 2.0 result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        }
+
+        // Here we handle updates to sourcedid
+        if ( result_id'] != null && $post['sourcedid'] != null && $post['sourcedid'] != sourcedid'] ) {
+            String sql = "UPDATE {$p}lti_result
+            SET sourcedid = :sourcedid, sourcedid_sha256 = :sourcedid_sha256
+            WHERE result_id = :result_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':sourcedid' => $post['sourcedid'],
+                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
+                    ':result_id' => result_id']));
+            sourcedid = $post['sourcedid'];
+            $actions[] = "=== Updated sourcedid=".sourcedid'];
+        }
+
+        // Here we handle updates to context_title, link_title, user_displayname, user_email, or role
+        if ( isset($post['context_title']) && $post['context_title'] != context_title'] ) {
+            String sql = "UPDATE {$p}lti_context SET title = :title WHERE context_id = :context_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':title' => $post['context_title'],
+                    ':context_id' => context_id']));
+            context_title = $post['context_title'];
+            $actions[] = "=== Updated context=".context_id']." title=".$post['context_title'];
+        }
+
+        if ( isset($post['link_title']) && $post['link_title'] != link_title'] ) {
+            String sql = "UPDATE {$p}lti_link SET title = :title WHERE link_id = :link_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':title' => $post['link_title'],
+                    ':link_id' => link_id']));
+            link_title = $post['link_title'];
+            $actions[] = "=== Updated link=".link_id']." title=".$post['link_title'];
+        }
+
+        if ( isset($post['user_displayname']) && $post['user_displayname'] != user_displayname'] && strlen($post['user_displayname']) > 0 ) {
+            String sql = "UPDATE {$p}lti_user SET displayname = :displayname WHERE user_id = :user_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':displayname' => $post['user_displayname'],
+                    ':user_id' => user_id']));
+            user_displayname = $post['user_displayname'];
+            $actions[] = "=== Updated user=".user_id']." displayname=".$post['user_displayname'];
+        }
+
+        if ( isset($post['user_email']) && $post['user_email'] != user_email'] && strlen($post['user_email']) > 0 ) {
+            String sql = "UPDATE {$p}lti_user SET email = :email WHERE user_id = :user_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':email' => $post['user_email'],
+                    ':user_id' => user_id']));
+            user_email = $post['user_email'];
+            $actions[] = "=== Updated user=".user_id']." email=".$post['user_email'];
+        }
+
+        if ( isset($post['role']) && $post['role'] != role'] ) {
+            String sql = "UPDATE {$p}lti_membership SET role = :role WHERE membership_id = :membership_id";
+            pdoQueryDie($pdo, $sql, array(
+                            ':role' => $post['role'],
+                    ':membership_id' => membership_id']));
+            role = $post['role'];
+            $actions[] = "=== Updated membership=".membership_id']." role=".$post['role'];
+        }
+        */
+
     }
 
     // STATICS
@@ -337,32 +515,32 @@ public class LTIRequest {
         return httpServletRequest;
     }
 
-    public String getLtiContext() {
-        return ltiContext;
+    public String getLtiContextId() {
+        return ltiContextId;
     }
 
     public String getLtiConsumerKey() {
         return ltiConsumerKey;
     }
 
-    public String getLtiLink() {
-        return ltiLink;
+    public String getLtiLinkId() {
+        return ltiLinkId;
     }
 
     public String getLtiMessageType() {
         return ltiMessageType;
     }
 
-    public String getLtiService() {
-        return ltiService;
+    public String getLtiServiceId() {
+        return ltiServiceId;
     }
 
     public String getLtiSourcedid() {
         return ltiSourcedid;
     }
 
-    public String getLtiUser() {
-        return ltiUser;
+    public String getLtiUserId() {
+        return ltiUserId;
     }
 
     public String getLtiVersion() {
@@ -461,7 +639,11 @@ public class LTIRequest {
         return ltiUserImageUrl;
     }
 
-    public String getLtiUserRoles() {
+    public String getRawUserRoles() {
+        return rawUserRoles;
+    }
+
+    public Set<String> getLtiUserRoles() {
         return ltiUserRoles;
     }
 

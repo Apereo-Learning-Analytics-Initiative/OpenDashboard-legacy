@@ -24,47 +24,32 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import static org.junit.Assert.*;
 
-@SuppressWarnings("UnusedAssignment")
+@SuppressWarnings({"UnusedAssignment", "SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LTITests extends BaseApplicationTest {
 
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiKeyRepository ltiKeyRepository;
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiUserRepository ltiUserRepository;
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
-    ProfileRepository profileRepository;
-    @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
-    SSOKeyRepository ssoKeyRepository;
-    @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiContextRepository ltiContextRepository;
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiLinkRepository ltiLinkRepository;
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiMembershipRepository ltiMembershipRepository;
     @Autowired
-    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiServiceRepository ltiServiceRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
+    @Autowired
+    AllRepositories allRepositories;
 
     @Test
     @Transactional
     public void testLTIRequest() {
-        assertNotNull(entityManager);
+        assertNotNull(allRepositories);
         assertNotNull(ltiKeyRepository);
         assertNotNull(ltiContextRepository);
         assertNotNull(ltiLinkRepository);
@@ -117,7 +102,7 @@ public class LTITests extends BaseApplicationTest {
         assertNotNull(ltiRequest.getLtiMessageType());
         assertNotNull(ltiRequest.getLtiConsumerKey());
         assertNull(ltiRequest.getKey()); // not loaded yet
-        boolean loaded = ltiRequest.loadLTIDataFromDB(entityManager); // load up the data
+        boolean loaded = ltiRequest.loadLTIDataFromDB(allRepositories); // load up the data
         assertTrue(loaded);
         assertNotNull(ltiRequest.getKey());
         assertEquals(key1, ltiRequest.getKey());
@@ -129,7 +114,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
         request.setParameter(LTIRequest.LTI_LINK_ID, link1.getLinkKey());
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
-        ltiRequest = new LTIRequest(request, entityManager);
+        ltiRequest = new LTIRequest(request, allRepositories);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
@@ -139,7 +124,7 @@ public class LTITests extends BaseApplicationTest {
         assertEquals(key1, ltiRequest.getKey());
         assertNotNull(ltiRequest.getContext());
         assertNotNull(ltiRequest.getLink());
-        assertNotNull(ltiRequest.getLtiUser());
+        assertNotNull(ltiRequest.getLtiUserId());
         assertNotNull(ltiRequest.getMembership());
         assertNull(ltiRequest.getService());
         assertNull(ltiRequest.getResult());
@@ -153,7 +138,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
         request.setParameter(LTIRequest.LTI_SOURCEDID, "invalid_sourcedid");
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
-        ltiRequest = new LTIRequest(request, entityManager);
+        ltiRequest = new LTIRequest(request, allRepositories);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
@@ -162,7 +147,7 @@ public class LTITests extends BaseApplicationTest {
         assertNotNull(ltiRequest.getKey());
         assertNotNull(ltiRequest.getContext());
         assertNull(ltiRequest.getLink());
-        assertNotNull(ltiRequest.getLtiUser());
+        assertNotNull(ltiRequest.getLtiUserId());
         assertNotNull(ltiRequest.getMembership());
         assertNull(ltiRequest.getResult());
         assertNotNull(ltiRequest.getService());
