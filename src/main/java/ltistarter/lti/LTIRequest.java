@@ -309,6 +309,7 @@ public class LTIRequest {
             log.info("LTIupdate: Inserted context id=" + ltiContextId);
         } else if (context != null) {
             repos.entityManager.merge(context); // reconnect object for this transaction
+            ltiContextId = context.getContextKey();
             log.info("LTIupdate: Reconnected existing context id=" + ltiContextId);
         }
 
@@ -318,43 +319,35 @@ public class LTIRequest {
             log.info("LTIupdate: Inserted link id=" + ltiLinkId);
         } else if (link != null) {
             repos.entityManager.merge(link); // reconnect object for this transaction
+            ltiLinkId = link.getLinkKey();
             log.info("LTIupdate: Reconnected existing link id=" + ltiLinkId);
         }
 
+        if (user == null && ltiUserId != null) {
+            LtiUserEntity newUser = new LtiUserEntity(ltiUserId, null);
+            newUser.setDisplayName(ltiUserDisplayName);
+            newUser.setEmail(ltiUserEmail);
+            user = repos.users.save(newUser);
+            log.info("LTIupdate: Inserted user id=" + ltiUserId);
+        } else if (user != null) {
+            repos.entityManager.merge(user); // reconnect object for this transaction
+            ltiUserId = user.getUserKey();
+            log.info("LTIupdate: Reconnected existing user id=" + ltiUserId);
+        }
+
+        if (membership == null && context != null && user != null) {
+            int roleNum = (isRoleInstructor() || isRoleAdministrator()) ? 1 : 0;
+            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, roleNum);
+            membership = repos.members.save(newMember);
+            log.info("LTIupdate: Inserted membership id=" + newMember.getMembershipId() + ", role=" + newMember.getRole() + ", user=" + ltiUserId + ", context=" + ltiContextId);
+        } else if (membership != null) {
+            repos.entityManager.merge(membership); // reconnect object for this transaction
+            ltiUserId = user.getUserKey();
+            ltiContextId = context.getContextKey();
+            log.info("LTIupdate: Reconnected existing membership id=" + membership.getMembershipId());
+        }
+
         /*
-        $user_displayname = isset($post['user_displayname']) ? $post['user_displayname'] : null;
-        $user_email = isset($post['user_email']) ? $post['user_email'] : null;
-        if ( user_id === null && isset($post['user_id']) ) {
-            String sql = "INSERT INTO {$p}lti_user
-            ( user_key, user_sha256, displayname, email, key_id, created_at, updated_at ) VALUES
-                    ( :user_key, :user_sha256, :displayname, :email, :key_id, NOW(), NOW() )";
-            pdoQueryDie($pdo, $sql, array(
-                            ':user_key' => $post['user_id'],
-                    ':user_sha256' => lti_sha256($post['user_id']),
-                    ':displayname' => $user_displayname,
-                    ':email' => $user_email,
-                    ':key_id' => key_id']));
-            user_id = $pdo->lastInsertId();
-            user_email = $user_email;
-            user_sha256 = lti_sha256($post['user_id']);
-            user_displayname = $user_displayname;
-            $actions[] = "=== Inserted user id=".user_id']." ".user_email'];
-        }
-
-        if ( membership_id === null && context_id'] !== null && user_id'] !== null ) {
-            String sql = "INSERT INTO {$p}lti_membership
-            ( context_id, user_id, role, created_at, updated_at ) VALUES
-                    ( :context_id, :user_id, :role, NOW(), NOW() )";
-            pdoQueryDie($pdo, $sql, array(
-                            ':context_id' => context_id'],
-                    ':user_id' => user_id'],
-                    ':role' => $post['role']));
-            membership_id = $pdo->lastInsertId();
-            role = $post['role'];
-            $actions[] = "=== Inserted membership id=".membership_id']." role=".role'].
-            " user=".user_id']." context=".context_id'];
-        }
-
         // We need to handle the case where the service URL changes but we already have a sourcedid
         $oldserviceid = service_id'];
         if ( service_id === null && $post['service'] && $post['sourcedid'] ) {
