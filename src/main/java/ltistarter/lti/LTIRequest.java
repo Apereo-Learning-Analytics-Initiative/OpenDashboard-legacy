@@ -347,73 +347,54 @@ public class LTIRequest {
             log.info("LTIupdate: Reconnected existing membership id=" + membership.getMembershipId());
         }
 
-        /*
         // We need to handle the case where the service URL changes but we already have a sourcedid
-        $oldserviceid = service_id'];
-        if ( service_id === null && $post['service'] && $post['sourcedid'] ) {
-            String sql = "INSERT INTO {$p}lti_service
-            ( service_key, service_sha256, key_id, created_at, updated_at ) VALUES
-                    ( :service_key, :service_sha256, :key_id, NOW(), NOW() )";
-            pdoQueryDie($pdo, $sql, array(
-                            ':service_key' => $post['service'],
-                    ':service_sha256' => lti_sha256($post['service']),
-                    ':key_id' => key_id']));
-            service_id = $pdo->lastInsertId();
-            service = $post['service'];
-            $actions[] = "=== Inserted service id=".service_id']." ".$post['service'];
+        boolean serviceCreated = false;
+        if (service == null && ltiServiceId != null && ltiSourcedid != null) {
+            LtiServiceEntity newService = new LtiServiceEntity(ltiServiceId, key, null);
+            service = repos.services.save(newService);
+            serviceCreated = true;
+            log.info("LTIupdate: Inserted service id=" + ltiServiceId);
+        } else if (service != null) {
+            repos.entityManager.merge(service); // reconnect object for this transaction
+            ltiServiceId = service.getServiceKey();
+            log.info("LTIupdate: Reconnected existing service id=" + ltiServiceId);
         }
 
         // If we just created a new service entry but we already had a result entry, update it
-        if ( $oldserviceid === null && result_id'] !== null && service_id'] !== null && $post['service'] && $post['sourcedid'] ) {
-            String sql = "UPDATE {$p}lti_result SET service_id = :service_id WHERE result_id = :result_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':service_id' => service_id'],
-                    ':result_id' => result_id']));
-            $actions[] = "=== Updated result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        if (serviceCreated && result != null && ltiServiceId != null && ltiSourcedid != null) {
+            repos.entityManager.merge(result); // reconnect object for this transaction
+            result.setSourcedid(ltiSourcedid);
+            repos.results.save(result);
+            log.info("LTIupdate: Updated existing result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
         }
 
-        // If we don'have a result but do have a service - link them together
-        if ( result_id === null && service_id'] !== null && $post['service'] && $post['sourcedid'] ) {
-            String sql = "INSERT INTO {$p}lti_result
-            ( sourcedid, sourcedid_sha256, service_id, link_id, user_id, created_at, updated_at ) VALUES
-                    ( :sourcedid, :sourcedid_sha256, :service_id, :link_id, :user_id, NOW(), NOW() )";
-            pdoQueryDie($pdo, $sql, array(
-                            ':sourcedid' => $post['sourcedid'],
-                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
-                    ':service_id' => service_id'],
-                    ':link_id' => link_id'],
-                    ':user_id' => user_id']));
-            result_id = $pdo->lastInsertId();
-            sourcedid = $post['sourcedid'];
-            $actions[] = "=== Inserted result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        // If we don't have a result but do have a service - link them together
+        if (result == null
+                && service != null && user != null && link != null
+                && ltiServiceId != null && ltiSourcedid != null) {
+            LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
+            result = repos.results.save(newResult);
+            log.info("LTIupdate: Inserted result id=" + result.getResultId());
+        } else if (result != null) {
+            repos.entityManager.merge(result); // reconnect object for this transaction
+            ltiSourcedid = result.getSourcedid();
         }
 
-        // If we don'have a result and do not have a service - just store the result (prep for LTI 2.0)
-        if ( result_id === null && service_id === null && ! $post['service'] && $post['sourcedid'] ) {
-            String sql = "INSERT INTO {$p}lti_result
-            ( sourcedid, sourcedid_sha256, link_id, user_id, created_at, updated_at ) VALUES
-                    ( :sourcedid, :sourcedid_sha256, :link_id, :user_id, NOW(), NOW() )";
-            pdoQueryDie($pdo, $sql, array(
-                            ':sourcedid' => $post['sourcedid'],
-                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
-                    ':link_id' => link_id'],
-                    ':user_id' => user_id']));
-            result_id = $pdo->lastInsertId();
-            $actions[] = "=== Inserted LTI 2.0 result id=".result_id']." service=".service_id']." ".$post['sourcedid'];
+        // If we don't have a result and do not have a service - just store the result (prep for LTI 2.0)
+        if (result == null && service == null && user != null && link != null && ltiSourcedid != null) {
+            LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
+            result = repos.results.save(newResult);
+            log.info("LTIupdate: Inserted LTI 2 result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
         }
 
         // Here we handle updates to sourcedid
-        if ( result_id'] != null && $post['sourcedid'] != null && $post['sourcedid'] != sourcedid'] ) {
-            String sql = "UPDATE {$p}lti_result
-            SET sourcedid = :sourcedid, sourcedid_sha256 = :sourcedid_sha256
-            WHERE result_id = :result_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':sourcedid' => $post['sourcedid'],
-                    ':sourcedid_sha256' => lti_sha256($post['sourcedid']),
-                    ':result_id' => result_id']));
-            sourcedid = $post['sourcedid'];
-            $actions[] = "=== Updated sourcedid=".sourcedid'];
+        if (result != null && ltiSourcedid != null && !ltiSourcedid.equals(result.getSourcedid())) {
+            result.setSourcedid(ltiSourcedid);
+            result = repos.results.save(result);
+            log.info("LTIupdate: Updated result (id=" + result.getResultId() + ") sourcedid=" + ltiSourcedid);
         }
+
+        /*
 
         // Here we handle updates to context_title, link_title, user_displayname, user_email, or role
         if ( isset($post['context_title']) && $post['context_title'] != context_title'] ) {
