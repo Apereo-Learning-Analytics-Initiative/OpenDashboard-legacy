@@ -35,7 +35,6 @@ import java.util.*;
  * This basically does everything in lti_db.php from tsugi (except the OAuth stuff, that is handled by spring security)
  *
  */
-@SuppressWarnings("deprecation")
 public class LTIRequest {
 
     final static Logger log = LoggerFactory.getLogger(LTIRequest.class);
@@ -129,6 +128,44 @@ public class LTIRequest {
         if (!isLTIRequest(request)) {
             throw new IllegalStateException("Request is not an LTI request");
         }
+        processRequestParameters(request);
+    }
+
+    /**
+     * @param request an http servlet request
+     * @param repos   the repos accessor which will be used to load DB data (if possible) for this request
+     * @throws IllegalStateException if this is not an LTI request
+     */
+    public LTIRequest(HttpServletRequest request, AllRepositories repos) {
+        this(request);
+        assert repos != null : "AllRepositories cannot be null";
+        this.loadLTIDataFromDB(repos);
+    }
+
+    /**
+     * @param paramName the request parameter name
+     * @return the value of the parameter OR null if there is none
+     */
+    public String getParam(String paramName) {
+        String value = null;
+        if (this.httpServletRequest != null && paramName != null) {
+            value = StringUtils.trimToNull(this.httpServletRequest.getParameter(paramName));
+        }
+        return value;
+    }
+
+    /**
+     * Processes all the parameters in this request into populated internal variables in the LTI Request
+     *
+     * @param request an http servlet request
+     * @return true if this is a complete LTI request (includes key, context, link, user) OR false otherwise
+     */
+    public boolean processRequestParameters(HttpServletRequest request) {
+        if (request != null && this.httpServletRequest != request) {
+            this.httpServletRequest = request;
+        }
+        assert this.httpServletRequest != null;
+
         ltiMessageType = getParam(LTI_MESSAGE_TYPE);
         ltiVersion = getParam(LTI_VERSION);
         // These 4 really need to be populated for this LTI request to make any sense...
@@ -174,47 +211,17 @@ public class LTIRequest {
                 userRoleNumber = roleOverrideNum;
             }
         }
-        // user displayName requires some trickyness
-        if (request.getParameter(LTI_USER_NAME_FULL) != null) {
+        // user displayName requires some special processing
+        if (getParam(LTI_USER_NAME_FULL) != null) {
             ltiUserDisplayName = getParam(LTI_USER_NAME_FULL);
-        } else if (request.getParameter(LIS_PERSON_PREFIX + "given") != null && request.getParameter(LIS_PERSON_PREFIX + "family") != null) {
+        } else if (getParam(LIS_PERSON_PREFIX + "given") != null && getParam(LIS_PERSON_PREFIX + "family") != null) {
             ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "given") + " " + getParam(LIS_PERSON_PREFIX + "family");
-        } else if (request.getParameter(LIS_PERSON_PREFIX + "given") != null) {
+        } else if (getParam(LIS_PERSON_PREFIX + "given") != null) {
             ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "given");
-        } else if (request.getParameter(LIS_PERSON_PREFIX + "family") != null) {
+        } else if (getParam(LIS_PERSON_PREFIX + "family") != null) {
             ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "family");
         }
-    }
-
-    /**
-     * @param request       an http servlet request
-     * @param repos the repos accessor which will be used to load DB data (if possible) for this request
-     * @throws IllegalStateException if this is not an LTI request
-     */
-    public LTIRequest(HttpServletRequest request, AllRepositories repos) {
-        this(request);
-        assert repos != null : "AllRepositories cannot be null";
-        this.loadLTIDataFromDB(repos);
-    }
-
-    /**
-     * @param paramName the request parameter name
-     * @return the value of the parameter OR null if there is none
-     */
-    public String getParam(String paramName) {
-        String value = null;
-        if (paramName != null) {
-            value = StringUtils.trimToNull(this.httpServletRequest.getParameter(paramName));
-        }
-        return value;
-    }
-
-    public boolean isRoleAdministrator() {
-        return (rawUserRoles != null && userRoleNumber >= 2);
-    }
-
-    public boolean isRoleInstructor() {
-        return (rawUserRoles != null && userRoleNumber >= 1);
+        return complete;
     }
 
     /**
@@ -229,6 +236,7 @@ public class LTIRequest {
         loaded = false;
         if (ltiConsumerKey == null) {
             // don't even attempt this without a key, it's pointless
+            log.info("LTIload: No key to load results for");
             return false;
         }
         boolean includesService = (ltiServiceId != null);
@@ -286,7 +294,9 @@ public class LTIRequest {
         }
         @SuppressWarnings("unchecked")
         List<Object[]> rows = q.getResultList();
-        if (rows != null && !rows.isEmpty()) {
+        if (rows == null || rows.isEmpty()) {
+            log.info("LTIload: No results found for key=" + ltiConsumerKey);
+        } else {
             // k, c, l, m, u, s, r
             Object[] row = rows.get(0);
             if (row.length > 0) key = (LtiKeyEntity) row[0];
@@ -302,10 +312,15 @@ public class LTIRequest {
             } else if (includesSourcedid) {
                 if (row.length > 5) result = (LtiResultEntity) row[5];
             }
+            if (key != null && context != null && link != null && user != null) {
+                complete = true;
+            } else {
+                complete = false;
+            }
             loaded = true;
-            return true;
+            log.info("LTIload: loaded data for key=" + ltiConsumerKey + " and context=" + ltiContextId + ", complete=" + complete);
         }
-        return false;
+        return loaded;
     }
 
     /**
@@ -360,8 +375,7 @@ public class LTIRequest {
         }
 
         if (membership == null && context != null && user != null) {
-            int roleNum = (isRoleInstructor() || isRoleAdministrator()) ? 1 : 0;
-            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, roleNum);
+            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, userRoleNumber);
             membership = repos.members.save(newMember);
             inserts++;
             log.info("LTIupdate: Inserted membership id=" + newMember.getMembershipId() + ", role=" + newMember.getRole() + ", user=" + ltiUserId + ", context=" + ltiContextId);
@@ -462,6 +476,14 @@ public class LTIRequest {
         int changes = inserts + updates;
         log.info("LTIupdate: changes=" + changes + ", inserts=" + inserts + ", updates=" + updates);
         return changes;
+    }
+
+    public boolean isRoleAdministrator() {
+        return (rawUserRoles != null && userRoleNumber >= 2);
+    }
+
+    public boolean isRoleInstructor() {
+        return (rawUserRoles != null && userRoleNumber >= 1);
     }
 
     // STATICS
