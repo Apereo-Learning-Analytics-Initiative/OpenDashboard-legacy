@@ -86,6 +86,8 @@ public class LTIRequest {
     //ProfileEntity profile;
     boolean loaded = false;
     boolean complete = false;
+    boolean updated = false;
+    int loadingUpdates = 0;
 
     // these are populated on construct
     String ltiContextId;
@@ -177,9 +179,7 @@ public class LTIRequest {
         ltiContextId = getParam(LTI_CONTEXT_ID);
         ltiLinkId = getParam(LTI_LINK_ID);
         ltiUserId = getParam(LTI_USER_ID);
-        if (ltiConsumerKey != null && ltiContextId != null && ltiLinkId != null && ltiUserId != null) {
-            complete = true;
-        }
+        complete = checkCompleteLTIRequest(false);
         // OPTIONAL fields below
         ltiServiceId = getParam(LTI_SERVICE);
         ltiSourcedid = getParam(LTI_SOURCEDID);
@@ -316,11 +316,8 @@ public class LTIRequest {
             } else if (includesSourcedid) {
                 if (row.length > 5) result = (LtiResultEntity) row[5];
             }
-            if (key != null && context != null && link != null && user != null) {
-                complete = true;
-            } else {
-                complete = false;
-            }
+            // check if the loading resulted in a complete set of LTI data
+            checkCompleteLTIRequest(true);
             loaded = true;
             log.info("LTIload: loaded data for key=" + ltiConsumerKey + " and context=" + ltiContextId + ", complete=" + complete);
         }
@@ -477,9 +474,32 @@ public class LTIRequest {
             updates++;
             log.info("LTIupdate: Updated membership (id=" + membership.getMembershipId() + ", user=" + ltiUserId + ", context=" + ltiContextId + ") roles=" + rawUserRoles + ", role=" + userRoleNumber);
         }
-        int changes = inserts + updates;
-        log.info("LTIupdate: changes=" + changes + ", inserts=" + inserts + ", updates=" + updates);
-        return changes;
+
+        // need to recheck and see if we are complete now
+        checkCompleteLTIRequest(true);
+
+        loadingUpdates = inserts + updates;
+        updated = true;
+        log.info("LTIupdate: changes=" + loadingUpdates + ", inserts=" + inserts + ", updates=" + updates);
+        return loadingUpdates;
+    }
+
+    /**
+     * Checks if this LTI request object has a complete set of required LTI data,
+     * also sets the #complete variable appropriately
+     *
+     * @param objects if true then check for complete objects, else just check for complete request params
+     * @return true if complete
+     */
+    private boolean checkCompleteLTIRequest(boolean objects) {
+        if (objects && key != null && context != null && link != null && user != null) {
+            complete = true;
+        } else if (!objects && ltiConsumerKey != null && ltiContextId != null && ltiLinkId != null && ltiUserId != null) {
+            complete = true;
+        } else {
+            complete = false;
+        }
+        return complete;
     }
 
     public boolean isRoleAdministrator() {
@@ -687,12 +707,20 @@ public class LTIRequest {
         return userRoleNumber;
     }
 
+    public int getLoadingUpdates() {
+        return loadingUpdates;
+    }
+
     public boolean isLoaded() {
         return loaded;
     }
 
     public boolean isComplete() {
         return complete;
+    }
+
+    public boolean isUpdated() {
+        return updated;
     }
 
 }

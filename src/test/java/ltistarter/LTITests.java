@@ -140,7 +140,8 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
         ltiRequest = new LTIRequest(request, allRepositories, false);
         assertTrue(ltiRequest.isLoaded());
-        assertTrue(ltiRequest.isComplete());
+        assertFalse(ltiRequest.isComplete()); // missing the link
+        assertFalse(ltiRequest.isUpdated());
         assertNotNull(ltiRequest.getLtiVersion());
         assertNotNull(ltiRequest.getLtiMessageType());
         assertNotNull(ltiRequest.getLtiConsumerKey());
@@ -150,6 +151,67 @@ public class LTITests extends BaseApplicationTest {
         assertNotNull(ltiRequest.getLtiUserId());
         assertNotNull(ltiRequest.getMembership());
         assertNull(ltiRequest.getResult());
+        assertNotNull(ltiRequest.getService());
+
+        // testing updating existing data
+        request = new MockHttpServletRequest(); // LTI request (gaps)
+        request.setParameter(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0);
+        request.setParameter(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC);
+        request.setParameter(LTIRequest.LTI_CONSUMER_KEY, key1.getKeyKey());
+        request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
+        request.setParameter(LTIRequest.LTI_CONTEXT_TITLE, "AZ context 1");
+        request.setParameter(LTIRequest.LTI_LINK_ID, link1.getLinkKey());
+        request.setParameter(LTIRequest.LTI_LINK_TITLE, "AZ link 1");
+        request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
+        request.setParameter(LTIRequest.LTI_USER_NAME_FULL, "Aaron Zeckoski");
+        request.setParameter(LTIRequest.LTI_USER_EMAIL, "azeckoski@fake.email.com");
+        request.setParameter(LTIRequest.LTI_USER_ROLES, "Administrator,Instructor,Learner");
+        request.setParameter(LTIRequest.LTI_SOURCEDID, "new_sourcedid_AZ");
+        request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
+        ltiRequest = new LTIRequest(request, allRepositories, true);
+        assertTrue(ltiRequest.isLoaded());
+        assertTrue(ltiRequest.isComplete());
+        assertTrue(ltiRequest.isUpdated());
+        assertEquals(2, ltiRequest.getUserRoleNumber());
+        assertNotNull(ltiRequest.getLtiVersion());
+        assertNotNull(ltiRequest.getLtiMessageType());
+        assertNotNull(ltiRequest.getLtiConsumerKey());
+        assertNotNull(ltiRequest.getKey());
+        assertNotNull(ltiRequest.getContext());
+        assertNotNull(ltiRequest.getLink());
+        assertNotNull(ltiRequest.getUser());
+        assertNotNull(ltiRequest.getMembership());
+        assertNotNull(ltiRequest.getResult());
+        assertNotNull(ltiRequest.getService());
+
+        // testing inserting all new data (except key of course)
+        request = new MockHttpServletRequest(); // LTI request (gaps)
+        request.setParameter(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0);
+        request.setParameter(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC);
+        request.setParameter(LTIRequest.LTI_CONSUMER_KEY, key5.getKeyKey());
+        request.setParameter(LTIRequest.LTI_CONTEXT_ID, "context 5555");
+        request.setParameter(LTIRequest.LTI_CONTEXT_TITLE, "AZ context 5555");
+        request.setParameter(LTIRequest.LTI_LINK_ID, "link 5555");
+        request.setParameter(LTIRequest.LTI_LINK_TITLE, "AZ link 5555");
+        request.setParameter(LTIRequest.LTI_USER_ID, "rzeckoski");
+        request.setParameter(LTIRequest.LTI_USER_NAME_FULL, "Rebecca Zeckoski");
+        request.setParameter(LTIRequest.LTI_USER_EMAIL, "rzeckoski@fake.email.com");
+        request.setParameter(LTIRequest.LTI_USER_ROLES, "Mentor/Advisor,Instructor/GuestInstructor,TeachingAssistant/TeachingAssistant");
+        request.setParameter(LTIRequest.LTI_SOURCEDID, "RZ_new_sourcedid");
+        request.setParameter(LTIRequest.LTI_SERVICE, "RZ_grading");
+        ltiRequest = new LTIRequest(request, allRepositories, true);
+        assertTrue(ltiRequest.isLoaded());
+        assertTrue(ltiRequest.isComplete());
+        assertTrue(ltiRequest.isUpdated());
+        assertNotNull(ltiRequest.getLtiVersion());
+        assertNotNull(ltiRequest.getLtiMessageType());
+        assertNotNull(ltiRequest.getLtiConsumerKey());
+        assertNotNull(ltiRequest.getKey());
+        assertNotNull(ltiRequest.getContext());
+        assertNotNull(ltiRequest.getLink());
+        assertNotNull(ltiRequest.getUser());
+        assertNotNull(ltiRequest.getMembership());
+        assertNotNull(ltiRequest.getResult());
         assertNotNull(ltiRequest.getService());
     }
 
