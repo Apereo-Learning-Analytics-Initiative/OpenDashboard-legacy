@@ -207,14 +207,6 @@ public class LTIRequest {
         userRoleNumber = makeUserRoleNum(rawUserRoles);
         String[] splitRoles = StringUtils.split(StringUtils.trimToEmpty(rawUserRoles), ",");
         ltiUserRoles = new HashSet<>(Arrays.asList(splitRoles));
-        // If there is an appropriate role override variable, we use that role
-        rawUserRolesOverride = getParam(USER_ROLE_OVERRIDE);
-        if (rawUserRolesOverride != null && rawUserRoles != null) {
-            int roleOverrideNum = makeUserRoleNum(rawUserRolesOverride);
-            if (roleOverrideNum > userRoleNumber) {
-                userRoleNumber = roleOverrideNum;
-            }
-        }
         // user displayName requires some special processing
         if (getParam(LTI_USER_NAME_FULL) != null) {
             ltiUserDisplayName = getParam(LTI_USER_NAME_FULL);
@@ -316,6 +308,16 @@ public class LTIRequest {
             } else if (includesSourcedid) {
                 if (row.length > 5) result = (LtiResultEntity) row[5];
             }
+
+            // handle SPECIAL post lookup processing
+            // If there is an appropriate role override variable, we use that role
+            if (membership != null && membership.getRoleOverride() != null) {
+                int roleOverrideNum = membership.getRoleOverride();
+                if (roleOverrideNum > userRoleNumber) {
+                    userRoleNumber = roleOverrideNum;
+                }
+            }
+
             // check if the loading resulted in a complete set of LTI data
             checkCompleteLTIRequest(true);
             loaded = true;
@@ -378,7 +380,8 @@ public class LTIRequest {
         }
 
         if (membership == null && context != null && user != null) {
-            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, userRoleNumber);
+            int roleNum = makeUserRoleNum(rawUserRoles); // NOTE: do not use userRoleNumber here, it may have been overridden
+            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, roleNum);
             membership = repos.members.save(newMember);
             inserts++;
             log.info("LTIupdate: Inserted membership id=" + newMember.getMembershipId() + ", role=" + newMember.getRole() + ", user=" + ltiUserId + ", context=" + ltiContextId);
