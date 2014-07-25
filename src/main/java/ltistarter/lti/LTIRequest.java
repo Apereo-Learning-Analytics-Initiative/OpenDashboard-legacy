@@ -67,6 +67,7 @@ public class LTIRequest {
     public static final String LTI_USER_IMAGE_URL = "user_image";
     public static final String LTI_USER_ROLES = "roles";
     public static final String LTI_VERSION = "lti_version";
+    public static final String USER_ROLE_OVERRIDE = "role_override";
 
     public static final String LTI_MESSAGE_TYPE_BASIC = "basic-lti-launch-request";
     public static final String LTI_MESSAGE_TYPE_PROXY_REG = "ToolProxyReregistrationRequest";
@@ -114,6 +115,7 @@ public class LTIRequest {
     String rawUserRoles;
     Set<String> ltiUserRoles;
     int userRoleNumber;
+    String rawUserRolesOverride;
     String ltiVersion;
 
     /**
@@ -164,6 +166,14 @@ public class LTIRequest {
         userRoleNumber = makeUserRoleNum(rawUserRoles);
         String[] splitRoles = StringUtils.split(StringUtils.trimToEmpty(rawUserRoles), ",");
         ltiUserRoles = new HashSet<>(Arrays.asList(splitRoles));
+        // If there is an appropriate role override variable, we use that role
+        rawUserRolesOverride = getParam(USER_ROLE_OVERRIDE);
+        if (rawUserRolesOverride != null && rawUserRoles != null) {
+            int roleOverrideNum = makeUserRoleNum(rawUserRolesOverride);
+            if (roleOverrideNum > userRoleNumber) {
+                userRoleNumber = roleOverrideNum;
+            }
+        }
         // user displayName requires some trickyness
         if (request.getParameter(LTI_USER_NAME_FULL) != null) {
             ltiUserDisplayName = getParam(LTI_USER_NAME_FULL);
