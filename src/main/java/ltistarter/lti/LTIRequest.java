@@ -41,6 +41,7 @@ public class LTIRequest {
     final static Logger log = LoggerFactory.getLogger(LTIRequest.class);
 
     static final String LIS_PERSON_PREFIX = "lis_person_name_";
+
     public static final String LTI_CONSUMER_KEY = "oauth_consumer_key";
     public static final String LTI_CONTEXT_ID = "context_id";
     public static final String LTI_CONTEXT_TITLE = "context_title";
@@ -112,6 +113,7 @@ public class LTIRequest {
     String ltiUserImageUrl;
     String rawUserRoles;
     Set<String> ltiUserRoles;
+    int userRoleNumber;
     String ltiVersion;
 
     /**
@@ -159,6 +161,7 @@ public class LTIRequest {
         ltiToolConsumerName = getParam(LTI_TOOL_CONSUMER_NAME);
         ltiToolConsumerEmail = getParam(LTI_TOOL_CONSUMER_EMAIL);
         rawUserRoles = getParam(LTI_USER_ROLES);
+        userRoleNumber = makeUserRoleNum(rawUserRoles);
         String[] splitRoles = StringUtils.split(StringUtils.trimToEmpty(rawUserRoles), ",");
         ltiUserRoles = new HashSet<>(Arrays.asList(splitRoles));
         // user displayName requires some trickyness
@@ -197,11 +200,11 @@ public class LTIRequest {
     }
 
     public boolean isRoleAdministrator() {
-        return (rawUserRoles != null && rawUserRoles.toLowerCase().contains("administrator"));
+        return (rawUserRoles != null && userRoleNumber >= 2);
     }
 
     public boolean isRoleInstructor() {
-        return (rawUserRoles != null && rawUserRoles.toLowerCase().contains("instructor"));
+        return (rawUserRoles != null && userRoleNumber >= 1);
     }
 
     /**
@@ -295,17 +298,26 @@ public class LTIRequest {
         return false;
     }
 
+    /**
+     * Attempts to insert or update the various LTI launch data (or other data that is part of this request)
+     *
+     * @param repos the repos accessor used to load the data (must be set)
+     * @return the number of changes (inserts or updates) that occur
+     */
     @Transactional
-    public void updateLTIDataInDB(AllRepositories repos) {
+    public int updateLTIDataInDB(AllRepositories repos) {
         assert repos != null : "access to the repos is required";
         assert loaded : "Data must be loaded before it can be updated";
+
         assert key != null : "Key data must not be null to update data";
         repos.entityManager.merge(key); // reconnect the key object for this transaction
 
-        //$actions = array();
+        int inserts = 0;
+        int updates = 0;
         if (context == null && ltiContextId != null) {
             LtiContextEntity newContext = new LtiContextEntity(ltiContextId, key, ltiContextTitle, null);
             context = repos.contexts.save(newContext);
+            inserts++;
             log.info("LTIupdate: Inserted context id=" + ltiContextId);
         } else if (context != null) {
             repos.entityManager.merge(context); // reconnect object for this transaction
@@ -316,6 +328,7 @@ public class LTIRequest {
         if (link == null && ltiLinkId != null) {
             LtiLinkEntity newLink = new LtiLinkEntity(ltiLinkId, context, ltiLinkTitle);
             link = repos.links.save(newLink);
+            inserts++;
             log.info("LTIupdate: Inserted link id=" + ltiLinkId);
         } else if (link != null) {
             repos.entityManager.merge(link); // reconnect object for this transaction
@@ -328,6 +341,7 @@ public class LTIRequest {
             newUser.setDisplayName(ltiUserDisplayName);
             newUser.setEmail(ltiUserEmail);
             user = repos.users.save(newUser);
+            inserts++;
             log.info("LTIupdate: Inserted user id=" + ltiUserId);
         } else if (user != null) {
             repos.entityManager.merge(user); // reconnect object for this transaction
@@ -339,6 +353,7 @@ public class LTIRequest {
             int roleNum = (isRoleInstructor() || isRoleAdministrator()) ? 1 : 0;
             LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, roleNum);
             membership = repos.members.save(newMember);
+            inserts++;
             log.info("LTIupdate: Inserted membership id=" + newMember.getMembershipId() + ", role=" + newMember.getRole() + ", user=" + ltiUserId + ", context=" + ltiContextId);
         } else if (membership != null) {
             repos.entityManager.merge(membership); // reconnect object for this transaction
@@ -352,6 +367,7 @@ public class LTIRequest {
         if (service == null && ltiServiceId != null && ltiSourcedid != null) {
             LtiServiceEntity newService = new LtiServiceEntity(ltiServiceId, key, null);
             service = repos.services.save(newService);
+            inserts++;
             serviceCreated = true;
             log.info("LTIupdate: Inserted service id=" + ltiServiceId);
         } else if (service != null) {
@@ -365,6 +381,7 @@ public class LTIRequest {
             repos.entityManager.merge(result); // reconnect object for this transaction
             result.setSourcedid(ltiSourcedid);
             repos.results.save(result);
+            inserts++;
             log.info("LTIupdate: Updated existing result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
         }
 
@@ -374,6 +391,7 @@ public class LTIRequest {
                 && ltiServiceId != null && ltiSourcedid != null) {
             LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
             result = repos.results.save(newResult);
+            inserts++;
             log.info("LTIupdate: Inserted result id=" + result.getResultId());
         } else if (result != null) {
             repos.entityManager.merge(result); // reconnect object for this transaction
@@ -384,6 +402,7 @@ public class LTIRequest {
         if (result == null && service == null && user != null && link != null && ltiSourcedid != null) {
             LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
             result = repos.results.save(newResult);
+            inserts++;
             log.info("LTIupdate: Inserted LTI 2 result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
         }
 
@@ -391,58 +410,48 @@ public class LTIRequest {
         if (result != null && ltiSourcedid != null && !ltiSourcedid.equals(result.getSourcedid())) {
             result.setSourcedid(ltiSourcedid);
             result = repos.results.save(result);
+            updates++;
             log.info("LTIupdate: Updated result (id=" + result.getResultId() + ") sourcedid=" + ltiSourcedid);
         }
 
-        /*
+        // Next we handle updates to context_title, link_title, user_displayname, user_email, or role
 
-        // Here we handle updates to context_title, link_title, user_displayname, user_email, or role
-        if ( isset($post['context_title']) && $post['context_title'] != context_title'] ) {
-            String sql = "UPDATE {$p}lti_context SET title = :title WHERE context_id = :context_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':title' => $post['context_title'],
-                    ':context_id' => context_id']));
-            context_title = $post['context_title'];
-            $actions[] = "=== Updated context=".context_id']." title=".$post['context_title'];
+        if (ltiContextTitle != null && context != null && !ltiContextTitle.equals(context.getTitle())) {
+            context.setTitle(ltiContextTitle);
+            context = repos.contexts.save(context);
+            updates++;
+            log.info("LTIupdate: Updated context (id=" + context.getContextId() + ") title=" + ltiContextTitle);
         }
 
-        if ( isset($post['link_title']) && $post['link_title'] != link_title'] ) {
-            String sql = "UPDATE {$p}lti_link SET title = :title WHERE link_id = :link_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':title' => $post['link_title'],
-                    ':link_id' => link_id']));
-            link_title = $post['link_title'];
-            $actions[] = "=== Updated link=".link_id']." title=".$post['link_title'];
+        if (ltiLinkTitle != null && link != null && !ltiLinkTitle.equals(link.getTitle())) {
+            link.setTitle(ltiLinkTitle);
+            link = repos.links.save(link);
+            updates++;
+            log.info("LTIupdate: Updated link (id=" + link.getLinkKey() + ") title=" + ltiLinkTitle);
         }
 
-        if ( isset($post['user_displayname']) && $post['user_displayname'] != user_displayname'] && strlen($post['user_displayname']) > 0 ) {
-            String sql = "UPDATE {$p}lti_user SET displayname = :displayname WHERE user_id = :user_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':displayname' => $post['user_displayname'],
-                    ':user_id' => user_id']));
-            user_displayname = $post['user_displayname'];
-            $actions[] = "=== Updated user=".user_id']." displayname=".$post['user_displayname'];
+        boolean userChanged = false;
+        if (ltiUserDisplayName != null && user != null && !ltiUserDisplayName.equals(user.getDisplayName())) {
+            user.setDisplayName(ltiUserDisplayName);
+        }
+        if (ltiUserEmail != null && user != null && !ltiUserEmail.equals(user.getEmail())) {
+            user.setEmail(ltiUserEmail);
+        }
+        if (userChanged) {
+            user = repos.users.save(user);
+            updates++;
+            log.info("LTIupdate: Updated user (id=" + user.getUserKey() + ") name=" + ltiUserDisplayName + ", email=" + ltiUserEmail);
         }
 
-        if ( isset($post['user_email']) && $post['user_email'] != user_email'] && strlen($post['user_email']) > 0 ) {
-            String sql = "UPDATE {$p}lti_user SET email = :email WHERE user_id = :user_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':email' => $post['user_email'],
-                    ':user_id' => user_id']));
-            user_email = $post['user_email'];
-            $actions[] = "=== Updated user=".user_id']." email=".$post['user_email'];
+        if (rawUserRoles != null && userRoleNumber != membership.getRole()) {
+            membership.setRole(userRoleNumber);
+            membership = repos.members.save(membership);
+            updates++;
+            log.info("LTIupdate: Updated membership (id=" + membership.getMembershipId() + ", user=" + ltiUserId + ", context=" + ltiContextId + ") roles=" + rawUserRoles + ", role=" + userRoleNumber);
         }
-
-        if ( isset($post['role']) && $post['role'] != role'] ) {
-            String sql = "UPDATE {$p}lti_membership SET role = :role WHERE membership_id = :membership_id";
-            pdoQueryDie($pdo, $sql, array(
-                            ':role' => $post['role'],
-                    ':membership_id' => membership_id']));
-            role = $post['role'];
-            $actions[] = "=== Updated membership=".membership_id']." role=".$post['role'];
-        }
-        */
-
+        int changes = inserts + updates;
+        log.info("LTIupdate: changes=" + changes + ", inserts=" + inserts + ", updates=" + updates);
+        return changes;
     }
 
     // STATICS
@@ -481,6 +490,23 @@ public class LTIRequest {
                 request.getParameter(LTI_LINK_ID) + "::" + request.getParameter(LTI_USER_ID) + "::" + (System.currentTimeMillis() / 1800) +
                 request.getHeader("User-Agent") + "::" + request.getContextPath();
         return DigestUtils.md5Hex(composite);
+    }
+
+    /**
+     * @param rawUserRoles the raw roles string (this could also only be part of the string assuming it is the highest one)
+     * @return the number that represents the role (higher is more access)
+     */
+    public static int makeUserRoleNum(String rawUserRoles) {
+        int roleNum = 0;
+        if (rawUserRoles != null) {
+            String lcRUR = rawUserRoles.toLowerCase();
+            if (lcRUR.contains("administrator")) {
+                roleNum = 2;
+            } else if (lcRUR.contains("instructor")) {
+                roleNum = 1;
+            }
+        }
+        return roleNum;
     }
 
     // GETTERS
@@ -619,6 +645,10 @@ public class LTIRequest {
 
     public Set<String> getLtiUserRoles() {
         return ltiUserRoles;
+    }
+
+    public int getUserRoleNumber() {
+        return userRoleNumber;
     }
 
     public boolean isLoaded() {
