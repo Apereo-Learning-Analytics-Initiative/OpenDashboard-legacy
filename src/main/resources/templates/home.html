@@ -38,7 +38,12 @@
     <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
     <div>Login: <span th:text="${session.login}"/></div>
 </div>
-
+<div sec:authorize="hasRole('ROLE_LTI')">
+    This content is only shown to LTI users only.
+    <div>Context: <span th:text="${ltiContext}"/></div>
+    <div>User: <span th:text="${ltiUser}"/></div>
+    <div>Link: <span th:text="${ltiLink}"/></div>
+</div>
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     This content is only shown to administrators (ROLE_ADMIN).
 </div>

@@ -14,6 +14,7 @@
  */
 package ltistarter.controllers;
 
+import ltistarter.lti.LTIRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,13 @@ public class LTIController extends BaseController {
         commonModelPopulate(req, principal, model);
         model.addAttribute("name", "lti1p");
         req.getSession().setAttribute("login", "oauth");
+        LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
+        if (ltiRequest != null) {
+            model.addAttribute("lti", true);
+            model.addAttribute("ltiContext", ltiRequest.getLtiContextId());
+            model.addAttribute("ltiUser", ltiRequest.getLtiUserDisplayName());
+            model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());
+        }
         return "home"; // name of the template
     }
 

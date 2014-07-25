@@ -372,6 +372,8 @@ public class LTIRequest {
         } else if (user != null) {
             repos.entityManager.merge(user); // reconnect object for this transaction
             ltiUserId = user.getUserKey();
+            ltiUserDisplayName = user.getDisplayName();
+            ltiUserEmail = user.getEmail();
             log.info("LTIupdate: Reconnected existing user id=" + ltiUserId);
         }
 
