@@ -134,12 +134,16 @@ public class LTIRequest {
     /**
      * @param request an http servlet request
      * @param repos   the repos accessor which will be used to load DB data (if possible) for this request
+     * @param update  if true then update (or insert) the DB records for this request (else skip DB updating)
      * @throws IllegalStateException if this is not an LTI request
      */
-    public LTIRequest(HttpServletRequest request, AllRepositories repos) {
+    public LTIRequest(HttpServletRequest request, AllRepositories repos, boolean update) {
         this(request);
         assert repos != null : "AllRepositories cannot be null";
         this.loadLTIDataFromDB(repos);
+        if (update) {
+            this.updateLTIDataInDB(repos);
+        }
     }
 
     /**

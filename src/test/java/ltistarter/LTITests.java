@@ -114,7 +114,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
         request.setParameter(LTIRequest.LTI_LINK_ID, link1.getLinkKey());
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
-        ltiRequest = new LTIRequest(request, allRepositories);
+        ltiRequest = new LTIRequest(request, allRepositories, false);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
@@ -138,7 +138,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
         request.setParameter(LTIRequest.LTI_SOURCEDID, "invalid_sourcedid");
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
-        ltiRequest = new LTIRequest(request, allRepositories);
+        ltiRequest = new LTIRequest(request, allRepositories, false);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());

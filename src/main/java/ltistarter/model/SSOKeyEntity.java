@@ -45,7 +45,7 @@ public class SSOKeyEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private ProfileEntity profile;
 
-    SSOKeyEntity() {
+    protected SSOKeyEntity() {
     }
 
     /**

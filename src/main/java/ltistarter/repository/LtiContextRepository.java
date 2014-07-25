@@ -15,7 +15,6 @@
 package ltistarter.repository;
 
 import ltistarter.model.LtiContextEntity;
-import ltistarter.model.LtiKeyEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,7 @@ public interface LtiContextRepository extends PagingAndSortingRepository<LtiCont
      * @param key the unique key
      * @return the LtiContextEntity OR null if there is no entity matching this key
      */
-    LtiKeyEntity findByContextKey(String key);
+    LtiContextEntity findByContextKey(String key);
 
     /**
      * @param key the unique key

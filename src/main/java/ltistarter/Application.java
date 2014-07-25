@@ -129,6 +129,7 @@ public class Application extends WebMvcConfigurerAdapter {
         OAuthProcessingFilterEntryPoint oauthProcessingFilterEntryPoint;
         @Autowired
         OAuthProviderTokenServices oauthProviderTokenServices;
+
         @PostConstruct
         public void init() {
             ltioAuthProviderProcessingFilter = new LTIOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
@@ -143,7 +144,7 @@ public class Application extends WebMvcConfigurerAdapter {
     }
 
     @Configuration
-    @Order(11) // HIGHEST
+    @Order(11) // HIGH
     public static class OAuthSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         private ZeroLeggedOAuthProviderProcessingFilter zeroLeggedOAuthProviderProcessingFilter;
         @Autowired
@@ -162,6 +163,7 @@ public class Application extends WebMvcConfigurerAdapter {
             // NOTE: have to build the filter here: http://stackoverflow.com/questions/24761194/how-do-i-stop-spring-filterregistrationbean-from-registering-my-filter-on/24762970
             zeroLeggedOAuthProviderProcessingFilter = new ZeroLeggedOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
         }
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/oauth/**")

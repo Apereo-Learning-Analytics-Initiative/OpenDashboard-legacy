@@ -52,7 +52,7 @@ public class OAuthUtils {
         return response;
     }
 
-    public static ResponseEntity sendOAuth2Request(String url, String clientId, String clientSecret, String accessTokenURI, Map<String, String> params, Map<String, String> headers) {
+    public static ResponseEntity sendOAuth2Request(String url, String clientId, String clientSecret, String accessTokenURI, Map<String, String> params) {
         assert url != null;
         assert clientId != null;
         assert clientSecret != null;
