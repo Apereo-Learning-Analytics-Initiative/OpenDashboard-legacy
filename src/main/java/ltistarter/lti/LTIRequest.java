@@ -510,6 +510,10 @@ public class LTIRequest {
         return (rawUserRoles != null && userRoleNumber >= 1);
     }
 
+    public boolean isRoleLearner() {
+        return (rawUserRoles != null && StringUtils.containsIgnoreCase(rawUserRoles, "learner"));
+    }
+
     // STATICS
 
     /**

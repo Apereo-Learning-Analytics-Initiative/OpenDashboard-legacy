@@ -21,6 +21,7 @@ import ltistarter.oauth.MyConsumerDetailsService;
 import ltistarter.oauth.MyOAuthAuthenticationHandler;
 import ltistarter.oauth.MyOAuthNonceServices;
 import ltistarter.oauth.ZeroLeggedOAuthProviderProcessingFilter;
+import ltistarter.repository.AllRepositories;
 import org.h2.server.web.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,8 @@ public class Application extends WebMvcConfigurerAdapter {
     public static class LTISecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         private LTIOAuthProviderProcessingFilter ltioAuthProviderProcessingFilter;
         @Autowired
+        AllRepositories allRepositories;
+        @Autowired
         LTIConsumerDetailsService oauthConsumerDetailsService;
         @Autowired
         MyOAuthNonceServices oauthNonceServices;
@@ -132,7 +135,7 @@ public class Application extends WebMvcConfigurerAdapter {
 
         @PostConstruct
         public void init() {
-            ltioAuthProviderProcessingFilter = new LTIOAuthProviderProcessingFilter(oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
+            ltioAuthProviderProcessingFilter = new LTIOAuthProviderProcessingFilter(allRepositories, oauthConsumerDetailsService, oauthNonceServices, oauthProcessingFilterEntryPoint, oauthAuthenticationHandler, oauthProviderTokenServices);
         }
 
         @Override

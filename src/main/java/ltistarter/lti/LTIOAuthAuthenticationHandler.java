@@ -39,6 +39,8 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
     final static Logger log = LoggerFactory.getLogger(LTIOAuthAuthenticationHandler.class);
 
     public static SimpleGrantedAuthority userGA = new SimpleGrantedAuthority("ROLE_USER");
+    public static SimpleGrantedAuthority learnerGA = new SimpleGrantedAuthority("ROLE_LEARNER");
+    public static SimpleGrantedAuthority instructorGA = new SimpleGrantedAuthority("ROLE_INSTRUCTOR");
     public static SimpleGrantedAuthority adminGA = new SimpleGrantedAuthority("ROLE_ADMIN");
 
     @PostConstruct
@@ -49,18 +51,29 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
     @Override
     public Authentication createAuthentication(HttpServletRequest request, ConsumerAuthentication authentication, OAuthAccessProviderToken authToken) {
         Collection<GrantedAuthority> authorities = new HashSet<>(authentication.getAuthorities());
+        LTIRequest ltiRequest = (LTIRequest) request.getAttribute(LTIRequest.class.getName());
+        if (ltiRequest == null) {
+            throw new IllegalStateException("Cannot create authentication for LTI because the LTIRequest is null");
+        }
+
         // attempt to create a user Authority
-        String username = request.getParameter("username");
+        String username = ltiRequest.getLtiUserId();
         if (StringUtils.isBlank(username)) {
             username = authentication.getName();
         }
 
-        // NOTE: you should replace this block with your real rules for determining OAUTH ADMIN roles
-        if (username.equals("admin")) {
+        // set appropriate permissions for this user based on LTI data
+        if (ltiRequest.getUser() != null) {
             authorities.add(userGA);
+        }
+        if (ltiRequest.isRoleAdministrator()) {
             authorities.add(adminGA);
-        } else {
-            authorities.add(userGA);
+        }
+        if (ltiRequest.isRoleInstructor()) {
+            authorities.add(instructorGA);
+        }
+        if (ltiRequest.isRoleLearner()) {
+            authorities.add(learnerGA);
         }
 
         Principal principal = new MyOAuthAuthenticationHandler.NamedOAuthPrincipal(username, authorities,
@@ -71,7 +84,7 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
                 authentication.getConsumerCredentials().getToken()
         );
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
-        log.info("createAuthentication generated auth principal (" + principal + "): req=" + request);
+        log.info("createAuthentication generated LTI auth principal (" + principal + "): req=" + request);
         return auth;
     }
 

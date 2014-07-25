@@ -15,6 +15,7 @@
 package ltistarter.lti;
 
 import ltistarter.oauth.MyOAuthNonceServices;
+import ltistarter.repository.AllRepositories;
 import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint;
 import org.springframework.security.oauth.provider.filter.ProtectedResourceProcessingFilter;
 import org.springframework.security.oauth.provider.token.OAuthProviderTokenServices;
@@ -23,6 +24,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -30,8 +32,12 @@ import java.io.IOException;
  */
 public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessingFilter {
 
-    public LTIOAuthProviderProcessingFilter(LTIConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, LTIOAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
+    AllRepositories allRepositories;
+
+    public LTIOAuthProviderProcessingFilter(AllRepositories allRepositories, LTIConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, LTIOAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
         super();
+        assert allRepositories != null;
+        this.allRepositories = allRepositories;
         setAuthenticationEntryPoint(oAuthProcessingFilterEntryPoint);
         setAuthHandler(oAuthAuthenticationHandler);
         setConsumerDetailsService(oAuthConsumerDetailsService);
@@ -42,10 +48,17 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-        if (!LTIRequest.isLTIRequest(servletRequest)) {
-            // NOTE: tsugi handles this by just allowing the request to continue - since we have a dedicated endpoint for launches I am killing it -AZ
-            throw new IllegalStateException("Request is not a well formed LTI request (invalid lti_version or lti_message_type)");
+        // NOTE: tsugi handles failures by just allowing the request to continue - since we have a dedicated endpoint for launches the LTIRequest object will throw an IllegalStateException is the LTI request is invalid somehow
+        if (!(servletRequest instanceof HttpServletRequest)) {
+            throw new IllegalStateException("LTI request MUST be an HttpServletRequest (cannot only be a ServletRequest)");
         }
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        // load and initialize the LTI request object (loads and validates the data)
+        LTIRequest ltiRequest = new LTIRequest(httpServletRequest, allRepositories, true); // IllegalStateException if invalid
+        httpServletRequest.setAttribute("LTI", true); // indicate this request is an LTI one
+        httpServletRequest.setAttribute("lti_valid", ltiRequest.isLoaded() && ltiRequest.isComplete()); // is LTI request totally valid and complete
+        httpServletRequest.setAttribute(LTIRequest.class.getName(), ltiRequest); // make the LTI data accessible later in the request if needed
         super.doFilter(servletRequest, servletResponse, chain);
     }
+
 }
