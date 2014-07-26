@@ -1,5 +1,5 @@
-LTI 1/2 java starter app
-========================
+LTI 1 and 2 java starter app
+============================
 
 IMS LTI 1 and 2 based starter (sample) application written using Java and Spring Boot
 
@@ -23,7 +23,7 @@ Then go to the following default URL:
 
     http://localhost:8080/
 
-You can access the H2 console for default in-memory DB (JDBC URL: **jdbc:h2:mem:AZ**) at:
+You can access the H2 console for default in-memory DB (JDBC URL: **jdbc:h2:mem:AZ**, username: **sa**, password: *(blank)*) at:
 
     http://localhost:8080/console
 
@@ -34,6 +34,6 @@ Use the logback.xml to adjust and control logging.
 
 Debugging
 ---------
-To enable the debugging port (localhost:8000) when using spring-boot:run, use the main profile: -Pdebug. Then you can attach any remote debugger (eclipse, intellij, etc.) to localhost:8000. NOTE that the application will pause until you connect the debugger to it.
+To enable the debugging port (localhost:8000) when using spring-boot:run, use the maven profile: **-Pdebug**. Then you can attach any remote debugger (eclipse, intellij, etc.) to localhost:8000. NOTE that the application will pause until you connect the debugger to it.
 
     mvn clean install spring-boot:run -Pdebug
