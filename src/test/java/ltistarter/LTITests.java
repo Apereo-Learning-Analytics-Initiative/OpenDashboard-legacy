@@ -14,6 +14,7 @@
  */
 package ltistarter;
 
+import ltistarter.lti.LTIDataService;
 import ltistarter.lti.LTIRequest;
 import ltistarter.model.*;
 import ltistarter.repository.*;
@@ -44,12 +45,12 @@ public class LTITests extends BaseApplicationTest {
     LtiServiceRepository ltiServiceRepository;
 
     @Autowired
-    AllRepositories allRepositories;
+    LTIDataService ltiDataService;
 
     @Test
     @Transactional
     public void testLTIRequest() {
-        assertNotNull(allRepositories);
+        assertNotNull(ltiDataService);
         assertNotNull(ltiKeyRepository);
         assertNotNull(ltiContextRepository);
         assertNotNull(ltiLinkRepository);
@@ -102,7 +103,7 @@ public class LTITests extends BaseApplicationTest {
         assertNotNull(ltiRequest.getLtiMessageType());
         assertNotNull(ltiRequest.getLtiConsumerKey());
         assertNull(ltiRequest.getKey()); // not loaded yet
-        boolean loaded = ltiRequest.loadLTIDataFromDB(allRepositories); // load up the data
+        boolean loaded = ltiDataService.loadLTIDataFromDB(ltiRequest); // load up the data
         assertTrue(loaded);
         assertNotNull(ltiRequest.getKey());
         assertEquals(key1, ltiRequest.getKey());
@@ -114,7 +115,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_CONTEXT_ID, context1.getContextKey());
         request.setParameter(LTIRequest.LTI_LINK_ID, link1.getLinkKey());
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
-        ltiRequest = new LTIRequest(request, allRepositories, false);
+        ltiRequest = new LTIRequest(request, ltiDataService, false);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertNotNull(ltiRequest.getLtiVersion());
@@ -138,7 +139,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_USER_ID, user1.getUserKey());
         request.setParameter(LTIRequest.LTI_SOURCEDID, "invalid_sourcedid");
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
-        ltiRequest = new LTIRequest(request, allRepositories, false);
+        ltiRequest = new LTIRequest(request, ltiDataService, false);
         assertTrue(ltiRequest.isLoaded());
         assertFalse(ltiRequest.isComplete()); // missing the link
         assertFalse(ltiRequest.isUpdated());
@@ -168,7 +169,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_USER_ROLES, "Administrator,Instructor,Learner");
         request.setParameter(LTIRequest.LTI_SOURCEDID, "new_sourcedid_AZ");
         request.setParameter(LTIRequest.LTI_SERVICE, service11.getServiceKey());
-        ltiRequest = new LTIRequest(request, allRepositories, true);
+        ltiRequest = new LTIRequest(request, ltiDataService, true);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertTrue(ltiRequest.isUpdated());
@@ -199,7 +200,7 @@ public class LTITests extends BaseApplicationTest {
         request.setParameter(LTIRequest.LTI_USER_ROLES, "Mentor/Advisor,Instructor/GuestInstructor,TeachingAssistant/TeachingAssistant");
         request.setParameter(LTIRequest.LTI_SOURCEDID, "RZ_new_sourcedid");
         request.setParameter(LTIRequest.LTI_SERVICE, "RZ_grading");
-        ltiRequest = new LTIRequest(request, allRepositories, true);
+        ltiRequest = new LTIRequest(request, ltiDataService, true);
         assertTrue(ltiRequest.isLoaded());
         assertTrue(ltiRequest.isComplete());
         assertTrue(ltiRequest.isUpdated());

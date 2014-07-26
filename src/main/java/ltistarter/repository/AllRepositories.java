@@ -64,6 +64,19 @@ public class AllRepositories {
     public EntityManager entityManager;
 
     /**
+     * @return a version of the entity manager which is transactional for cases where we cannot use the @Transactional annotation
+     * or we are not operating in a service method
+     */
+    public EntityManager getTransactionalEntityManager() {
+        /* Need a transactional entity manager and for some reason the normal one is NOT, without this we get:
+         * java.lang.IllegalStateException: No transactional EntityManager available
+         * http://forum.spring.io/forum/spring-projects/roo/88329-entitymanager-problem
+         * http://stackoverflow.com/questions/14522691/java-lang-illegalstateexception-no-transactional-entitymanager-available
+         */
+        return entityManager.getEntityManagerFactory().createEntityManager();
+    }
+
+    /**
      * Do NOT construct this class manually
      */
     protected AllRepositories() {

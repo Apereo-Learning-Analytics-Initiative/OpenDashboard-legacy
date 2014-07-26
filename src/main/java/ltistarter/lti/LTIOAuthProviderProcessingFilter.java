@@ -15,7 +15,6 @@
 package ltistarter.lti;
 
 import ltistarter.oauth.MyOAuthNonceServices;
-import ltistarter.repository.AllRepositories;
 import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint;
 import org.springframework.security.oauth.provider.filter.ProtectedResourceProcessingFilter;
 import org.springframework.security.oauth.provider.token.OAuthProviderTokenServices;
@@ -32,12 +31,12 @@ import java.io.IOException;
  */
 public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessingFilter {
 
-    AllRepositories allRepositories;
+    LTIDataService ltiDataService;
 
-    public LTIOAuthProviderProcessingFilter(AllRepositories allRepositories, LTIConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, LTIOAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
+    public LTIOAuthProviderProcessingFilter(LTIDataService ltiDataService, LTIConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, LTIOAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
         super();
-        assert allRepositories != null;
-        this.allRepositories = allRepositories;
+        assert ltiDataService != null;
+        this.ltiDataService = ltiDataService;
         setAuthenticationEntryPoint(oAuthProcessingFilterEntryPoint);
         setAuthHandler(oAuthAuthenticationHandler);
         setConsumerDetailsService(oAuthConsumerDetailsService);
@@ -54,7 +53,7 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
         }
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         // load and initialize the LTI request object (loads and validates the data)
-        LTIRequest ltiRequest = new LTIRequest(httpServletRequest, allRepositories, true); // IllegalStateException if invalid
+        LTIRequest ltiRequest = new LTIRequest(httpServletRequest, ltiDataService, true); // IllegalStateException if invalid
         httpServletRequest.setAttribute("LTI", true); // indicate this request is an LTI one
         httpServletRequest.setAttribute("lti_valid", ltiRequest.isLoaded() && ltiRequest.isComplete()); // is LTI request totally valid and complete
         httpServletRequest.setAttribute(LTIRequest.class.getName(), ltiRequest); // make the LTI data accessible later in the request if needed

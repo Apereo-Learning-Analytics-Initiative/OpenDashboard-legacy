@@ -15,18 +15,18 @@
 package ltistarter.lti;
 
 import ltistarter.model.*;
-import ltistarter.repository.AllRepositories;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Query;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * LTI Request object holds all the details for a valid LTI request
@@ -135,16 +135,16 @@ public class LTIRequest {
 
     /**
      * @param request an http servlet request
-     * @param repos   the repos accessor which will be used to load DB data (if possible) for this request
+     * @param ltiDataService   the service used for accessing LTI data
      * @param update  if true then update (or insert) the DB records for this request (else skip DB updating)
      * @throws IllegalStateException if this is not an LTI request
      */
-    public LTIRequest(HttpServletRequest request, AllRepositories repos, boolean update) {
+    public LTIRequest(HttpServletRequest request, LTIDataService ltiDataService, boolean update) {
         this(request);
-        assert repos != null : "AllRepositories cannot be null";
-        this.loadLTIDataFromDB(repos);
+        assert ltiDataService != null : "LTIDataService cannot be null";
+        ltiDataService.loadLTIDataFromDB(this);
         if (update) {
-            this.updateLTIDataInDB(repos);
+            ltiDataService.updateLTIDataInDB(this);
         }
     }
 
@@ -221,282 +221,13 @@ public class LTIRequest {
     }
 
     /**
-     * Loads up the data which is referenced in this LTI request (assuming it can be found in the DB)
-     *
-     * @param repos the repos accessor used to load the data (must be set)
-     * @return true if any data was loaded OR false if none could be loaded (because no matching data was found or the input keys are not set)
-     */
-    @Transactional
-    public boolean loadLTIDataFromDB(AllRepositories repos) {
-        assert repos != null;
-        loaded = false;
-        if (ltiConsumerKey == null) {
-            // don't even attempt this without a key, it's pointless
-            log.info("LTIload: No key to load results for");
-            return false;
-        }
-        boolean includesService = (ltiServiceId != null);
-        boolean includesSourcedid = (ltiSourcedid != null);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT k, c, l, m, u"); //k.keyId, k.keyKey, k.secret, c.contextId, c.title AS contextTitle, l.linkId, l.title AS linkTitle, u.userId, u.displayName AS userDisplayName, u.email AS userEmail, u.subscribe, u.userSha256, m.membershipId, m.role, m.roleOverride"); // 15
-
-        if (includesService) {
-            sb.append(", s"); //, s.serviceId, s.serviceKey AS service"); // 2
-        }
-        if (includesSourcedid) {
-            sb.append(", r"); //, r.resultId, r.sourcedid, r.grade"); // 3
-        }
-        /*
-        if (includeProfile) {
-            sb.append(", p"); //", p.profileId, p.displayName AS profileDisplayName, p.email AS profileEmail, p.subscribe AS profileSubscribe"); // 4
-        }*/
-
-        sb.append(" FROM LtiKeyEntity k " +
-                "LEFT JOIN k.contexts c ON c.contextSha256 = :context " + // LtiContextEntity
-                "LEFT JOIN c.links l ON l.linkSha256 = :link " + // LtiLinkEntity
-                "LEFT JOIN c.memberships m " + // LtiMembershipEntity
-                "LEFT JOIN m.user u ON u.userSha256 = :user " // LtiUserEntity
-        );
-
-        if (includesService) {
-            sb.append(" LEFT JOIN k.services s ON s.serviceSha256 = :service"); // LtiServiceEntity
-        }
-        if (includesSourcedid) {
-            sb.append(" LEFT JOIN u.results r ON r.sourcedidSha256 = :sourcedid"); // LtiResultEntity
-        }
-        /*
-        if (includeProfile) {
-            sb.append(" LEFT JOIN u.profile p"); // ProfileEntity
-        }*/
-        sb.append(" WHERE k.keySha256 = :key AND (m IS NULL OR (m.context = c AND m.user = u))");
-        /*
-        if (includeProfile) {
-            sb.append(" AND (u IS NULL OR u.profile = p)");
-        }*/
-
-        String sql = sb.toString();
-        Query q = repos.entityManager.createQuery(sql);
-        q.setMaxResults(1);
-        q.setParameter("key", BaseEntity.makeSHA256(ltiConsumerKey));
-        q.setParameter("context", BaseEntity.makeSHA256(ltiContextId));
-        q.setParameter("link", BaseEntity.makeSHA256(ltiLinkId));
-        q.setParameter("user", BaseEntity.makeSHA256(ltiUserId));
-        if (includesService) {
-            q.setParameter("service", BaseEntity.makeSHA256(ltiServiceId));
-        }
-        if (includesSourcedid) {
-            q.setParameter("sourcedid", BaseEntity.makeSHA256(ltiSourcedid));
-        }
-        @SuppressWarnings("unchecked")
-        List<Object[]> rows = q.getResultList();
-        if (rows == null || rows.isEmpty()) {
-            log.info("LTIload: No results found for key=" + ltiConsumerKey);
-        } else {
-            // k, c, l, m, u, s, r
-            Object[] row = rows.get(0);
-            if (row.length > 0) key = (LtiKeyEntity) row[0];
-            if (row.length > 1) context = (LtiContextEntity) row[1];
-            if (row.length > 2) link = (LtiLinkEntity) row[2];
-            if (row.length > 3) membership = (LtiMembershipEntity) row[3];
-            if (row.length > 4) user = (LtiUserEntity) row[4];
-            if (includesService && includesSourcedid) {
-                if (row.length > 5) service = (LtiServiceEntity) row[5];
-                if (row.length > 6) result = (LtiResultEntity) row[6];
-            } else if (includesService) {
-                if (row.length > 5) service = (LtiServiceEntity) row[5];
-            } else if (includesSourcedid) {
-                if (row.length > 5) result = (LtiResultEntity) row[5];
-            }
-
-            // handle SPECIAL post lookup processing
-            // If there is an appropriate role override variable, we use that role
-            if (membership != null && membership.getRoleOverride() != null) {
-                int roleOverrideNum = membership.getRoleOverride();
-                if (roleOverrideNum > userRoleNumber) {
-                    userRoleNumber = roleOverrideNum;
-                }
-            }
-
-            // check if the loading resulted in a complete set of LTI data
-            checkCompleteLTIRequest(true);
-            loaded = true;
-            log.info("LTIload: loaded data for key=" + ltiConsumerKey + " and context=" + ltiContextId + ", complete=" + complete);
-        }
-        return loaded;
-    }
-
-    /**
-     * Attempts to insert or update the various LTI launch data (or other data that is part of this request)
-     *
-     * @param repos the repos accessor used to load the data (must be set)
-     * @return the number of changes (inserts or updates) that occur
-     */
-    @Transactional
-    public int updateLTIDataInDB(AllRepositories repos) {
-        assert repos != null : "access to the repos is required";
-        assert loaded : "Data must be loaded before it can be updated";
-
-        assert key != null : "Key data must not be null to update data";
-        repos.entityManager.merge(key); // reconnect the key object for this transaction
-
-        int inserts = 0;
-        int updates = 0;
-        if (context == null && ltiContextId != null) {
-            LtiContextEntity newContext = new LtiContextEntity(ltiContextId, key, ltiContextTitle, null);
-            context = repos.contexts.save(newContext);
-            inserts++;
-            log.info("LTIupdate: Inserted context id=" + ltiContextId);
-        } else if (context != null) {
-            repos.entityManager.merge(context); // reconnect object for this transaction
-            ltiContextId = context.getContextKey();
-            log.info("LTIupdate: Reconnected existing context id=" + ltiContextId);
-        }
-
-        if (link == null && ltiLinkId != null) {
-            LtiLinkEntity newLink = new LtiLinkEntity(ltiLinkId, context, ltiLinkTitle);
-            link = repos.links.save(newLink);
-            inserts++;
-            log.info("LTIupdate: Inserted link id=" + ltiLinkId);
-        } else if (link != null) {
-            repos.entityManager.merge(link); // reconnect object for this transaction
-            ltiLinkId = link.getLinkKey();
-            log.info("LTIupdate: Reconnected existing link id=" + ltiLinkId);
-        }
-
-        if (user == null && ltiUserId != null) {
-            LtiUserEntity newUser = new LtiUserEntity(ltiUserId, null);
-            newUser.setDisplayName(ltiUserDisplayName);
-            newUser.setEmail(ltiUserEmail);
-            user = repos.users.save(newUser);
-            inserts++;
-            log.info("LTIupdate: Inserted user id=" + ltiUserId);
-        } else if (user != null) {
-            repos.entityManager.merge(user); // reconnect object for this transaction
-            ltiUserId = user.getUserKey();
-            ltiUserDisplayName = user.getDisplayName();
-            ltiUserEmail = user.getEmail();
-            log.info("LTIupdate: Reconnected existing user id=" + ltiUserId);
-        }
-
-        if (membership == null && context != null && user != null) {
-            int roleNum = makeUserRoleNum(rawUserRoles); // NOTE: do not use userRoleNumber here, it may have been overridden
-            LtiMembershipEntity newMember = new LtiMembershipEntity(context, user, roleNum);
-            membership = repos.members.save(newMember);
-            inserts++;
-            log.info("LTIupdate: Inserted membership id=" + newMember.getMembershipId() + ", role=" + newMember.getRole() + ", user=" + ltiUserId + ", context=" + ltiContextId);
-        } else if (membership != null) {
-            repos.entityManager.merge(membership); // reconnect object for this transaction
-            ltiUserId = user.getUserKey();
-            ltiContextId = context.getContextKey();
-            log.info("LTIupdate: Reconnected existing membership id=" + membership.getMembershipId());
-        }
-
-        // We need to handle the case where the service URL changes but we already have a sourcedid
-        boolean serviceCreated = false;
-        if (service == null && ltiServiceId != null && ltiSourcedid != null) {
-            LtiServiceEntity newService = new LtiServiceEntity(ltiServiceId, key, null);
-            service = repos.services.save(newService);
-            inserts++;
-            serviceCreated = true;
-            log.info("LTIupdate: Inserted service id=" + ltiServiceId);
-        } else if (service != null) {
-            repos.entityManager.merge(service); // reconnect object for this transaction
-            ltiServiceId = service.getServiceKey();
-            log.info("LTIupdate: Reconnected existing service id=" + ltiServiceId);
-        }
-
-        // If we just created a new service entry but we already had a result entry, update it
-        if (serviceCreated && result != null && ltiServiceId != null && ltiSourcedid != null) {
-            repos.entityManager.merge(result); // reconnect object for this transaction
-            result.setSourcedid(ltiSourcedid);
-            repos.results.save(result);
-            inserts++;
-            log.info("LTIupdate: Updated existing result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
-        }
-
-        // If we don't have a result but do have a service - link them together
-        if (result == null
-                && service != null && user != null && link != null
-                && ltiServiceId != null && ltiSourcedid != null) {
-            LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
-            result = repos.results.save(newResult);
-            inserts++;
-            log.info("LTIupdate: Inserted result id=" + result.getResultId());
-        } else if (result != null) {
-            repos.entityManager.merge(result); // reconnect object for this transaction
-            ltiSourcedid = result.getSourcedid();
-        }
-
-        // If we don't have a result and do not have a service - just store the result (prep for LTI 2.0)
-        if (result == null && service == null && user != null && link != null && ltiSourcedid != null) {
-            LtiResultEntity newResult = new LtiResultEntity(ltiSourcedid, user, link, null, null);
-            result = repos.results.save(newResult);
-            inserts++;
-            log.info("LTIupdate: Inserted LTI 2 result id=" + result.getResultId() + ", sourcedid=" + ltiSourcedid);
-        }
-
-        // Here we handle updates to sourcedid
-        if (result != null && ltiSourcedid != null && !ltiSourcedid.equals(result.getSourcedid())) {
-            result.setSourcedid(ltiSourcedid);
-            result = repos.results.save(result);
-            updates++;
-            log.info("LTIupdate: Updated result (id=" + result.getResultId() + ") sourcedid=" + ltiSourcedid);
-        }
-
-        // Next we handle updates to context_title, link_title, user_displayname, user_email, or role
-
-        if (ltiContextTitle != null && context != null && !ltiContextTitle.equals(context.getTitle())) {
-            context.setTitle(ltiContextTitle);
-            context = repos.contexts.save(context);
-            updates++;
-            log.info("LTIupdate: Updated context (id=" + context.getContextId() + ") title=" + ltiContextTitle);
-        }
-
-        if (ltiLinkTitle != null && link != null && !ltiLinkTitle.equals(link.getTitle())) {
-            link.setTitle(ltiLinkTitle);
-            link = repos.links.save(link);
-            updates++;
-            log.info("LTIupdate: Updated link (id=" + link.getLinkKey() + ") title=" + ltiLinkTitle);
-        }
-
-        boolean userChanged = false;
-        if (ltiUserDisplayName != null && user != null && !ltiUserDisplayName.equals(user.getDisplayName())) {
-            user.setDisplayName(ltiUserDisplayName);
-        }
-        if (ltiUserEmail != null && user != null && !ltiUserEmail.equals(user.getEmail())) {
-            user.setEmail(ltiUserEmail);
-        }
-        if (userChanged) {
-            user = repos.users.save(user);
-            updates++;
-            log.info("LTIupdate: Updated user (id=" + user.getUserKey() + ") name=" + ltiUserDisplayName + ", email=" + ltiUserEmail);
-        }
-
-        if (rawUserRoles != null && userRoleNumber != membership.getRole()) {
-            membership.setRole(userRoleNumber);
-            membership = repos.members.save(membership);
-            updates++;
-            log.info("LTIupdate: Updated membership (id=" + membership.getMembershipId() + ", user=" + ltiUserId + ", context=" + ltiContextId + ") roles=" + rawUserRoles + ", role=" + userRoleNumber);
-        }
-
-        // need to recheck and see if we are complete now
-        checkCompleteLTIRequest(true);
-
-        loadingUpdates = inserts + updates;
-        updated = true;
-        log.info("LTIupdate: changes=" + loadingUpdates + ", inserts=" + inserts + ", updates=" + updates);
-        return loadingUpdates;
-    }
-
-    /**
      * Checks if this LTI request object has a complete set of required LTI data,
      * also sets the #complete variable appropriately
      *
      * @param objects if true then check for complete objects, else just check for complete request params
      * @return true if complete
      */
-    private boolean checkCompleteLTIRequest(boolean objects) {
+    protected boolean checkCompleteLTIRequest(boolean objects) {
         if (objects && key != null && context != null && link != null && user != null) {
             complete = true;
         } else if (!objects && ltiConsumerKey != null && ltiContextId != null && ltiLinkId != null && ltiUserId != null) {
