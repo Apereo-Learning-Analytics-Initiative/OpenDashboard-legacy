@@ -143,7 +143,8 @@ public class Application extends WebMvcConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/lti1p/**")
                     .addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                    .authorizeRequests().anyRequest().hasRole("LTI");
+                    .authorizeRequests().anyRequest().hasRole("LTI")
+                    .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
         }
     }
 
@@ -173,7 +174,8 @@ public class Application extends WebMvcConfigurerAdapter {
             http.antMatcher("/oauth/**")
                     // added filters must be ordered: see http://docs.spring.io/spring-security/site/docs/3.2.0.RELEASE/apidocs/org/springframework/security/config/annotation/web/HttpSecurityBuilder.html#addFilter%28javax.servlet.Filter%29
                     .addFilterBefore(zeroLeggedOAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                    .authorizeRequests().anyRequest().hasRole("OAUTH");
+                    .authorizeRequests().anyRequest().hasRole("OAUTH")
+                    .and().csrf().disable(); // see above
         }
     }
 
