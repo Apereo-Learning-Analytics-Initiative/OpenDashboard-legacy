@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ltistarter;
+package ltistarter.lti;
 
-import ltistarter.lti.LTIDataService;
-import ltistarter.lti.LTIRequest;
+import ltistarter.BaseApplicationTest;
 import ltistarter.model.*;
 import ltistarter.repository.*;
 import org.junit.Test;
