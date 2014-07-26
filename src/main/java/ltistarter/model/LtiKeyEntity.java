@@ -38,6 +38,9 @@ public class LtiKeyEntity extends BaseEntity {
     @Basic
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
+    @Basic
+    @Column(nullable = true, length = 8192)
+    private String settings;
 
     @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
     private Set<LtiContextEntity> contexts;
@@ -98,6 +101,14 @@ public class LtiKeyEntity extends BaseEntity {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public String getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String settings) {
+        this.settings = settings;
     }
 
     public Set<LtiContextEntity> getContexts() {
