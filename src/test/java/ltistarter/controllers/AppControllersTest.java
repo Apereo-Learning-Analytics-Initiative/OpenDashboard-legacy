@@ -16,13 +16,20 @@ package ltistarter.controllers;
 
 import ltistarter.Application;
 import ltistarter.BaseApplicationTest;
+import ltistarter.lti.LTIRequest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,9 +37,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,12 +78,16 @@ public class AppControllersTest extends BaseApplicationTest {
         assertTrue(content.contains("Hello Spring Boot"));
     }
 
-    /* How to handle the OAuth?
     @Test
+    @Ignore
     public void testLoadLTI() throws Exception {
         // test minimal LTI launch
-        CoreOAuthProviderSupport support = new CoreOAuthProviderSupport();
-        support.setBaseUrl("http://azeckoski.net");
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_OAUTH"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_LTI"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        Authentication authToken = new UsernamePasswordAuthenticationToken("azeckoski", "password", authorities);
+        SecurityContextHolder.getContext().setAuthentication(authToken);
         this.mockMvc.perform(
                 post("/ltip0")
                         .param(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0)
@@ -83,6 +98,5 @@ public class AppControllersTest extends BaseApplicationTest {
                         .param(LTIRequest.LTI_USER_ID, "azeckoski")
         ).andExpect(status().isOk());
     }
-    */
 
 }
