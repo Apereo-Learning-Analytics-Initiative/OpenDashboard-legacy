@@ -39,7 +39,7 @@ public class LtiLinkEntity extends BaseEntity {
     @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
     private String json;
     @Basic
-    @Column(nullable = true, length = 8192)
+    @Column(nullable = true, length = 65535)
     private String settings;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
