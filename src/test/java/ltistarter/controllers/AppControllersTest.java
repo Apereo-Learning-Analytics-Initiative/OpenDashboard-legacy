@@ -60,7 +60,7 @@ public class AppControllersTest extends BaseApplicationTest {
         MockitoAnnotations.initMocks(this);
         // Setup Spring test in webapp-mode (same config as spring-boot)
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                //.addFilter(springSecurityFilter, "/*")
+                .addFilters(springSecurityFilter)
                 .build();
     }
 
@@ -105,15 +105,18 @@ public class AppControllersTest extends BaseApplicationTest {
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         Authentication authToken = new UsernamePasswordAuthenticationToken("azeckoski", "password", authorities);
         SecurityContextHolder.getContext().setAuthentication(authToken);
-        this.mockMvc.perform(
-                post("/ltip0")
+        MvcResult result = this.mockMvc.perform(
+                post("/lti1p")
                         .param(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0)
                         .param(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC)
                         .param(LTIRequest.LTI_CONSUMER_KEY, "key")
                         .param(LTIRequest.LTI_LINK_ID, "Mylink")
                         .param(LTIRequest.LTI_CONTEXT_ID, "courseAZ")
                         .param(LTIRequest.LTI_USER_ID, "azeckoski")
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andReturn();
+        assertNotNull(result);
+        String content = result.getResponse().getContentAsString();
+        assertNotNull(content);
+        assertTrue(content.contains("Hello Spring Boot"));
     }
-
 }
