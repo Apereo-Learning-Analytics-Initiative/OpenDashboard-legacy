@@ -55,6 +55,7 @@ public class AppControllersTest extends BaseApplicationTest {
 
     @Before
     public void setup() {
+        assertNotNull(context);
         assertNotNull(springSecurityFilter);
         // Process mock annotations
         MockitoAnnotations.initMocks(this);
@@ -74,7 +75,7 @@ public class AppControllersTest extends BaseApplicationTest {
         String content = result.getResponse().getContentAsString();
         assertNotNull(content);
         assertTrue(content.contains("Hello Spring Boot"));
-        //assertTrue(content.contains("Form Login endpoint")); // TODO fails!
+        assertTrue(content.contains("Form Login endpoint")); // TODO fails!
     }
 
     @Test
