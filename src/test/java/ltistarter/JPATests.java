@@ -39,6 +39,7 @@ public class JPATests extends BaseApplicationTest {
     LtiKeyRepository ltiKeyRepository;
 
     @Test
+    @Transactional
     public void testJPA() {
         Iterable<LtiKeyEntity> keys;
         LtiKeyEntity key;
@@ -151,9 +152,9 @@ public class JPATests extends BaseApplicationTest {
     @PersistenceContext
     EntityManager entityManager;
 
-    @SuppressWarnings("JpaQlInspection")
     @Test
     @Transactional
+    @SuppressWarnings("JpaQlInspection")
     public void testJPAQuery() {
         assertNotNull(entityManager);
         assertNotNull(ltiKeyRepository);
@@ -190,9 +191,9 @@ public class JPATests extends BaseApplicationTest {
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     LtiMembershipRepository ltiMembershipRepository;
 
-    @SuppressWarnings("JpaQlInspection")
     @Test
     @Transactional
+    @SuppressWarnings("JpaQlInspection")
     public void testJPAJoinsQuery() {
         assertNotNull(entityManager);
         assertNotNull(ltiKeyRepository);

@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
@@ -109,9 +110,10 @@ public class AppControllersTest extends BaseApplicationTest {
     LtiKeyRepository ltiKeyRepository;
 
     @Test
+    @Transactional // rollback after
     public void testLoadLTI() throws Exception {
         // test minimal LTI launch
-        LtiKeyEntity key = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
+        LtiKeyEntity key = ltiKeyRepository.save(new LtiKeyEntity("AZltiKey", "AZsecret"));
         MockHttpSession session = makeAuthSession("azeckoski", "ROLE_LTI", "ROLE_OAUTH", "ROLE_USER");
         MvcResult result = this.mockMvc.perform(
                 post("/lti1p").session(session)
