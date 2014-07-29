@@ -16,14 +16,16 @@ package ltistarter.controllers;
 
 import ltistarter.BaseApplicationTest;
 import ltistarter.lti.LTIRequest;
+import ltistarter.model.LtiKeyEntity;
+import ltistarter.repository.LtiKeyRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.oauth.provider.filter.OAuthProviderProcessingFilter;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -102,16 +104,21 @@ public class AppControllersTest extends BaseApplicationTest {
         assertTrue(content.contains("Logout")); // logout button
     }
 
+    @Autowired
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
+    LtiKeyRepository ltiKeyRepository;
+
     @Test
-    @Ignore
     public void testLoadLTI() throws Exception {
         // test minimal LTI launch
+        LtiKeyEntity key = ltiKeyRepository.save(new LtiKeyEntity("AZkey", "AZsecret"));
         MockHttpSession session = makeAuthSession("azeckoski", "ROLE_LTI", "ROLE_OAUTH", "ROLE_USER");
         MvcResult result = this.mockMvc.perform(
                 post("/lti1p").session(session)
+                        .requestAttr(OAuthProviderProcessingFilter.OAUTH_PROCESSING_HANDLED, true) // skip OAuth processing in the filter
                         .param(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0)
                         .param(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC)
-                        .param(LTIRequest.LTI_CONSUMER_KEY, "key")
+                        .param(LTIRequest.LTI_CONSUMER_KEY, key.getKeyKey())
                         .param(LTIRequest.LTI_LINK_ID, "Mylink")
                         .param(LTIRequest.LTI_CONTEXT_ID, "courseAZ")
                         .param(LTIRequest.LTI_USER_ID, "azeckoski")
@@ -120,5 +127,6 @@ public class AppControllersTest extends BaseApplicationTest {
         String content = result.getResponse().getContentAsString();
         assertNotNull(content);
         assertTrue(content.contains("Hello Spring Boot"));
+        assertTrue(content.contains("only shown to LTI users"));
     }
 }

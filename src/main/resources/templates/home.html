@@ -39,7 +39,7 @@
     <div>Login: <span th:text="${session.login}"/></div>
 </div>
 <div sec:authorize="hasRole('ROLE_LTI')">
-    This content is only shown to LTI users only.
+    This content is only shown to LTI users (ROLE_LTI).
     <div>Context: <span th:text="${ltiContext}"/></div>
     <div>User: <span th:text="${ltiUser}"/></div>
     <div>Link: <span th:text="${ltiLink}"/></div>

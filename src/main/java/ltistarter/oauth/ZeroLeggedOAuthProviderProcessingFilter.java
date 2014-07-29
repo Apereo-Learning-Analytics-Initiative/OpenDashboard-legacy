@@ -24,13 +24,15 @@ import org.springframework.security.oauth.provider.token.OAuthProviderTokenServi
  */
 public class ZeroLeggedOAuthProviderProcessingFilter extends ProtectedResourceProcessingFilter {
 
-    public ZeroLeggedOAuthProviderProcessingFilter(MyConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, OAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
+    public ZeroLeggedOAuthProviderProcessingFilter(MyConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, OAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices, boolean testing) {
         super();
         setAuthenticationEntryPoint(oAuthProcessingFilterEntryPoint);
         setAuthHandler(oAuthAuthenticationHandler);
         setConsumerDetailsService(oAuthConsumerDetailsService);
         setNonceServices(oAuthNonceServices);
         setTokenServices(oAuthProviderTokenServices);
-        //setIgnoreMissingCredentials(false); // die if OAuth params are not included
+        if (testing) {
+            setIgnoreMissingCredentials(true); // die if OAuth params are not included
+        }
     }
 }
