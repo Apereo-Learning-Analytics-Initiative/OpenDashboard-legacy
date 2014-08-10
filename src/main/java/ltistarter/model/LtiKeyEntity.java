@@ -36,11 +36,20 @@ public class LtiKeyEntity extends BaseEntity {
     @Column(name = "secret", nullable = false, insertable = true, updatable = true, length = 4096)
     private String secret;
     @Basic
-    @Column(name = "json", nullable = true, insertable = true, updatable = true, length = 65535)
+    @Column(name = "new_secret", nullable = true, length = 4096)
+    private String newSecret;
+    @Basic
+    @Column(name = "json", nullable = true, length = 65535)
     private String json;
     @Basic
     @Column(nullable = true, length = 65535)
     private String settings;
+    @Basic
+    @Column(name = "consumer_profile", nullable = true, length = 65535)
+    private String consumerProfile;
+    @Basic
+    @Column(name = "new_consumer_profile", nullable = true, length = 65535)
+    private String newConsumerProfile;
 
     @OneToMany(mappedBy = "ltiKey", fetch = FetchType.LAZY)
     private Set<LtiContextEntity> contexts;
@@ -125,6 +134,30 @@ public class LtiKeyEntity extends BaseEntity {
 
     public void setServices(Set<LtiServiceEntity> services) {
         this.services = services;
+    }
+
+    public String getNewSecret() {
+        return newSecret;
+    }
+
+    public void setNewSecret(String newSecret) {
+        this.newSecret = newSecret;
+    }
+
+    public String getConsumerProfile() {
+        return consumerProfile;
+    }
+
+    public void setConsumerProfile(String consumerProfile) {
+        this.consumerProfile = consumerProfile;
+    }
+
+    public String getNewConsumerProfile() {
+        return newConsumerProfile;
+    }
+
+    public void setNewConsumerProfile(String newConsumerProfile) {
+        this.newConsumerProfile = newConsumerProfile;
     }
 
     @Override
