@@ -27,17 +27,18 @@ import java.security.Principal;
  * Key "key" and secret "secret"
  */
 @Controller
-@RequestMapping("/lti1p")
-public class LTIController extends BaseController {
+@RequestMapping("/lti2p")
+public class LTI2Controller extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "lti1p");
+        model.addAttribute("name", "lti2p");
         req.getSession().setAttribute("login", "oauth");
         LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
         if (ltiRequest != null) {
             model.addAttribute("lti", true);
+            model.addAttribute("ltiVersion", 2);
             model.addAttribute("ltiContext", ltiRequest.getLtiContextId());
             model.addAttribute("ltiUser", ltiRequest.getLtiUserDisplayName());
             model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());

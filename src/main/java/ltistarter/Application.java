@@ -141,10 +141,17 @@ public class Application extends WebMvcConfigurerAdapter {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            /*
+            http
+                    .addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                    .authorizeRequests().antMatchers("/lti1p/**","/lti2p/**").hasRole("LTI")
+                    .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
+            /**/
             http.antMatcher("/lti1p/**")
                     .addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests().anyRequest().hasRole("LTI")
                     .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
+            /**/
         }
     }
 
