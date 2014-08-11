@@ -46,6 +46,8 @@ public class LTIConsumerDetailsService implements ConsumerDetailsService {
     public ConsumerDetails loadConsumerByConsumerKey(String consumerKey) throws OAuthException {
         consumerKey = StringUtils.trimToNull(consumerKey);
         assert StringUtils.isNotEmpty(consumerKey) : "consumerKey must be set and not null";
+        //HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        //assert request != null : "request must be available for this to make sense";
         BaseConsumerDetails cd;
         LtiKeyEntity ltiKey = ltiKeyRepository.findByKeyKey(consumerKey);
         if (ltiKey == null) {
@@ -54,6 +56,11 @@ public class LTIConsumerDetailsService implements ConsumerDetailsService {
         } else {
             cd = new BaseConsumerDetails();
             cd.setConsumerKey(consumerKey);
+            // If there is a new_secret it means an LTI2 re-registration is in progress
+            if (StringUtils.isNotBlank(ltiKey.getNewSecret()) && !StringUtils.equals(ltiKey.getSecret(), ltiKey.getNewSecret())) {
+                log.info("LTI 2 re-registration in progress - new_secret is not blank");
+                // TODO do we need to do anything here?
+            }
             cd.setSignatureSecret(new SharedConsumerSecretImpl(ltiKey.getSecret()));
             cd.setConsumerName(String.valueOf(ltiKey.getKeyId()));
             cd.setRequiredToObtainAuthenticatedToken(false); // no token required (0-legged)

@@ -38,7 +38,7 @@ public class LTI2Controller extends BaseController {
         LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
         if (ltiRequest != null) {
             model.addAttribute("lti", true);
-            model.addAttribute("ltiVersion", 2);
+            model.addAttribute("ltiVersion", "2.0");
             model.addAttribute("ltiContext", ltiRequest.getLtiContextId());
             model.addAttribute("ltiUser", ltiRequest.getLtiUserDisplayName());
             model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());
