@@ -24,26 +24,43 @@ import java.security.Principal;
 
 /**
  * This LTI controller should be protected by OAuth 1.0a (on the /oauth path)
- * Key "key" and secret "secret"
+ * This will handle LTI 1 and 2 (many of the paths ONLY make sense for LTI2 though)
+ * Sample Key "key" and secret "secret"
  */
 @Controller
-@RequestMapping("/lti2p")
-public class LTI2Controller extends BaseController {
+@RequestMapping("/lti")
+public class LTIController extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "lti2p");
+        model.addAttribute("name", "lti");
         req.getSession().setAttribute("login", "oauth");
         LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
         if (ltiRequest != null) {
             model.addAttribute("lti", true);
-            model.addAttribute("ltiVersion", "2.0");
+            model.addAttribute("ltiVersion", ltiRequest.getLtiVersion());
             model.addAttribute("ltiContext", ltiRequest.getLtiContextId());
             model.addAttribute("ltiUser", ltiRequest.getLtiUserDisplayName());
             model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());
         }
+        //noinspection SpringMVCViewInspection
         return "home"; // name of the template
+    }
+
+    @RequestMapping({"/register"})
+    public String register(HttpServletRequest req, Model model) {
+        LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
+        if (ltiRequest != null) {
+            if (ltiRequest.checkValidToolRegistration()) { // throws exception on failure
+                model.addAttribute("validToolRegistration", true);
+                // TODO process it!
+            }
+        } else {
+            throw new IllegalStateException("Invalid LTI request, cannot create LTIRequest from request: " + req);
+        }
+        //noinspection SpringMVCViewInspection
+        return "register"; // name of the template
     }
 
 }

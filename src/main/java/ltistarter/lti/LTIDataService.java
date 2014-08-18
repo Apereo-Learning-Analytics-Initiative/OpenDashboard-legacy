@@ -306,4 +306,10 @@ public class LTIDataService {
         return lti.loadingUpdates;
     }
 
+    public KeyRequestEntity findKeyRequest(LTIRequest lti) {
+        assert lti != null;
+        assert lti.getUser() != null : "User not populated in the LTIRequest";
+        return repos.keyRequests.findByUser_UserId(lti.getUser().getUserId());
+    }
+
 }

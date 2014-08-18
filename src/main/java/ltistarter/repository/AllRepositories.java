@@ -34,6 +34,9 @@ public class AllRepositories {
     public ConfigRepository configs;
 
     @Autowired
+    public KeyRequestRepository keyRequests;
+
+    @Autowired
     public LtiContextRepository contexts;
 
     @Autowired

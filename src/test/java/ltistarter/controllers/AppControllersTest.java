@@ -116,7 +116,7 @@ public class AppControllersTest extends BaseApplicationTest {
         LtiKeyEntity key = ltiKeyRepository.save(new LtiKeyEntity("AZltiKey", "AZsecret"));
         MockHttpSession session = makeAuthSession("azeckoski", "ROLE_LTI", "ROLE_OAUTH", "ROLE_USER");
         MvcResult result = this.mockMvc.perform(
-                post("/lti1p").session(session)
+                post("/lti").session(session)
                         .requestAttr(OAuthProviderProcessingFilter.OAUTH_PROCESSING_HANDLED, true) // skip OAuth processing in the filter
                         .param(LTIRequest.LTI_VERSION, LTIRequest.LTI_VERSION_1P0)
                         .param(LTIRequest.LTI_MESSAGE_TYPE, LTIRequest.LTI_MESSAGE_TYPE_BASIC)

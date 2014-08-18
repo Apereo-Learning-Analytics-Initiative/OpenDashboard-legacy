@@ -14,12 +14,12 @@
  */
 package ltistarter.repository;
 
-import ltistarter.model.ProfileEntity;
+import ltistarter.model.KeyRequestEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface ProfileRepository extends PagingAndSortingRepository<ProfileEntity, Long> {
+public interface KeyRequestRepository extends PagingAndSortingRepository<KeyRequestEntity, Long> {
     /* Add custom crud methods here
      * If you need a custom implementation of the methods then see docs for steps to add it
      * http://docs.spring.io/spring-data/data-commons/docs/current/reference/html/repositories.html
@@ -31,5 +31,5 @@ public interface ProfileRepository extends PagingAndSortingRepository<ProfileEnt
      * List<User> findWithAlias(String alias);
      */
 
-    ProfileEntity findByProfileKey(String profileKey);
+    public KeyRequestEntity findByUser_UserId(long userId);
 }

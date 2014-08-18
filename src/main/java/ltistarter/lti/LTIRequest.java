@@ -14,19 +14,21 @@
  */
 package ltistarter.lti;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ltistarter.model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * LTI Request object holds all the details for a valid LTI request
@@ -60,6 +62,7 @@ public class LTIRequest {
     public static final String LTI_TOOL_CONSUMER_VERSION = "tool_consumer_info_version";
     public static final String LTI_TOOL_CONSUMER_NAME = "tool_consumer_instance_name";
     public static final String LTI_TOOL_CONSUMER_EMAIL = "tool_consumer_instance_contact_email";
+    public static final String LTI_TOOL_CONSUMER_PROFILE_URL = "tc_profile_url";
     public static final String LTI_USER_ID = "user_id";
     public static final String LTI_USER_EMAIL = "lis_person_contact_email_primary";
     public static final String LTI_USER_NAME_FULL = LIS_PERSON_PREFIX + "full";
@@ -69,11 +72,14 @@ public class LTIRequest {
     public static final String USER_ROLE_OVERRIDE = "role_override";
 
     public static final String LTI_MESSAGE_TYPE_BASIC = "basic-lti-launch-request";
-    public static final String LTI_MESSAGE_TYPE_PROXY_REG = "ToolProxyReregistrationRequest";
+    public static final String LTI_MESSAGE_TYPE_PROXY_REG = "ToolProxyRegistrationRequest";
+    public static final String LTI_MESSAGE_TYPE_PROXY_REREG = "ToolProxyReregistrationRequest";
     public static final String LTI_VERSION_1P0 = "LTI-1p0";
     public static final String LTI_VERSION_2P0 = "LTI-2p0";
 
     HttpServletRequest httpServletRequest;
+    LTIDataService ltiDataService;
+    RestTemplate restTemplate;
 
     // these are populated by the loadLTIDataFromDB operation
     LtiKeyEntity key;
@@ -126,6 +132,7 @@ public class LTIRequest {
     public LTIRequest(HttpServletRequest request) {
         assert request != null : "cannot make an LtiRequest without a request";
         this.httpServletRequest = request;
+        this.restTemplate = new RestTemplate();
         // extract the typical LTI data from the request
         if (!isLTIRequest(request)) {
             throw new IllegalStateException("Request is not an LTI request");
@@ -146,6 +153,7 @@ public class LTIRequest {
         if (update) {
             ltiDataService.updateLTIDataInDB(this);
         }
+        this.ltiDataService = ltiDataService;
     }
 
     /**
@@ -238,6 +246,90 @@ public class LTIRequest {
         return complete;
     }
 
+    /**
+     * Checks if we have a valid tool registration in the current request
+     *
+     * @return true if valid, false otherwise
+     * @throws IllegalArgumentException if the inputs are invalid
+     * @throws IllegalStateException    is the key request is not approved or valid
+     */
+    public boolean checkValidToolRegistration() {
+        assert ltiDataService != null;
+        // See if current user is allowed to register a tool
+        KeyRequestEntity keyRequestEntity = ltiDataService.findKeyRequest(this);
+
+        if (keyRequestEntity == null) {
+            throw new IllegalStateException("Cannot find a key request for the current user");
+        }
+        if (keyRequestEntity.getState() == 0) {
+            throw new IllegalStateException("Your key has not yet been approved");
+        }
+        if (keyRequestEntity.getState() != 1) {
+            throw new IllegalStateException("Your key request was not approved");
+        }
+        if (keyRequestEntity.getLti() != 2) {
+            throw new IllegalStateException("You did not request an LTI 2.0 key");
+        }
+        // We have a person authorized to use LTI 2.0 on this server
+
+        String regKey;
+        String regPass;
+        if (LTI_MESSAGE_TYPE_PROXY_REREG.equals(this.ltiMessageType)) {
+            regKey = this.ltiConsumerKey;
+            regPass = "secret";
+        } else if (LTI_MESSAGE_TYPE_PROXY_REG.equals(this.ltiMessageType)) {
+            regKey = this.httpServletRequest.getParameter("reg_key");
+            regPass = this.httpServletRequest.getParameter("reg_password");
+        } else {
+            throw new IllegalArgumentException("lti_message_type param is invalid: " + this.ltiMessageType);
+        }
+
+        //this.ltiPresReturnUrl
+
+        Map<String, Object> tcProfile;
+        String tcProfileJSON;
+        String tcProfileURL = getParam(LTI_TOOL_CONSUMER_PROFILE_URL);
+        if (StringUtils.length(tcProfileURL) > 1) {
+            log.debug("Retrieving profile from " + tcProfileURL);
+            String json = this.restTemplate.getForObject(tcProfileURL, String.class);
+            try {
+                tcProfile = jsonToMap(json);
+                tcProfileJSON = json;
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Unable to parse tc_profile JSON (" + e.getMessage() + "): " + json, e);
+            }
+        } else {
+            throw new IllegalArgumentException("Missing tc_profile_url in the request, cannot register tool...");
+        }
+
+        // Find the registration URL
+        /* TODO
+$oauth_consumer_key = $tc_profile->guid;
+$tc_services = $tc_profile->service_offered;
+echo("Found ".count($tc_services)." services profile..\n");
+if ( count($tc_services) < 1 ) lmsDie("At a minimum, we need the service to register ourself - doh!\n");
+// var_dump($tc_services);
+$register_url = false;
+$result_url = false;
+foreach ($tc_services as $tc_service) {
+    $formats = $tc_service->{'format'};
+    $type = $tc_service->{'@type'};
+    $id = $tc_service->{'@id'};
+    $actions = $tc_service->action;
+    if ( ! (is_array($actions) && in_array('POST', $actions)) ) continue;
+    foreach($formats as $format) {
+        echo("Service: ".$format." id=".$id."\n");
+        if ( $format != "application/vnd.ims.lti.v2.toolproxy+json" ) continue;
+        // var_dump($tc_service);
+        $register_url = $tc_service->endpoint;
+    }
+}
+if ( $register_url == false ) lmsDie("Must have an application/vnd.ims.lti.v2.toolproxy+json service available in order to do tool_registration.");
+         */
+
+        return false;
+    }
+
     public boolean isRoleAdministrator() {
         return (rawUserRoles != null && userRoleNumber >= 2);
     }
@@ -262,7 +354,8 @@ public class LTIRequest {
         String ltiMessageType = StringUtils.trimToNull(request.getParameter(LTI_MESSAGE_TYPE));
         if (ltiMessageType != null && ltiVersion != null) {
             boolean goodMessageType = LTI_MESSAGE_TYPE_BASIC.equals(ltiMessageType)
-                    || LTI_MESSAGE_TYPE_PROXY_REG.equals(ltiMessageType);
+                    || LTI_MESSAGE_TYPE_PROXY_REG.equals(ltiMessageType)
+                    || LTI_MESSAGE_TYPE_PROXY_REREG.equals(ltiMessageType);
             boolean goodLTIVersion = LTI_VERSION_1P0.equals(ltiVersion)
                     || LTI_VERSION_2P0.equals(ltiVersion);
             valid = goodMessageType && goodLTIVersion;
@@ -303,6 +396,60 @@ public class LTIRequest {
             }
         }
         return roleNum;
+    }
+
+    /**
+     * Use Jackson to convert some JSON to a map
+     *
+     * @param json input JSON
+     * @return the map
+     * @throws java.lang.IllegalArgumentException if the json is invalid
+     */
+    public static Map<String, Object> jsonToMap(final String json) {
+        if (StringUtils.isBlank(json)) {
+            throw new IllegalArgumentException("Invalid json: blank/empty/null string");
+        }
+        Map<String, Object> map = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            //noinspection unchecked
+            map = mapper.readValue(json, Map.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid json: " + e.getMessage(), e);
+        }
+        return map;
+    }
+
+    /**
+     * Use Jackson to check if some JSON is valid
+     *
+     * @param json a chunk of json
+     * @return true if valid
+     */
+    public static boolean isValidJSON(final String json) {
+        boolean valid;
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        try {
+            JsonParser parser = null;
+            try {
+                parser = new ObjectMapper().getFactory().createParser(json);
+                //noinspection StatementWithEmptyBody
+                while (parser.nextToken() != null) {
+                }
+                valid = true;
+            } catch (JsonParseException jpe) {
+                valid = false;
+            } finally {
+                if (parser != null) {
+                    parser.close();
+                }
+            }
+        } catch (IOException e) {
+            valid = false;
+        }
+        return valid;
     }
 
     // GETTERS

@@ -147,7 +147,7 @@ public class Application extends WebMvcConfigurerAdapter {
                     .authorizeRequests().antMatchers("/lti1p/**","/lti2p/**").hasRole("LTI")
                     .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
             /**/
-            http.antMatcher("/lti1p/**")
+            http.antMatcher("/lti/**")
                     .addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests().anyRequest().hasRole("LTI")
                     .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
@@ -215,6 +215,7 @@ public class Application extends WebMvcConfigurerAdapter {
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().antMatchers("/console/**");
         }
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             // this ensures security context info (Principal, sec:authorize, etc.) is accessible on all paths
