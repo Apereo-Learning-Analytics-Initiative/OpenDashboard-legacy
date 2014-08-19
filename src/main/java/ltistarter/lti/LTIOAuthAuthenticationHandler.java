@@ -76,6 +76,7 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
             authorities.add(learnerGA);
         }
 
+        // TODO store lti context and user id in the principal
         Principal principal = new MyOAuthAuthenticationHandler.NamedOAuthPrincipal(username, authorities,
                 authentication.getConsumerCredentials().getConsumerKey(),
                 authentication.getConsumerCredentials().getSignature(),

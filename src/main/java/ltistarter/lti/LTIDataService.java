@@ -38,6 +38,14 @@ public class LTIDataService {
     AllRepositories repos;
 
     /**
+     * Allows convenient access to the DAO repositories which manage the stored LTI data
+     * @return the repositories access service
+     */
+    public AllRepositories getRepos() {
+        return repos;
+    }
+
+    /**
      * Loads up the data which is referenced in this LTI request (assuming it can be found in the DB)
      *
      * @param lti the LTIRequest which we are populating

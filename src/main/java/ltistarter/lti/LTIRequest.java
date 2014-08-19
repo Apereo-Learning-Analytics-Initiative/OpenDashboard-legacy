@@ -17,6 +17,7 @@ package ltistarter.lti;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ltistarter.config.ApplicationConfig;
 import ltistarter.model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +25,12 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
@@ -34,8 +38,23 @@ import java.util.*;
  * LTI Request object holds all the details for a valid LTI request
  * (including data populated on the validated launch)
  *
- * This basically does everything in lti_db.php from tsugi (except the OAuth stuff, that is handled by spring security)
+ * This is generally the only class that a developer will need to interact with but it will
+ * only be available during incoming LTI requests (launches, etc.). Once the tool application
+ * takes over and is servicing the requests on its own path this will no longer be available.
  *
+ * Obtain this class using the static instance methods like so (recommended):
+ * LTIRequest ltiRequest = LTIRequest.getInstanceOrDie();
+ *
+ * Or by retrieving it from the HttpServletRequest attributes like so (best to not do this):
+ * LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
+ *
+ * Devs may also need to use the LTIDataService service (injected) to access data when there is no
+ * LTI request active.
+ *
+ * The main LTI data will also be placed into the Session and the Principal under the
+ * LTI_USER_ID, LTI_CONTEXT_ID, and LTI_ROLE_ID constant keys.
+ *
+ * NOTE: This basically does everything in lti_db.php from tsugi (except the OAuth stuff, that is handled by spring security)
  */
 public class LTIRequest {
 
@@ -68,6 +87,7 @@ public class LTIRequest {
     public static final String LTI_USER_NAME_FULL = LIS_PERSON_PREFIX + "full";
     public static final String LTI_USER_IMAGE_URL = "user_image";
     public static final String LTI_USER_ROLES = "roles";
+    public static final String LTI_USER_ROLE = "user_role";
     public static final String LTI_VERSION = "lti_version";
     public static final String USER_ROLE_OVERRIDE = "role_override";
 
@@ -76,6 +96,10 @@ public class LTIRequest {
     public static final String LTI_MESSAGE_TYPE_PROXY_REREG = "ToolProxyReregistrationRequest";
     public static final String LTI_VERSION_1P0 = "LTI-1p0";
     public static final String LTI_VERSION_2P0 = "LTI-2p0";
+    public static final String LTI_ROLE_GENERAL = "user";
+    public static final String LTI_ROLE_LEARNER = "learner";
+    public static final String LTI_ROLE_INSTRUCTOR = "instructor";
+    public static final String LTI_ROLE_ADMIN = "administrator";
 
     HttpServletRequest httpServletRequest;
     LTIDataService ltiDataService;
@@ -124,6 +148,54 @@ public class LTIRequest {
     int userRoleNumber;
     String rawUserRolesOverride;
     String ltiVersion;
+
+    /**
+     * @return the current LTIRequest object if there is one available, null if there isn't one and this is not a valid LTI based request
+     */
+    public static synchronized LTIRequest getInstance() {
+        LTIRequest ltiRequest = null;
+        try {
+            ltiRequest = getInstanceOrDie();
+        } catch (Exception e) {
+            // nothing to do here
+        }
+        return ltiRequest;
+    }
+
+    /**
+     * @return the current LTIRequest object if there is one available
+     * @throws java.lang.IllegalStateException if the LTIRequest cannot be obtained
+     */
+    public static LTIRequest getInstanceOrDie() {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest req = sra.getRequest();
+        if (req == null) {
+            throw new IllegalStateException("No HttpServletRequest can be found, cannot get the LTIRequest unless we are currently in a request");
+        }
+        LTIRequest ltiRequest = (LTIRequest) req.getAttribute(LTIRequest.class.getName());
+        if (ltiRequest == null) {
+            log.debug("No LTIRequest found, attempting to create one for the current request");
+            LTIDataService ltiDataService = null;
+            try {
+                ltiDataService = ApplicationConfig.getContext().getBean(LTIDataService.class);
+            } catch (Exception e) {
+                log.warn("Unable to get the LTIDataService, initializing the LTIRequest without it");
+            }
+            try {
+                if (ltiDataService != null) {
+                    ltiRequest = new LTIRequest(req, ltiDataService, true);
+                } else {
+                    ltiRequest = new LTIRequest(req);
+                }
+            } catch (Exception e) {
+                log.warn("Failure trying to create the LTIRequest: " + e);
+            }
+        }
+        if (ltiRequest == null) {
+            throw new IllegalStateException("Invalid LTI request, cannot create LTIRequest from request: " + req);
+        }
+        return ltiRequest;
+    }
 
     /**
      * @param request an http servlet request
@@ -225,6 +297,19 @@ public class LTIRequest {
         } else if (getParam(LIS_PERSON_PREFIX + "family") != null) {
             ltiUserDisplayName = getParam(LIS_PERSON_PREFIX + "family");
         }
+        // store the basics in the session (even though they are already in the security context)
+        HttpSession session = this.httpServletRequest.getSession();
+        session.setAttribute(LTI_USER_ID, ltiUserId);
+        session.setAttribute(LTI_CONTEXT_ID, ltiContextId);
+        String normalizedRoleName = LTI_ROLE_GENERAL;
+        if (isRoleAdministrator()) {
+            normalizedRoleName = LTI_ROLE_ADMIN;
+        } else if (isRoleInstructor()) {
+            normalizedRoleName = LTI_ROLE_INSTRUCTOR;
+        } else if (isRoleLearner()) {
+            normalizedRoleName = LTI_ROLE_LEARNER;
+        }
+        session.setAttribute(LTI_USER_ROLE, normalizedRoleName);
         return complete;
     }
 

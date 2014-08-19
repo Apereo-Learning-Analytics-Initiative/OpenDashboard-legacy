@@ -23,18 +23,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /**
- * This LTI controller should be protected by OAuth 1.0a (on the /oauth path)
- * This will handle LTI 1 and 2 (many of the paths ONLY make sense for LTI2 though)
- * Sample Key "key" and secret "secret"
+ * This LTI controller should be protected by OAuth 1.0a and is here for cases
+ * where we need lti2 specific processing that can't be done under the lti path
  */
 @Controller
-@RequestMapping("/lti")
-public class LTIController extends BaseController {
+@RequestMapping("/lti2")
+public class LTI2Controller extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
         commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "lti");
+        model.addAttribute("name", "lti2");
         req.getSession().setAttribute("login", "oauth");
         LTIRequest ltiRequest = LTIRequest.getInstance();
         if (ltiRequest != null) {
@@ -46,17 +45,6 @@ public class LTIController extends BaseController {
         }
         //noinspection SpringMVCViewInspection
         return "home"; // name of the template
-    }
-
-    @RequestMapping({"/register"})
-    public String register(HttpServletRequest req, Model model) {
-        LTIRequest ltiRequest = LTIRequest.getInstanceOrDie();
-        if (ltiRequest.checkValidToolRegistration()) { // throws exception on failure
-            model.addAttribute("validToolRegistration", true);
-            // TODO process it!
-        }
-        //noinspection SpringMVCViewInspection
-        return "register"; // name of the template
     }
 
 }

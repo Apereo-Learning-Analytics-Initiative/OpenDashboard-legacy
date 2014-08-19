@@ -19,12 +19,16 @@ import ltistarter.repository.ConfigRepository;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 /**
@@ -32,9 +36,11 @@ import javax.annotation.Resource;
  * merges config settings from spring and local application config
  */
 @Component
-public class ApplicationConfig {
+public class ApplicationConfig implements ApplicationContextAware {
 
     final static Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
+    private volatile static ApplicationContext context;
+    private volatile static ApplicationConfig config;
 
     @Autowired
     ConfigurableEnvironment env;
@@ -50,10 +56,18 @@ public class ApplicationConfig {
     @PostConstruct
     public void init() {
         log.info("INIT");
-        log.info("profiles active: " + ArrayUtils.toString(env.getActiveProfiles()));
-        log.info("profiles default: " + ArrayUtils.toString(env.getDefaultProfiles()));
+        //log.info("profiles active: " + ArrayUtils.toString(env.getActiveProfiles()));
+        //log.info("profiles default: " + ArrayUtils.toString(env.getDefaultProfiles()));
         env.setActiveProfiles("dev", "testing");
-        log.info("profiles active: " + ArrayUtils.toString(env.getActiveProfiles()));
+        config = this;
+        log.info("Config INIT: profiles active: " + ArrayUtils.toString(env.getActiveProfiles()));
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        context = null;
+        config = null;
+        log.info("DESTROY");
     }
 
     // DELEGATED from the spring Environment (easier config access)
@@ -110,6 +124,25 @@ public class ApplicationConfig {
             }
         }
         return property;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        context = applicationContext;
+    }
+
+    /**
+     * @return the current service instance the spring application context (only populated after init)
+     */
+    public static ApplicationContext getContext() {
+        return context;
+    }
+
+    /**
+     * @return the current service instance of the config object (only populated after init)
+     */
+    public static ApplicationConfig getInstance() {
+        return config;
     }
 
 }
