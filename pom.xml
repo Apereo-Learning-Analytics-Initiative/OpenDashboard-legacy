@@ -3,14 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.zeckoski</groupId>
-  <artifactId>ltistarter</artifactId>
+  <groupId>org.apereo</groupId>
   <version>0.1-SNAPSHOT</version>
   <inceptionYear>2014</inceptionYear>
   <packaging>war</packaging>
 
-  <name>LTI starter app</name>
-  <description>IMS LTI starter app</description>
+  <name>OpenDash</name>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -227,20 +225,6 @@
     </plugins>
   </build>
 
-  <developers>
-    <developer>
-      <id>azeckoski</id>
-      <name>Aaron Zeckoski</name>
-      <email>azeckoski@vt.edu</email>
-      <url>http://tinyurl.com/azprofile</url>
-      <roles>
-        <role>Architect</role>
-        <role>Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
-
   <licenses>
     <license>
       <name>Apache License 2.0</name>
@@ -249,4 +233,5 @@
     </license>
   </licenses>
 
+  <artifactId>opendash</artifactId>
 </project>
