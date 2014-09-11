@@ -1,94 +1,21 @@
-<!--
-
-    Copyright 2014 Unicon (R)
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <!DOCTYPE html>
-<!--suppress CheckEmptyScriptTag -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<html>
+
 <head>
-    <title>LTI Starter</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"></link>
 </head>
+
 <body>
-<p>Hello Spring Boot User <span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
 
-<div>Request URI: <span th:text="${reqURI}"/></div>
-<p th:text="|Today: ${today}!|"/>
-
-<div>OPEN: <a th:href="@{/}">Home(/)</a> | <a th:href="@{/open}">/open</a></div>
-
-<div sec:authorize="isAuthenticated()"><!-- only show this when user IS logged in -->
-    <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
-        <input type="submit" value="Logout"/>
-    </form>
-    <div>User: <span sec:authentication="name">AZ</span></div>
-    <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
-    <div>Login: <span th:text="${session.login}"/></div>
-</div>
-<div sec:authorize="hasRole('ROLE_LTI')">
-    This content is only shown to LTI users (ROLE_LTI).
-    <div>Context: <span th:text="${ltiContext}"/></div>
-    <div>Version: <span th:text="${ltiVersion}"/></div>
-    <div>User: <span th:text="${ltiUser}"/></div>
-    <div>Link: <span th:text="${ltiLink}"/></div>
-</div>
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    This content is only shown to administrators (ROLE_ADMIN).
-</div>
-<div sec:authorize="hasRole('ROLE_USER')">
-    This content is only shown to users (ROLE_USER).
-</div>
-<div th:if="${param.logout}">
-    You have been logged out.
-</div>
-
-<!-- <TAG sec:authorize="KEY"...>
-KEY                         DESCRIPTION
-hasRole([role])             Returns true if the current principal has the specified role.
-hasAnyRole([role1,role2])   Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
-principal                   Allows direct access to the principal object representing the current user
-authentication              Allows direct access to the current Authentication object obtained from the SecurityContext
-permitAll                   Always evaluates to true
-denyAll                     Always evaluates to false
-isAnonymous()               Returns true if the current principal is an anonymous user
-isRememberMe()              Returns true if the current principal is a remember-me user
-isAuthenticated()           Returns true if the user is not anonymous
-isFullyAuthenticated()      Returns true if the user is not an anonymous or a remember-me user
--->
-<div sec:authorize="isAnonymous()"><!-- only show this when user is NOT logged in -->
-    <h2>Form Login endpoint</h2>
-
-    <div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
-    <div><a th:href="@{/form}">/form</a></div>
-
-    <h2>Basic Auth endpoint</h2>
-
-    <div>Username: <span th:text="${basicUser}"/>, Password: <span th:text="${basicPass}"/></div>
-    <div><a th:href="@{/basic}">/basic</a></div>
-
-    <h2>Oauth 1.0 endpoint</h2>
-
-    <div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
-    <div><a th:href="@{/oauth}">/oauth</a></div>
-
-    <h2>LTI 1.0 provider endpoint</h2>
-
-    <div>Consumer Key: <span th:text="${oauthKey}"/>, Secret: <span th:text="${oauthSecret}"/></div>
-    <div><a th:href="@{/lti1p}">/lti1p</a></div>
-</div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">OpenDashboard</a>
+            </div>
+        </div>
+    </nav>
 
 </body>
+
 </html>
