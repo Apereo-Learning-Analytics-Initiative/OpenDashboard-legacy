@@ -24,6 +24,7 @@ import ltistarter.repository.ProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +54,11 @@ public class DatabasePreload {
     @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     ProfileRepository profileRepository;
 
+    @Value("${lti.consumer.key}")
+    private String consumerKey;
+    @Value("${lti.consumer.secret}")
+    private String consumerSecret;
+
     @PostConstruct
     public void init() {
         if (ltiKeyRepository.count() > 0) {
@@ -62,7 +68,7 @@ public class DatabasePreload {
             // preload the sample data
             log.info("INIT - preloaded keys and user");
             // create our sample key
-            ltiKeyRepository.save(new LtiKeyEntity("key", "secret"));
+            ltiKeyRepository.save(new LtiKeyEntity(consumerKey, consumerSecret));
             // create our sample user
             LtiUserEntity user = ltiUserRepository.save(new LtiUserEntity("azeckoski", null));
             ProfileEntity profile = profileRepository.save(new ProfileEntity("AaronZeckoski", null, "azeckoski@test.com"));
