@@ -1,0 +1,153 @@
+<!--
+
+    Copyright 2014 Unicon (R)
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--suppress CheckEmptyScriptTag -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<head>
+    <meta charset="utf-8"/>
+    <!--meta http-equiv="X-UA-Compatible" content="IE=edge"/-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>OpenDashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- Bootstrap Core -->
+    <!--link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap.min.css"/-->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <!-- Bootstrap theme -->
+    <!--link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css"/-->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <style>
+    html, body {
+        height: 100% 
+    }
+    .panel-container {
+        display: inline-block;
+        vertical-align: top;
+        width: 50%;
+    }
+    .iframe {
+        width: 100%;
+        height: 750px;
+        width: 750px;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="page-header" align="center">
+        <h4>OpenDashboard</h4>
+    </div>
+
+    <!-- <TAG sec:authorize="KEY"...>
+    KEY                         DESCRIPTION
+    hasRole([role])             Returns true if the current principal has the specified role.
+    hasAnyRole([role1,role2])   Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
+    principal                   Allows direct access to the principal object representing the current user
+    authentication              Allows direct access to the current Authentication object obtained from the SecurityContext
+    permitAll                   Always evaluates to true
+    denyAll                     Always evaluates to false
+    isAnonymous()               Returns true if the current principal is an anonymous user
+    isRememberMe()              Returns true if the current principal is a remember-me user
+    isAuthenticated()           Returns true if the user is not anonymous
+    isFullyAuthenticated()      Returns true if the user is not an anonymous or a remember-me user
+    -->
+
+    <div class="container-fluid" align="center">
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">OpenLRS View</h3>
+                </div>
+                <div class="panel-body" style="height:800px">
+                    <div>
+                        <iframe src="/openlrs/launch" class="iframe"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">LTI</h3>
+                </div>
+                <div class="panel-body" style="height:800px">
+                    <div>
+                        <iframe src="/ltiproxy/launch" class="iframe"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Debug</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Hello Spring Boot User (w/ Bootstrap)<span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
+                    <div>Request URI: <span th:text="${reqURI}"/></div>
+                    <p th:text="|Today: ${today}!|"/>
+                    <div>OPEN: <a th:href="@{/}">Home(/)</a> | <a th:href="@{/open}">/open</a></div>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
+                            <input type="submit" value="Logout"/>
+                        </form>
+                        <div>User: <span sec:authentication="name">AZ</span></div>
+                        <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
+                        <div>Login: <span th:text="${session.login}"/></div>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_LTI')">
+                        This content is only shown to LTI users (ROLE_LTI).
+                        <div>Context: <span th:text="${ltiContext}"/></div>
+                        <div>Version: <span th:text="${ltiVersion}"/></div>
+                        <div>User: <span th:text="${ltiUser}"/></div>
+                        <div>Link: <span th:text="${ltiLink}"/></div>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_ADMIN')">
+                        This content is only shown to administrators (ROLE_ADMIN).
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_USER')">
+                        This content is only shown to users (ROLE_USER).
+                    </div>
+                    <div th:if="${param.logout}">
+                        You have been logged out.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div-->
+
+    </div>
+
+    <div class="footer" align="center">
+      <div class="container">
+        <p class="text-muted">© 2014 Apereo</p>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!--script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"/-->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"/>
+  </body>
+</html>

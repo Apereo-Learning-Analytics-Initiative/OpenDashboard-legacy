@@ -142,7 +142,11 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             /**/
-            http.requestMatchers().antMatchers("/lti/**", "/lti2/**").and().addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests().anyRequest().hasRole("LTI").and().csrf().disable();
+            http.requestMatchers().antMatchers("/lti/**", "/lti2/**") //, "/ltiproxy/**", "/openlrs/**") //TODO: fix security
+                .and().addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests().anyRequest().hasRole("LTI")
+                .and().csrf().disable();
+            http.headers().frameOptions().disable();
             /*
             http.antMatcher("/lti/**")
                     .addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
@@ -216,7 +220,14 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             // this ensures security context info (Principal, sec:authorize, etc.) is accessible on all paths
-            http.antMatcher("/**").authorizeRequests().anyRequest().permitAll();
+            http.antMatcher("/**").authorizeRequests().anyRequest().permitAll().and().csrf().disable();
+            // TEMPORARY
+            http
+            .headers()
+            .cacheControl()
+            .contentTypeOptions()
+            .xssProtection()
+            .frameOptions().disable();
         }
     }
 

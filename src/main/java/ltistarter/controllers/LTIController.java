@@ -45,7 +45,7 @@ public class LTIController extends BaseController {
             model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());
         }
         //noinspection SpringMVCViewInspection
-        return "home"; // name of the template
+        return "dashboard"; // name of the template
     }
 
     @RequestMapping({"/register"})

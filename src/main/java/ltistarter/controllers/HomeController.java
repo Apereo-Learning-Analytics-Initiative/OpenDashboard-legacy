@@ -27,6 +27,7 @@ import java.security.Principal;
  * (no security)
  */
 @Controller
+@RequestMapping("/home")
 public class HomeController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)

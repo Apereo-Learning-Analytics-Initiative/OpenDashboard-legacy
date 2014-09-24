@@ -1,0 +1,53 @@
+<!--
+
+    Copyright 2014 Unicon (R)
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--suppress CheckEmptyScriptTag -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+<head>
+    <title>LTI Launch</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- Bootstrap Core -->
+    <!--link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap.min.css"/-->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"></link>
+    <!-- Bootstrap theme -->
+    <!--link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css"/-->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"></link>
+    <script language="javascript">
+        function submitForm() {
+            document.getElementById('lti_launch_form').submit();
+        }
+        function doOnLoadActions() {
+            submitForm();
+        }
+    </script>
+</head>
+<body onload="doOnLoadActions()">
+    <div id="lti_launch_form_container">
+        <form th:action="${launchForm.launchUrl}" name="lti_launch_form" id="lti_launch_form" method="post" encType="application/x-www-form-urlencoded" autocomplete="off">
+            <table>
+                <tr>
+                    <td><input name="oauth_signature" th:value="${launchForm.signature}" type="hidden" /></td>
+                </tr>
+                <tr th:each="param : ${launchForm.parameters}">
+                    <td><input th:name="${param.key}" th:value="${param.value}" type="hidden" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
