@@ -14,6 +14,8 @@
  */
 package ltistarter;
 
+import javax.annotation.PostConstruct;
+
 import ltistarter.lti.LTIConsumerDetailsService;
 import ltistarter.lti.LTIDataService;
 import ltistarter.lti.LTIOAuthAuthenticationHandler;
@@ -22,6 +24,7 @@ import ltistarter.oauth.MyConsumerDetailsService;
 import ltistarter.oauth.MyOAuthAuthenticationHandler;
 import ltistarter.oauth.MyOAuthNonceServices;
 import ltistarter.oauth.ZeroLeggedOAuthProviderProcessingFilter;
+
 import org.h2.server.web.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +52,10 @@ import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoi
 import org.springframework.security.oauth.provider.token.InMemoryProviderTokenServices;
 import org.springframework.security.oauth.provider.token.OAuthProviderTokenServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.StringValueResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import javax.annotation.PostConstruct;
 
 @ComponentScan("ltistarter")
 @Configuration
@@ -142,8 +144,8 @@ public class Application extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             /**/
-            http.requestMatchers().antMatchers("/lti/**", "/lti2/**") //, "/ltiproxy/**", "/openlrs/**") //TODO: fix security
-                .and().addFilterBefore(ltioAuthProviderProcessingFilter, UsernamePasswordAuthenticationFilter.class)
+            http.requestMatchers().antMatchers("/lti/**")
+                .and().addFilterAfter(ltioAuthProviderProcessingFilter, LogoutFilter.class)
                 .authorizeRequests().anyRequest().hasRole("LTI")
                 .and().csrf().disable();
             http.headers().frameOptions().disable();
@@ -154,6 +156,12 @@ public class Application extends WebMvcConfigurerAdapter {
                     .and().csrf().disable(); // probably need https://github.com/spring-projects/spring-boot/issues/179
             /**/
         }
+
+//        @Override
+//        protected void configure(AuthenticationManagerBuilder authManagerBuilder)
+//                throws Exception {
+//                   authManagerBuilder.authenticationProvider(this());
+//        }
     }
 
     @Configuration

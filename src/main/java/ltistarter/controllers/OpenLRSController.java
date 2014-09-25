@@ -19,13 +19,16 @@ import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import ltistarter.lti.LTIUserCredentials;
 import ltistarter.model.LaunchForm;
 import ltistarter.model.LaunchRequest;
-import ltistarter.oauth.MyOAuthAuthenticationHandler.NamedOAuthPrincipal;
 import ltistarter.oauth.OAuthMessageSigner;
 import ltistarter.oauth.OAuthUtil;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,17 +54,20 @@ public class OpenLRSController extends BaseController {
     private OAuthMessageSigner signer = new OAuthMessageSigner();
 
     @RequestMapping({"", "/launch"})
-    //@Secured("ROLE_LTI")
+    @Secured("ROLE_LTI")
     public String openlrs(HttpServletRequest req, Principal principal, Model model) {
-        final NamedOAuthPrincipal namedOauthPrincipal = (NamedOAuthPrincipal)principal;
-        final LaunchRequest launchRequest = this.createLaunchRequest(namedOauthPrincipal);
+        log.debug("PRINCIPAL: {}", principal);
+        log.debug("AUTHORITIES: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LaunchRequest launchRequest = this.createLaunchRequest(ltiOauthPrincipal);
         final String signature = this.calculateOauthSignature(launchRequest);
         final LaunchForm launchForm = new LaunchForm(this.openLrsLtiUrl, false, launchRequest.toSortedMap(), signature);
         model.addAttribute("launchForm", launchForm);
         return "ltilaunch"; // name of the template
     }
 
-    private LaunchRequest createLaunchRequest(final NamedOAuthPrincipal principal) {
+    private LaunchRequest createLaunchRequest(final LTIUserCredentials creds) {
         final LaunchRequest result = new LaunchRequest(
             "basic-lti-launch-request", // ltiRequest.getLtiMessageType(),
             "LTI-1p0", //ltiRequest.getLtiVersion(),

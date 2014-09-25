@@ -15,6 +15,8 @@
 package ltistarter.lti;
 
 import ltistarter.oauth.MyOAuthNonceServices;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint;
 import org.springframework.security.oauth.provider.filter.ProtectedResourceProcessingFilter;
 import org.springframework.security.oauth.provider.token.OAuthProviderTokenServices;
@@ -33,7 +35,13 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
 
     LTIDataService ltiDataService;
 
-    public LTIOAuthProviderProcessingFilter(LTIDataService ltiDataService, LTIConsumerDetailsService oAuthConsumerDetailsService, MyOAuthNonceServices oAuthNonceServices, OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint, LTIOAuthAuthenticationHandler oAuthAuthenticationHandler, OAuthProviderTokenServices oAuthProviderTokenServices) {
+    public LTIOAuthProviderProcessingFilter(
+            LTIDataService ltiDataService,
+            LTIConsumerDetailsService oAuthConsumerDetailsService,
+            MyOAuthNonceServices oAuthNonceServices,
+            OAuthProcessingFilterEntryPoint oAuthProcessingFilterEntryPoint,
+            LTIOAuthAuthenticationHandler oAuthAuthenticationHandler,
+            OAuthProviderTokenServices oAuthProviderTokenServices) {
         super();
         assert ltiDataService != null;
         this.ltiDataService = ltiDataService;
@@ -42,7 +50,7 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
         setConsumerDetailsService(oAuthConsumerDetailsService);
         setNonceServices(oAuthNonceServices);
         setTokenServices(oAuthProviderTokenServices);
-        //setIgnoreMissingCredentials(false); // die if OAuth params are not included
+        setIgnoreMissingCredentials(false); // die if OAuth params are not included
     }
 
     @Override
@@ -58,6 +66,11 @@ public class LTIOAuthProviderProcessingFilter extends ProtectedResourceProcessin
         httpServletRequest.setAttribute("lti_valid", ltiRequest.isLoaded() && ltiRequest.isComplete()); // is LTI request totally valid and complete
         httpServletRequest.setAttribute(LTIRequest.class.getName(), ltiRequest); // make the LTI data accessible later in the request if needed
         super.doFilter(servletRequest, servletResponse, chain);
+    }
+
+    @Override
+    protected void resetPreviousAuthentication(Authentication previousAuthentication) {
+        // do NOT reset this otherwise subsequent requests will have no authentication
     }
 
 }

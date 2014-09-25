@@ -19,14 +19,16 @@ import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import ltistarter.lti.LTIUserCredentials;
 import ltistarter.model.LaunchForm;
 import ltistarter.model.LaunchRequest;
 import ltistarter.model.LtiLaunchConfig;
-import ltistarter.oauth.MyOAuthAuthenticationHandler.NamedOAuthPrincipal;
 import ltistarter.oauth.OAuthMessageSigner;
 import ltistarter.oauth.OAuthUtil;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,28 +55,40 @@ public class LTIProxyController extends BaseController {
     private OAuthMessageSigner signer = new OAuthMessageSigner();
 
     @RequestMapping({"", "/launch"})
-    //@Secured("ROLE_LTI")
+    @Secured("ROLE_LTI")
     public String ltiproxy(HttpServletRequest req, Principal principal, Model model) {
+        log.debug("PRINCIPAL: {}", principal);
         log.debug("AUTHORITIES: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        final NamedOAuthPrincipal namedOauthPrincipal = (NamedOAuthPrincipal)principal;
-        final LtiLaunchConfig config = this.lookupLtiLaunchConfig();
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiLaunchConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         if (config == null) {
             return this.config(req, principal, model);
         } else {
-            // if found return auto-submitting launch form
-            final LaunchRequest launchRequest = this.createLaunchRequest(namedOauthPrincipal, config);
+            final LaunchRequest launchRequest = this.createLaunchRequest(config);
             final String signature = this.calculateOauthSignature(config, launchRequest);
             final LaunchForm launchForm = new LaunchForm(config.getUrl(), false, launchRequest.toSortedMap(), signature);
             model.addAttribute("launchForm", launchForm);
-            return "ltilaunch"; // name of the template
+            return "ltilaunch";
         }
     }
 
-    private LtiLaunchConfig lookupLtiLaunchConfig() {
+    @RequestMapping({"", "/config"})
+    @Secured("ROLE_LTI")
+    public String config(HttpServletRequest req, Principal principal, Model model) {
+        log.debug("PRINCIPAL: {}", principal);
+        log.debug("AUTHORITIES: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiLaunchConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        return this.config(req, principal, model, config);
+    }
+
+    private LtiLaunchConfig lookupLtiLaunchConfig(final String userId, final String contextId) {
         return new LtiLaunchConfig(this.ltiConfigUserId, this.ltiConfigContextId, this.ltiConfigUrl, this.ltiConfigConsumerKey, this.ltiConfigConsumerSecret);
     }
 
-    private LaunchRequest createLaunchRequest(final NamedOAuthPrincipal principal, final LtiLaunchConfig config) {
+    private LaunchRequest createLaunchRequest(final LtiLaunchConfig config) {
         final LaunchRequest result = new LaunchRequest(
             "basic-lti-launch-request", // ltiRequest.getLtiMessageType(),
             "LTI-1p0", //ltiRequest.getLtiVersion(),
@@ -136,13 +150,6 @@ public class LTIProxyController extends BaseController {
         }
         log.debug("CALCULATED SIGNATURE: {}", signature);
         return signature;
-    }
-
-    @RequestMapping({"", "/config"})
-    //@Secured("ROLE_LTI")
-    public String config(HttpServletRequest req, Principal principal, Model model) {
-        final LtiLaunchConfig config = this.lookupLtiLaunchConfig();
-        return this.config(req, principal, model, config);
     }
 
     private String config(HttpServletRequest req, Principal principal, Model model, LtiLaunchConfig config) {

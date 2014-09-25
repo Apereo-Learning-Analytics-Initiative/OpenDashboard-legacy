@@ -14,8 +14,12 @@
  */
 package ltistarter.lti;
 
-import ltistarter.oauth.MyOAuthAuthenticationHandler;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collection;
+import java.util.HashSet;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,12 +30,6 @@ import org.springframework.security.oauth.provider.ConsumerAuthentication;
 import org.springframework.security.oauth.provider.OAuthAuthenticationHandler;
 import org.springframework.security.oauth.provider.token.OAuthAccessProviderToken;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
 
 @Component
 public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler {
@@ -56,12 +54,6 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
             throw new IllegalStateException("Cannot create authentication for LTI because the LTIRequest is null");
         }
 
-        // attempt to create a user Authority
-        String username = ltiRequest.getLtiUserId();
-        if (StringUtils.isBlank(username)) {
-            username = authentication.getName();
-        }
-
         // set appropriate permissions for this user based on LTI data
         if (ltiRequest.getUser() != null) {
             authorities.add(userGA);
@@ -76,17 +68,23 @@ public class LTIOAuthAuthenticationHandler implements OAuthAuthenticationHandler
             authorities.add(learnerGA);
         }
 
-        // TODO store lti context and user id in the principal
-        Principal principal = new MyOAuthAuthenticationHandler.NamedOAuthPrincipal(username, authorities,
+        final LTIUserCredentials principal = new LTIUserCredentials(
+                ltiRequest.getLtiContextId(),
+                ltiRequest.getLtiUserId(),
                 authentication.getConsumerCredentials().getConsumerKey(),
                 authentication.getConsumerCredentials().getSignature(),
                 authentication.getConsumerCredentials().getSignatureMethod(),
                 authentication.getConsumerCredentials().getSignatureBaseString(),
-                authentication.getConsumerCredentials().getToken()
-        );
-        Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
-        log.info("createAuthentication generated LTI auth principal (" + principal + "): req=" + request);
-        return auth;
+                authentication.getConsumerCredentials().getToken(),
+                authentication.getOAuthParameters());
+//        final LTIOAuthAuthenticationToken userAuth = new LTIOAuthAuthenticationToken(
+//                principal,
+//                authentication.getConsumerCredentials(),
+//                authorities,
+//                authentication.getOAuthParameters());
+        final Authentication userAuth = new UsernamePasswordAuthenticationToken(principal, principal, authorities);
+        log.info("createAuthentication generated LTI auth ({}): req={}", userAuth, request);
+        return userAuth;
     }
 
 }
