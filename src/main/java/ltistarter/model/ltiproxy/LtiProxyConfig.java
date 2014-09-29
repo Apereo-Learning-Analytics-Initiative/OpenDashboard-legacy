@@ -13,7 +13,15 @@
  * limitations under the License.
  */
 
-package ltistarter.model;
+package ltistarter.model.ltiproxy;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -21,14 +29,27 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@IdClass(LtiProxyConfigPk.class)
+@Entity
+@Table(name = "lti_proxy_config")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LtiProxyConfig {
 
+    @Id
+    @Column(name = "user_id", nullable = false, insertable = true, updatable = false)
     private String userId;
+    @Id
+    @Column(name = "context_id", nullable = false, insertable = true, updatable = false)
     private String contextId;
 
+    @Basic
+    @Column(name = "launch_url", nullable = false, insertable = true, updatable = true)
     private String url;
+    @Basic
+    @Column(name = "consumer_key", nullable = false, insertable = true, updatable = true)
     private String consumerKey;
+    @Basic
+    @Column(name = "consumer_secret", nullable = false, insertable = true, updatable = true)
     private String consumerSecret;
 
     public LtiProxyConfig(

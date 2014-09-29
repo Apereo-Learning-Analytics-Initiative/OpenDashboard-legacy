@@ -15,8 +15,6 @@
 package ltistarter.controllers;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 import ltistarter.exceptions.EntityNotFoundException;
 import ltistarter.model.LaunchForm;
 import ltistarter.model.LaunchRequest;
-import ltistarter.model.LtiProxyConfig;
+import ltistarter.model.ltiproxy.LtiProxyConfig;
 import ltistarter.oauth.OAuthMessageSigner;
 import ltistarter.oauth.OAuthUtil;
+import ltistarter.services.LtiProxyConfigService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,7 +44,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LTIProxyController extends BaseController {
 
     private OAuthMessageSigner signer = new OAuthMessageSigner();
-    private Map<String,LtiProxyConfig> launchConfigMap = new HashMap<String,LtiProxyConfig>();
+
+    @Autowired
+    private LtiProxyConfigService service;
 
     @RequestMapping({"", "/"})
     @Secured("ROLE_LTI")
@@ -103,16 +105,15 @@ public class LTIProxyController extends BaseController {
 
     private LtiProxyConfig lookupLtiLaunchConfig(final String userId, final String contextId) {
         log.debug("Looking up LTI launch config for [{}, {}].", userId, contextId);
-        final LtiProxyConfig result = this.launchConfigMap.get(userId + ":" + contextId);
+        final LtiProxyConfig result = this.service.find(new LtiProxyConfig(userId, contextId));
         log.debug("Lookup returning: {}", result);
         return result;
     }
 
     private LtiProxyConfig saveLtiLaunchConfig(final LtiProxyConfig config) {
         log.debug("Saving LTI launch config: {}", config);
-        final String key = config.getUserId() + ":" + config.getContextId();
-        this.launchConfigMap.put(key, config);
-        return this.launchConfigMap.get(key);
+        this.service.save(config);
+        return this.service.find(config);
     }
 
     private LaunchRequest createLaunchRequest(final LtiProxyConfig config) {
