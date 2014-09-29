@@ -16,8 +16,8 @@
 angular.module('dashboard', [])
 .controller('LtiConfigController', ['$scope', '$http', function($scope, $http) {
 
-    var configUrl = "/ltiproxy/config";
-    var launchUrl = "/ltiproxy/launch";
+    var configUrl = "ltiproxy/config";
+    var launchUrl = "ltiproxy/launch";
     $scope.addMode = false;
     $scope.editMode = false;
     $scope.launchMode = false;

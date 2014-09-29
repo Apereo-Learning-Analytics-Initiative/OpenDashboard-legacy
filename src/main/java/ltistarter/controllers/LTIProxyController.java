@@ -20,6 +20,7 @@ import java.util.SortedMap;
 import javax.servlet.http.HttpServletRequest;
 
 import ltistarter.exceptions.EntityNotFoundException;
+import ltistarter.lti.LTIUserCredentials;
 import ltistarter.model.LaunchForm;
 import ltistarter.model.LaunchRequest;
 import ltistarter.model.ltiproxy.LtiProxyConfig;
@@ -29,6 +30,7 @@ import ltistarter.services.LtiProxyConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,12 +57,11 @@ public class LTIProxyController extends BaseController {
     }
 
     @RequestMapping({"", "/launch"})
-//    @Secured("ROLE_LTI")
+    @Secured("ROLE_LTI")
     public String launch(HttpServletRequest req, Principal principal, Model model) {
-        log.debug("PRINCIPAL: {}", principal);
-//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
-//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
-        final LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiProxyConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         if (config == null) {
             throw new IllegalStateException("cannot launch without configured LTI proxy");
         } else {
@@ -76,12 +77,12 @@ public class LTIProxyController extends BaseController {
     @ResponseBody
     //@Secured("ROLE_LTI")
     public LtiProxyConfig getConfig(HttpServletRequest req, Principal principal) {
-//        log.debug("PRINCIPAL: {}", principal);
-//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
-//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
-        final LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiProxyConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         if (config == null) {
-            throw new EntityNotFoundException("LtiProxyConfig for [userId: " + "admin" + ", contextId: " + "mercury" + "]");
+            throw new EntityNotFoundException(
+                    "LtiProxyConfig for [userId: " + ltiOauthPrincipal.getUserId() + ", contextId: " + ltiOauthPrincipal.getContextId() + "]");
         } else {
             return config;
         }
@@ -91,11 +92,11 @@ public class LTIProxyController extends BaseController {
     @ResponseBody
     //@Secured("ROLE_LTI")
     public LtiProxyConfig saveConfig(@RequestBody LtiProxyConfig updates, HttpServletRequest req, Principal principal) {
-//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
-//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
-        LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        LtiProxyConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         if (config == null) {
-            config = new LtiProxyConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+            config = new LtiProxyConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         }
         config.setConsumerKey(updates.getConsumerKey());
         config.setConsumerSecret(updates.getConsumerSecret());
