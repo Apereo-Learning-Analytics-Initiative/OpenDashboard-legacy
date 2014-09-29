@@ -15,24 +15,26 @@
 package ltistarter.controllers;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import ltistarter.lti.LTIUserCredentials;
+import ltistarter.exceptions.EntityNotFoundException;
 import ltistarter.model.LaunchForm;
 import ltistarter.model.LaunchRequest;
-import ltistarter.model.LtiLaunchConfig;
+import ltistarter.model.LtiProxyConfig;
 import ltistarter.oauth.OAuthMessageSigner;
 import ltistarter.oauth.OAuthUtil;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for displaying OpenLRS view.
@@ -41,29 +43,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/ltiproxy")
 public class LTIProxyController extends BaseController {
 
-    @Value("${lti.config.user.id}")
-    private String ltiConfigUserId;
-    @Value("${lti.config.context.id}")
-    private String ltiConfigContextId;
-    @Value("${lti.config.url}")
-    private String ltiConfigUrl;
-    @Value("${lti.config.consumer.key}")
-    private String ltiConfigConsumerKey;
-    @Value("${lti.config.consumer.secret}")
-    private String ltiConfigConsumerSecret;
-
     private OAuthMessageSigner signer = new OAuthMessageSigner();
+    private Map<String,LtiProxyConfig> launchConfigMap = new HashMap<String,LtiProxyConfig>();
 
-    @RequestMapping({"", "/launch"})
+    @RequestMapping({"", "/"})
     @Secured("ROLE_LTI")
     public String ltiproxy(HttpServletRequest req, Principal principal, Model model) {
+        return "ltiproxy";
+    }
+
+    @RequestMapping({"", "/launch"})
+//    @Secured("ROLE_LTI")
+    public String launch(HttpServletRequest req, Principal principal, Model model) {
         log.debug("PRINCIPAL: {}", principal);
-        log.debug("AUTHORITIES: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
-        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
-        final LtiLaunchConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
         if (config == null) {
-            return this.config(req, principal, model);
+            throw new IllegalStateException("cannot launch without configured LTI proxy");
         } else {
             final LaunchRequest launchRequest = this.createLaunchRequest(config);
             final String signature = this.calculateOauthSignature(config, launchRequest);
@@ -73,22 +70,52 @@ public class LTIProxyController extends BaseController {
         }
     }
 
-    @RequestMapping({"", "/config"})
-    @Secured("ROLE_LTI")
-    public String config(HttpServletRequest req, Principal principal, Model model) {
-        log.debug("PRINCIPAL: {}", principal);
-        log.debug("AUTHORITIES: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
-        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
-        final LtiLaunchConfig config = this.lookupLtiLaunchConfig(ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
-        return this.config(req, principal, model, config);
+    @RequestMapping(value = "config", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    //@Secured("ROLE_LTI")
+    public LtiProxyConfig getConfig(HttpServletRequest req, Principal principal) {
+//        log.debug("PRINCIPAL: {}", principal);
+//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        final LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        if (config == null) {
+            throw new EntityNotFoundException("LtiProxyConfig for [userId: " + "admin" + ", contextId: " + "mercury" + "]");
+        } else {
+            return config;
+        }
     }
 
-    private LtiLaunchConfig lookupLtiLaunchConfig(final String userId, final String contextId) {
-        return new LtiLaunchConfig(this.ltiConfigUserId, this.ltiConfigContextId, this.ltiConfigUrl, this.ltiConfigConsumerKey, this.ltiConfigConsumerSecret);
+    @RequestMapping(value = "config", method = RequestMethod.PUT, produces = "application/json")
+    @ResponseBody
+    //@Secured("ROLE_LTI")
+    public LtiProxyConfig saveConfig(@RequestBody LtiProxyConfig updates, HttpServletRequest req, Principal principal) {
+//        final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)principal;
+//        final LTIUserCredentials ltiOauthPrincipal = (LTIUserCredentials)token.getCredentials();
+        LtiProxyConfig config = this.lookupLtiLaunchConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        if (config == null) {
+            config = new LtiProxyConfig("admin", "mercury");//ltiOauthPrincipal.getUserId(), ltiOauthPrincipal.getContextId());
+        }
+        config.setConsumerKey(updates.getConsumerKey());
+        config.setConsumerSecret(updates.getConsumerSecret());
+        config.setUrl(updates.getUrl());
+        return this.saveLtiLaunchConfig(config);
     }
 
-    private LaunchRequest createLaunchRequest(final LtiLaunchConfig config) {
+    private LtiProxyConfig lookupLtiLaunchConfig(final String userId, final String contextId) {
+        log.debug("Looking up LTI launch config for [{}, {}].", userId, contextId);
+        final LtiProxyConfig result = this.launchConfigMap.get(userId + ":" + contextId);
+        log.debug("Lookup returning: {}", result);
+        return result;
+    }
+
+    private LtiProxyConfig saveLtiLaunchConfig(final LtiProxyConfig config) {
+        log.debug("Saving LTI launch config: {}", config);
+        final String key = config.getUserId() + ":" + config.getContextId();
+        this.launchConfigMap.put(key, config);
+        return this.launchConfigMap.get(key);
+    }
+
+    private LaunchRequest createLaunchRequest(final LtiProxyConfig config) {
         final LaunchRequest result = new LaunchRequest(
             "basic-lti-launch-request", // ltiRequest.getLtiMessageType(),
             "LTI-1p0", //ltiRequest.getLtiVersion(),
@@ -134,7 +161,7 @@ public class LTIProxyController extends BaseController {
         return result;
     }
 
-    private String calculateOauthSignature(final LtiLaunchConfig config, final LaunchRequest request) {
+    private String calculateOauthSignature(final LtiProxyConfig config, final LaunchRequest request) {
         String signature = null;
         try {
             final SortedMap<String,String> alphaSortedMap = request.toSortedMap();
@@ -150,15 +177,6 @@ public class LTIProxyController extends BaseController {
         }
         log.debug("CALCULATED SIGNATURE: {}", signature);
         return signature;
-    }
-
-    private String config(HttpServletRequest req, Principal principal, Model model, LtiLaunchConfig config) {
-        if (config != null) {
-            model.addAttribute("launchUrl", config.getUrl());
-            model.addAttribute("consumerKey", config.getConsumerKey());
-            model.addAttribute("consumerSecret", config.getConsumerSecret());
-        }
-        return "lticonfig";
     }
 
 }

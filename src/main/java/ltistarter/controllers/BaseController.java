@@ -14,15 +14,15 @@
  */
 package ltistarter.controllers;
 
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Date;
 
 /**
  * Common controller methods
@@ -43,18 +43,18 @@ public class BaseController {
      * @param model     the model
      */
     void commonModelPopulate(HttpServletRequest req, Principal principal, Model model) {
-        model.addAttribute("today", new Date());
-        // TODO real user and pass
-        model.addAttribute("basicUser", "admin");
-        model.addAttribute("basicPass", "admin");
-        // TODO real key and secret?
-        model.addAttribute("oauthKey", "key");
-        model.addAttribute("oauthSecret", "secret");
-        // a little extra request handling stuff
-        model.addAttribute("req", req);
-        model.addAttribute("reqURI", req.getMethod() + " " + req.getRequestURI());
-        // current user
-        model.addAttribute("username", principal != null ? principal.getName() : "ANONYMOUS");
+//        model.addAttribute("today", new Date());
+//        // TODO real user and pass
+//        model.addAttribute("basicUser", "admin");
+//        model.addAttribute("basicPass", "admin");
+//        // TODO real key and secret?
+//        model.addAttribute("oauthKey", "key");
+//        model.addAttribute("oauthSecret", "secret");
+//        // a little extra request handling stuff
+//        model.addAttribute("req", req);
+//        model.addAttribute("reqURI", req.getMethod() + " " + req.getRequestURI());
+//        // current user
+//        model.addAttribute("username", principal != null ? principal.getName() : "ANONYMOUS");
     }
 
 }

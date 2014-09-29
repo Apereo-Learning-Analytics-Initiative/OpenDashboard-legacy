@@ -18,7 +18,6 @@
 <!--suppress CheckEmptyScriptTag -->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
-
 <head>
     <meta charset="utf-8"/>
     <!--meta http-equiv="X-UA-Compatible" content="IE=edge"/-->
@@ -32,23 +31,10 @@
     <!-- Bootstrap theme -->
     <!--link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap-theme.min.css"/-->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
-    <style>
-    html, body {
-        height: 100% 
-    }
-    .panel-container {
-        display: inline-block;
-        vertical-align: top;
-        width: 50%;
-    }
-    .iframe {
-        width: 100%;
-        height: 750px;
-        width: 750px;
-    }
-    </style>
+    <!-- Custom Page Styling -->
+    <link rel="stylesheet" href="/css/dashboard.css"/>
 </head>
-<body>
+<body id="ng-app" ng-app="dashboard" ng-controller="LtiConfigController">
 
     <div class="page-header" align="center">
         <h4>OpenDashboard</h4>
@@ -78,7 +64,7 @@
                 </div>
                 <div class="panel-body" style="height:800px">
                     <div>
-                        <iframe src="/openlrs/launch" class="iframe"></iframe>
+                        <iframe src="/openlrs/launch" class="iframe">Browser does not support iframes.</iframe>
                     </div>
                 </div>
             </div>
@@ -89,52 +75,49 @@
                     <h3 class="panel-title">LTI</h3>
                 </div>
                 <div class="panel-body" style="height:800px">
-                    <div>
-                        <iframe src="/ltiproxy/launch" class="iframe"></iframe>
+                    <div class="row-fluid" id="edit-div">
+                        <div align="right">
+                            <button type='button' ng-click="setUpEditMode()">Edit</button>
+                        </div>
                     </div>
+                    <div class="row-fluid" id="config-form" ng-show="addMode || editMode">
+                        <div class="block">
+                            <div class="block-content collapse in">
+                                <div class="span12">
+                                    <form class="form-horizontal" id="form">
+                                        <fieldset>
+                                            <div class="control-group">
+                                                <label for="lti_config_url" class="col-xs-offset-1 col-xs-2 required pull-left">Launch URL</label>
+                                                <div class="controls">
+                                                    <input id="lti_config_url" name="lti_config_url" class="form-control" type="text" ng-model="url" required="true"/>
+                                                </div>
+                                            </div>
+                                            <div class="control-group">
+                                                <label for="lti_consumer_key" class="col-xs-offset-1 col-xs-2 required pull-left">Key</label>
+                                                <div class="controls">
+                                                    <input id="lti_consumer_key" name="lti_consumer_key" class="form-control" type="text" ng-model="consumerKey" required="true"/>
+                                                </div>
+                                            </div>
+                                            <div class="control-group">
+                                                <label for="lti_consumer_secret" class="col-xs-offset-1 col-xs-2 required pull-left">Secret</label>
+                                                <div class="controls">
+                                                    <input id="lti_consumer_secret" name="lti_consumer_secret" class="form-control" type="text" ng-model="consumerSecret" required="true"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <button type="button" ng-click="saveConfig()">Save</button>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="launchMode" id="ltiproxy-iframe-div"></div>
                 </div>
             </div>
         </div>
     </div>
-    <!--div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Debug</h3>
-                </div>
-                <div class="panel-body">
-                    <p>Hello Spring Boot User (w/ Bootstrap)<span th:text="${username}"/>! (<span th:text="${name}"/>)</p>
-                    <div>Request URI: <span th:text="${reqURI}"/></div>
-                    <p th:text="|Today: ${today}!|"/>
-                    <div>OPEN: <a th:href="@{/}">Home(/)</a> | <a th:href="@{/open}">/open</a></div>
-                    <div sec:authorize="isAuthenticated()">
-                        <form th:if="${canLogout}" th:action="@{/form/logout}" method="post">
-                            <input type="submit" value="Logout"/>
-                        </form>
-                        <div>User: <span sec:authentication="name">AZ</span></div>
-                        <div>Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span></div>
-                        <div>Login: <span th:text="${session.login}"/></div>
-                    </div>
-                    <div sec:authorize="hasRole('ROLE_LTI')">
-                        This content is only shown to LTI users (ROLE_LTI).
-                        <div>Context: <span th:text="${ltiContext}"/></div>
-                        <div>Version: <span th:text="${ltiVersion}"/></div>
-                        <div>User: <span th:text="${ltiUser}"/></div>
-                        <div>Link: <span th:text="${ltiLink}"/></div>
-                    </div>
-                    <div sec:authorize="hasRole('ROLE_ADMIN')">
-                        This content is only shown to administrators (ROLE_ADMIN).
-                    </div>
-                    <div sec:authorize="hasRole('ROLE_USER')">
-                        This content is only shown to users (ROLE_USER).
-                    </div>
-                    <div th:if="${param.logout}">
-                        You have been logged out.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div-->
 
     </div>
 
@@ -148,6 +131,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <!--script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"/-->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"/>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- AngularJS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.js"></script>
+    <!-- Page -->
+    <script src="/js/dashboard.js"></script>
   </body>
 </html>

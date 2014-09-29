@@ -14,13 +14,13 @@
  */
 package ltistarter.controllers;
 
-import ltistarter.lti.LTIRequest;
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 
 /**
  * This LTI controller should be protected by OAuth 1.0a (on the /oauth path)
@@ -33,30 +33,19 @@ public class LTIController extends BaseController {
 
     @RequestMapping({"", "/"})
     public String home(HttpServletRequest req, Principal principal, Model model) {
-        commonModelPopulate(req, principal, model);
-        model.addAttribute("name", "lti");
-        req.getSession().setAttribute("login", "oauth");
-        LTIRequest ltiRequest = LTIRequest.getInstance();
-        if (ltiRequest != null) {
-            model.addAttribute("lti", true);
-            model.addAttribute("ltiVersion", ltiRequest.getLtiVersion());
-            model.addAttribute("ltiContext", ltiRequest.getLtiContextId());
-            model.addAttribute("ltiUser", ltiRequest.getLtiUserDisplayName());
-            model.addAttribute("ltiLink", ltiRequest.getLtiLinkId());
-        }
         //noinspection SpringMVCViewInspection
-        return "dashboard"; // name of the template
+        return "redirect:/dashboard"; // name of the template
     }
 
-    @RequestMapping({"/register"})
-    public String register(HttpServletRequest req, Model model) {
-        LTIRequest ltiRequest = LTIRequest.getInstanceOrDie();
-        if (ltiRequest.checkValidToolRegistration()) { // throws exception on failure
-            model.addAttribute("validToolRegistration", true);
-            // TODO process it!
-        }
-        //noinspection SpringMVCViewInspection
-        return "register"; // name of the template
-    }
+//    @RequestMapping({"/register"})
+//    public String register(HttpServletRequest req, Model model) {
+//        LTIRequest ltiRequest = LTIRequest.getInstanceOrDie();
+//        if (ltiRequest.checkValidToolRegistration()) { // throws exception on failure
+//            model.addAttribute("validToolRegistration", true);
+//            // TODO process it!
+//        }
+//        //noinspection SpringMVCViewInspection
+//        return "register"; // name of the template
+//    }
 
 }

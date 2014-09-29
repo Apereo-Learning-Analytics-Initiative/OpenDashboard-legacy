@@ -208,6 +208,7 @@
             <exclude>**/*.md</exclude>
             <exclude>**/*.sql</exclude>
             <exclude>**/js/jquery/**</exclude>
+            <exclude>**/js/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
