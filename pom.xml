@@ -1,238 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apereo</groupId>
-  <version>0.1-SNAPSHOT</version>
-  <inceptionYear>2014</inceptionYear>
-  <packaging>war</packaging>
+	<groupId>org.apereo</groupId>
+	<version>0.1-SNAPSHOT</version>
+	<inceptionYear>2014</inceptionYear>
+	<packaging>jar</packaging>
 
-  <name>OpenDash</name>
+	<name>OpenDash</name>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.1.5.RELEASE</version>
-    <relativePath/>
-    <!-- lookup parent from repository -->
-  </parent>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<start-class>od.Application</start-class>
+		<java.version>1.7</java.version>
+	</properties>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <start-class>ltistarter.Application</start-class>
-    <java.version>1.7</java.version>
-  </properties>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.1.6.RELEASE</version>
+	</parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.9</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-
-    <!-- H2 DATABASE -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.4.178</version>
-    </dependency>
-
-    <!-- OAuth 1.0 library
-    <dependency>
-      <groupId>net.oauth.core</groupId>
-      <artifactId>oauth-provider</artifactId>
-      <version>20100527</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>net.oauth.core</groupId>
-          <artifactId>oauth-httpclient3</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.oauth.core</groupId>
-          <artifactId>oauth-httpclient4</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.3.3</version>
-    </dependency>
-    -->
-
-    <!-- Added by spring boot template below -->
-    <!-- tag::jetty[] -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jetty</artifactId>
-    </dependency>
-    <!-- end::jetty[] -->
-    <!-- tag::actuator[] -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <!-- end::actuator[] -->
-
-    <!-- templating -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-thymeleaf</artifactId>
-    </dependency>
-    <!-- adds template integration with spring security - allows sec: attributed to work (automatic SpringSecurityDialect) -->
-    <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity3</artifactId>
-    </dependency>
-
-    <!-- security and oauth -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <!-- OAuth -->
-    <dependency>
-      <groupId>org.springframework.security.oauth</groupId>
-      <artifactId>spring-security-oauth</artifactId>
-      <version>2.0.2.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security.oauth</groupId>
-      <artifactId>spring-security-oauth2</artifactId>
-      <version>2.0.2.RELEASE</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-rest</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
-  <profiles>
-    <profile>
-      <id>debug</id>
-      <build>
-        <plugins>
-          <plugin>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-              <jvmArguments><!-- debug on port 8000 -->
-                -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
-              </jvmArguments>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+	</dependencies>
 
-  <build>
-    <finalName>starter</finalName>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <!-- Used to replace the headers of files with proper licenses -
-          http://code.google.com/p/maven-license-plugin -
-          Run mvn license:format to fix up licenses on all files in the project -->
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>1.10.b1</version>
-        <configuration>
-          <strictCheck>true</strictCheck>
-          <header>${basedir}/LICENSE_HEADER</header>
-          <properties>
-            <name>${project.name}</name>
-            <year>${project.inceptionYear}</year>
-            <holder>Unicon (R)</holder>
-          </properties>
-          <excludes>
-            <exclude>.gitignore</exclude>
-            <exclude>target/**</exclude>
-            <exclude>bin/**</exclude>
-            <exclude>.idea/**</exclude>
-            <exclude>**/*.iml</exclude>
-            <exclude>LICENSE*</exclude>
-            <exclude>**/*.properties</exclude>
-            <exclude>**/*.csv</exclude>
-            <exclude>**/*.txt</exclude>
-            <exclude>**/*.md</exclude>
-            <exclude>**/*.sql</exclude>
-            <exclude>**/js/jquery/**</exclude>
-            <exclude>**/js/**</exclude>
-          </excludes>
-          <mapping>
-            <tag>DYNASCRIPT_STYLE</tag>
-          </mapping>
-          <encoding>UTF-8</encoding>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
-  <licenses>
-    <license>
-      <name>Apache License 2.0</name>
-      <distribution>repo</distribution>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-    </license>
-  </licenses>
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
 
-  <artifactId>opendash</artifactId>
+	<artifactId>opendash</artifactId>
 </project>

@@ -1,0 +1,24 @@
+<style type="text/css">
+	.lti-launch-container iframe {
+	    width: 100%;
+	    height: 100%;
+	    min-height: 575px;
+	}
+</style>
+
+<div ng-controller="LtiCardController" id="{{card.id}}">
+	<form id="lti_launch_form" 
+		target="lti_iframe" 
+		enctype="application/x-www-form-urlencoded"
+		method="post">
+		<input ng-repeat="(key, value) in outboundLaunch.params" type="hidden" name="{{key}}" value="{{value}}"/>
+	</form>
+
+
+	<div class="col-xs-12 col-md-6 lti-launch-container">
+		<div class="embed-responsive embed-responsive-4by3">
+		  <iframe class="embed-responsive-item" name="lti_iframe" seamless="seamless"></iframe>
+		</div>	
+	</div>
+
+</div>

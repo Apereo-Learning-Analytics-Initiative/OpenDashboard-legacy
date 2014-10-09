@@ -1,0 +1,32 @@
+<div class="media">
+  <a class="pull-left" href="#">
+    <img class="media-object" src="{{card.imgUrl}}" alt="...">
+  </a>
+  <div class="media-body">
+    <h4 class="media-heading">{{card.name}}</h4>
+    {{card.description}}
+  </div>
+</div>
+
+<form name="ltiForm" role="form" class="mt" ng-submit="saveCardInstance()" novalidate="novalidate">
+  <div class="form-group" ng-class="{ 'has-error' : ltiForm.launchUrl.$invalid && !ltiForm.launchUrl.$pristine }">
+    <label for="launchUrl">Launch URL</label>
+    <input type="url" class="form-control" id="launchUrl" name="launchUrl" placeholder="Enter launch URL" 
+    	ng-model="cardConfiguration.launchUrl" required>
+    <p ng-show="ltiForm.launchUrl.$invalid && !ltiForm.launchUrl.$pristine" class="help-block">Launch URL is required.</p>
+  </div>
+  <div class="form-group" ng-class="{ 'has-error' : ltiForm.key.$invalid && !ltiForm.key.$pristine }">
+    <label for="key">Consumer Key</label>
+    <input type="text" class="form-control" id="key" name="key" placeholder="Enter consumer key"  
+    	ng-model="cardConfiguration.key" required>
+    <p ng-show="ltiForm.key.$invalid && !ltiForm.key.$pristine" class="help-block">Consumer Key is required.</p>
+  </div>
+  <div class="form-group" ng-class="{ 'has-error' : ltiForm.secret.$invalid && !ltiForm.secret.$pristine }">
+    <label for="secret">Consumer Secret</label>
+    <input type="text" class="form-control" id="secret" name="secret" placeholder="Enter secret"  
+    	ng-model="cardConfiguration.secret" required>
+    <p ng-show="ltiForm.secret.$invalid && !ltiForm.secret.$pristine" class="help-block">Secret is required.</p>
+  </div>
+  <button type="submit" class="btn btn-primary" ng-disabled="ltiForm.$invalid">Submit</button>
+  <button type="button" class="btn btn-link" ng-click="closeThisDialog()">Cancel</button>
+</form>
