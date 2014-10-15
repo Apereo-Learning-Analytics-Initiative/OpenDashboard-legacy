@@ -1,20 +1,29 @@
 <style type="text/css">
+.card .panel-body {
+	min-height: 180px;
+}
+.card .img-responsive {
+    margin: 0 auto;
+}
 .card:hover {
     border: 2px solid #0096da;
     cursor: pointer;
+}
+.m-l {
+	margin-left: 10px;
 }
 </style>
 
 <div class="col-xs-12">
 	
 	<div class="row">
-		<div ng-repeat="card in installedCards" ng-include="'/html/cards/'+card.cardType+'.html'"></div>
+		<div ng-repeat="card in installedCards" ng-include="'/html/cards/'+card.cardType+'/card.html'"></div>
 	</div>
 	
 	<h3>Available Cards</h3>
-	<div class="card col-xs-12 col-sm-6 col-md-3 col-lg-2 panel panel-default text-center" ng-repeat="card in availableCards" ng-click="addCardInstance(card)">
+	<div class="card col-xs-12 col-sm-6 col-md-3 col-lg-2 panel panel-default text-center" ng-repeat="card in availableCards" ng-click="addCardInstance(card)" ng-class="{'m-l' : $first == false}">
 	    <div class="panel-body">
-	        <img alt="" src="{{card.imgUrl}}">
+	        <img class="img-responsive" alt="" ng-src="{{card.imgUrl}}">
 	        <h4>{{card.name}}</h4>
 	    </div>
 	</div>

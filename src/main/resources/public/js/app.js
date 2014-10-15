@@ -1,6 +1,6 @@
-var OpenDashboard = angular.module('OpenDashboard', ['ngRoute', 'OpenDashboardControllers', 'OpenDashboardServices']);
+var OpenDashboard = angular.module('OpenDashboard', ['ngRoute', 'OpenDashboardControllers', 'OpenDashboardServices', 'LTICard', 'OpenLRSCard']);
 
-OpenDashboard.config(['$routeProvider', function($routeProvider) {
+OpenDashboard.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.
     when('/', {
       templateUrl: '/html/welcome.html',
@@ -8,8 +8,8 @@ OpenDashboard.config(['$routeProvider', function($routeProvider) {
       resolve: {
     	contextMapping: function(ContextMappingService, $window) {
     		var inbound_lti_launch_request = {};
-	    	if ($window && $window.inbound_lti_launch_request) {
-	    		inbound_lti_launch_request = $window.inbound_lti_launch_request;
+	    	if ($window && $window.OpenDashboard_API) {
+	    		inbound_lti_launch_request = $window.OpenDashboard_API.getInbound_LTI_Launch();
 	    	}
     		return ContextMappingService.get(inbound_lti_launch_request.oauth_consumer_key, inbound_lti_launch_request.context_id);
     	}
@@ -33,4 +33,6 @@ OpenDashboard.config(['$routeProvider', function($routeProvider) {
     otherwise({
       redirectTo: '/'
     });
+    
+    $locationProvider.html5Mode(true);
 }]);

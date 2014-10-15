@@ -51,9 +51,15 @@ public class Application {
 		card1.setName("LTI");
 		card1.setDescription("Use this card to launch out to an LTI tool");
 		card1.setImgUrl("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8F5Og94mVZUAFy7fMqcmv5NZUJMqH8j0FcgvFzete2Z5YJClgDQ");
+		
+		Card card2 = new Card();
+		card2.setCardType(CardType.openlrs);
+		card2.setName("OpenLRS");
+		card2.setDescription("Use this card to access your course data in OpenLRS");
+		card2.setImgUrl("/img/openlrs.png");
 
 		cardRepository.save(card1);
-
+		cardRepository.save(card2);
     }
 
 }

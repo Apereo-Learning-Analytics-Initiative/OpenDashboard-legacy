@@ -25,4 +25,10 @@ public class OpenDashController {
 		model.addAttribute("inbound_lti_launch_request", launchRequest);
 		return "openDashboard";
     }
+	
+	@RequestMapping(value={"/", "/context/**"}, method=RequestMethod.GET)
+    public String routes() {
+		return "openDashboard";
+    }
+
 }

@@ -8,5 +8,5 @@ package od.model;
  *
  */
 public enum CardType {
-	LTI
+	LTI, openlrs
 }

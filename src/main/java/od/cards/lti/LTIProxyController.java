@@ -1,7 +1,7 @@
 /**
  * 
  */
-package od.controllers.rest;
+package od.cards.lti;
 
 import java.io.Serializable;
 import java.util.Map;

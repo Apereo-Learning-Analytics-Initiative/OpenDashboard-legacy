@@ -1,0 +1,66 @@
+<style type="text/css">
+.voffset  { margin-top: 2px; }
+.voffset1 { margin-top: 5px; }
+.voffset2 { margin-top: 10px; }
+.voffset3 { margin-top: 15px; }
+.voffset4 { margin-top: 30px; }
+.voffset5 { margin-top: 40px; }
+.voffset6 { margin-top: 60px; }
+.voffset7 { margin-top: 80px; }
+.voffset8 { margin-top: 100px; }
+.voffset9 { margin-top: 150px; }    
+
+.m-l {margin-left: 15px;}
+.m-r {margin-right: 15px;}
+.m-t {margin-right: 10px;}
+
+.chart {
+		width: 250px;
+		height: 250px;
+}
+
+@media only screen and (min-width: 992px) {
+	.chart {
+			width: 500px;
+			height: 500px;
+	}
+  	}
+</style>
+<div class="col-xs-12 col-md-6">
+<div ng-controller="OpenLRSCardController">
+    	<div class="row" ng-if="statements">
+			<div class="col-xs-12">
+				<div 
+	    			data-ac-chart="'pie'" 
+	    			data-ac-data="data" 
+	    			data-ac-config="config"
+	    			class="chart center-block">
+	  			</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="row voffset2" ng-if="statements">
+					<div class="form-group col-xs-12">
+					  <input type="text" class="form-control" 
+					    ng-model="query" name="query" id="query" placeholder="Search..."></input>
+				    </div>
+				    <div class="form-group col-xs-12"><a href="#" ng-click="reset()">reset</a></div>
+			    </div>
+			    <div class="row voffset1">
+					<div class="list-group col-xs-12 m-l m-r">
+						  <a href="#" class="list-group-item" ng-repeat="statement in statements | filter:query" ng-click="expandStatement(statement)">{{statement}}</a>
+<!-- 						  <ul ng-show="activeStatement &amp;&amp; activeStatement.id == statement.id"> -->
+<!-- 						  	<li>Statement ID: {{statement.id}}</li> -->
+<!-- 						  	<li>Actor: {{statement.actor}}</li> -->
+<!-- 						  	<li>Verb: {{statement.verb}}</li> -->
+<!-- 						  	<li>Object: {{statement.object}}</li> -->
+<!-- 						  	<li>Stored: {{statement.stored}}</li> -->
+<!-- 						  </ul> -->
+						  <h4 class="text-center" ng-show="!statements || statements.length == 0">No xAPI Statements available</h4>
+					</div>			    
+				</div>
+			</div>
+		</div>
+</div>
+</div>

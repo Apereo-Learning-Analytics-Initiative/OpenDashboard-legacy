@@ -1,0 +1,30 @@
+
+<div class="media">
+  <div class="media-body">
+    <h4 class="media-heading">{{card.name}}</h4>
+    {{card.description}}
+  </div>
+</div>
+
+<form name="openlrsForm" role="form" class="mt" ng-submit="saveCardInstance()" novalidate="novalidate">
+  <div class="form-group" ng-class="{ 'has-error' : openlrsForm.url.$invalid && !openlrsForm.url.$pristine }">
+    <label for="url">URL</label>
+    <input type="url" class="form-control" id="url" name="url" placeholder="Enter URL" 
+    	ng-model="cardConfiguration.url" required>
+    <p ng-show="openlrsForm.url.$invalid && !openlrsForm.url.$pristine" class="help-block">URL is required.</p>
+  </div>
+  <div class="form-group" ng-class="{ 'has-error' : openlrsForm.key.$invalid && !openlrsForm.key.$pristine }">
+    <label for="key">Key</label>
+    <input type="text" class="form-control" id="key" name="key" placeholder="Enter key"  
+    	ng-model="cardConfiguration.key" required>
+    <p ng-show="openlrsForm.key.$invalid && !openlrsForm.key.$pristine" class="help-block">Key is required.</p>
+  </div>
+  <div class="form-group" ng-class="{ 'has-error' : openlrsForm.secret.$invalid && !openlrsForm.secret.$pristine }">
+    <label for="secret">Secret</label>
+    <input type="text" class="form-control" id="secret" name="secret" placeholder="Enter secret"  
+    	ng-model="cardConfiguration.secret" required>
+    <p ng-show="openlrsForm.secret.$invalid && !openlrsForm.secret.$pristine" class="help-block">Secret is required.</p>
+  </div>
+  <button type="submit" class="btn btn-primary" ng-disabled="openlrsForm.$invalid">Submit</button>
+  <button type="button" class="btn btn-link" ng-click="closeThisDialog()">Cancel</button>
+</form>

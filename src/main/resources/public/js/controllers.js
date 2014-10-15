@@ -17,8 +17,8 @@ var OpenDashboardControllers = angular.module('OpenDashboardControllers', ['ngDi
 
 OpenDashboardControllers.controller('NavbarController', function($scope, $http, $window){
 	
-	if ($window && $window.inbound_lti_launch_request) {
-		$scope.inbound_lti_launch_request = $window.inbound_lti_launch_request;
+	if ($window && $window.OpenDashboard_API) {
+		$scope.inbound_lti_launch_request = $window.OpenDashboard_API.getInbound_LTI_Launch();
 	}
 	
 	$scope.isEmbed = function() {
@@ -44,8 +44,8 @@ OpenDashboardControllers.controller('WelcomeController', function($scope, $http,
 	
 	$scope.saveContextMapping = function() {
 		var inbound_lti_launch_request = null;
-		if ($window && $window.inbound_lti_launch_request) {
-			inbound_lti_launch_request = $window.inbound_lti_launch_request;
+		if ($window && $window.OpenDashboard_API) {
+			inbound_lti_launch_request = $window.OpenDashboard_API.getInbound_LTI_Launch();
 		}
 		
 		var cm = {};
@@ -64,7 +64,7 @@ OpenDashboardControllers.controller('WelcomeController', function($scope, $http,
 
 OpenDashboardControllers.controller('DashboardController', function($scope, ngDialog, context, installedCards, availableCards, CardInstanceService){
 	$scope.context = context;
-	$scope.installedCards = [];
+	$scope.installedCards = installedCards;
 	$scope.availableCards = availableCards;
 	$scope.dialog = null;
 	$scope.card = null;
@@ -93,29 +93,9 @@ OpenDashboardControllers.controller('DashboardController', function($scope, ngDi
 		$scope.card = card;
 		$scope.dialog = ngDialog.open(
 		{
-			template:'/html/cards/'+$scope.card.cardType+'-config.html',
+			template:'/html/cards/'+$scope.card.cardType+'/config.html',
 			scope: $scope
 		});
 	};
 	
-});
-
-OpenDashboardControllers.controller('LtiCardController', function($scope, $window, $timeout, LtiProxyService) {
-	if ($window && $window.inbound_lti_launch_request) {
-		$scope.inbound_lti_launch_request = $window.inbound_lti_launch_request;
-	}
-	
-	$scope.readyToLaunch = false;
-	$scope.outboundLaunch = null;
-	
-	LtiProxyService.post($scope.card,$scope.inbound_lti_launch_request)
-		.then(function(proxiedLaunch){
-			$scope.outboundLaunch = proxiedLaunch;
-			$timeout(function() {
-				var selector = '#' + $scope.card.id + ' > #lti_launch_form';
-				$(selector).attr('action', $scope.outboundLaunch.launchUrl);
-				$(selector).submit();
-		    }, 2000);
-		});
-
 });

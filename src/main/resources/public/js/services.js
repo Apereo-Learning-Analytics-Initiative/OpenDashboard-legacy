@@ -107,25 +107,3 @@ OpenDashboardServices.service('CardInstanceService', function($http) {
 	}
 });
 
-OpenDashboardServices.service('LtiProxyService', function($http) {
-	return {
-		post : function (cardInstance,inboundLaunch) {
-			var promise =
-			$http({
-		        method  : 'POST',
-		        url     : '/api/lti/launch/'+cardInstance.id,
-		        data    : JSON.stringify(inboundLaunch),
-		        headers : { 'Content-Type': 'application/json' }
-			})
-			.then(function (response) {
-				if (response.data) {
-					return response.data;
-				}
-				else {
-					return null;
-				}
-			});
-			return promise;
-		}
-	}
-});
