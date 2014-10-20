@@ -67,6 +67,7 @@ OpenDashboardControllers.controller('DashboardController', function($scope, ngDi
 	$scope.installedCards = installedCards;
 	$scope.availableCards = availableCards;
 	$scope.dialog = null;
+	$scope.selectedCard = null;
 	$scope.card = null;
 	$scope.cardConfiguration = {};
 	
@@ -83,7 +84,10 @@ OpenDashboardControllers.controller('DashboardController', function($scope, ngDi
 				if (!$scope.installedCards) {
 					$scope.installedCards = [];
 				}
-				$scope.installedCards.push(new CardInstance(savedCardInstance));
+				$scope.selectedCard = new CardInstance(savedCardInstance);
+				$scope.installedCards.push($scope.selectedCard);
+				$scope.card = null;
+				$scope.cardConfiguration = {};
 				$scope.dialog.close();
 			});
 	};
@@ -91,11 +95,16 @@ OpenDashboardControllers.controller('DashboardController', function($scope, ngDi
 	
 	$scope.addCardInstance = function(card) {
 		$scope.card = card;
+		$scope.cardConfiguration = {};
 		$scope.dialog = ngDialog.open(
 		{
 			template:'/html/cards/'+$scope.card.cardType+'/config.html',
 			scope: $scope
 		});
 	};
-	
+
+	$scope.selectCard = function(card) {
+		$scope.selectedCard = card;
+	};
+
 });

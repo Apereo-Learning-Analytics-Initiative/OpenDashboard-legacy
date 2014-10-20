@@ -9,6 +9,12 @@
 </div>
 
 <form name="ltiForm" role="form" class="mt" ng-submit="saveCardInstance()" novalidate="novalidate">
+  <div class="form-group" ng-class="{ 'has-error' : ltiForm.title.$invalid && !ltiForm.title.$pristine }">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title" placeholder="Card Title" 
+    	ng-model="cardConfiguration.title" required>
+    <p ng-show="ltiForm.title.$invalid && !ltiForm.title.$pristine" class="help-block">Title is required.</p>
+  </div>
   <div class="form-group" ng-class="{ 'has-error' : ltiForm.launchUrl.$invalid && !ltiForm.launchUrl.$pristine }">
     <label for="launchUrl">Launch URL</label>
     <input type="url" class="form-control" id="launchUrl" name="launchUrl" placeholder="Enter launch URL" 

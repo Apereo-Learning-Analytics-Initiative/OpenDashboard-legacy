@@ -8,11 +8,11 @@ LTICard.controller('LtiCardController', function($scope, $window, $timeout, LtiP
 	$scope.readyToLaunch = false;
 	$scope.outboundLaunch = null;
 
-	LtiProxyService.post($scope.card,$scope.inbound_lti_launch_request)
+	LtiProxyService.post($scope.selectedCard,$scope.inbound_lti_launch_request)
 		.then(function(proxiedLaunch){
 			$scope.outboundLaunch = proxiedLaunch;
 			$timeout(function() {
-				var selector = '#' + $scope.card.id + ' > #lti_launch_form';
+				var selector = '#' + $scope.selectedCard.id + ' > #lti_launch_form';
 				$(selector).attr('action', $scope.outboundLaunch.launchUrl);
 				$(selector).submit();
 		    }, 2000);
