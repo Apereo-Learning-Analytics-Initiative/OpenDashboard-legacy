@@ -22,7 +22,7 @@ OpenLRSCard.controller('OpenLRSCardController', ['$scope', '$http', '$window', '
 		    }
 		  };
 		// TODO context, user
-		OpenLRSService.getStatements($scope.card)
+		OpenLRSService.getStatements($scope.selectedCard)
 			.then(function (statements) {
 		    	$scope.statements = statements;
 	    		$scope.data.data = _.chain(statements)
@@ -63,16 +63,14 @@ OpenLRSCard.controller('OpenLRSCardController', ['$scope', '$http', '$window', '
 OpenLRSCard.service('OpenLRSService', function($http, $window) {
 	return {
 		getStatements: function(cardInstance,context,user) {
-			var token = $window.btoa(cardInstance.config.key+':'+cardInstance.config.secret);
-			var url = cardInstance.config.url + '?callback=JSON_CALLBACK'
 	    	var promise = $http({
 	    		method  : 'GET',
 	    		url     : '/api/openlrs/'+cardInstance.id+'/statements',
 	    		headers : { 'Content-Type': 'application/json'}
 	    	})
 	    	.then(function (response) {
-	    		if (response.data && response.data.statements) {
-		    		return response.data.statements;
+	    		if (response.data) {
+		    		return response.data;
 	    		}
 	    		
 	    		return null;
