@@ -1,0 +1,6 @@
+{
+ "cardType":"openlrs",
+ "name":"OpenLRS",
+ "description":"Use this card to access your course data in OpenLRS",
+ "imgUrl":"/img/openlrs.png"
+}

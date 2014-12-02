@@ -21,7 +21,7 @@ public class CardInstance implements Serializable {
 	private String name;
 	private String description;
 	private String imgUrl;
-	private CardType cardType;
+	private String cardType;
 	private Map<String, Object> config;
 	private Integer sequence;
 	
@@ -61,10 +61,10 @@ public class CardInstance implements Serializable {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
-	public CardType getCardType() {
+	public String getCardType() {
 		return cardType;
 	}
-	public void setCardType(CardType cardType) {
+	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}
 	public Map<String, Object> getConfig() {

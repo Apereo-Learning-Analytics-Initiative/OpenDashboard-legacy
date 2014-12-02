@@ -1,0 +1,18 @@
+
+<div class="media">
+  <div class="media-body">
+    <h4 class="media-heading">{{card.name}}</h4>
+    {{card.description}}
+  </div>
+</div>
+
+<form name="rssreaderForm" role="form" class="mt" ng-submit="saveCardInstance()" novalidate="novalidate">
+  <div class="form-group" ng-class="{ 'has-error' : rssreaderForm.url.$invalid && !rssreaderForm.url.$pristine }">
+    <label for="url">URL</label>
+    <input type="url" class="form-control" id="url" name="url" placeholder="Enter URL" 
+    	ng-model="cardConfiguration.url" required>
+    <p ng-show="rssreaderForm.url.$invalid && !rssreaderForm.url.$pristine" class="help-block">URL is required.</p>
+  </div>
+  <button type="submit" class="btn btn-primary" ng-disabled="rssreaderForm.$invalid">Submit</button>
+  <button type="button" class="btn btn-link" ng-click="closeThisDialog()">Cancel</button>
+</form>

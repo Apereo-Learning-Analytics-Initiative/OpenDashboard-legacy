@@ -1,0 +1,6 @@
+{
+ "cardType":"rssreader",
+ "name":"RSS Reader",
+ "description":"Use this card to display an RSS feed",
+ "imgUrl":"/img/rss.png"
+}
