@@ -79,3 +79,7 @@ Open src/main/resources/public/js/app.js and add your card module to the applica
 Open src/main/resources/templates/openDashboard.html and add a script tag at the bottom of the page pointing to your module js file. For example:
 
 `<script src="../static/js/cards/rssreader/module.js" th:src="@{/js/cards/rssreader/module.js}"></script>`
+
+### Optionally create your own data services
+
+If you need to proxy requests to another data source or call an external web service you may need to add Java code to OpenDashboard to do this. See src/main/java/od/cards/openlrs/OpenLRSCardController.java for an example.
