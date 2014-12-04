@@ -62,36 +62,50 @@ OpenDashboardControllers.controller('WelcomeController', function($scope, $http,
 	
 });
 
-OpenDashboardControllers.controller('DashboardController', function($scope, ngDialog, context, installedCards, availableCards, CardInstanceService){
+OpenDashboardControllers.controller('DashboardController', function($window, $scope, $location, $route, ngDialog, context, selectedCard, installedCards, availableCards, CardInstanceService){
 	$scope.context = context;
+	$scope.selectedCard = selectedCard;
 	$scope.installedCards = installedCards;
 	$scope.availableCards = availableCards;
+	$scope.isInstructor = $window.OpenDashboard_API.isInstructor();
+	$scope.isNotStudent = $window.OpenDashboard_API.isNotStudent();
+	$scope.isStudent = $window.OpenDashboard_API.isStudent();
 	$scope.dialog = null;
-	$scope.selectedCard = null;
 	$scope.card = null;
 	$scope.cardConfiguration = {};
 	
 	$scope.saveCardInstance = function() {
 		
-		var cardInstance = new CardInstance({});
-		cardInstance.setCard($scope.card);
-		cardInstance.setConfig($scope.cardConfiguration);
-		cardInstance.context = $scope.context;
-		cardInstance.sequence = $scope.installedCards ? $scope.installedCards.length : 0;
-		
-		CardInstanceService.create(cardInstance)
-			.then(function(savedCardInstance){
-				if (!$scope.installedCards) {
-					$scope.installedCards = [];
-				}
-				$scope.selectedCard = new CardInstance(savedCardInstance);
-				$scope.installedCards.push($scope.selectedCard);
+		if ($scope.selectedCard) {
+			CardInstanceService.update($scope.selectedCard)
+			.then(function(savedCardInstance) {
 				$scope.card = null;
 				$scope.cardConfiguration = {};
 				$scope.dialog.close();
-			});
+				$route.reload();
+			});		
+		}
+		else {
+			var cardInstance = new CardInstance({});
+			cardInstance.setCard($scope.card);
+			cardInstance.setConfig($scope.cardConfiguration);
+			cardInstance.context = $scope.context;
+			cardInstance.sequence = $scope.installedCards ? $scope.installedCards.length : 0;
+			
+			CardInstanceService.create(cardInstance)
+				.then(function(savedCardInstance){
+					if (!$scope.installedCards) {
+						$scope.installedCards = [];
+					}
+					$scope.installedCards.push($scope.selectedCard);
+					$scope.card = null;
+					$scope.cardConfiguration = {};
+					$scope.dialog.close();
+					var url = '/context/' + context + '/' + savedCardInstance.id;
+					$location.path(url);
+				});
+		}		
 	};
-	
 	
 	$scope.addCardInstance = function(card) {
 		$scope.card = card;
@@ -101,6 +115,34 @@ OpenDashboardControllers.controller('DashboardController', function($scope, ngDi
 			template:'/html/cards/'+$scope.card.cardType+'/config.html',
 			scope: $scope
 		});
+	};
+	
+	$scope.editCardInstance = function(card) {
+		$scope.card = card;
+		$scope.cardConfiguration = card.config;
+		$scope.dialog = ngDialog.open(
+		{
+			template:'/html/cards/'+$scope.card.cardType+'/config.html',
+			scope: $scope
+		});
+	};
+	
+	$scope.removeCardInstance = function(card) {
+		$scope.card = card;
+		$scope.dialog = ngDialog.open(
+		{
+			template:'/html/removeCard.html',
+			scope: $scope
+		});
+	};
+	
+	$scope.confirmRemoveCardInstance = function() {
+		CardInstanceService.remove($scope.selectedCard)
+			.then(function() {
+				$scope.installedCards = _.without($scope.installedCards, _.findWhere($scope.installedCards, {id:$scope.selectedCard.id}));
+				$scope.selectedCard = null;
+				$scope.dialog.close();
+			});
 	};
 
 	$scope.selectCard = function(card) {

@@ -8,10 +8,13 @@ import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author ggilbert
  *
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class CardInstance implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -8,11 +8,14 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * @author ggilbert
  *
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ContextMapping implements Serializable {
 
 	private static final long serialVersionUID = 1L;

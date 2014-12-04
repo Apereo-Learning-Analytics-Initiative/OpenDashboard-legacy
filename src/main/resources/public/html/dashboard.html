@@ -16,15 +16,27 @@
 
 <div class="col-xs-3 col-md-2">
 	<ul class="nav nav-pills nav-stacked">
-		<li ng-repeat="card in installedCards" ng-class="{'active':selectedCard.id == card.id}"><a href="#" ng-click="selectCard(card)">{{card.config.title || card.name}}</a></li>
-		<li ng-class="{'active':selectedCard == null}"><a href="#" ng-click="selectCard(null)">Available Cards</a></li>
+		<li ng-repeat="card in installedCards" ng-class="{'active':selectedCard.id == card.id}">
+			<a href="{{'/context/' + card.context + '/' + card.id}}">{{card.config.title || card.name}}</a>
+		</li>
+		<li ng-if="isNotStudent" ng-class="{'active':selectedCard == null}"><a href="#" ng-click="selectCard(null)">Available Cards</a></li>
 	</ul>
 </div>
 <div class="col-xs-9 col-md-10">
 	<div class="row" ng-if="selectedCard != null">
+		<nav class="navbar navbar-default" ng-if="isNotStudent">
+		  <div class="container-fluid">
+		    <div class="collapse navbar-collapse">
+		      <ul class="nav navbar-nav navbar-right">
+		        <li><a href="#" ng-click="editCardInstance(selectedCard)">Edit</a></li>
+		        <li><a href="#" ng-click="removeCardInstance(selectedCard)">Remove</a></li>
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
 		<div class="col-xs-12" ng-include="'/html/cards/'+selectedCard.cardType+'/card.html'"></div>
 	</div>
-	<div ng-if="selectedCard == null">
+	<div ng-if="selectedCard == null && isNotStudent">
 		<div class="card col-xs-12 col-sm-6 col-md-3 col-lg-2 panel panel-default text-center" ng-repeat="card in availableCards" ng-click="addCardInstance(card)" ng-class="{'m-l' : $first == false}">
 		    <div class="panel-body">
 		        <img class="img-responsive" alt="" ng-src="{{card.imgUrl}}">

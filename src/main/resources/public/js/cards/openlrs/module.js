@@ -21,8 +21,13 @@ OpenLRSCard.controller('OpenLRSCardController', ['$scope', '$http', '$window', '
 		      position: 'left'
 		    }
 		  };
-		// TODO context, user
-		OpenLRSService.getStatements($scope.selectedCard)
+		
+		var user = null;
+		if ($scope.isStudent) {
+			user = $window.OpenDashboard_API.getUserId();
+		}
+
+		OpenLRSService.getStatements($scope.selectedCard,user)
 			.then(function (statements) {
 		    	$scope.statements = statements;
 	    		$scope.data.data = _.chain(statements)
@@ -62,10 +67,15 @@ OpenLRSCard.controller('OpenLRSCardController', ['$scope', '$http', '$window', '
 
 OpenLRSCard.service('OpenLRSService', function($http, $window) {
 	return {
-		getStatements: function(cardInstance,context,user) {
+		getStatements: function(cardInstance,user) {
+			var url = '/api/openlrs/'+cardInstance.id+'/statements';
+			if (user) {
+				url = url + '?user='+user;
+			}
+
 	    	var promise = $http({
 	    		method  : 'GET',
-	    		url     : '/api/openlrs/'+cardInstance.id+'/statements',
+	    		url     : url,
 	    		headers : { 'Content-Type': 'application/json'}
 	    	})
 	    	.then(function (response) {

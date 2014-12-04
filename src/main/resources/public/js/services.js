@@ -103,7 +103,50 @@ OpenDashboardServices.service('CardInstanceService', function($http) {
 				}
 			});
 			return promise;
+		},
+		getOne : function (context,cardInstanceId) {
+			var promise =
+			$http({
+		        method  : 'GET',
+		        url     : '/api/cards/'+context+'/'+cardInstanceId,
+		        headers : { 'Content-Type': 'application/json' }
+			})
+			.then(function (response) {
+				if (response.data) {
+					return new CardInstance(response.data);
+				}
+				else {
+					return null;
+				}
+			});
+			return promise;
+		},
+		update : function (cardInstance) {
+			var promise =
+			$http({
+		        method  : 'PUT',
+		        url     : '/api/cards/'+cardInstance.context+'/'+cardInstance.id,
+		        data    : JSON.stringify(cardInstance),
+		        headers : { 'Content-Type': 'application/json' }
+			})
+			.then(function (response) {
+				return response.data;
+			});
+			return promise;
+		},
+		remove : function (cardInstance) {
+			var promise =
+			$http({
+		        method  : 'DELETE',
+		        url     : '/api/cards/'+cardInstance.context+'/'+cardInstance.id,
+		        headers : { 'Content-Type': 'application/json' }
+			})
+			.then(function (response) {				
+				return response;
+			});
+			return promise;
 		}
+
 	}
 });
 

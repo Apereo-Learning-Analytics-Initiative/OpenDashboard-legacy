@@ -15,12 +15,15 @@ OpenDashboard.config(['$routeProvider', '$locationProvider', function($routeProv
     	}
       }
     }).
-    when('/context/:id', {
+    when('/context/:id/:cardInstanceId?', {
       templateUrl: '/html/dashboard.html',
       controller: 'DashboardController',
       resolve: {
     	context: function($route) {
     		return $route.current.params.id;
+    	},
+    	selectedCard: function(CardInstanceService, $route) {
+    		return CardInstanceService.getOne($route.current.params.id,$route.current.params.cardInstanceId);
     	},
     	installedCards: function(CardInstanceService, $route) {
     		return CardInstanceService.get($route.current.params.id);

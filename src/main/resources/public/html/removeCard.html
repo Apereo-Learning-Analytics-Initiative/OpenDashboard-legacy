@@ -1,0 +1,11 @@
+
+<div class="media">
+  <div class="media-body">
+    <h4 class="media-heading">Are you sure you want to remove {{card.name}}?</h4>
+  </div>
+</div>
+
+<form role="form" class="mt" ng-submit="confirmRemoveCardInstance()" novalidate="novalidate">
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="button" class="btn btn-link" ng-click="closeThisDialog()">Cancel</button>
+</form>

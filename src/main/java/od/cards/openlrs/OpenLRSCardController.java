@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,13 +37,26 @@ public class OpenLRSCardController {
 	
 	@RequestMapping(value = "/api/openlrs/{cardInstanceId}/statements", method = RequestMethod.GET, 
 			produces = "application/json;charset=utf-8")
-	public String getOpenLRSStatements(@PathVariable("cardInstanceId") String cardInstanceId) {
+	public String getOpenLRSStatements(@PathVariable("cardInstanceId") String cardInstanceId, @RequestParam(value="user",required=false) String user) {
+		
+		if (log.isDebugEnabled()) {
+			log.debug("cardInstanceId "+cardInstanceId);
+			log.debug("user "+user);
+		}
+		
 		CardInstance cardInstance = cardInstanceRepository.findOne(cardInstanceId);
 		ContextMapping contextMapping = contextMappingRepository.findOne(cardInstance.getContext());
 		Map<String, Object> config = cardInstance.getConfig();
 		String url = (String)config.get("url");
+		String expandedUrl = url;
 		
-		String expandedUrl = url + "/api/context/"+ contextMapping.getContext();
+		if (user != null) {
+			expandedUrl = expandedUrl + "/api/user/"+user+"/context/"+ contextMapping.getContext();
+		}
+		else {
+			expandedUrl = expandedUrl + "/api/context/"+ contextMapping.getContext();
+		}
+		
 		log.debug("expandedUrl: "+expandedUrl);
 		String basic = (String)config.get("key")+":"+(String)config.get("secret");
 		final byte[] encodedBytes = Base64.encodeBase64(basic.getBytes());

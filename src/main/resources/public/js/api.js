@@ -24,6 +24,92 @@ OD_API.prototype = {
 		}
 		
 		return lti_launch;
+	},
+	
+	getUserId: function () {
+		var userId = null;
+		if (this.inbound_lti_launch) {
+			userId = this.inbound_lti_launch.user_id;
+		}
+		return userId;
+	},
+	
+	isInstructor: function() {
+		var isInstructor = false;
+		var instructorRoles = ['Instructor','TeachingAssistant','Teacher','Faculty'];
+		
+		if (this.inbound_lti_launch) {
+			var roles = this.inbound_lti_launch.roles;
+			if (roles) {
+				var roleArray = null;
+				if (roles.indexOf(',') > -1) {
+					roleArray = roles.split(',');
+				}
+				else {
+					roleArray = [roles];
+				}
+				
+				var intersection = _.intersection(instructorRoles,roleArray);
+				if (intersection && intersection.length > 0) {
+					isInstructor = true;
+				}
+			}
+			
+		}
+		
+		return isInstructor;
+	},
+	
+	isNotStudent: function() {
+		var isNotStudent = false;
+		var studentRoles = ['Student','Learner','Guest'];
+		
+		if (this.inbound_lti_launch) {
+			var roles = this.inbound_lti_launch.roles;
+			if (roles) {
+				var roleArray = null;
+				if (roles.indexOf(',') > -1) {
+					roleArray = roles.split(',');
+				}
+				else {
+					roleArray = [roles];
+				}
+		
+				var intersection = _.intersection(studentRoles,roleArray);
+				if (!intersection || intersection.length == 0) {
+					isNotStudent = true;
+				}
+			}
+			
+		}
+		
+		return isNotStudent;
+	},
+	
+	isStudent: function() {
+		var isStudent = false;
+		var studentRoles = ['Student','Learner','Guest'];
+		
+		if (this.inbound_lti_launch) {
+			var roles = this.inbound_lti_launch.roles;
+			if (roles) {
+				var roleArray = null;
+				if (roles.indexOf(',') > -1) {
+					roleArray = roles.split(',');
+				}
+				else {
+					roleArray = [roles];
+				}
+				
+				var intersection = _.intersection(studentRoles,roleArray);
+				if (intersection && intersection.length > 0) {
+					isStudent = true;
+				}
+			}
+			
+		}
+		
+		return isStudent;
 	}
 
 };

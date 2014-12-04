@@ -24,6 +24,12 @@ public class CardInstanceController {
 	
 	@Autowired private CardInstanceRepository cardInstanceRepository;
 	
+	@RequestMapping(value = "/api/cards/{context}/{cardInstanceId}", method = RequestMethod.GET, 
+			produces = "application/json;charset=utf-8")
+	public CardInstance getOne(@PathVariable("context") final String context, @PathVariable("cardInstanceId") final String cardInstanceId) {
+		return cardInstanceRepository.findOne(cardInstanceId);
+	}
+	
 	@RequestMapping(value = "/api/cards/{context}", method = RequestMethod.GET, 
 			produces = "application/json;charset=utf-8")
 	public List<CardInstance> getAvailableCardsForContext(@PathVariable("context") final String context) {
@@ -35,5 +41,16 @@ public class CardInstanceController {
 	public CardInstance create(@RequestBody CardInstance cardInstance) {
 		return cardInstanceRepository.save(cardInstance);
 	}
-
+	
+	@RequestMapping(value = "/api/cards/{context}/{cardInstanceId}", method = RequestMethod.PUT)
+	public void update(@PathVariable("context") final String context, 
+						@PathVariable("cardInstanceId") final String cardInstanceId,
+						@RequestBody CardInstance cardInstance) {
+		cardInstanceRepository.save(cardInstance);
+	}
+	
+	@RequestMapping(value = "/api/cards/{context}/{cardInstanceId}", method = RequestMethod.DELETE)
+	public void remove(@PathVariable("context") final String context, @PathVariable("cardInstanceId") final String cardInstanceId) {
+		cardInstanceRepository.delete(cardInstanceId);
+	}
 }
