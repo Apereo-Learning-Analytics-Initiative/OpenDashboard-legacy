@@ -39,6 +39,4 @@ CardInstance.prototype = {
 	setConfig: function(config) {
 		this.config = config;
 	}
-	
 };
-

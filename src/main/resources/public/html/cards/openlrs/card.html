@@ -1,66 +1,66 @@
 <style type="text/css">
-.voffset  { margin-top: 2px; }
-.voffset1 { margin-top: 5px; }
-.voffset2 { margin-top: 10px; }
-.voffset3 { margin-top: 15px; }
-.voffset4 { margin-top: 30px; }
-.voffset5 { margin-top: 40px; }
-.voffset6 { margin-top: 60px; }
-.voffset7 { margin-top: 80px; }
-.voffset8 { margin-top: 100px; }
-.voffset9 { margin-top: 150px; }    
-
-.m-l {margin-left: 15px;}
-.m-r {margin-right: 15px;}
-.m-t {margin-right: 10px;}
-
 .chart {
-		width: 250px;
+		width: 100%;
 		height: 250px;
 }
-
-@media only screen and (min-width: 992px) {
-	.chart {
-			width: 500px;
-			height: 500px;
-	}
-  	}
 </style>
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12">
 <div ng-controller="OpenLRSCardController">
-    	<div class="row" ng-if="statements">
-			<div class="col-xs-12">
-				<div 
-	    			data-ac-chart="'pie'" 
-	    			data-ac-data="data" 
-	    			data-ac-config="config"
-	    			class="chart center-block">
-	  			</div>
-			</div>
+	<h4 class="text-center" ng-show="!statements || statements.length == 0">No activity available for {{courseName}}</h4>
+	<h4 ng-if="statements">OpenLRS Activity for {{courseName}}</h4>
+	<h5 ng-if="statements && !isStudent">Group By: 
+	<a ng-if="groupedBy != 'DATE'" ng-click="groupBy('DATE')">Date</a><span ng-if="groupedBy == 'DATE'">Date</span> | <a ng-if="groupedBy != 'STUDENT'" ng-click="groupBy('STUDENT')">Student</a><span ng-if="groupedBy == 'STUDENT'">Student</span></h5>
+   	<div class="row m-t" ng-if="statements">
+		<div class="col-xs-12">
+			<div 
+    			data-ac-chart="'bar'" 
+    			data-ac-data="data" 
+    			data-ac-config="config"
+    			class="chart center-block">
+  			</div>
 		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="row voffset2" ng-if="statements">
-					<div class="form-group col-xs-12">
-					  <input type="text" class="form-control" 
-					    ng-model="query" name="query" id="query" placeholder="Search..."></input>
-				    </div>
-				    <div class="form-group col-xs-12"><a href="#" ng-click="reset()">reset</a></div>
+	</div>
+	<div class="row" ng-if="subset">
+		<div class="col-xs-12">
+			<div class="row m-t" >
+				<div class="col-xs-12 col-md-7">
+					<div class="panel panel-default">
+  						<div class="panel-heading">Activity for {{groupedByValue}}</div>
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+								<div class="form-group col-xs-9">
+							    	<div class="input-group col-xs-12">
+							    		<input type="text" class="form-control" ng-model="query" name="query" id="query" placeholder="Search..."></input>
+							    	</div>
+  								</div>
+  								<div class="form-group col-xs-3">
+   									<button ng-click="query = null" class="btn btn-link">Reset</button>
+  								</div>
+							</form>
+						</div>
+  						<table class="table table-hover table-condensed">
+  							<thead>
+  								<tr>
+  									<th>User</th>
+  									<th>Action</th>
+  									<th>Activity</th>
+  								</tr>
+  							</thead>
+  							<tbody>
+  								<tr ng-repeat="statement in subset | filter:query | orderBy:'stored'" ng-click="expandStatement(statement)">
+  									<td>{{getStatementUser(statement)}}</td>
+  									<td>{{statement.verb.id}}</td>
+  									<td>{{statement.object.id}}</td>
+  								</tr>
+  							</tbody>
+  						</table>
+					</div>				  
 			    </div>
-			    <div class="row voffset1">
-					<div class="list-group col-xs-12 m-l m-r">
-						  <a href="#" class="list-group-item" ng-repeat="statement in statements | filter:query" ng-click="expandStatement(statement)">{{statement}}</a>
-<!-- 						  <ul ng-show="activeStatement &amp;&amp; activeStatement.id == statement.id"> -->
-<!-- 						  	<li>Statement ID: {{statement.id}}</li> -->
-<!-- 						  	<li>Actor: {{statement.actor}}</li> -->
-<!-- 						  	<li>Verb: {{statement.verb}}</li> -->
-<!-- 						  	<li>Object: {{statement.object}}</li> -->
-<!-- 						  	<li>Stored: {{statement.stored}}</li> -->
-<!-- 						  </ul> -->
-						  <h4 class="text-center" ng-show="!statements || statements.length == 0">No xAPI Statements available</h4>
-					</div>			    
-				</div>
-			</div>
+			    <div class="col-xs-12 col-md-5" ng-if="activeStatement">
+			    	<pre>{{activeStatement}}</pre>
+			    </div>
+		    </div>
 		</div>
+	</div>
 </div>
 </div>

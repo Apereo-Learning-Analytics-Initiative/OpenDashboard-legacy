@@ -59,6 +59,7 @@ public class Application {
 					cardRepository.save(card);
 				}
 			}
+			
 		} 
     	catch (IOException e) {
 			log.error(e.getMessage(),e);

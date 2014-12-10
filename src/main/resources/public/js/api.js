@@ -26,6 +26,22 @@ OD_API.prototype = {
 		return lti_launch;
 	},
 	
+	getCourseName: function() {
+		var name = '';
+		
+		if (this.inbound_lti_launch) {
+			var context_title = this.inbound_lti_launch.context_title;
+			if (context_title) {
+				name = context_title;
+			}
+			else {
+				name = this.inbound_lti_launch.context_id;
+			}
+		}
+
+		return name;
+	},
+	
 	getUserId: function () {
 		var userId = null;
 		if (this.inbound_lti_launch) {
