@@ -7,9 +7,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import od.cards.InvalidCardConfigurationException;
-import od.model.CardInstance;
+import od.model.Card;
 import od.model.ContextMapping;
-import od.model.repository.CardInstanceRepository;
 import od.model.repository.ContextMappingRepository;
 
 import org.apache.commons.codec.binary.Base64;
@@ -35,62 +34,37 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class OpenLRSCardController {
 	private Logger log = Logger.getLogger(OpenLRSCardController.class);
-	@Autowired private CardInstanceRepository cardInstanceRepository;
 	@Autowired private ContextMappingRepository contextMappingRepository;
 	
-	@Value("${openlrs.url:#{null}}")
-	private String openlrsUrl;
-	
-	@Value("${openlrs.key:#{null}}")
-	private String openlrsKey;
-	
-	@Value("${openlrs.secret:#{null}}")
-	private String openlrsSecret;
-
-	@RequestMapping(value = "/api/openlrs/configured", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public boolean configured() {
-		boolean configured = true;
-		if (StringUtils.isBlank(openlrsKey) || StringUtils.isBlank(openlrsSecret) || StringUtils.isBlank(openlrsUrl)) {
-			configured = false;
-		}
-		
-		return configured;
-	}
-	
-	@RequestMapping(value = "/api/{cm}/openlrs/statements", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	public String getOpenLRSStatements(@PathVariable("cm") String contextMappingId, 
-			@RequestParam(value="user",required=false) String user, @RequestParam(value="cardInstanceId",required=false) String cardInstanceId) throws InvalidCardConfigurationException {
+	@RequestMapping(value = "/api/{contextMappingId}/db/{dashboardId}/openlrs/{cardId}/statements", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	public String getOpenLRSStatements(@PathVariable("contextMappingId") String contextMappingId, 
+			@PathVariable("dashboardId") String dashboardId,
+			@PathVariable("cardId") String cardId, 
+			@RequestParam(value="user",required=false) String user) throws InvalidCardConfigurationException {
 		
 		if (log.isDebugEnabled()) {
-			log.debug("context mapping "+contextMappingId);
-			log.debug("cardInstanceId "+cardInstanceId);
+			log.debug("contextMappingId "+contextMappingId);
+			log.debug("dashboardId "+dashboardId);
+			log.debug("cardId "+cardId);
 			log.debug("user "+user);
 		}
 		
-		if (StringUtils.isBlank(cardInstanceId) && !configured()) {
-			//TODO
-			throw new InvalidCardConfigurationException();
-		}
+		ContextMapping cm = contextMappingRepository.findOne(contextMappingId);
+		Card card = cm.findCard(cardId);
+		Map<String, Object> config = card.getConfig();
 		
 		String baseUrl = null;
 		String basicAuth = null;
-		
-		ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
-		String context = contextMapping.getContext();
-		
-		if (StringUtils.isNotBlank(cardInstanceId)) {
-			CardInstance cardInstance = cardInstanceRepository.findOne(cardInstanceId);
-			Map<String, Object> config = cardInstance.getConfig();
+				
+		if (config != null && !config.isEmpty()) {
 			baseUrl = (String)config.get("url");
 			basicAuth = (String)config.get("key")+":"+(String)config.get("secret");
 		}
 		else {
-			baseUrl = openlrsUrl;
-			basicAuth = openlrsKey+":"+openlrsSecret;
+			throw new InvalidCardConfigurationException();
 		}
 		
-		return exchange(baseUrl, context, user, basicAuth);
+		return exchange(baseUrl, cm.getContext(), user, basicAuth);
 	}
 	
 	private String exchange(String baseUrl, String context, String user, String basicAuth) {

@@ -1,0 +1,8 @@
+<div ng-controller="RssReaderCardController">
+	<div class="media" ng-repeat="item in feed.entries">
+	  <div class="media-body">
+	    <h4 class="media-heading"><a href="{{item.link}}" target="_blank">{{item.title}}</a> <small>({{item.publishedDate | date:'short'}})</small></h4>
+	    {{item.contentSnippet}}
+	  </div>
+	</div>
+</div>

@@ -1,0 +1,21 @@
+<div class="row">			
+	<div class="col-xs-2 col-lg-1 od-left" ng-include="'/framework/dashboard/left-nav.html'"></div>			
+	<div class="col-xs-10 col-lg-11 od-content">
+		<div class="col-xs-12 col-lg-6">
+			<h1>Welcome to OpenDashboard</h1>
+			<p class="lead">
+				See your most important data in a glance.
+			</p>
+		
+			<div class="well">
+				OpenDashboard is a collection of data views - we call them cards - that give you an overview of the reports and metrics you care about most.
+				<br>
+				<br>
+				<button ng-if="!isStudent" class="btn btn-primary btn-large" ng-click="saveContextMapping()">Get Started</button>
+				<p class="lead" ng-if="isStudent">OpenDashboard has not yet been configured. Please check back later.</p>
+		
+			</div>
+		</div>
+	</div>
+</div>
+

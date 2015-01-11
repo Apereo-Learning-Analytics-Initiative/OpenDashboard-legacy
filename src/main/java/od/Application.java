@@ -14,12 +14,6 @@
  */
 package od;
 
-import java.io.IOException;
-
-import od.model.Card;
-import od.model.repository.CardRepository;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -27,10 +21,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ComponentScan("od")
 @Configuration
@@ -41,28 +31,5 @@ public class Application {
     
     public static void main(String[] args) {
     	ApplicationContext ctx = SpringApplication.run(Application.class, args);
-    	CardRepository cardRepository = ctx.getBean(CardRepository.class);
-    	
-    	try {
-    		Resource cardListResource = ctx.getResource("classpath:cards/cards.txt");
-			String cardList = new String(FileCopyUtils.copyToByteArray(cardListResource.getInputStream()));
-			log.info("Available cards: "+cardList);
-			
-			String [] cards = StringUtils.split(cardList, ",");
-			ObjectMapper objectMapper = new ObjectMapper();
-			for (String c : cards) {
-				Resource cardResource = ctx.getResource("classpath:cards/"+c+".json");
-				Card card = objectMapper.readValue(cardResource.getInputStream(), Card.class);
-				Card cardExists = cardRepository.findByCardType(card.getCardType());
-				if (cardExists == null) {
-					log.info("Adding card: "+card.getName());
-					cardRepository.save(card);
-				}
-			}
-			
-		} 
-    	catch (IOException e) {
-			log.error(e.getMessage(),e);
-		}    	
     }
 }

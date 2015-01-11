@@ -10,9 +10,11 @@ import java.util.SortedMap;
 import lti.LaunchRequest;
 import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
-import od.model.CardInstance;
-import od.model.repository.CardInstanceRepository;
+import od.model.Card;
+import od.model.ContextMapping;
+import od.model.repository.ContextMappingRepository;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,13 +28,27 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class LTIProxyController {
-	@Autowired private CardInstanceRepository cardInstanceRepository;
+	private Logger log = Logger.getLogger(LTIProxyController.class);
+	@Autowired private ContextMappingRepository contextMappingRepository;
 
-	@RequestMapping(value = "/api/lti/launch/{cardInstanceId}", method = RequestMethod.POST, 
+	@RequestMapping(value = "/api/{contextMappingId}/lti/launch/{cardId}", method = RequestMethod.POST, 
 			produces = "application/json;charset=utf-8")
-	public ProxiedLaunch proxy(@RequestBody LaunchRequest launchRequest, @PathVariable("cardInstanceId") String cardInstanceId) throws Exception {
-		CardInstance cardInstance = cardInstanceRepository.findOne(cardInstanceId);
-		Map<String, Object> config = cardInstance.getConfig();
+	public ProxiedLaunch proxy(@RequestBody LaunchRequest launchRequest, @PathVariable("contextMappingId") String contextMappingId, @PathVariable("cardId") String cardId) throws Exception {
+		
+		if (log.isDebugEnabled()) {
+			log.debug("contextMappingId: "+contextMappingId);
+			log.debug("cardId: "+cardId);
+		}
+		
+		ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
+		Card card = contextMapping.findCard(cardId);
+		
+		if (log.isDebugEnabled()) {
+			log.debug(contextMapping);
+			log.debug(card);
+		}
+		
+		Map<String, Object> config = card.getConfig();
 		
 		LaunchRequest proxiedLaunchRequest = new LaunchRequest(
 				launchRequest.getLti_message_type(),

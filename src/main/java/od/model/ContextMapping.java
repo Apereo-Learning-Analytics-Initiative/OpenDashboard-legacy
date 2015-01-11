@@ -5,6 +5,8 @@ package od.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 
@@ -23,6 +25,7 @@ public class ContextMapping implements Serializable {
 	@Id private String id;
 	private String key;
 	private String context;
+	private Set<Dashboard> dashboards;
 	private Date modified;
 	
 	public String getId() {
@@ -49,12 +52,30 @@ public class ContextMapping implements Serializable {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-	@Override
-	public String toString() {
-		return "ContextMapping [id=" + id + ", key=" + key + ", context="
-				+ context + ", modified=" + modified + "]";
+	public Set<Dashboard> getDashboards() {
+		return dashboards;
+	}
+	public void setDashboards(Set<Dashboard> dashboards) {
+		this.dashboards = dashboards;
 	}
 	
-	
-
+	public Card findCard(String cardId) {
+		Card card = null;
+		
+		if (dashboards != null && !dashboards.isEmpty()) {
+			outer:for (Dashboard dashboard : dashboards) {
+				LinkedList<Card> cards = dashboard.getCards();
+				if (cards != null && !cards.isEmpty()) {
+					for (Card c : cards) {
+						if (c.getId() != null && c.getId().equals(cardId)) {
+							card = c;
+							break outer;
+						}
+					}
+				}
+			}
+		}
+		
+		return card;
+	}
 }

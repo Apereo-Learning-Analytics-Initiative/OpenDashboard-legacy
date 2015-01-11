@@ -23,12 +23,12 @@ public class OpenDashController {
     public String lti(HttpServletRequest request, Model model) {
 		LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
 		model.addAttribute("inbound_lti_launch_request", launchRequest);
-		return "openDashboard";
+		return "od";
     }
 	
-	@RequestMapping(value={"/", "/context/**"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/", "/cm/**"}, method=RequestMethod.GET)
     public String routes() {
-		return "openDashboard";
+		return "od";
     }
 
 }

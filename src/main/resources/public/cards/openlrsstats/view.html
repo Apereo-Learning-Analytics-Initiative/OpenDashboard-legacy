@@ -1,0 +1,62 @@
+<div class="col-xs-12 m-t" ng-controller="OpenLRSStatsCardController">
+	<div class="col-lg-4 col-md-6">
+       <div class="panel panel-primary">
+           <div class="panel-heading">
+               <div class="row">
+                   <div class="col-xs-12 text-center">
+                       <h1>{{total}}</h1>
+                       <p class="lead">Total Number of Events</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+	<div class="col-lg-4 col-md-6">
+       <div class="panel panel-primary">
+           <div class="panel-heading">
+               <div class="row">
+                   <div class="col-xs-12 text-center">
+                       <h1>{{thisWeek}}</h1>
+                       <p class="lead">Number of Events This Week</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+	<div class="col-lg-4 col-md-6">
+       <div class="panel panel-primary">
+           <div class="panel-heading">
+               <div class="row">
+                   <div class="col-xs-12 text-center">
+                       <h1>{{today}}</h1>
+                       <p class="lead">Number of Events Last 24 Hours</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+	<div class="col-lg-6" ng-if="!isStudent">
+       <div class="panel panel-primary">
+           <div class="panel-heading">
+               <div class="row">
+                   <div class="col-xs-12 text-center">
+                       <h1>{{topUser}}</h1>
+                       <p class="lead">Most Active User</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+	<div class="col-lg-6" ng-if="!isStudent">
+       <div class="panel panel-primary">
+           <div class="panel-heading">
+               <div class="row">
+                   <div class="col-xs-12 text-center">
+                       <h3>{{topActivity}}</h3>
+                       <p class="lead">Most Frequent Activity</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>

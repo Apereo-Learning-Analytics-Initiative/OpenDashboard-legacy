@@ -16,11 +16,12 @@ public class Card implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id private String id;
-	private String name;
+	private String id;
+	private String title;
 	private String description;
 	private String imgUrl;
 	private String cardType;
+	private String styleClasses;
 	private Map<String, Object> config;
 	
 	public String getId() {
@@ -28,12 +29,6 @@ public class Card implements Serializable {
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public String getDescription() {
 		return description;
@@ -59,10 +54,22 @@ public class Card implements Serializable {
 	public void setConfig(Map<String, Object> config) {
 		this.config = config;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getStyleClasses() {
+		return styleClasses;
+	}
+	public void setStyleClasses(String styleClasses) {
+		this.styleClasses = styleClasses;
+	}
 	@Override
 	public String toString() {
-		return "Card [id=" + id + ", name=" + name + ", description="
+		return "Card [id=" + id + ", title=" + title + ", description="
 				+ description + ", imgUrl=" + imgUrl + ", cardType=" + cardType
-				+ ", config=" + config + "]";
+				+ ", styleClasses=" + styleClasses + ", config=" + config + "]";
 	}
 }
