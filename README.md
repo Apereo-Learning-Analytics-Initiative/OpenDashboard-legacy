@@ -38,47 +38,50 @@ Step-by-step instructions with examples for developing your own OpenDashboard Ca
 
 OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. In our example we'll be building an RSS Feed Reader Card so I'm going to call my card type rssreader.
 
-### Add your card type to the card list file src/main/resources/cards/cards.txt
-
-`LTI,openlrs,someothercards,<your card type>`
-
-for example:
-
-`LTI,openlrs,rssreader`
-
-### Next create a json descriptor file for your card
-
-This will contain your card's default configuration. Place this file in src/main/resources/cards and name it <your card type>.json (e.g. rssreader.json). The file will have the following format:
-
-`{"cardType":"some type", "name":"some name", "description":"some description", "imgUrl":"path or url to an image"}`
-
-for example:
-
-`{"cardType":"rssreader", "name":"RSS Reader", "description":"Use this card to display an RSS feed","imgUrl":"/img/rss.png"}`
-
 ### Create the HTML for your card
 
-Start by creating a new directory in src/main/resources/public/html/cards that matches your card type (e.g. src/main/resources/public/html/cards/rssreader). Then create two html files in the new directory called card.html and config.html. card.html should contain the UI markup for your card. config.html is typically used to capture configuration information about your card and handles adding an instance of your card to the dashboard. OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.
+Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/html/rssreader). Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card. OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.
 
-See src/main/resources/public/html/cards/rssreader/card.html and src/main/resources/public/html/cards/rssreader/config.html for examples.
+See src/main/resources/public/cards/rssreader/view.html for an example.
 
 ### Create the AngularJS Module for your card
 
-This file contains the supporting Javascript for your card. Start by creating a new directory in src/main/resources/public/js/cards that matches your type. Then create a file called module.js. Use this file to define the AngularJS module and any supporting controllers and services.
+This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. Use this file to define the AngularJS module and any supporting controllers and services.
 
-See src/main/resources/public/js/cards/rssreader/module.js for an example.
+See src/main/resources/public/cards/rssreader/module.js for an example.
+
+Also use this file to register your card with OpenDashboard and define its configuration data. 
+
+For example:
+
+`registryProvider.register('rssreader',
+ {
+		title: 'RSS Reader',
+		description: 'Use this card to display an RSS feed',
+		imgUrl: '/cards/rssreader/rss.png',
+		cardType: 'rssreader',
+		styleClasses: 'od-card col-xs-12 col-md-6',
+		config: [
+		  {field:'url',fieldName:'URL',fieldType:'url',required:true}
+		]
+	});`
+	
+	Note, cardType should match the name of your card directory.
 
 ### Update the AngularJS application to include your module
 
-Open src/main/resources/public/js/app.js and add your card module to the application dependencies. For example:
+Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:
 
-`var OpenDashboard = angular.module('OpenDashboard', ['ngRoute', 'OpenDashboardControllers', 'OpenDashboardServices', 'LTICard', 'OpenLRSCard', 'RssReaderCard']);`
+`angular
+	.module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework', 
+	                          'angularCharts',
+	                          'od.cards.version', 'od.cards.lti', 'od.cards.openlrs', 'od.cards.openlrsstats', 'od.cards.rssreader'])`
 
 ### Add your module js file to the main application page
 
-Open src/main/resources/templates/openDashboard.html and add a script tag at the bottom of the page pointing to your module js file. For example:
+Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:
 
-`<script src="../static/js/cards/rssreader/module.js" th:src="@{/js/cards/rssreader/module.js}"></script>`
+`<script src="../static/cards/rssreader/module.js" th:src="@{/cards/rssreader/module.js}"></script>`
 
 ### Optionally create your own data services
 
