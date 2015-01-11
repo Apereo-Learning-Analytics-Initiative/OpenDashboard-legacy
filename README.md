@@ -40,7 +40,7 @@ OpenDashboard relies heavily on convention over code so your card type is import
 
 ### Create the HTML for your card
 
-Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/html/rssreader). Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card. OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.
+Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/rssreader). Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card. OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.
 
 See src/main/resources/public/cards/rssreader/view.html for an example.
 
@@ -66,7 +66,7 @@ For example:
 		]
 	});`
 	
-	Note, cardType should match the name of your card directory.
+Note, cardType should match the name of your card directory.
 
 ### Update the AngularJS application to include your module
 
