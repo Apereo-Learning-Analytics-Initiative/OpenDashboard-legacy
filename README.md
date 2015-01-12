@@ -29,7 +29,9 @@ OpenDashboard is a Java application built with Spring Boot (http://docs.spring.i
 * java -jar opendash.jar
 
 This starts OpenDashboard on port 8080. Changing the server port (and other properties) can be done on the command line (http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
-
+*************************************************************************************
+## Accessing OpenDashboard via LTI
+Currently OpenDashboard can only be accessed via an LTI tool launch. The LTI tool launch endpoint is http(s)://your server/ . The default OAuth consumer key and secret values are defined in src/main/resources/application.properties - these values can and should be overriden in local properties.
 *************************************************************************************
 ## Developing your own OpenDashboard Card
 Step-by-step instructions with examples for developing your own OpenDashboard Card.
