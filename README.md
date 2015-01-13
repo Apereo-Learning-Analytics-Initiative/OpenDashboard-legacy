@@ -30,9 +30,31 @@ OpenDashboard is a Java application built with Spring Boot (http://docs.spring.i
 
 This starts OpenDashboard on port 8080. Changing the server port (and other properties) can be done on the command line (http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 *************************************************************************************
+
+## Manual Development Environment Setup
+
+### Install the following required supporting components
+* [JDK 7+] (https://jdk7.java.net/download.html)
+* [MongoDB] (http://docs.mongodb.org/manual/installation/)
+* [Maven 3] (http://maven.apache.org/download.cgi#Installation)
+
+### Install OpenDashboard
+OpenDashboard source code is stored in a git repository so you will need to have [git] (http://git-scm.com/downloads) installed on your computer.
+
+* Create a new directory for the project. Navigate to the newly created directory and then run these git commands
+
+	`git init`
+	
+	`git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard.git`
+	
+* This creates a new directory named OpenDashboard that contains the source code for the OpenDashboard project.
+
+**************************************************************************************
+
 ## Accessing OpenDashboard via LTI
 Currently OpenDashboard can only be accessed via an LTI tool launch. The LTI tool launch endpoint is http(s)://your server/ . The default OAuth consumer key and secret values are defined in src/main/resources/application.properties - these values can and should be overriden in local properties.
 *************************************************************************************
+
 ## Developing your own OpenDashboard Card
 Step-by-step instructions with examples for developing your own OpenDashboard Card.
 
@@ -88,3 +110,10 @@ Open src/main/resources/templates/od.html and add a script tag at the bottom of 
 ### Optionally create your own data services
 
 If you need to proxy requests to another data source or call an external web service you may need to add Java code to OpenDashboard to do this. See src/main/java/od/cards/openlrs/OpenLRSCardController.java for an example.
+
+*************************************************************************************
+## Preconfigured Dashboards
+
+OpenDashboard provides the ability to preconfigure a collection of dashboards. This gives administrators the ability to define card layout and configuration for their entire OpenDashboard instance and removes the need for end users to configure their own dashboards.
+
+Preconfigured dashboards are defined in JSON format (see src/main/resources/dashboards.json) for an example. By default the preconfigured dashboards option is disabled; to enable preconfigured dashboards set the dashboards.preconfigured.allow property to true. By default src/main/resources/dashboards.json is used as the dashboards definition file but the location can be specified using the dashboards.jsonfile property. 
