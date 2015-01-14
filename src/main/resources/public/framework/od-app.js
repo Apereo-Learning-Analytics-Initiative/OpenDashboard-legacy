@@ -5,7 +5,11 @@
 	.module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework', 
 	                          'angularCharts',
 	                          'od.cards.version', 'od.cards.lti', 'od.cards.openlrs', 'od.cards.openlrsstats', 'od.cards.rssreader'])
-	.run(function($http) {$http.defaults.headers.common['X-OD-AUTH'] = od_token;})
+	.run(function($http, $log) {
+		//TODO
+		$log.log(sessionStorage.token);
+		$http.defaults.headers.common['X-OD-AUTH'] = sessionStorage.token;
+	})
 	.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 		$routeProvider
 		    .when('/', {

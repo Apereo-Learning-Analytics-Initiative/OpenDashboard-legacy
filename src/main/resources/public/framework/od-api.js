@@ -3,18 +3,9 @@ var OD_API = function(inbound_lti_launch) {
 };
 OD_API.prototype = {
 	getInbound_LTI_Launch: function () {
-		var lti_launch;
-		
-		if (this.inbound_lti_launch) {
-			lti_launch = this.inbound_lti_launch;
-			
+		if (!this.inbound_lti_launch) {
 			if(typeof(sessionStorage) !== "undefined") {
-			    sessionStorage.setItem('inbound_lti_launch',JSON.stringify(lti_launch));
-			} 
-		}
-		else {
-			if(typeof(sessionStorage) !== "undefined") {
-			    lti_launch = JSON.parse(sessionStorage.getItem('inbound_lti_launch'));
+			    this.inbound_lti_launch = JSON.parse(sessionStorage.getItem('inbound_lti_launch'));
 			} 
 			else {
 			    if (console) {
@@ -23,19 +14,19 @@ OD_API.prototype = {
 			}
 		}
 		
-		return lti_launch;
+		return this.inbound_lti_launch;
 	},
 	
 	getCourseName: function() {
 		var name = '';
 		
-		if (this.inbound_lti_launch) {
-			var context_title = this.inbound_lti_launch.context_title;
+		if (this.getInbound_LTI_Launch()) {
+			var context_title = this.getInbound_LTI_Launch().context_title;
 			if (context_title) {
 				name = context_title;
 			}
 			else {
-				name = this.inbound_lti_launch.context_id;
+				name = this.getInbound_LTI_Launch().context_id;
 			}
 		}
 
@@ -44,16 +35,16 @@ OD_API.prototype = {
 	
 	getCourseId: function () {
 		var courseId = null;
-		if (this.inbound_lti_launch) {
-			courseId = this.inbound_lti_launch.context_id;
+		if (this.getInbound_LTI_Launch()) {
+			courseId = this.getInbound_LTI_Launch().context_id;
 		}
 		return courseId;
 	},
 	
 	getUserId: function () {
 		var userId = null;
-		if (this.inbound_lti_launch) {
-			userId = this.inbound_lti_launch.user_id;
+		if (this.getInbound_LTI_Launch()) {
+			userId = this.getInbound_LTI_Launch().user_id;
 		}
 		return userId;
 	},
@@ -62,8 +53,8 @@ OD_API.prototype = {
 		var isInstructor = false;
 		var instructorRoles = ['Instructor','TeachingAssistant','Teacher','Faculty'];
 		
-		if (this.inbound_lti_launch) {
-			var roles = this.inbound_lti_launch.roles;
+		if (this.getInbound_LTI_Launch()) {
+			var roles = this.getInbound_LTI_Launch().roles;
 			if (roles) {
 				var roleArray = null;
 				if (roles.indexOf(',') > -1) {
@@ -88,8 +79,8 @@ OD_API.prototype = {
 		var isNotStudent = false;
 		var studentRoles = ['Student','Learner','Guest'];
 		
-		if (this.inbound_lti_launch) {
-			var roles = this.inbound_lti_launch.roles;
+		if (this.getInbound_LTI_Launch()) {
+			var roles = this.getInbound_LTI_Launch().roles;
 			if (roles) {
 				var roleArray = null;
 				if (roles.indexOf(',') > -1) {
@@ -114,8 +105,8 @@ OD_API.prototype = {
 		var isStudent = false;
 		var studentRoles = ['Student','Learner','Guest'];
 		
-		if (this.inbound_lti_launch) {
-			var roles = this.inbound_lti_launch.roles;
+		if (this.getInbound_LTI_Launch()) {
+			var roles = this.getInbound_LTI_Launch().roles;
 			if (roles) {
 				var roleArray = null;
 				if (roles.indexOf(',') > -1) {

@@ -6,6 +6,8 @@ package od;
 import java.util.ArrayList;
 import java.util.List;
 
+import lti.oauth.OAuthFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig {
 	
 	@Autowired private APIFilter apiFilter;
+	@Autowired private OAuthFilter oAuthFilter;
 	
 	@Bean
 	public FilterRegistrationBean apiFilterBean() {
@@ -36,6 +39,18 @@ public class SecurityConfig {
 		registrationBean.setOrder(1);
 		return registrationBean;
 	}
+	
+	@Bean
+	public FilterRegistrationBean oAuthFilterBean() {
+		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+		registrationBean.setFilter(oAuthFilter);
+		List<String> urls = new ArrayList<String>(1);
+		urls.add("/");
+		registrationBean.setUrlPatterns(urls);
+		registrationBean.setOrder(2);
+		return registrationBean;
+	}
+
 	
 	@Order(99)
     @Configuration

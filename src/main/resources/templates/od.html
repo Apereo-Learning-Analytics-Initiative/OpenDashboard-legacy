@@ -17,7 +17,15 @@
     <script th:inline="javascript">
 	/*<![CDATA[*/
 	    var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
+		if(inbound_lti_launch_request && typeof(sessionStorage) !== "undefined") {
+			sessionStorage.setItem('inbound_lti_launch',JSON.stringify(inbound_lti_launch_request));
+		} 
+	
 		var od_token = /*[[${token}]]*/ null;
+		if(od_token && typeof(sessionStorage) !== "undefined") {
+		    sessionStorage.setItem('token',od_token);
+		} 
+
 		var OpenDashboard_API = new OD_API(inbound_lti_launch_request);
 	/*]]>*/
 	</script>

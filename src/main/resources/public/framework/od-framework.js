@@ -31,8 +31,8 @@
 	});
 
 	angular
-	.module('OpenDashboardAPI', [])
-	.factory('OpenDashboard_API', function () {
+	.module('OpenDashboardAPI', ['underscore'])
+	.factory('OpenDashboard_API', function ($log, $window, _) {
 		return window.OpenDashboard_API;
 	});
 
