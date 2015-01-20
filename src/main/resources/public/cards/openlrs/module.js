@@ -42,7 +42,13 @@ angular
 	    			var group = _.find($scope.data.data, function(g) {
 	    				return g.x == data.x;
 	    			});
-	    			$scope.groupedByValue = group.x;
+	    			if (group.u) {
+	    				$scope.groupedByValue = group.u;
+	    			}
+	    			else {
+	    				$scope.groupedByValue = group.x;
+	    			}
+	    			
 	    			$scope.subset =
 	    				_.filter($scope.statements, function(statement){
 	    					if ($scope.groupedBy == 'DATE') {
@@ -79,6 +85,11 @@ angular
     		$scope.data.data = _.sortBy(OpenLRSService.groupByAndMap($scope.statements), function(obj){return obj.x;});
 		});
 	
+	$scope.reset = function () {
+		$scope.queryString = null;
+		$scope.activeStatement = null;
+	};
+	
 	$scope.groupBy = function (groupedBy) {
 		$scope.groupedBy = groupedBy;
 		
@@ -91,10 +102,16 @@ angular
 				}
 			};
 
-			$scope.data.data = OpenLRSService.groupByAndMap($scope.statements,groupByStudent);
+			var sorted = _.sortBy(OpenLRSService.groupByAndMap($scope.statements,groupByStudent), function(obj){return obj.x;});
+			angular.forEach(sorted, function(value,key){
+				value.u = value.x;
+				var x = value.x.split(':')[1];
+				value.x = x.split('@')[0];                       
+			});
+			$scope.data.data = sorted;
 		}
 		else {
-			$scope.data.data = OpenLRSService.groupByAndMap($scope.statements);
+			$scope.data.data = _.sortBy(OpenLRSService.groupByAndMap($scope.statements), function(obj){return obj.x;});
 		}
 		
 	};

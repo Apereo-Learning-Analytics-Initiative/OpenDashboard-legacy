@@ -20,7 +20,7 @@
   			</div>
 		</div>
 	</div>
-	<div class="row" ng-if="subset">
+	<div class="row" ng-show="subset">
 		<div class="col-xs-12">
 			<div class="row m-t" >
 				<div class="col-xs-12 col-md-7">
@@ -34,7 +34,7 @@
 							    	</div>
   								</div>
   								<div class="form-group col-xs-3">
-   									<button ng-click="queryString = null" class="btn btn-link">Reset</button>
+   									<button ng-click="reset()" class="btn btn-link">Reset</button>
   								</div>
 							</form>
 						</div>
@@ -56,7 +56,7 @@
   						</table>
 					</div>				  
 			    </div>
-			    <div class="col-xs-12 col-md-5" ng-if="activeStatement">
+			    <div class="col-xs-12 col-md-5" ng-show="activeStatement">
 			    	<pre>{{activeStatement}}</pre>
 			    </div>
 		    </div>
