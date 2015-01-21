@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package od.controllers.rest;
 
@@ -12,9 +12,10 @@ import java.util.UUID;
 import od.model.Card;
 import od.model.ContextMapping;
 import od.model.Dashboard;
-import od.model.repository.ContextMappingRepository;
+import od.repository.ContextMappingRepositoryInterface;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -33,94 +34,95 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RestController
 public class ContextMappingController {
-	
-	private Logger log = Logger.getLogger(ContextMappingController.class);
-	
-	@Autowired private ContextMappingRepository contextMappingRepository;
-	
-	@Value("${dashboards.jsonfile:classpath:/dashboards.json}")
-	private Resource dashboardsJson;
-	
-	@Value("${dashboards.preconfigured.allow:false}")
-	private boolean dashboardsPreconfiguedAllow;
-	
-	@RequestMapping(value = "/api/consumer/{consumerKey}/context", method = RequestMethod.POST, 
-			produces = "application/json;charset=utf-8", consumes = "application/json")
-	public ContextMapping create(@RequestBody ContextMapping contextMapping) {
-		
-		if (log.isDebugEnabled()) {
-			log.debug(contextMapping);
-		}
-		
-		try {
-			if (dashboardsPreconfiguedAllow && dashboardsJson.exists()) {
-				if (log.isDebugEnabled()) {
-					String dashboardJsonString = new String(FileCopyUtils.copyToByteArray(dashboardsJson.getInputStream()));
-					log.debug("Preconfigured dashboards: "+dashboardJsonString);
-				}
-				
-				ObjectMapper objectMapper = new ObjectMapper();
-				Dashboard [] dashboards = objectMapper.readValue(dashboardsJson.getInputStream(), Dashboard[].class);
-				
-				if (dashboards != null && dashboards.length > 0) {
-					Set<Dashboard> dashboardSet = new HashSet<Dashboard>();
-					for (Dashboard db : dashboards) {
-						db.setId(UUID.randomUUID().toString());
-						List<Card> cards = db.getCards();
-						if (cards != null && !cards.isEmpty()) {
-							for (Card c : cards) {
-								c.setId(UUID.randomUUID().toString());
-							}
-						}
-						dashboardSet.add(db);
-					}
-					contextMapping.setDashboards(dashboardSet);
-				}
-			}
-			
-		}
-		catch (Exception e) {
-			log.error("Unable to load preconfigured dashboards");
-			log.error(e.getMessage(),e);
-		}
-		
-		contextMapping.setModified(new Date());
-		return contextMappingRepository.save(contextMapping);
-	}
-	
-	@RequestMapping(value = "/api/consumer/{consumerKey}/context/{context}", method = RequestMethod.PUT, 
-			produces = "application/json;charset=utf-8", consumes = "application/json")
-	public ContextMapping update(@RequestBody ContextMapping contextMapping) {
-		
-		if (log.isDebugEnabled()) {
-			log.debug(contextMapping);
-		}
-		
-		contextMapping.setModified(new Date());
-		return contextMappingRepository.save(contextMapping);
-	}
+
+    private static final Logger logger = LoggerFactory.getLogger(ContextMappingController.class);
+
+    @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
+
+    @Value("${dashboards.jsonfile:classpath:/dashboards.json}")
+    private Resource dashboardsJson;
+
+    @Value("${dashboards.preconfigured.allow:false}")
+    private boolean dashboardsPreconfiguedAllow;
+
+    @RequestMapping(value = "/api/consumer/{consumerKey}/context", method = RequestMethod.POST,
+            produces = "application/json;charset=utf-8", consumes = "application/json")
+    public ContextMapping create(@RequestBody ContextMapping contextMapping) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("{}", contextMapping);
+        }
+
+        try {
+            if (dashboardsPreconfiguedAllow && dashboardsJson.exists()) {
+                if (logger.isDebugEnabled()) {
+                    String dashboardJsonString = new String(FileCopyUtils.copyToByteArray(dashboardsJson.getInputStream()));
+                    logger.debug("Preconfigured dashboards: {}", dashboardJsonString);
+                }
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                Dashboard [] dashboards = objectMapper.readValue(dashboardsJson.getInputStream(), Dashboard[].class);
+
+                if (dashboards != null && dashboards.length > 0) {
+                    Set<Dashboard> dashboardSet = new HashSet<Dashboard>();
+                    for (Dashboard db : dashboards) {
+                        db.setId(UUID.randomUUID().toString());
+                        List<Card> cards = db.getCards();
+                        if (cards != null && !cards.isEmpty()) {
+                            for (Card c : cards) {
+                                c.setId(UUID.randomUUID().toString());
+                            }
+                        }
+                        dashboardSet.add(db);
+                    }
+                    contextMapping.setDashboards(dashboardSet);
+                }
+            }
+
+        }
+        catch (Exception e) {
+            logger.error("Unable to load preconfigured dashboards");
+            logger.error(e.getMessage(), e);
+        }
+
+        contextMapping.setModified(new Date());
+        return contextMappingRepository.save(contextMapping);
+    }
+
+    @RequestMapping(value = "/api/consumer/{consumerKey}/context/{context}", method = RequestMethod.PUT,
+            produces = "application/json;charset=utf-8", consumes = "application/json")
+    public ContextMapping update(@RequestBody ContextMapping contextMapping) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("{}", contextMapping);
+        }
+
+        contextMapping.setModified(new Date());
+        return contextMappingRepository.save(contextMapping);
+    }
 
 
-	@RequestMapping(value = "/api/consumer/{consumerKey}/context/{context}", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public ContextMapping get(@PathVariable("consumerKey") final String consumerKey,
-								@PathVariable("context") final String context) {
-		
-		if (log.isDebugEnabled()) {
-			log.debug(String.format("get ContextMapping for %s and %s", consumerKey,context));
-		}
-		
-		return contextMappingRepository.findByKeyAndContext(consumerKey, context);
-	}
-	
-	@RequestMapping(value = "/api/cm/{id}", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public ContextMapping getById(@PathVariable("id") final String contextMappingId) {
-		
-		if (log.isDebugEnabled()) {
-			log.debug(String.format("get ContextMapping for %s", contextMappingId));
-		}
-		
-		return contextMappingRepository.findOne(contextMappingId);
-	}
+    @RequestMapping(value = "/api/consumer/{consumerKey}/context/{context}", method = RequestMethod.GET,
+            produces = "application/json;charset=utf-8")
+    public ContextMapping get(@PathVariable("consumerKey") final String consumerKey,
+                                @PathVariable("context") final String context) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("get ContextMapping for {} and {}", consumerKey,context);
+        }
+        ContextMapping returnValue = contextMappingRepository.findByKeyAndContext(consumerKey, context);
+        logger.info("Returning context:\n{}", returnValue);
+        return contextMappingRepository.findByKeyAndContext(consumerKey, context);
+    }
+
+    @RequestMapping(value = "/api/cm/{id}", method = RequestMethod.GET,
+            produces = "application/json;charset=utf-8")
+    public ContextMapping getById(@PathVariable("id") final String contextMappingId) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("get ContextMapping for {}", contextMappingId);
+        }
+
+        return contextMappingRepository.findOne(contextMappingId);
+    }
 }
