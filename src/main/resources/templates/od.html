@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.thymeleaf.org">
+    xmlns:sec="http://www.thymeleaf.org"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.thymeleaf.org">
 <head>
-	<meta charset="utf-8"></meta>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 
-	<title>OpenDashboard</title>
-	<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'></link>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" th:href="@{/css/lib/bootstrap.min.css}"></link>
-	<link rel="stylesheet" th:href="@{/css/od.css}"></link>
-	
+    <title>OpenDashboard</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'></link>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" th:href="@{/css/lib/bootstrap.min.css}"></link>
+    <link rel="stylesheet" th:href="@{/css/od.css}"></link>
+    
     <script th:src="@{/framework/od-api.js}"></script>
     <script th:inline="javascript">
-	/*<![CDATA[*/
-	    var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
-		if(inbound_lti_launch_request && typeof(sessionStorage) !== "undefined") {
-			sessionStorage.setItem('inbound_lti_launch',JSON.stringify(inbound_lti_launch_request));
-		} 
-	
-		var od_token = /*[[${token}]]*/ null;
-		if(od_token && typeof(sessionStorage) !== "undefined") {
-		    sessionStorage.setItem('token',od_token);
-		} 
+    /*<![CDATA[*/
+        var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
+        if(inbound_lti_launch_request && typeof(sessionStorage) !== "undefined") {
+            sessionStorage.setItem('inbound_lti_launch',JSON.stringify(inbound_lti_launch_request));
+        } 
+    
+        var od_token = /*[[${token}]]*/ null;
+        if(od_token && typeof(sessionStorage) !== "undefined") {
+            sessionStorage.setItem('token',od_token);
+        } 
 
-		var OpenDashboard_API = new OD_API(inbound_lti_launch_request);
-	/*]]>*/
-	</script>
+        var OpenDashboard_API = new OD_API(inbound_lti_launch_request);
+    /*]]>*/
+    </script>
 </head>
 
 <body id="ng-app" ng-app="OpenDashboard">
-	<div class="container-fluid ng-view">
-	</div>
-	
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js" th:src="@{/js/lib/jquery.min.js}"></script>
+    <div class="container-fluid ng-view">
+    </div>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js" th:src="@{/js/lib/jquery.min.js}"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js" th:src="@{/js/lib/bootstrap.min.js}"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js" th:src="@{/js/lib/angular.min.js}"></script>
@@ -51,7 +51,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
     <script th:src="@{/js/lib/angular-dc.min.js}"></script>
-  	<script th:src="@{/js/lib/angular-charts.min.js}"></script>
+      <script th:src="@{/js/lib/angular-charts.min.js}"></script>
     
     <script th:src="@{/framework/od-framework.js}"></script>
     <script th:src="@{/framework/od-app.js}"></script>
@@ -68,13 +68,13 @@
     
     <!-- Cards -->
     <!-- OpenDashboard Version -->
-	<script src="../static/cards/odversion/module.js" th:src="@{/cards/odversion/module.js}"></script>
-	<!-- LTI -->
-	<script src="../static/cards/lti/module.js" th:src="@{/cards/lti/module.js}"></script>
-	<!-- OpenLRS -->
-	<script src="../static/cards/openlrs/module.js" th:src="@{/cards/openlrs/module.js}"></script>
-	<script src="../static/cards/openlrsstats/module.js" th:src="@{/cards/openlrsstats/module.js}"></script>
-	<!-- RSS Reader -->
-	<script src="../static/cards/rssreader/module.js" th:src="@{/cards/rssreader/module.js}"></script>
+    <script src="../static/cards/odversion/module.js" th:src="@{/cards/odversion/module.js}"></script>
+    <!-- LTI -->
+    <script src="../static/cards/lti/module.js" th:src="@{/cards/lti/module.js}"></script>
+    <!-- OpenLRS -->
+    <script src="../static/cards/openlrs/module.js" th:src="@{/cards/openlrs/module.js}"></script>
+    <script src="../static/cards/openlrsstats/module.js" th:src="@{/cards/openlrsstats/module.js}"></script>
+    <!-- RSS Reader -->
+    <script src="../static/cards/rssreader/module.js" th:src="@{/cards/rssreader/module.js}"></script>
 </body>
 </html>

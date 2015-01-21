@@ -29,6 +29,6 @@ public class Application {
     final static Logger log = LoggerFactory.getLogger(Application.class);
     
     public static void main(String[] args) {
-    	SpringApplication.run(Application.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

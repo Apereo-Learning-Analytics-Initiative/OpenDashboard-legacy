@@ -1,9 +1,9 @@
 <img class="center-block m-t od-logo" alt="" src="/img/od.png"></img>
 <ul class="od-left-nav list-unstyled" ng-if="contextMapping">
-	<li class="od-left-nav-item" ng-repeat="dashboard in contextMapping.dashboards" ng-class="{ 'active' : dashboard.id == activeDashboard.id }"><a ng-href="/cm/{{contextMapping.id}}/dashboard/{{dashboard.id}}">{{dashboard.title}}</a></li>
+    <li class="od-left-nav-item" ng-repeat="dashboard in contextMapping.dashboards" ng-class="{ 'active' : dashboard.id == activeDashboard.id }"><a ng-href="/cm/{{contextMapping.id}}/dashboard/{{dashboard.id}}">{{dashboard.title}}</a></li>
 </ul>
 <hr class="m-r-l"></hr>
 <ul class="od-left-nav list-unstyled" ng-controller="NavigationController">
-	<li class="od-left-nav-item" ng-if="!isStudent && (contextMapping && contextMapping.id)"><a ng-href="/cm/{{contextMapping.id}}/dashboard">+ Dashboard</a></li>
-	<li class="od-left-nav-item" ng-if="!isStudent && (contextMapping && contextMapping.id) && activeDashboard"><a ng-href="/cm/{{contextMapping.id}}/dashboard/{{activeDashboard.id}}?addCard=true">+  Card</a></li>
+    <li class="od-left-nav-item" ng-if="!isStudent && (contextMapping && contextMapping.id)"><a ng-href="/cm/{{contextMapping.id}}/dashboard">+ Dashboard</a></li>
+    <li class="od-left-nav-item" ng-if="!isStudent && (contextMapping && contextMapping.id) && activeDashboard"><a ng-href="/cm/{{contextMapping.id}}/dashboard/{{activeDashboard.id}}?addCard=true">+  Card</a></li>
 </ul>

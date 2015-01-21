@@ -1,66 +1,66 @@
 <style type="text/css">
 .chart {
-		width: 100%;
-		height: 250px;
+        width: 100%;
+        height: 250px;
 }
 </style>
 <div class="col-xs-12">
 <div ng-controller="OpenLRSCardController">
-	<h4 class="text-center" ng-show="!statements || statements.length == 0">No activity available for {{courseName}}</h4>
-	<h4 ng-if="statements">OpenLRS Activity for {{courseName}}</h4>
-	<h5 ng-if="statements && !isStudent">Group By: 
-	<a ng-if="groupedBy != 'DATE'" ng-click="groupBy('DATE')">Date</a><span ng-if="groupedBy == 'DATE'">Date</span> | <a ng-if="groupedBy != 'STUDENT'" ng-click="groupBy('STUDENT')">Member</a><span ng-if="groupedBy == 'STUDENT'">Member</span></h5>
-   	<div class="row m-t" ng-if="statements">
-		<div class="col-xs-12">
-			<div 
-    			data-ac-chart="'bar'" 
-    			data-ac-data="data" 
-    			data-ac-config="config"
-    			class="chart center-block">
-  			</div>
-		</div>
-	</div>
-	<div class="row" ng-show="subset">
-		<div class="col-xs-12">
-			<div class="row m-t" >
-				<div class="col-xs-12 col-md-7">
-					<div class="panel panel-default">
-  						<div class="panel-heading">Activity for {{groupedByValue}}</div>
-						<div class="panel-body">
-							<form class="form-inline" role="form">
-								<div class="form-group col-xs-9">
-							    	<div class="input-group col-xs-12">
-							    		<input type="text" class="form-control" ng-model="queryString" name="query" id="query" placeholder="Search..."></input>
-							    	</div>
-  								</div>
-  								<div class="form-group col-xs-3">
-   									<button ng-click="reset()" class="btn btn-link">Reset</button>
-  								</div>
-							</form>
-						</div>
-  						<table class="table table-hover table-condensed">
-  							<thead>
-  								<tr>
-  									<th>Member</th>
-  									<th>Action</th>
-  									<th>Activity</th>
-  								</tr>
-  							</thead>
-  							<tbody>
-  								<tr ng-repeat="statement in subset | filter:queryString | orderBy:'stored'" ng-click="expandStatement(statement)">
-  									<td>{{getStatementUser(statement)}}</td>
-  									<td>{{statement.verb.id}}</td>
-  									<td>{{statement.object.id}}</td>
-  								</tr>
-  							</tbody>
-  						</table>
-					</div>				  
-			    </div>
-			    <div class="col-xs-12 col-md-5" ng-show="activeStatement">
-			    	<pre>{{activeStatement}}</pre>
-			    </div>
-		    </div>
-		</div>
-	</div>
+    <h4 class="text-center" ng-show="!statements || statements.length == 0">No activity available for {{courseName}}</h4>
+    <h4 ng-if="statements">OpenLRS Activity for {{courseName}}</h4>
+    <h5 ng-if="statements && !isStudent">Group By: 
+    <a ng-if="groupedBy != 'DATE'" ng-click="groupBy('DATE')">Date</a><span ng-if="groupedBy == 'DATE'">Date</span> | <a ng-if="groupedBy != 'STUDENT'" ng-click="groupBy('STUDENT')">Member</a><span ng-if="groupedBy == 'STUDENT'">Member</span></h5>
+       <div class="row m-t" ng-if="statements">
+        <div class="col-xs-12">
+            <div 
+                data-ac-chart="'bar'" 
+                data-ac-data="data" 
+                data-ac-config="config"
+                class="chart center-block">
+              </div>
+        </div>
+    </div>
+    <div class="row" ng-show="subset">
+        <div class="col-xs-12">
+            <div class="row m-t" >
+                <div class="col-xs-12 col-md-7">
+                    <div class="panel panel-default">
+                          <div class="panel-heading">Activity for {{groupedByValue}}</div>
+                        <div class="panel-body">
+                            <form class="form-inline" role="form">
+                                <div class="form-group col-xs-9">
+                                    <div class="input-group col-xs-12">
+                                        <input type="text" class="form-control" ng-model="queryString" name="query" id="query" placeholder="Search..."></input>
+                                    </div>
+                                  </div>
+                                  <div class="form-group col-xs-3">
+                                       <button ng-click="reset()" class="btn btn-link">Reset</button>
+                                  </div>
+                            </form>
+                        </div>
+                          <table class="table table-hover table-condensed">
+                              <thead>
+                                  <tr>
+                                      <th>Member</th>
+                                      <th>Action</th>
+                                      <th>Activity</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr ng-repeat="statement in subset | filter:queryString | orderBy:'stored'" ng-click="expandStatement(statement)">
+                                      <td>{{getStatementUser(statement)}}</td>
+                                      <td>{{statement.verb.id}}</td>
+                                      <td>{{statement.object.id}}</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                    </div>                  
+                </div>
+                <div class="col-xs-12 col-md-5" ng-show="activeStatement">
+                    <pre>{{activeStatement}}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </div>

@@ -1,39 +1,39 @@
-<div class="row">			
-	<div class="col-xs-2 col-lg-1 od-left" ng-include="'/framework/dashboard/left-nav.html'"></div>			
-	<div class="col-xs-10 col-lg-11 od-content">
-	
-		<div class="row">
-			<div class="col-xs-12 col-md-6">
-				<h1>Add card</h1>
-				<p class="lead">
-					Configure the card and add it to your dashboard.
-				</p>
-				<div class="media od-card-add">
-	  				<a class="pull-left" href="#">
-	    				<img class="media-object od-img-thumb" src="{{card.imgUrl}}" alt="...">
-	  				</a>
-	  				<div class="media-body">
-	    				<h4 class="media-heading">{{card.title}}</h4>
-	    				{{card.description}}
-	  				</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-6">
-				<form name="cardForm" class="m-t form-horizontal od-card-add" novalidate="novalidate">
-				
-				  <div class="form-group" ng-repeat="c in card.config">
-				    <label class="col-sm-2 control-label" for="{{c.field}}">{{c.fieldName}}</label>
-				    <div class="col-sm-10">
-				    	<input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
-				    </div>
-				  </div>
-				  
-				  <button class="btn btn-primary" ng-click="addCard()">Add Card</button>
-				  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
-				</form>
-			</div>
-		</div>
-	</div>
+<div class="row">            
+    <div class="col-xs-2 col-lg-1 od-left" ng-include="'/framework/dashboard/left-nav.html'"></div>            
+    <div class="col-xs-10 col-lg-11 od-content">
+    
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <h1>Add card</h1>
+                <p class="lead">
+                    Configure the card and add it to your dashboard.
+                </p>
+                <div class="media od-card-add">
+                      <a class="pull-left" href="#">
+                        <img class="media-object od-img-thumb" src="{{card.imgUrl}}" alt="...">
+                      </a>
+                      <div class="media-body">
+                        <h4 class="media-heading">{{card.title}}</h4>
+                        {{card.description}}
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <form name="cardForm" class="m-t form-horizontal od-card-add" novalidate="novalidate">
+                
+                  <div class="form-group" ng-repeat="c in card.config">
+                    <label class="col-sm-2 control-label" for="{{c.field}}">{{c.fieldName}}</label>
+                    <div class="col-sm-10">
+                        <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
+                    </div>
+                  </div>
+                  
+                  <button class="btn btn-primary" ng-click="addCard()">Add Card</button>
+                  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
