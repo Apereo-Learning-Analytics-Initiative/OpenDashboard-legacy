@@ -10,10 +10,10 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import lti.LaunchRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,30 +32,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Controller
-public class OpenDashController implements ErrorController {
-	
+public class OpenDashController {
+    private static final Logger logger = LoggerFactory.getLogger(OpenDashController.class);
+
 	@Autowired private AuthenticationManager authenticationManager;
-	
+
 	@RequestMapping(value={"/"}, method=RequestMethod.POST)
     public String lti(HttpServletRequest request, Model model) {
 		LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
 		model.addAttribute("inbound_lti_launch_request", launchRequest);
-		
+
 		String uuid = UUID.randomUUID().toString();
 		model.addAttribute("token", uuid);
-		
+
         //Create a token using spring provided class : org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 		String role = null;
-		
 		if (hasInstructorRole(null, launchRequest.getRoles())) {
 			role = "ROLE_INSTRUCTOR";
 		}
 		else {
 			role = "ROLE_STUDENT";
 		}
-		
+
 		String credentials = launchRequest.getUser_id() + ":" + uuid + ":" + role;
-		
+
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(credentials, uuid, AuthorityUtils.commaSeparatedStringToAuthorityList(role));
 
         // generate session if one doesn't exist
@@ -72,28 +72,19 @@ public class OpenDashController implements ErrorController {
 
         //Set SPRING_SECURITY_CONTEXT attribute in session as Spring identifies context through this attribute
         request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,SecurityContextHolder.getContext());
-		
+
 		return "od";
     }
-	
+
 	@Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})
 	@RequestMapping(value={"/", "/cm/**"}, method=RequestMethod.GET)
     public String routes(Model model) {
         return "od";
     }
 
- 	@Override
-	public String getErrorPath() {
-		return "/error";
-	}
-	
-	@RequestMapping(value={"/error"})
-	public String error(HttpServletRequest request) {
-		return "error";
-	}
-	
+
 	public boolean hasInstructorRole(List<String> instructorRoles, String roles) {
-		
+
 		if (instructorRoles == null) {
 			instructorRoles = new ArrayList<String>();
 			instructorRoles.add("Instructor");
@@ -102,14 +93,22 @@ public class OpenDashController implements ErrorController {
 			instructorRoles.add("TeachingAssistant");
 			instructorRoles.add("Teacher");
 			instructorRoles.add("Faculty");
-		}		
-		
+		}
+
 		for (String instructorRole : instructorRoles) {
 			if (roles.contains(instructorRole)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
+
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 }

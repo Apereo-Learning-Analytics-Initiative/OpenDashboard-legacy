@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package od;
 
@@ -19,6 +19,7 @@ import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -33,7 +34,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfig {
 	@Autowired private OAuthFilter oAuthFilter;
-	
+
 	@Bean
 	public FilterRegistrationBean oAuthFilterBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -44,16 +45,16 @@ public class SecurityConfig {
 		registrationBean.setOrder(2);
 		return registrationBean;
 	}
-    
+
     @Order(99)
     @Configuration
     public static class NoAuthConfigurationAdapter extends WebSecurityConfigurerAdapter {
 		@Value("${auth.oauth.key}")
 		private String securityKey;
-		
+
 		@Value("${auth.oauth.secret}")
-		private String securitySecret;		
-		
+		private String securitySecret;
+
 		@Autowired private LTIUserDetailsService userDetailsService;
 
         @Override
@@ -71,7 +72,13 @@ public class SecurityConfig {
             .antMatchers("/").permitAll()
             .anyRequest().authenticated().and().csrf().disable();
         }
-        
+
+        @Override
+        @Bean
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            return super.authenticationManagerBean();
+        }
+
         @Autowired
         public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 //            auth
@@ -79,13 +86,13 @@ public class SecurityConfig {
 //            .withUser(securityKey + "-Instructor").password(securitySecret).roles("INSTRUCTOR")
 //            .and()
 //            .withUser(securityKey + "-Student").password(securitySecret).roles("STUDENT");
-            
+
             auth
             //.authenticationProvider(authenticationProvider)
             .userDetailsService(userDetailsService);
         }
     }
-	
+
 	@Bean
 	public SessionTrackingConfigListener sessionTrackingConfigListener() {
 		return new SessionTrackingConfigListener();
