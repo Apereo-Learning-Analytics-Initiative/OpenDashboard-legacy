@@ -596,4 +596,116 @@ public class LaunchRequest extends LtiMessage {
     public void setExtra(Map<String, String> extra) {
         this.extra = extra;
     }
+
+    public void setResource_link_id(String resource_link_id) {
+        this.resource_link_id = resource_link_id;
+    }
+
+    public void setContext_id(String context_id) {
+        this.context_id = context_id;
+    }
+
+    public void setLaunch_presentation_document_target(String launch_presentation_document_target) {
+        this.launch_presentation_document_target = launch_presentation_document_target;
+    }
+
+    public void setLaunch_presentation_width(String launch_presentation_width) {
+        this.launch_presentation_width = launch_presentation_width;
+    }
+
+    public void setLaunch_presentation_height(String launch_presentation_height) {
+        this.launch_presentation_height = launch_presentation_height;
+    }
+
+    public void setLaunch_presentation_return_url(String launch_presentation_return_url) {
+        this.launch_presentation_return_url = launch_presentation_return_url;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public void setContext_type(String context_type) {
+        this.context_type = context_type;
+    }
+
+    public void setLaunch_presentation_locale(String launch_presentation_locale) {
+        this.launch_presentation_locale = launch_presentation_locale;
+    }
+
+    public void setLaunch_presentation_css_url(String launch_presentation_css_url) {
+        this.launch_presentation_css_url = launch_presentation_css_url;
+    }
+
+    public void setRole_scope_mentor(String role_scope_mentor) {
+        this.role_scope_mentor = role_scope_mentor;
+    }
+
+    public void setUser_image(String user_image) {
+        this.user_image = user_image;
+    }
+
+    public void setResource_link_description(String resource_link_description) {
+        this.resource_link_description = resource_link_description;
+    }
+
+    public void setLis_person_name_given(String lis_person_name_given) {
+        this.lis_person_name_given = lis_person_name_given;
+    }
+
+    public void setLis_person_name_full(String lis_person_name_full) {
+        this.lis_person_name_full = lis_person_name_full;
+    }
+
+    public void setLis_person_contact_email_primary(String lis_person_contact_email_primary) {
+        this.lis_person_contact_email_primary = lis_person_contact_email_primary;
+    }
+
+    public void setLis_outcome_service_url(String lis_outcome_service_url) {
+        this.lis_outcome_service_url = lis_outcome_service_url;
+    }
+
+    public void setLis_result_sourcedid(String lis_result_sourcedid) {
+        this.lis_result_sourcedid = lis_result_sourcedid;
+    }
+
+    public void setContext_title(String context_title) {
+        this.context_title = context_title;
+    }
+
+    public void setContext_label(String context_label) {
+        this.context_label = context_label;
+    }
+
+    public void setTool_consumer_info_product_family_code(String tool_consumer_info_product_family_code) {
+        this.tool_consumer_info_product_family_code = tool_consumer_info_product_family_code;
+    }
+
+    public void setTool_consumer_info_version(String tool_consumer_info_version) {
+        this.tool_consumer_info_version = tool_consumer_info_version;
+    }
+
+    public void setTool_consumer_instance_guid(String tool_consumer_instance_guid) {
+        this.tool_consumer_instance_guid = tool_consumer_instance_guid;
+    }
+
+    public void setTool_consumer_instance_name(String tool_consumer_instance_name) {
+        this.tool_consumer_instance_name = tool_consumer_instance_name;
+    }
+
+    public void setTool_consumer_instance_description(String tool_consumer_instance_description) {
+        this.tool_consumer_instance_description = tool_consumer_instance_description;
+    }
+
+    public void setTool_consumer_instance_url(String tool_consumer_instance_url) {
+        this.tool_consumer_instance_url = tool_consumer_instance_url;
+    }
+
+    public void setTool_consumer_instance_contact_email(String tool_consumer_instance_contact_email) {
+        this.tool_consumer_instance_contact_email = tool_consumer_instance_contact_email;
+    }
 }

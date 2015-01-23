@@ -32,14 +32,19 @@ The properties file used by the application is chosen automatically based on the
 Alternatively -Dspring.config.location can be used in the command line to override the packaged properties file.
 
 #### Run (in place for development purposes)
-Depending on whether mongo or redis is used, the active profile will need to be sent in as a command line arg
-* mvn -Drun.jvmArguments="-Dspring.profiles.active=mongo" clean package spring-boot:run
-* mvn -Drun.jvmArguments="-Dspring.profiles.active=redis" clean package spring-boot:run
+Depending on whether mongo or redis is used, the active profile will need to be sent in as a command line arg.
+The profile needs to have two command line args, one for unit tests and once for runtime.
+* mvn -Drun.jvmArguments="-Dspring.profiles.active=mongo" -Dspring.profiles.active=mongo clean package spring-boot:run
+* mvn -Drun.jvmArguments="-Dspring.profiles.active=redis" -Dspring.profiles.active=redis clean package spring-boot:run
 
 #### Deploy
 Depending on whether mongo or redis is used, the active profile will need to be sent in as a command line arg
 * java -jar -Dspring.profiles.active=mongo target/opendash*.jar
 * java -jar -Dspring.profiles.active=redis target/opendash*.jar
+
+#### Test
+mvn -Dspring.profiles.active=mongo clean test
+mvn -Dspring.profiles.active=redis clean test
 
 This starts OpenDashboard on port 8080. Changing the server port (and other properties) can be done on the command line (http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 *************************************************************************************

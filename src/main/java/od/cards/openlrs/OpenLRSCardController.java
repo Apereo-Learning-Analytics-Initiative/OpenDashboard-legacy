@@ -41,26 +41,28 @@ public class OpenLRSCardController {
 
     private static final Logger log = LoggerFactory.getLogger(OpenLRSCardController.class);
     @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
-	
+
+    private RestTemplateFactoryInterface restTemplateFactory = new RestTemplateFactory();
+
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/{contextMappingId}/db/{dashboardId}/openlrs/{cardId}/statements", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	public String getOpenLRSStatements(@PathVariable("contextMappingId") String contextMappingId, 
+	public String getOpenLRSStatements(@PathVariable("contextMappingId") String contextMappingId,
 			@PathVariable("dashboardId") String dashboardId,
 			@PathVariable("cardId") String cardId) throws InvalidCardConfigurationException {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("contextMappingId "+contextMappingId);
 			log.debug("dashboardId "+dashboardId);
 			log.debug("cardId "+cardId);
 		}
-		
+
 		ContextMapping cm = contextMappingRepository.findOne(contextMappingId);
 		Card card = cm.findCard(cardId);
 		Map<String, Object> config = card.getConfig();
-		
+
 		String baseUrl = null;
 		String basicAuth = null;
-				
+
 		if (config != null && !config.isEmpty()) {
 			baseUrl = (String)config.get("url");
 			basicAuth = (String)config.get("key")+":"+(String)config.get("secret");
@@ -68,24 +70,24 @@ public class OpenLRSCardController {
 		else {
 			throw new InvalidCardConfigurationException();
 		}
-		
+
 		return exchange(baseUrl, cm.getContext(), null, basicAuth);
 	}
-	
+
 	@Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})
 	@RequestMapping(value = "/api/{contextMappingId}/db/{dashboardId}/openlrs/{cardId}/statements/{userId}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	public String getOpenLRSStatementsForUser(@PathVariable("contextMappingId") String contextMappingId, 
+	public String getOpenLRSStatementsForUser(@PathVariable("contextMappingId") String contextMappingId,
 			@PathVariable("dashboardId") String dashboardId,
-			@PathVariable("cardId") String cardId, 
+			@PathVariable("cardId") String cardId,
 			@PathVariable("userId") String user) throws InvalidCardConfigurationException {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("contextMappingId "+contextMappingId);
 			log.debug("dashboardId "+dashboardId);
 			log.debug("cardId "+cardId);
 			log.debug("userId "+user);
 		}
-		
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> roles = auth.getAuthorities();
 		if (roles != null && !roles.isEmpty()) {
@@ -100,14 +102,14 @@ public class OpenLRSCardController {
 				}
 			}
 		}
-		
+
 		ContextMapping cm = contextMappingRepository.findOne(contextMappingId);
 		Card card = cm.findCard(cardId);
 		Map<String, Object> config = card.getConfig();
-		
+
 		String baseUrl = null;
 		String basicAuth = null;
-				
+
 		if (config != null && !config.isEmpty()) {
 			baseUrl = (String)config.get("url");
 			basicAuth = (String)config.get("key")+":"+(String)config.get("secret");
@@ -115,33 +117,51 @@ public class OpenLRSCardController {
 		else {
 			throw new InvalidCardConfigurationException();
 		}
-		
+
 		return exchange(baseUrl, cm.getContext(), user, basicAuth);
 	}
-	
+
 	private String exchange(String baseUrl, String context, String user, String basicAuth) {
-		
+
 		String expandedUrl = null;
-		
+
 		if (user != null) {
 			expandedUrl = baseUrl + "/api/user/"+user+"/context/"+ context;
 		}
 		else {
 			expandedUrl = baseUrl + "/api/context/"+ context;
 		}
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug(String.format("expandedUrl: %s",expandedUrl));
 		}
-		
-		RestTemplate restTemplate = new RestTemplate();
+
+		RestTemplate restTemplate = restTemplateFactory.createRestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		headers.set("Authorization", "Basic "+new String(Base64.encodeBase64(basicAuth.getBytes())));
 		headers.set("X-Experience-API-Version", "1.0.1");
-		
+
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
-		
+
 		return restTemplate.exchange(expandedUrl, HttpMethod.GET, entity, String.class).getBody();
 	}
+        public interface RestTemplateFactoryInterface {
+            public RestTemplate createRestTemplate();
+        }
+
+        public class RestTemplateFactory implements RestTemplateFactoryInterface {
+            @Override
+            public RestTemplate createRestTemplate() {
+                return new RestTemplate();
+            }
+	}
+
+        public RestTemplateFactoryInterface getRestTemplateFactory() {
+            return restTemplateFactory;
+        }
+
+        public void setRestTemplateFactory(RestTemplateFactoryInterface restTemplateFactory) {
+            this.restTemplateFactory = restTemplateFactory;
+        }
 }

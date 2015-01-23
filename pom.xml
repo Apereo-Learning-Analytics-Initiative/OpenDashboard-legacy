@@ -70,6 +70,17 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.3.2</version>
         </dependency>
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <version>0.6.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -81,7 +92,105 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.15</version>
+                <configuration>
+                  <!-- Toggle to Run Tests -->
+                  <groups>od.test.groups.ControllerUnitTests,
+                          od.test.groups.ModelUnitTests
+                  </groups>
+                  <excludedGroups></excludedGroups>
+                  <includes>
+                    <include>**/*Tests.java</include>
+                    <include>**/*Test.java</include>
+                  </includes>
+                  <excludes>
+                    <exclude>**/Abstract*.java</exclude>
+                  </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+            <!-- Test Coverage Report found in /target/site/jacoco/index.html -->
+               <groupId>org.jacoco</groupId>
+               <artifactId>jacoco-maven-plugin</artifactId>
+               <version>0.7.2.201409121644</version>
+               <configuration>
+                   <excludes>
+                  </excludes>
+              </configuration>
+              <executions>
+                  <execution>
+                  <id>pre-unit-test</id>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+                  </execution>
+                  <execution>
+                      <id>post-unit-test</id>
+                      <phase>test</phase>
+                  <goals>
+                      <goal>report</goal>
+                      <goal>check</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                    <!--  implmentation is needed only for Maven 2  -->
+                    <rule implementation="org.jacoco.maven.RuleConfiguration">
+                        <element>BUNDLE</element>
+                        <limits>
+                        <limit implementation="org.jacoco.report.check.Limit">
+                          <counter>INSTRUCTION</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.0</minimum>         
+                        </limit>
+                        <!--  implmentation is needed only for Maven 2  -->
+                        <limit implementation="org.jacoco.report.check.Limit">
+                          <counter>COMPLEXITY</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.0</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+                </execution>
+              </executions>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.jacoco</groupId>
+                                        <artifactId>
+                                            jacoco-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [0.7.2.201409121644,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>prepare-agent</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <licenses>
