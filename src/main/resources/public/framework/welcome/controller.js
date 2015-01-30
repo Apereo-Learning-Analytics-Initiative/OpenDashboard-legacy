@@ -6,7 +6,7 @@
     .controller('WelcomeController', function($log, $scope, $location,
                                                 OpenDashboard_API, ContextMappingService) {    
         $scope.contextMapping = {};
-        $scope.isStudent = OpenDashboard_API.isStudent();
+        $scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
         
         $scope.saveContextMapping = function() {
             var inbound_lti_launch_request = OpenDashboard_API.getInbound_LTI_Launch();

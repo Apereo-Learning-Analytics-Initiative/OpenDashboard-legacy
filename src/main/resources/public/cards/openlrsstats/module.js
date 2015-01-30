@@ -18,7 +18,7 @@ angular
     });
  })
 .controller('OpenLRSStatsCardController', function($scope, $http, _, OpenDashboard_API, OpenLRSService) {
-	$scope.isStudent = OpenDashboard_API.isStudent();
+	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
 	$scope.total = null;
 	$scope.thisWeek = null;
 	$scope.today = null;
@@ -26,8 +26,8 @@ angular
 	$scope.topUser = null;
 	
 	var user = null;
-	if (OpenDashboard_API.isStudent()) {
-		user = OpenDashboard_API.getUserId();
+	if ($scope.isStudent) {
+		user = OpenDashboard_API.getCurrentUser().getUserId();
 	}
 	
 	var handleStatementResponse = function (statements) {

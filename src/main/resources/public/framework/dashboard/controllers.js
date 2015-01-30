@@ -29,7 +29,7 @@
     .controller('DashboardController', function($log, $scope, $location, $route,
                                             _ , registry, OpenDashboard_API,
                                             contextMapping, dashboard) {
-        $scope.isStudent = OpenDashboard_API.isStudent();
+    	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
         $scope.showAddCard = ($route.current.params.addCard == 'true');
         $scope.contextMapping = contextMapping;
         $scope.activeDashboard = dashboard;

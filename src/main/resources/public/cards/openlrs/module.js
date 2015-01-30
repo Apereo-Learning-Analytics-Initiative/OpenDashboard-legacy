@@ -18,13 +18,14 @@ angular
     });
  })
 .controller('OpenLRSCardController', function($scope, $http, _, OpenDashboard_API, OpenLRSService) {
+	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
     $scope.statements = null;
     $scope.data = {};
     $scope.subset = null;
     $scope.activeStatement = null;
     $scope.groupedBy = 'DATE';
     $scope.groupedByValue = null;
-    $scope.courseName = OpenDashboard_API.getCourseName();
+    $scope.courseName = OpenDashboard_API.getCourse().getTitle();
     $scope.queryString = null;
     
 	$scope.config = {
@@ -75,8 +76,8 @@ angular
 	  };
 	
 	var user = null;
-	if (OpenDashboard_API.isStudent()) {
-		user = OpenDashboard_API.getUserId();
+	if ($scope.isStudent) {
+		user = OpenDashboard_API.getCurrentUser().getUserId();
 	}
 	
 	var handleStatementResponse = function (statements) {

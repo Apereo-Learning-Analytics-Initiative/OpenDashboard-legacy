@@ -5,7 +5,7 @@
     .module('OpenDashboard')
     .controller('NavigationController', function($log,$scope,
                                             OpenDashboard_API) {
-        $scope.isStudent = OpenDashboard_API.isStudent();
+    	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
     });
     
     angular
