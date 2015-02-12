@@ -75,3 +75,21 @@
     margin-right: 10px;
     margin-left: 10px;
 }
+
+/* PADDING */
+
+.p-t {
+	padding-top: 10px;
+}
+
+.p-b {
+	padding-bottom: 10px;
+}
+
+.p-t-sm {
+	padding-top: 5px;
+}
+
+.p-b-sm {
+	padding-bottom: 5px;
+}

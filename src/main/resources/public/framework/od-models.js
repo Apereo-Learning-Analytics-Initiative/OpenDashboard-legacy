@@ -18,6 +18,7 @@ var Course = function() {
 	this.learners = [];
 	
 	this.events = [];
+	this.events_median = null;
 }
 Course.prototype = {
 	getId : function () {
@@ -59,6 +60,8 @@ Course.prototype = {
 		}
 	},
 	buildRoster : function (members) {
+		this.instructors = [];
+		this.learners = [];
 		_.forEach(members,function(member){
             if (member.isInstructor()) {
             	this.instructors.push(member);
@@ -93,8 +96,13 @@ Demographics.prototype = {};
 var Member = function() {
 	this.user_id = null;
 	this.user_image = null;
+	this.role = null;
 	this.roles = null;
 	this.person = null;
+	this.events = null;
+	this.relative_activity_level = null;
+	this.risk = null;
+	this.last_activity = null;
 };
 
 Member.prototype = {
@@ -109,10 +117,22 @@ Member.prototype = {
 			
 			this.person = new Person();
 			this.person.contact_email_primary = lti_launch.lis_person_contact_email_primary;
-			this.name_given = lti_launch.lis_person_name_given;
-			this.name_family = lti_launch.lis_person_name_family;
-			this.name_full = lti_launch.lis_person_name_full;
+			this.person.name_given = lti_launch.lis_person_name_given;
+			this.person.name_family = lti_launch.lis_person_name_family;
+			this.person.name_full = lti_launch.lis_person_name_full;
 		}
+	},
+	fromLIS : function (LIS_member) {
+		this.user_id = LIS_member.user_id;
+		this.user_image = LIS_member.user_image;
+		this.role = LIS_member.role;
+		this.roles = LIS_member.roles;
+		
+		this.person = new Person();
+		this.person.contact_email_primary = LIS_member.person_contact_email_primary;
+		this.person.name_given = LIS_member.person_name_given;
+		this.person.name_family = LIS_member.person_name_family;
+		this.person.name_full = LIS_member.person_name_full;
 	},
     isInstructor: function() {
         var isInstructor = false;
@@ -173,6 +193,39 @@ var Event = function() {
 
 Event.prototype = {
 	fromXAPI: function(xapi) {
+		this.type = this.XAPI;
+		this.raw = xapi;
+		this.timestamp = xapi.timestamp;
+		
+		if (xapi.actor) {
+			var mbox = xapi.actor.mbox;
+			if (mbox) {
+				var uid = mbox;
+				if (S(uid).contains(':')) {
+					uid = uid.split(':')[1];
+				}
+				
+				if (S(uid).contains('@')) {
+					uid = uid.split('@')[0];
+				}
+				
+				this.user_id = uid;
+			}
+			
+			this.name_full = xapi.actor.name;
+		}
+		
+		if (xapi.verb) {
+			var xapiAction = xapi.verb.id;
+			var lastSlash = xapiAction.lastIndexOf('/');
+			this.action = xapiAction.substr(lastSlash + 1);
+		}
+		
+		if (xapi.object) {
+			var xapiObject = xapi.object.definition.type;
+			var lastSlash = xapiObject.lastIndexOf('/');
+			this.object = xapiObject.substr(lastSlash + 1);
+		}
 	}
 };
 

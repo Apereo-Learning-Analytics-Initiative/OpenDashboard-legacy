@@ -243,5 +243,84 @@
 			}
 		}
 	});
+	
+	angular.
+	module('OpenDashboard')
+	.service('LearningAnalyticsProcessorService', function($http, _) {
+		return {
+			getResults: function(contextMappingId,dashboardId,cardId) {
+				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/lap/'+cardId+'/risk';
+		    	var promise = $http({
+		    		method  : 'GET',
+		    		url     : url,
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+			    		return response.data;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			},
+			getResultsForUser: function(contextMappingId,dashboardId,cardId,user) {
+				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/lap/'+cardId+'/risk/'+user;
+		    	var promise = $http({
+		    		method  : 'GET',
+		    		url     : url,
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+			    		return response.data;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			},
+			mapToRoster: function(roster,lapResults) {
+				_.map(roster, function(member){
+				    return _.assign(member, _.findWhere(lapResults, { alternativeId: member.user_id }));
+				});
+			}
+		}
+	});
+	
+	angular.
+	module('OpenDashboard')
+	.service('RosterService', function($http, _) {
+		return {
+			getRosterUsingBasicLIS: function(contextMappingId,dashboardId,cardId,basicLISData) {
+				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/roster/'+cardId+'/basiclis';
+		    	var promise = $http({
+		    		method  : 'POST',
+		    		url		: url,
+		    		data    : JSON.stringify(basicLISData),
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+		    			var json = x2js.xml_str2json(response.data);
+		    			var memberArray = json.message_response.members.member;
+		    			
+		    			var members = [];
+		    			angular.forEach(memberArray, function(value,key) {
+		                    var member = new Member();
+		                    member.fromLIS(value);
+		                    members.push(member);
+		                });
+		    			
+			    		return members;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			}
+		}
+	});
+
 })(angular, JSON, Math);
 
