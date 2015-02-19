@@ -23,7 +23,9 @@ angular
 .controller('RssReaderCardController', function ($scope, RssReaderCardFactory) {
     $scope.feed = null;
     RssReaderCardFactory.fetch({q: $scope.card.config.url, num: 10}, {}, function (data) {
-        $scope.feed = data.responseData.feed;
+    	if (data && data.responseData) {
+            $scope.feed = data.responseData.feed;
+    	}    	
     });
 });
 })();

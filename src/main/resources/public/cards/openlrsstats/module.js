@@ -27,7 +27,7 @@ angular
 	
 	var user = null;
 	if ($scope.isStudent) {
-		user = OpenDashboard_API.getCurrentUser().getUserId();
+		user = OpenDashboard_API.getCurrentUser().user_id;
 	}
 	
 	var handleStatementResponse = function (statements) {

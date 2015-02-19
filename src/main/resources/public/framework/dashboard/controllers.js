@@ -30,10 +30,15 @@
                                             _ , registry, OpenDashboard_API,
                                             contextMapping, dashboard) {
     	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
+    	$scope.showNavbar = false;
         $scope.showAddCard = ($route.current.params.addCard == 'true');
         $scope.contextMapping = contextMapping;
         $scope.activeDashboard = dashboard;
         $scope.cards = registry.registry;
+        
+        $scope.toggleNavbar = function () {
+        	$scope.showNavbar = !$scope.showNavbar;
+        };
         
         $scope.addCard = function(cardType) {
             $log.log('add card type: '+cardType);

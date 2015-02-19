@@ -25,7 +25,7 @@ angular
     $scope.activeStatement = null;
     $scope.groupedBy = 'DATE';
     $scope.groupedByValue = null;
-    $scope.courseName = OpenDashboard_API.getCourse().getTitle();
+    $scope.courseName = OpenDashboard_API.getCourse().title;
     $scope.queryString = null;
     
 	$scope.config = {
@@ -77,7 +77,7 @@ angular
 	
 	var user = null;
 	if ($scope.isStudent) {
-		user = OpenDashboard_API.getCurrentUser().getUserId();
+		user = OpenDashboard_API.getCurrentUser().user_id;
 	}
 	
 	var handleStatementResponse = function (statements) {

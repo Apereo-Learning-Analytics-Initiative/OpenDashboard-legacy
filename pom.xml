@@ -57,11 +57,15 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
         </dependency>
-        <dependency>
+		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-core</artifactId>
+		</dependency>        
+		<dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.9</version>
@@ -154,6 +158,7 @@
                         <source>src/main/resources/public/js/lib/angular-route.min.js</source>
                         <source>src/main/resources/public/js/lib/angular-resource.min.js</source>
                         <source>src/main/resources/public/js/lib/lodash.underscore.min.js</source>
+                        <source>src/main/resources/public/js/lib/string.min.js</source>
                         <source>src/main/resources/public/js/lib/moment.min.js</source>
                         <source>src/main/resources/public/js/lib/d3.js</source>
                         <source>src/main/resources/public/js/lib/crossfilter.min.js</source>
@@ -162,9 +167,10 @@
                         <source>src/main/resources/public/js/lib/angular-charts.min.js</source>
                         <source>src/main/resources/public/js/lib/angular-mocks.js</source>
                         
+                        <source>src/main/resources/public/framework/od-models.js</source>
+                        <source>src/main/resources/public/framework/od-api-module.js</source>
                         <source>src/main/resources/public/framework/od-framework.js</source>
                         <source>src/main/resources/public/framework/od-app.js</source>
-                        <source>src/main/resources/public/framework/od-models.js</source>
                         <source>src/main/resources/public/framework/od-controller.js</source>
                         <source>src/main/resources/public/framework/od-services.js</source>
                         

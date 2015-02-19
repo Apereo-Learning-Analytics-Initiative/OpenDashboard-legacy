@@ -14,10 +14,10 @@
     <link rel="stylesheet" th:href="@{/css/od.css}"></link>
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js" th:src="@{/js/lib/lodash.underscore.min.js}"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" th:src="@{/js/lib/string.min.js}" charset="UTF-8"></script>
     
     <script th:src="@{/framework/od-models.js}"></script>
-    <script th:src="@{/framework/od-api.js}"></script>
+    <script th:src="@{/framework/od-api-module.js}"></script>
     <script th:inline="javascript">
     /*<![CDATA[*/
         var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
@@ -30,7 +30,7 @@
             sessionStorage.setItem('token',od_token);
         } 
 
-        var OpenDashboard_API = new OD_API(inbound_lti_launch_request);
+        OpenDashboardApi.setInbound_LTI_Launch(inbound_lti_launch_request);
     /*]]>*/
     </script>
 </head>

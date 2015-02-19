@@ -1,4 +1,4 @@
-(function(angular,JSON,Math) {
+(function(angular, JSON, Math) {
 	'use strict';
 	
 	angular
@@ -90,7 +90,7 @@
 	
 	angular
 	.module('OpenDashboard')
-	.service('ContextMappingService', function($http, UUIDService) {
+	.service('ContextMappingService', function($http, UUIDService, OpenDashboard_API) {
 		return {
 			create : function (contextMapping) {
 				var promise =
@@ -147,7 +147,7 @@
 				})
 				.then(function (response) {
 					if (response.data) {
-						return new ContextMapping(response.data);
+						return OpenDashboard_API.createContextMappingInstance(response.data);
 					}
 					else {
 						return null;
@@ -164,7 +164,7 @@
 				})
 				.then(function (response) {
 					if (response.data) {
-						return new ContextMapping(response.data);
+						return OpenDashboard_API.createContextMappingInstance(response.data);
 					}
 					else {
 						return null;
@@ -290,29 +290,98 @@
 	
 	angular.
 	module('OpenDashboard')
-	.service('RosterService', function($http, _) {
+	.service('RosterService', function($http, _, OpenDashboard_API) {
 		return {
-			getRosterUsingBasicLIS: function(contextMappingId,dashboardId,cardId,basicLISData) {
-				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/roster/'+cardId+'/basiclis';
+			getRoster: function(contextMappingId,dashboardId,cardId,options) {
+				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/card/'+cardId+'/roster';
 		    	var promise = $http({
 		    		method  : 'POST',
 		    		url		: url,
-		    		data    : JSON.stringify(basicLISData),
+		    		data    : JSON.stringify(options),
 		    		headers : { 'Content-Type': 'application/json'}
 		    	})
 		    	.then(function (response) {
 		    		if (response && response.data) {
-		    			var json = x2js.xml_str2json(response.data);
-		    			var memberArray = json.message_response.members.member;
-		    			
 		    			var members = [];
-		    			angular.forEach(memberArray, function(value,key) {
-		                    var member = new Member();
-		                    member.fromLIS(value);
+		    			angular.forEach(response.data, function(value,key) {
+		                    var member = OpenDashboard_API.createMemberInstance();
+		                    member.fromService(value);
 		                    members.push(member);
 		                });
 		    			
 			    		return members;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			}
+		}
+	});
+	
+	angular.
+	module('OpenDashboard')
+	.service('DemographicsService', function($http, _, OpenDashboard_API) {
+		return {
+			getDemographics: function() {
+				var url = '/api/demographics';
+		    	var promise = $http({
+		    		method  : 'GET',
+		    		url		: url,
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+		    			var demographics = [];
+		    			angular.forEach(response.data, function(value,key) {
+		                    var demographic = OpenDashboard_API.createDemographicsInstance();
+		                    demographic.fromService(value);
+		                    demographics.push(demographic);
+		                });
+		    			
+			    		return demographics;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			},
+			getDemographicsForUser: function(userId) {
+				var url = '/api/demographics/'+userId;
+		    	var promise = $http({
+		    		method  : 'GET',
+		    		url		: url,
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+	                    var demographic = new Demographics();
+	                    demographic.fromService(response.data);
+			    		return demographic;		    			
+		    		}
+		    		
+		    		return null;
+		    	}, function () {return null;});
+				return promise;
+			}			
+		}
+	});
+	
+	angular.
+	module('OpenDashboard')
+	.service('OutcomesService', function($http, _) {
+		return {
+			getOutcomes: function(contextMappingId,dashboardId,cardId,options) {
+				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/card/'+cardId+'/outcomes';
+		    	var promise = $http({
+		    		method  : 'POST',
+		    		url		: url,
+		    		data    : JSON.stringify(options),
+		    		headers : { 'Content-Type': 'application/json'}
+		    	})
+		    	.then(function (response) {
+		    		if (response && response.data) {
+			    		return response.data;		    			
 		    		}
 		    		
 		    		return null;

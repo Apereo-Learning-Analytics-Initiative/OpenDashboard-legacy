@@ -17,9 +17,11 @@
             </div>
             <div ng-if="!showAddCard && activeDashboard.cards && activeDashboard.cards.length > 0" class="m-t">
                 <div ng-repeat="card in activeDashboard.cards" class="{{card.styleClasses}}">
-                    <div class="navbar navbar-default m-t" ng-if="!isStudent">
+                	<button ng-if="!isStudent && !showNavbar" type="button" class="btn btn-default navbar-btn pull-right" ng-click="toggleNavbar()"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></button>
+                    <div class="navbar navbar-default m-t" ng-show="showNavbar">
                         <div class="container-fluid">
-                            <div class="navbar-right">
+                        	<button type="button" class="btn btn-default navbar-btn" ng-click="toggleNavbar()"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></button>
+                            <div class="navbar-right" >
                                 <button type="button" class="btn btn-default navbar-btn" ng-click="editCard(card)">Edit</button>
                                 <button type="button" class="btn btn-default navbar-btn" ng-click="removeCard(card)">Remove</button>                       
                             </div>

@@ -26,14 +26,14 @@
     
     angular
     .module('underscore', [])
-    .factory('_', function () {
-        return window._;
+    .factory('_', function ($window) {
+        return $window._;
     });
 
     angular
     .module('OpenDashboardAPI', ['underscore'])
     .factory('OpenDashboard_API', function ($log, $window, _) {
-        return window.OpenDashboard_API;
+        return $window.OpenDashboardApi;
     });
 
     angular

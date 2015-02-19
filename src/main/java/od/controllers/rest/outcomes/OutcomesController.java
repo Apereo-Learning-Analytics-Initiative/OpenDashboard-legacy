@@ -1,13 +1,15 @@
 /**
  * 
  */
-package od.controllers.rest.roster;
+package od.controllers.rest.outcomes;
 
 import java.util.Map;
 import java.util.Set;
 
-import od.model.roster.Member;
-import od.providers.roster.RosterProvider;
+import od.model.ContextMapping;
+import od.model.outcomes.LineItem;
+import od.providers.outcomes.OutcomesProvider;
+import od.repository.ContextMappingRepositoryInterface;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-public class RosterController {
+public class OutcomesController {
+	private static final Logger log = LoggerFactory.getLogger(OutcomesController.class);
 	
-	private static final Logger log = LoggerFactory.getLogger(RosterController.class);
-	
-	@Autowired private RosterProvider rosterProvider;
+	@Autowired private OutcomesProvider outcomesProvider;
+	@Autowired private ContextMappingRepositoryInterface contextMappingRepository;
 	
 	@Secured("ROLE_INSTRUCTOR")
-	@RequestMapping(value = "/api/{contextMappingId}/db/{dashboardId}/card/{cardId}/roster", method = RequestMethod.POST)
-	public Set<Member> roster(
+	@RequestMapping(value = "/api/{contextMappingId}/db/{dashboardId}/card/{cardId}/outcomes", method = RequestMethod.POST)
+	public Set<LineItem> outcomes(
 			@PathVariable("contextMappingId") String contextMappingId,
 			@PathVariable("dashboardId") String dashboardId,
 			@PathVariable("cardId") String cardId,
@@ -45,7 +47,7 @@ public class RosterController {
 			log.debug("cardId " + cardId);
 			log.debug("options " + options);
 		}
-		
-		return rosterProvider.getRoster(options.get("ext_ims_lis_memberships_url"), options.get("ext_ims_lis_memberships_id"));
+		ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
+		return outcomesProvider.getOutcomesForCourse(options, contextMapping.getContext());
 	}
 }

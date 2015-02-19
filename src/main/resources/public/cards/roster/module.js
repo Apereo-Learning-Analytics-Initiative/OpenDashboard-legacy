@@ -37,7 +37,7 @@ angular
 		
 		var handleLRSResponse = function (statements) {
 			_.forEach(statements, function (statement) {
-				var event = new Event();
+				var event = OpenDashboard_API.createEventInstance();
 				event.fromXAPI(statement);
 				$scope.course.events.push(event);
 			});
@@ -122,7 +122,7 @@ angular
 		};
 
 		if ($scope.isStudent) {
-			var userId = OpenDashboard_API.getCurrentUser().getUserId();
+			var userId = OpenDashboard_API.getCurrentUser().user_id;
 			OpenLRSService.getStatementsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
 				.then(handleLRSResponse);
 			LearningAnalyticsProcessorService.getResultsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
@@ -130,7 +130,7 @@ angular
 		}
 		else {
 			RosterService
-			.getRosterUsingBasicLIS($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,basicLISData)
+			.getRoster($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,basicLISData)
 			.then(
 				function (rosterData) {
 					if (rosterData) {
