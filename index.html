@@ -134,27 +134,20 @@
 
         <h2>Course</h2>
         <p>Represents an external context (e.g. an LMS course)</p>
+        <h3>Members</h3>
+        <h4>id</h4>
+        <p>The external context id (e.g. course id)</p>
+        <h4>title</h4>
+        <p>The context title</p>
+        <h4>instructors</h4>
+        <p>An array of Member objects containing the instructors for the context</p>
+        <h4>learners</h4>
+        <p>An array of Member objects containing the learner for the context</p>
+        <h4>events</h4>
+        <p>An array of Event objects for this context</p>
+        <h4>events_median</h4>
+        <p>An integer representing the median number of events for learners in the context. This is used to determine a relative activity level for each learner.</p>
         <h3>Functions</h3>   
-        <h4>getId</h4>
-        <p>Get the external context id (e.g. course id)</p>
-        <h4>getTitle</h4>
-        <p>Get the context title</p>
-        <h4>getInstructors</h4>
-        <p>Get an array of Member objects containing the instructors for the context</p>
-        <h4>getLearners</h4>
-        <p>Get an array of Member objects containing the learner for the context</p>
-        <h4>getEvents</h4>
-        <p>Get an array of Event objects for this context</p>
-        <h4>getEventsMedian</h4>
-        <p>Get an integer representing the median number of events for learners in the context. This is used to determine a relative activity level for each learner.</p>
-        <h4>setEventsMedian (deprecated)</h4>
-        <p>Set the integer representing the median number of events</p>
-        <h4>fromLTI</h4>
-        <p>Create a Course from the inbound LTI launch object</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>ltiLaunch : Object</li>
-        </ul>  
         <h4>buildRoster</h4>
         <p>Construct the course roster from an array of Members</p>
         <h5>Parameters</h5>
@@ -170,25 +163,26 @@
 
         <h2>Member</h2>
         <p>Represents a user within a context</p>
+        <h3>Members</h3>
+        <h4>user_id</h4>
+        <p>The external user id</p>
+        <h4>user_image</h4>
+        <p>The URL for user image (avatar)</p>
+        <h4>role</h4>
+        <p>The member's role within this context</p>
+        <h4>roles</h4>
+        <p>The common separated list of roles within this context</p>
+        <h4>person</h4>
+        <p>The Person object for this member</p>
+        <h4>events</h4>
+        <p>An array of events for this member within this context</p>
+        <h4>relative_activity_level</h4>
+        <p>The activity level for this member relative to the rest of the members</p>
+        <h4>risk</h4>
+        <p>The risk level as determined by an external analytics processor</p>
+        <h4>last_activity</h4>
+        <p>The timestamp from the last activity within the context for this member</p>
         <h3>Functions</h3>
-        <h4>getUserId</h4>
-        <p>Get the external user id</p>
-        <h4>getUserImage</h4>
-        <p>Get the URL for user image (avatar)</p>
-        <h4>getRole</h4>
-        <p>Get the member's role within this context</p>
-        <h4>getRoles</h4>
-        <p>Get the common separated list of roles within this context</p>
-        <h4>getPerson</h4>
-        <p>Get the Person object for this member</p>
-        <h4>getEvents</h4>
-        <p>Get an array of events for this member within this context</p>
-        <h4>getRelativeActivityLevel</h4>
-        <p>Get activity level for this member relative to the rest of the members</p>
-        <h4>getRisk</h4>
-        <p>Get the risk level as determined by an external analytics processor</p>
-        <h4>getLastActivity</h4>
-        <p>Get the timestamp from the last activity within the context for this member</p>
         <h4>fromLTI</h4>
         <p>Construct a member object from the inbound LTI launch object</p>
         <h5>Parameters</h5>
@@ -208,73 +202,74 @@
         
         <h2>Person</h2>
         <p>User personally identifiable information</p>
-        <h3>Functions</h3> 
-        <h4>getContactEmailPrimary</h4>
-        <p>Get the person's email address</p>
-        <h4>getNameGiven</h4>
-        <p>Get the person's first name</p>
-        <h4>getNameFamily</h4>
-        <p>Get the person's last name</p>
-        <h4>getNameFull</h4>
-        <p>Get the person's full name</p>
-        <h4>getDemographics</h4>
-        <p>Get the Demographics object for this person</p>
+        <h3>Members</h3> 
+        <h4>contact_email_primary</h4>
+        <p>The person's email address</p>
+        <h4>name_given</h4>
+        <p>The person's first name</p>
+        <h4>name_family</h4>
+        <p>The person's last name</p>
+        <h4>name_full</h4>
+        <p>The person's full name</p>
+        <h4>demographics</h4>
+        <p>Demographics object for this person</p>
 
         <h2>Demographics</h2>
         <p>A collection of demographics for the person</p>
-        <h3>Functions</h3>   
-        <h4>getUserId</h4>
-        <p>Get the external user id</p>
-        <h4>getPercentile</h4>
+        <h3>Members</h3>   
+        <h4>user_id</h4>
+        <p>The external user id</p>
+        <h4>percentile</h4>
         <p></p>
-        <h4>getSatVerbal</h4>
-        <p>Get the SAT Verbal score for this person</p>
-        <h4>getSatMath</h4>
-        <p>Get the SAT Math score for this person</p>
-        <h4>getActComposite</h4>
-        <p>Get the ACT score for this person</p>
-        <h4>getAge</h4>
-        <p>Get the person's age</p>
-        <h4>getRace</h4>
-        <p>Get the race code for this person</p>
-        <h4>getGender</h4>
-        <p>Get the gender code for this person</p>
-        <h4>getEnrollmentStatus</h4>
-        <p>Get this person's enrollment status code</p>
-        <h4>getEarnedCreditHours</h4>
-        <p>Get the number of credits this person has earned</p>
-        <h4>getGpaCumulative</h4>
-        <p>Get the person's overall GPA</p>
-        <h4>getGpaSemester</h4>
-        <p>Get the person's GPA for this semester</p>
-        <h4>getStanding</h4>
-        <p>Get this person's academic standing</p>
-        <h4>getPellStatus</h4>
-        <p>Get this person's Pell eligibility code</p>
-        <h4>getClassCode</h4>
-        <p>Get this person's class code</p>
+        <h4>sat_verbal</h4>
+        <p>The SAT Verbal score for this person</p>
+        <h4>sat_math</h4>
+        <p>The SAT Math score for this person</p>
+        <h4>act_composite</h4>
+        <p>The ACT score for this person</p>
+        <h4>age</h4>
+        <p>The person's age</p>
+        <h4>race</h4>
+        <p>The race code for this person</p>
+        <h4>gender</h4>
+        <p>The gender code for this person</p>
+        <h4>enrollment_status</h4>
+        <p>This person's enrollment status code</p>
+        <h4>earned_credit_hours</h4>
+        <p>The number of credits this person has earned</p>
+        <h4>gpa_cumulative</h4>
+        <p>The person's overall GPA</p>
+        <h4>gpa_semester</h4>
+        <p>The person's GPA for this semester</p>
+        <h4>standing</h4>
+        <p>This person's academic standing</p>
+        <h4>pell_status</h4>
+        <p>This person's Pell eligibility code</p>
+        <h4>class_code</h4>
+        <p>This person's class code</p>
         
         <h2>Event</h2>
         <p>An interaction with a system by a user optionally within a context</p>
-        <h3>Functions</h3>   
-        <h4>getUserId</h4>
-        <p>Get the user id for the event actor</p>
-        <h4>getContextId</h4>
-        <p>Get the context id (e.g. course id) where this event occurred</p>
-        <h4>getOrganizationId</h4>
-        <p>Get the id for the organization (e.g. school, institution, etc)</p>
-         <h4>getNameFull</h4>
-        <p>Get the full name of the event actor (e.g. John Wall)</p>
-        <h4>getType</h4>
-        <p>Get the pre-transform event type (xAPI, Caliper, etc)</p>
-        <h4>getAction</h4>
-        <p>Get the action that was performed</p>
-        <h4>getObject</h4>
-        <p>Get the object that this event was performed on</p>
-        <h4>getRaw</h4>
-        <p>Get the raw (xAPI, Caliper, etc format) event</p>
-        <h4>getTimestamp</h4>
-        <p>Get the timestamp for when this event occurred</p>
+        <h3>Members</h3>   
+        <h4>user_id</h4>
+        <p>The user id for the event actor</p>
+        <h4>context_id</h4>
+        <p>The context id (e.g. course id) where this event occurred</p>
+        <h4>organization_id</h4>
+        <p>The id for the organization (e.g. school, institution, etc)</p>
+         <h4>name_full</h4>
+        <p>The full name of the event actor (e.g. John Wall)</p>
+        <h4>type</h4>
+        <p>The pre-transform event type (xAPI, Caliper, etc)</p>
+        <h4>action</h4>
+        <p>The action that was performed</p>
+        <h4>object</h4>
+        <p>The object that this event was performed on</p>
+        <h4>raw</h4>
+        <p>The raw (xAPI, Caliper, etc format) event</p>
+        <h4>timestamp</h4>
+        <p>The timestamp for when this event occurred</p>
+        <h3>Functions</h3>
         <h4>fromService</h4>
         <p>Use this method to transform an external event into the normalized event format</p>
 	</section>
