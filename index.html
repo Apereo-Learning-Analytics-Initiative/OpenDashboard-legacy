@@ -18,9 +18,7 @@
         <h1>OpenDashboard</h1>
         <p></p>
         <p class="view">
-            <a href="#js-model">
-            JavaScript Data Model
-            </a>
+        <a href="#js-model">JavaScript Data Model</a>
         </p>
         <p class="view"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View the Project on GitHub <small>Apereo-Learning-Analytics-Initiative/OpenDashboard</small></a></p>
 
@@ -31,112 +29,257 @@
         </ul>
       </header>
       <section>
-        <h3>
+        <h1>
             <a id="js-model" class="anchor" href="#js-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript Data Model
-        </h3>
-        <h4>OpenDashboardModelFactory</h4>
+        </h1>
+        <h2>OpenDashboardModelFactory</h2>
 
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+        <p>Use this factory to create new instances of model classes.</p>
 
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
+        <h3>Functions</h3>
+        <h4>createContextMappingInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <h5>Example</h5>
+        <pre>
+            <code>
+            // creates an emtpy context mapping object
+            var contextMapping = OpenDashboardModelFactory.createContextMappingInstance();
+            </code>
+        </pre>
+        <h4>createCourseInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>
+        <h5>Example</h5>
+        <pre>
+            <code>
+            // creates an emtpy course object
+            var course = OpenDashboardModelFactory.createCourseInstance();
+            // creates a new course object with the given options
+            var anotherCourse = 
+                OpenDashboardModelFactory.createCourseInstance({'id':12345});
+            </code>
+        </pre>
+        <h4>createPersonInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <h5>Example</h5>
+        <pre>
+            <code>
+            // creates an emtpy person object
+            var person = OpenDashboardModelFactory.createPersonInstance();
+            </code>
+        </pre>
+        <h4>createMemberInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <h5>Example</h5>
+        <pre>
+            <code>
+            var member = OpenDashboardModelFactory.createMemberInstance();
+            </code>
+        </pre>
+        <h4>createDemographicsInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <h5>Example</h5>
+        <pre>
+            <code>
+            var options = {'user_id':12345,'gender':'F'}
+            var demographics 
+                = OpenDashboardModelFactory.createDemographicsInstance(options);
+            </code>
+        </pre>
+        <h4>createEventInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <pre>
+            <code>
+            var event 
+                = OpenDashboardModelFactory.createEventInstance();
+            </code>
+        </pre>
 
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+        <h2>Context Mapping</h2>
+        <p>Represents the relationship between an external context (e.g. a course or course section) and a set of OpenDashboard dashboards.</p>
+        <h3>Functions</h3>
+        <h4>getId</h4>
+        <p>Get the primary key</p>
+        <h4>getKey</h4>
+        <p>Get the consumer key</p>
+        <h4>getDashboards</h4>
+        <p>Get the array of dashboard objects associated with this context</p>
+        <h4>getContext</h4>
+        <p>Get the external context id (e.g. course id) associated with this mapping</p>
+        <h4>getModified</h4>
+        <p>Get last modifed timestamp</p>
+        <h4>addDashboard</h4>
+        <p>Add a new dashboard to this context mapping. This is a framework function - you probably don't need to call it yourself.</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>dashboard : Object</li>
+        </ul>  
+
+        <h2>Course</h2>
+        <p>Represents an external context (e.g. an LMS course)</p>
+        <h3>Functions</h3>   
+        <h4>getId</h4>
+        <p>Get the external context id (e.g. course id)</p>
+        <h4>getTitle</h4>
+        <p>Get the context title</p>
+        <h4>getInstructors</h4>
+        <p>Get an array of Member objects containing the instructors for the context</p>
+        <h4>getLearners</h4>
+        <p>Get an array of Member objects containing the learner for the context</p>
+        <h4>getEvents</h4>
+        <p>Get an array of Event objects for this context</p>
+        <h4>getEventsMedian</h4>
+        <p>Get an integer representing the median number of events for learners in the context. This is used to determine a relative activity level for each learner.</p>
+        <h4>setEventsMedian (deprecated)</h4>
+        <p>Set the integer representing the median number of events</p>
+        <h4>fromLTI</h4>
+        <p>Create a Course from the inbound LTI launch object</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>ltiLaunch : Object</li>
+        </ul>  
+        <h4>buildRoster</h4>
+        <p>Construct the course roster from an array of Members</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>members : Array[Member]</li>
+        </ul>  
+        <h4>addEvent</h4>
+        <p>Add a new event to the array of events for this context</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>event : Event</li>
+        </ul>  
+
+        <h2>Member</h2>
+        <p>Represents a user within a context</p>
+        <h3>Functions</h3>
+        <h4>getUserId</h4>
+        <p>Get the external user id</p>
+        <h4>getUserImage</h4>
+        <p>Get the URL for user image (avatar)</p>
+        <h4>getRole</h4>
+        <p>Get the member's role within this context</p>
+        <h4>getRoles</h4>
+        <p>Get the common separated list of roles within this context</p>
+        <h4>getPerson</h4>
+        <p>Get the Person object for this member</p>
+        <h4>getEvents</h4>
+        <p>Get an array of events for this member within this context</p>
+        <h4>getRelativeActivityLevel</h4>
+        <p>Get activity level for this member relative to the rest of the members</p>
+        <h4>getRisk</h4>
+        <p>Get the risk level as determined by an external analytics processor</p>
+        <h4>getLastActivity</h4>
+        <p>Get the timestamp from the last activity within the context for this member</p>
+        <h4>fromLTI</h4>
+        <p>Construct a member object from the inbound LTI launch object</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>ltiLaunch : Object</li>
+        </ul>  
+        <h4>fromService</h4>
+        <p>Convert an external member record to the internal format</p>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <h4>isInstructor</h4>
+        <p>Returns true if the member is an Instructor within this context</p>
+        <h4>isStudent</h4>
+        <p>Returns true if the member is a Learner within this context</p>
         
-        <h4>Context Mapping</h4>
+        <h2>Person</h2>
+        <p>User personally identifiable information</p>
+        <h3>Functions</h3> 
+        <h4>getContactEmailPrimary</h4>
+        <p>Get the person's email address</p>
+        <h4>getNameGiven</h4>
+        <p>Get the person's first name</p>
+        <h4>getNameFamily</h4>
+        <p>Get the person's last name</p>
+        <h4>getNameFull</h4>
+        <p>Get the person's full name</p>
+        <h4>getDemographics</h4>
+        <p>Get the Demographics object for this person</p>
 
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+        <h2>Demographics</h2>
+        <p>A collection of demographics for the person</p>
+        <h3>Functions</h3>   
+        <h4>getUserId</h4>
+        <p>Get the external user id</p>
+        <h4>getPercentile</h4>
+        <p></p>
+        <h4>getSatVerbal</h4>
+        <p>Get the SAT Verbal score for this person</p>
+        <h4>getSatMath</h4>
+        <p>Get the SAT Math score for this person</p>
+        <h4>getActComposite</h4>
+        <p>Get the ACT score for this person</p>
+        <h4>getAge</h4>
+        <p>Get the person's age</p>
+        <h4>getRace</h4>
+        <p>Get the race code for this person</p>
+        <h4>getGender</h4>
+        <p>Get the gender code for this person</p>
+        <h4>getEnrollmentStatus</h4>
+        <p>Get this person's enrollment status code</p>
+        <h4>getEarnedCreditHours</h4>
+        <p>Get the number of credits this person has earned</p>
+        <h4>getGpaCumulative</h4>
+        <p>Get the person's overall GPA</p>
+        <h4>getGpaSemester</h4>
+        <p>Get the person's GPA for this semester</p>
+        <h4>getStanding</h4>
+        <p>Get this person's academic standing</p>
+        <h4>getPellStatus</h4>
+        <p>Get this person's Pell eligibility code</p>
+        <h4>getClassCode</h4>
+        <p>Get this person's class code</p>
         
-         <h4>Course</h4>
-
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-        
-        <h4>Member</h4>
-
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-        
-        <h4>Person</h4>
-
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-        <h4>Demographics</h4>
-
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-        
-        <h4>Event</h4>
-
-        <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-        <pre><code>$ cd your_repo_root/repo_name
-        $ git fetch origin
-        $ git checkout gh-pages
-        </code></pre>
-
-        <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a id="rather-drive-stick" class="anchor" href="#rather-drive-stick" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="https://help.github.com/pages">https://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/Apereo-Learning-Analytics-Initiative">Apereo-Learning-Analytics-Initiative</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+        <h2>Event</h2>
+        <p>An interaction with a system by a user optionally within a context</p>
+        <h3>Functions</h3>   
+        <h4>getUserId</h4>
+        <p>Get the user id for the event actor</p>
+        <h4>getContextId</h4>
+        <p>Get the context id (e.g. course id) where this event occurred</p>
+        <h4>getOrganizationId</h4>
+        <p>Get the id for the organization (e.g. school, institution, etc)</p>
+         <h4>getNameFull</h4>
+        <p>Get the full name of the event actor (e.g. John Wall)</p>
+        <h4>getType</h4>
+        <p>Get the pre-transform event type (xAPI, Caliper, etc)</p>
+        <h4>getAction</h4>
+        <p>Get the action that was performed</p>
+        <h4>getObject</h4>
+        <p>Get the object that this event was performed on</p>
+        <h4>getRaw</h4>
+        <p>Get the raw (xAPI, Caliper, etc format) event</p>
+        <h4>getTimestamp</h4>
+        <p>Get the timestamp for when this event occurred</p>
+        <h4>fromService</h4>
+        <p>Use this method to transform an external event into the normalized event format</p>
+	</section>
+	</div>
+   <script src="javascripts/scale.fix.js"></script>
     
   </body>
 </html>
