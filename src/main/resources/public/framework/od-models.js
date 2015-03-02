@@ -8,69 +8,9 @@ var Constants = (function(window,undefined) {
 	};
 })(window);
 
-var OpenDashboardModelFactory = (function(window,undefined){
-	
-	function createContextMappingInstance (options) {
-		var contextMapping = new this.ContextMapping();
-		if (options) {
-			contextMapping.init(options);
-		}
-		return contextMapping;
-	};
-	
-	function createCourseInstance (options) {
-		var course = new this.Course();
-		if (options) {
-			course.init(options);
-		}
-		return course;
-	};
-	
-	function createPersonInstance (options) {
-		var person = new this.Person();
-		if (options) {
-			person.init(options);
-		}
-		return person;
-	};
-	
-	function createMemberInstance (options) {
-		var member = new this.Member();
-		if (options) {
-			member.init(options);
-		}
-		return member;
-	};
-	
-	function createDemographicsInstance (options) {
-		var demographics = new this.Demographics();
-		if (options) {
-			demographics.init(options);
-		}
-		return demographics;
-	};
-	
-	function createEventInstance (options) {
-		var event = new this.Event();
-		if (options) {
-			event.init(options);
-		}
-		return event;
-	};
-	
-	return {
-		createContextMappingInstance : createContextMappingInstance,
-		createCourseInstance : createCourseInstance,
-		createPersonInstance : createPersonInstance,
-		createMemberInstance : createMemberInstance,
-		createDemographicsInstance : createDemographicsInstance,
-		createEventInstance : createEventInstance
-	}
-})(window);
-
-(function(OpenDashboardModelFactory, undefined) {
+(function(OpenDashboardApi, undefined) {
   
-	function ContextMapping () {
+	function ContextMapping (options) {
     
 	    this.id = null;
 	    this.key = null;
@@ -78,26 +18,29 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	    this.context = null;
 	    this.modified = null;
 	    
-	    function init(options) {
-		    this.id = options.id;
-		    this.key = options.key;
-		    this.dashboards = options.dashboards;
-		    this.context = options.context;
-		    this.modified = options.modified;
-	    };
+	    if (options) {
+	    	this.id = options.id;
+	    	this.key = options.key;
+	    	this.dashboards = options.dashboards;
+	    	this.context = options.context;
+	    	this.modified = options.modified;
+	    };	    
 	    
-	    return {
-	    	init : init
-	    }
+	    this.addDashboard = function addDashboard(dashboard) {
+	    	if (!this.dashboards) {
+	    		this.dashboards = [];
+	    	}
+	    	this.dashboards.push(dashboard);
+	    };
 	};
   
-	OpenDashboardModelFactory.ContextMapping = ContextMapping;
+	OpenDashboardApi.ContextMapping = ContextMapping;
   
-})( OpenDashboardModelFactory );
+})( OpenDashboardApi );
 
-(function(OpenDashboardModelFactory, _, undefined) {
+(function(OpenDashboardApi, _, undefined) {
   
-	function Course () {
+	function Course (options) {
     
 		this.id = null;
 		this.title = null;		
@@ -105,30 +48,30 @@ var OpenDashboardModelFactory = (function(window,undefined){
 		this.learners = [];
 		this.events = [];
 		this.events_median = null;
-
-		function init(options) {
+		
+		if (options) {
 			this.id = options.id;
 			this.title = options.title;		
 			this.instructors = options.instructors || [];
 			this.learners = options.learners || [];
 			this.events = options.events || [];
 			this.events_median = options.events_median;
-	    };
-	    
-	    function fromLTI(lti_launch) {
+		}
+		
+	    this.fromLTI = function fromLTI(lti_launch) {
 			if (lti_launch) {
 				this.instructors = [];
 				this.learners = [];
 				this.id = lti_launch.context_id;
 				var context_title = lti_launch.context_title;
 	            if (context_title) {
-	                this.title = lti_launch.context_title;
+	            	this.title = lti_launch.context_title;
 	            }
 	            else {
-	                this.title = lti_launch.context_id;
+	            	this.title = lti_launch.context_id;
 	            }
 	            
-	            var member = OpenDashboardModelFactory.createMemberInstance();
+	            var member = OpenDashboardApi.createMemberInstance();
 	            member.fromLTI(lti_launch);
 	            
 	            if (member.isInstructor()) {
@@ -140,9 +83,9 @@ var OpenDashboardModelFactory = (function(window,undefined){
 			}
 	    };
 	 
-	    function buildRoster(members) {
-			this.instructors = [];
-			this.learners = [];
+	    this.buildRoster = function buildRoster(members) {
+	    	this.instructors = [];
+	    	this.learners = [];
 			_.forEach(members,function(member){
 	            if (member.isInstructor()) {
 	            	this.instructors.push(member);
@@ -153,20 +96,22 @@ var OpenDashboardModelFactory = (function(window,undefined){
 			},this);
 	    };
 	    
-	    return {
-	    	init : init,
-	    	fromLTI : fromLTI,
-	    	buildRoster : buildRoster
-	    }
+	    this.addEvent = function addEvent(event) {
+	    	if (!this.events) {
+	    		this.events = [];
+	    	}
+	    	this.events.push(event);
+	    };
+	    
 	};
   
-	OpenDashboardModelFactory.Course = Course;
+	OpenDashboardApi.Course = Course;
   
-})( OpenDashboardModelFactory, _ );
+})( OpenDashboardApi, _ );
 
-(function(OpenDashboardModelFactory, undefined) {
+(function(OpenDashboardApi, undefined) {
   
-	function Person () {
+	function Person (options) {
     
 		this.contact_email_primary = null;
 		this.name_given = null;
@@ -174,7 +119,7 @@ var OpenDashboardModelFactory = (function(window,undefined){
 		this.name_full = null;
 		this.demographics = null;
 	    
-	    function init(options) {
+	    if(options) {
 	    	this.contact_email_primary = options.contact_email_primary;
 	    	this.name_given = options.name_given;
 	    	this.name_family = options.name_family;
@@ -182,18 +127,15 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	    	this.demographics = options.demographics;
 	    };
 	    
-	    return {
-	    	init : init
-	    }
 	};
   
-	OpenDashboardModelFactory.Person = Person;
+	OpenDashboardApi.Person = Person;
   
-})( OpenDashboardModelFactory );
+})( OpenDashboardApi );
 
-(function(OpenDashboardModelFactory, undefined) {
+(function(OpenDashboardApi, undefined) {
   
-	function Demographics () {
+	function Demographics (options) {
     
 		this.user_id = null;
 		this.percentile = null;
@@ -211,7 +153,7 @@ var OpenDashboardModelFactory = (function(window,undefined){
 		this.pell_status = null;
 		this.class_code = null;
 	    
-	    function init(options) {
+	    if(options) {
 	    	this.user_id = options.user_id;
 	    	this.percentile = options.percentile;
 	    	this.sat_verbal = options.sat_verbal;
@@ -228,24 +170,15 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	    	this.pell_status = options.pell_status;
 	    	this.class_code = options.class_code;
 	    };
-	    
-	    function fromService(demographic) {
-	    	init(demographic);
-	    };
-	    
-	    return {
-	    	init : init,
-	    	fromService : fromService
-	    }
 	};
   
-	OpenDashboardModelFactory.Demographics = Demographics;
+	OpenDashboardApi.Demographics = Demographics;
   
-})( OpenDashboardModelFactory );
+})( OpenDashboardApi );
 
-(function(OpenDashboardModelFactory, _, undefined) {
+(function(OpenDashboardApi, _, undefined) {
   
-	function Member () {
+	function Member (options) {
     
 		this.user_id = null;
 		this.user_image = null;
@@ -257,7 +190,7 @@ var OpenDashboardModelFactory = (function(window,undefined){
 		this.risk = null;
 		this.last_activity = null;
 	    
-	    function init(options) {
+	    if (options) {
 	    	this.user_id = options.user_id;
 	    	this.user_image = options.user_image;
 	    	this.role = options.role;
@@ -269,7 +202,7 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	    	this.last_activity = options.last_activity;
 	    };
 	    
-	    function fromLTI(lti_launch) {
+	    this.fromLTI = function fromLTI(lti_launch) {
 			if (lti_launch) {
 				this.user_id = lti_launch.user_id;
 				this.user_image = lti_launch.user_image;
@@ -281,11 +214,11 @@ var OpenDashboardModelFactory = (function(window,undefined){
 				options.name_family = lti_launch.lis_person_name_family;
 				options.name_full = lti_launch.lis_person_name_full;
 
-				this.person = OpenDashboardModelFactory.createPersonInstance(options);
+				this.person = OpenDashboardApi.createPersonInstance(options);
 			}
 		};
 		
-		function fromService(member) {
+		this.fromService = function fromService(member) {
 			this.user_id = member.user_id;
 			this.user_image = member.user_image;
 			this.role = member.role;
@@ -298,11 +231,11 @@ var OpenDashboardModelFactory = (function(window,undefined){
 				options.name_family = member.person.name_family;
 				options.name_full = member.person.name_full;
 
-				this.person = OpenDashboardModelFactory.createPersonInstance(options);
+				this.person = OpenDashboardApi.createPersonInstance(options);
 			}
 		};
 	    
-	    function isInstructor() {
+	    this.isInstructor = function isInstructor() {
 	        var isInstructor = false;
 	        
 	        if (this.roles) {
@@ -323,7 +256,7 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	        return isInstructor;
 	    };
 	    
-	    function isStudent() {
+	    this.isStudent = function isStudent() {
 	        var isStudent = false;
 	        
 	        if (this.roles) {
@@ -343,24 +276,15 @@ var OpenDashboardModelFactory = (function(window,undefined){
 	        
 	        return isStudent;
 	    };
-
-	    
-	    return {
-	    	init : init,
-	    	fromLTI : fromLTI,
-	    	fromService : fromService,
-	    	isInstructor : isInstructor,
-	    	isStudent : isStudent
-	    }
 	};
   
-	OpenDashboardModelFactory.Member = Member;
+	OpenDashboardApi.Member = Member;
   
-})( OpenDashboardModelFactory, _ );
+})( OpenDashboardApi, _ );
 
-(function(OpenDashboardModelFactory, S, undefined) {
+(function(OpenDashboardApi, S, undefined) {
   
-	function Event () {
+	function Event (options) {
     
 		var XAPI = 'XAPI';
 		var CALIPER = 'CALIPER';
@@ -375,10 +299,10 @@ var OpenDashboardModelFactory = (function(window,undefined){
 		this.raw = null;
 		this.timestamp = null;
 	    
-	    function init(options) {
-			this.user_id = options.user_id;
-			this.context_id = options.context_id;
-			this.organization_id = options.organization_id;
+	    if (options) {
+	    	this.user_id = options.user_id;
+	    	this.context_id = options.context_id;
+	    	this.organization_id = options.organization_id;
 			this.name_full = options.name_full;
 			this.type = options.type;
 			this.action = options.action;
@@ -387,10 +311,10 @@ var OpenDashboardModelFactory = (function(window,undefined){
 			this.timestamp = options.timestamp;
 	    };
 	    
-	    function fromXAPI(xapi) {
-			this.type = this.XAPI;
-			this.raw = xapi;
-			this.timestamp = xapi.timestamp;
+	    this.fromService = function fromXAPI(xapi) {
+	    	this.type = XAPI;
+	    	this.raw = xapi;
+	    	this.timestamp = xapi.timestamp;
 			
 			if (xapi.actor) {
 				var mbox = xapi.actor.mbox;
@@ -423,12 +347,8 @@ var OpenDashboardModelFactory = (function(window,undefined){
 			}
 		};
 
-	    return {
-	    	init : init,
-	    	fromXAPI : fromXAPI
-	    }
 	};
   
-	OpenDashboardModelFactory.Event = Event;
+	OpenDashboardApi.Event = Event;
   
-})( OpenDashboardModelFactory, S );
+})( OpenDashboardApi, S );

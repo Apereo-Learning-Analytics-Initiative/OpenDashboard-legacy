@@ -121,10 +121,7 @@
 			addDashboard: function (contextMapping, dashboard) {
 				if (contextMapping) {
 					dashboard.id = UUIDService.generate();
-					if (!contextMapping.dashboards) {
-						contextMapping.dashboards = [];
-					}
-					contextMapping.dashboards.push(dashboard);
+					contextMapping.addDashboard(dashboard);
 					return this.update(contextMapping);
 				}
 			},
@@ -282,7 +279,7 @@
 			},
 			mapToRoster: function(roster,lapResults) {
 				_.map(roster, function(member){
-				    return _.assign(member, _.findWhere(lapResults, { alternativeId: member.user_id }));
+				    return _.assign(member, _.findWhere(lapResults, { alternativeId: member.getUserId() }));
 				});
 			}
 		}
@@ -334,8 +331,7 @@
 		    		if (response && response.data) {
 		    			var demographics = [];
 		    			angular.forEach(response.data, function(value,key) {
-		                    var demographic = OpenDashboard_API.createDemographicsInstance();
-		                    demographic.fromService(value);
+		                    var demographic = OpenDashboard_API.createDemographicsInstance(value);
 		                    demographics.push(demographic);
 		                });
 		    			
@@ -355,8 +351,7 @@
 		    	})
 		    	.then(function (response) {
 		    		if (response && response.data) {
-	                    var demographic = new Demographics();
-	                    demographic.fromService(response.data);
+	                    var demographic = OpenDashboard_API.createDemographicsInstance(response.data);
 			    		return demographic;		    			
 		    		}
 		    		

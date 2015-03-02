@@ -1,4 +1,4 @@
-(function() {
+(function(angular, Math, moment) {
 'use strict';
     
 angular
@@ -38,17 +38,16 @@ angular
 		var handleLRSResponse = function (statements) {
 			_.forEach(statements, function (statement) {
 				var event = OpenDashboard_API.createEventInstance();
-				event.fromXAPI(statement);
-				$scope.course.events.push(event);
+				event.fromService(statement);
+				$scope.course.addEvent(event);
 			});
 
-			var eventsGroupByUser = _.groupBy($scope.course.events,'user_id');
-			
+			var eventsGroupByUser = _.groupBy($scope.course.events,function(event){ return event.user_id; });
 			_.forEach($scope.course.learners, function (learner) {
 				var learnerEvents = eventsGroupByUser[learner.user_id];
 				learner.events = learnerEvents;
 			});
-			
+
 			var totalEventsForStudents = $scope.course.learners.reduce(function (total, learner) {
 				if (learner.events) {
 					return total.concat(learner.events.length);
@@ -73,6 +72,7 @@ angular
 			$scope.course.events_median = median(totalEventsForStudents);
 			
 			_.forEach($scope.course.learners, function (learner) {
+
 				var activityLevel = 'Medium';
 				
 				var median = $scope.course.events_median;
@@ -151,4 +151,4 @@ angular
 	}
 });
 
-})();
+})(angular, Math, moment);

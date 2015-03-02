@@ -20,18 +20,22 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-6">
-                <form name="cardForm" class="m-t form-horizontal od-card-add" novalidate="novalidate">
-                  <div class="form-group" ng-repeat="c in cardConfig">
-                    <label class="col-sm-1 control-label" for="{{c.field}}">{{c.fieldName}}</label>
-                    <div class="col-sm-11">
-                        <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="card.config[c.field]">
-                    </div>
-                  </div>
-                  
-                  <button class="btn btn-primary" ng-click="editCard()">Save</button>
-                  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
-                </form>
+            <div class="col-xs-12 col-md-8">
+            	<div class="row ">
+            		<div class="col-xs-12">
+		                <form name="cardForm" class="m-t od-card-add" novalidate="novalidate">
+		                  <div class="form-group" ng-repeat="c in cardConfig">
+		                    <label for="{{c.field}}">{{c.fieldName}}</label>
+		                    <div>
+		                        <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="card.config[c.field]">
+		                    </div>
+		                  </div>
+		                  
+		                  <button class="btn btn-primary" ng-click="editCard()">Save</button>
+		                  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+		                </form>
+            		</div>
+            	</div>
             </div>
         </div>
     </div>

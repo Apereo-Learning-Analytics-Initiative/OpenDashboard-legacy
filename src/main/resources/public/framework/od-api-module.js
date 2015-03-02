@@ -2,7 +2,7 @@
 /**
  * OpenDashboard API Module
  */
-var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, undefined ) {
+var OpenDashboardApi = ( function( window, JSON, undefined ) {
 	
 	this.inbound_lti_launch = null;
 	this.course = null;
@@ -32,7 +32,7 @@ var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, unde
 	
 	function getCourse() {
 		if (!this.course && this.inbound_lti_launch) {
-			this.course = OpenDashboardModelFactory.createCourseInstance();
+			this.course = new this.Course();
 			this.course.fromLTI(this.inbound_lti_launch);
 		}
 		return this.course;
@@ -43,12 +43,16 @@ var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, unde
 	 */
 	
 	function createMemberInstance (options) {
-		return OpenDashboardModelFactory.createMemberInstance(options);
+		return new this.Member(options);
+	};
+	
+	function createPersonInstance (options) {
+		return new this.Person(options);
 	};
 	
 	function getCurrentUser() {
 		if (!this.currentUser && this.inbound_lti_launch) {
-			this.currentUser = OpenDashboardModelFactory.createMemberInstance();
+			this.currentUser = new this.Member()
 			this.currentUser.fromLTI(this.inbound_lti_launch);
 		}
 		return this.currentUser;
@@ -59,7 +63,7 @@ var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, unde
 	 */
 		
 	 function createEventInstance (options) {
-		return OpenDashboardModelFactory.createEventInstance(options);
+		return new this.Event(options);
 	};
 
 	/**
@@ -67,7 +71,7 @@ var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, unde
 	 */
 	
 	function createContextMappingInstance (options) {
-		return OpenDashboardModelFactory.createContextMappingInstance(options);
+		return new this.ContextMapping(options);
 	};
 	
 	
@@ -78,7 +82,8 @@ var OpenDashboardApi = ( function( window, JSON, OpenDashboardModelFactory, unde
 		getCurrentUser : getCurrentUser,
 		createContextMappingInstance : createContextMappingInstance,
 		createMemberInstance : createMemberInstance,
+		createPersonInstance : createPersonInstance,
 		createEventInstance : createEventInstance
 	};
   
-} )( window, JSON, OpenDashboardModelFactory );
+} )( window, JSON );

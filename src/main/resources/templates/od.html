@@ -15,9 +15,9 @@
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js" th:src="@{/js/lib/lodash.underscore.min.js}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" th:src="@{/js/lib/string.min.js}" charset="UTF-8"></script>
-    
+
+    <script th:src="@{/framework/od-api-module.js}"></script>    
     <script th:src="@{/framework/od-models.js}"></script>
-    <script th:src="@{/framework/od-api-module.js}"></script>
     <script th:inline="javascript">
     /*<![CDATA[*/
         var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
@@ -54,7 +54,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
     <script th:src="@{/js/lib/angular-dc.min.js}"></script>
-      <script th:src="@{/js/lib/angular-charts.min.js}"></script>
+    <script th:src="@{/js/lib/angular-charts.min.js}"></script>
     
     <script th:src="@{/framework/od-framework.js}"></script>
     <script th:src="@{/framework/od-app.js}"></script>
@@ -69,15 +69,10 @@
     <script th:src="@{/framework/card/controllers.js}"></script>
     
     <!-- Cards -->
-    <!-- OpenDashboard Version -->
-    <script src="../static/cards/odversion/module.js" th:src="@{/cards/odversion/module.js}"></script>
     <!-- LTI -->
     <script src="../static/cards/lti/module.js" th:src="@{/cards/lti/module.js}"></script>
     <!-- OpenLRS -->
     <script src="../static/cards/openlrs/module.js" th:src="@{/cards/openlrs/module.js}"></script>
-    <script src="../static/cards/openlrsstats/module.js" th:src="@{/cards/openlrsstats/module.js}"></script>
-    <!-- RSS Reader -->
-    <script src="../static/cards/rssreader/module.js" th:src="@{/cards/rssreader/module.js}"></script>
     <!-- Roster -->
     <script src="../static/cards/roster/module.js" th:src="@{/cards/roster/module.js}"></script>
 </body>

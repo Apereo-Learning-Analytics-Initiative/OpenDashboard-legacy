@@ -19,7 +19,6 @@
 			<h4 class="text-center"><strong>Risk Assessment</strong></h4>
 		</div>
 	</div>
-
 	<div class="row" ng-repeat="learner in course.learners | filter:queryString | orderBy : 'person.name_family' : reverse">
 		<div class="col-xs-3 bg-primary p-t p-b">
 			<h4 class="text-center"><strong>{{learner.person.name_full}}</strong></h4>
@@ -29,11 +28,13 @@
 		</div>
 		<div class="col-xs-3 p-t-sm p-b-sm">
 			<div class="text-center"><span class="glyphicon glyphicon-stats" 
-				ng-class="{'text-info':learner.relative_activity_level == 'Medium','text-success':learner.relative_activity_level == 'High','text-warning':learner.relative_activity_level == 'Low'}" style="font-size: 2em;"></span><br>{{learner.relative_activity_level | uppercase}}</div>
+				ng-class="{'text-info':learner.relative_activity_level == 'Medium','text-success':learner.relative_activity_level == 'High','text-warning':learner.relative_activity_level == 'Low'}" style="font-size: 2em;"></span>
+				<br>{{learner.relative_activity_level | uppercase}}</div>
 		</div>
 		<div class="col-xs-3 p-t-sm p-b-sm">
 			<div class="text-center"><span class="glyphicon glyphicon-align-justify" 
-				ng-class="{'text-info':learner.risk == 'LOW RISK','text-success':learner.risk == 'NO RISK','text-danger':learner.risk == 'HIGH RISK', 'text-warning':learner.risk == 'MEDIUM RISK'}" style="font-size: 2em;"></span><br>{{learner.risk || "UNAVAILABLE"}}</div>
+				ng-class="{'text-info':learner.risk == 'LOW RISK','text-success':learner.risk == 'NO RISK','text-danger':learner.risk == 'HIGH RISK', 'text-warning':learner.risk == 'MEDIUM RISK'}" style="font-size: 2em;"></span>
+				<br>{{learner.risk || "UNAVAILABLE"}}</div>
 		</div>
 	</div>
 </div>

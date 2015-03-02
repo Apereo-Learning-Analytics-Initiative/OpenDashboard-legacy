@@ -167,8 +167,8 @@
                         <source>src/main/resources/public/js/lib/angular-charts.min.js</source>
                         <source>src/main/resources/public/js/lib/angular-mocks.js</source>
                         
-                        <source>src/main/resources/public/framework/od-models.js</source>
                         <source>src/main/resources/public/framework/od-api-module.js</source>
+                        <source>src/main/resources/public/framework/od-models.js</source>
                         <source>src/main/resources/public/framework/od-framework.js</source>
                         <source>src/main/resources/public/framework/od-app.js</source>
                         <source>src/main/resources/public/framework/od-controller.js</source>
