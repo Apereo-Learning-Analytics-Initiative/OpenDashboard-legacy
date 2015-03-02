@@ -18,6 +18,9 @@
         <h1>OpenDashboard</h1>
         <p></p>
         <p class="view">
+        <a href="#js-api">JavaScript API</a>
+        </p>
+        <p class="view">
         <a href="#js-model">JavaScript Data Model</a>
         </p>
         <p class="view"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View the Project on GitHub <small>Apereo-Learning-Analytics-Initiative/OpenDashboard</small></a></p>
@@ -30,52 +33,31 @@
       </header>
       <section>
         <h1>
-            <a id="js-model" class="anchor" href="#js-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript Data Model
+            <a id="js-api" class="anchor" href="#js-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript API
         </h1>
-        <h2>OpenDashboardModelFactory</h2>
-
-        <p>Use this factory to create new instances of model classes.</p>
+        <p>Javascript API module providing common functions and access to entities.</p>
 
         <h3>Functions</h3>
-        <h4>createContextMappingInstance</h4>
+        <h4>setLTIToolLaunch</h4>
         <h5>Parameters</h5>
         <ul style="list-style-type:none">
-            <li>options : Object</li>
+            <li>lti_launch : Object</li>
         </ul>  
         <h5>Example</h5>
         <pre>
             <code>
-            // creates an emtpy context mapping object
-            var contextMapping = OpenDashboardModelFactory.createContextMappingInstance();
+			OpenDashboardApi.setInbound_LTI_Launch(inbound_lti_launch_request);
             </code>
         </pre>
-        <h4>createCourseInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>
+        <h4>getLTIToolLaunch</h4>
         <h5>Example</h5>
         <pre>
             <code>
-            // creates an emtpy course object
-            var course = OpenDashboardModelFactory.createCourseInstance();
-            // creates a new course object with the given options
-            var anotherCourse = 
-                OpenDashboardModelFactory.createCourseInstance({'id':12345});
+            var lti_launch_data = OpenDashboardApi.getLTIToolLaunch();
             </code>
         </pre>
-        <h4>createPersonInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <h5>Example</h5>
-        <pre>
-            <code>
-            // creates an emtpy person object
-            var person = OpenDashboardModelFactory.createPersonInstance();
-            </code>
-        </pre>
+        <h4>getCourse</h4>
+        <p>Returns a Course object representing the current context</p>
         <h4>createMemberInstance</h4>
         <h5>Parameters</h5>
         <ul style="list-style-type:none">
@@ -84,22 +66,11 @@
         <h5>Example</h5>
         <pre>
             <code>
-            var member = OpenDashboardModelFactory.createMemberInstance();
+            var member = OpenDashboardApi.createMemberInstance();
             </code>
         </pre>
-        <h4>createDemographicsInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <h5>Example</h5>
-        <pre>
-            <code>
-            var options = {'user_id':12345,'gender':'F'}
-            var demographics 
-                = OpenDashboardModelFactory.createDemographicsInstance(options);
-            </code>
-        </pre>
+        <h4>getCurrentUser</h4>
+		<p>Returns a Member object representing the current user within the context</p>
         <h4>createEventInstance</h4>
         <h5>Parameters</h5>
         <ul style="list-style-type:none">
@@ -108,23 +79,41 @@
         <pre>
             <code>
             var event 
-                = OpenDashboardModelFactory.createEventInstance();
+                = OpenDashboardApi.createEventInstance();
             </code>
         </pre>
-
+        <h4>createContextMappingInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+        </ul>  
+        <pre>
+            <code>
+            var options = {'id':12345};
+            var cm 
+                = OpenDashboardApi.createContextMappingInstance(options);
+            </code>
+        </pre>
+      </section>
+      <section>
+        <h1>
+            <a id="js-model" class="anchor" href="#js-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript Data Model
+        </h1>
+        <p>Javascript modules representing framework and common relevant entities. Use the OpenDashboardApi module to access these entities.</p>
         <h2>Context Mapping</h2>
         <p>Represents the relationship between an external context (e.g. a course or course section) and a set of OpenDashboard dashboards.</p>
-        <h3>Functions</h3>
-        <h4>getId</h4>
+        <h3>Members</h3>
+        <h4>id</h4>
         <p>Get the primary key</p>
-        <h4>getKey</h4>
+        <h4>key</h4>
         <p>Get the consumer key</p>
-        <h4>getDashboards</h4>
+        <h4>dashboards</h4>
         <p>Get the array of dashboard objects associated with this context</p>
-        <h4>getContext</h4>
+        <h4>context</h4>
         <p>Get the external context id (e.g. course id) associated with this mapping</p>
-        <h4>getModified</h4>
+        <h4>modified</h4>
         <p>Get last modifed timestamp</p>
+        <h3>Functions</h3>
         <h4>addDashboard</h4>
         <p>Add a new dashboard to this context mapping. This is a framework function - you probably don't need to call it yourself.</p>
         <h5>Parameters</h5>
