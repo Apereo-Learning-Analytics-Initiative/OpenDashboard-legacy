@@ -18,6 +18,9 @@
         <h1>OpenDashboard</h1>
         <p></p>
         <p class="view">
+        <a href="#new-card">Developing your own OpenDashboard Card</a>
+        </p>
+        <p class="view">
         <a href="#js-api">JavaScript API</a>
         </p>
         <p class="view">
@@ -31,6 +34,117 @@
           <li><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
+      <section>
+        <h1>
+            <a id="new-card" class="anchor" href="#new-card" aria-hidden="true"><span class="octicon octicon-link"></span></a>Developing your own OpenDashboard Card
+        </h1>
+        <p>Step-by-step instructions with examples for developing your own OpenDashboard Card.</p>
+
+		<h3>Pick a type for your card</h3>
+
+		<p>OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. 
+		In our example we'll be building a card that displays all available data for the given context for demonstration purposes so I'm going to call my card type demo.</p>
+
+		<h3>Create the AngularJS Module for your card</h3>
+		<p>This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. 
+		Use this file to define the AngularJS module and any supporting controllers and services.</p>
+
+		<p>Also use this file to register your card with OpenDashboard and define its configuration data.</p>
+
+		<p>For example:</p>
+		
+		<pre>
+			<code>
+(function(angular) {
+'use strict';
+    
+angular
+.module('od.cards.demo', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
+ .config(function(registryProvider){
+    registryProvider.register('demo',{
+        title: 'Roster View',
+        description: 'This card demonstrates how to retrieve data from various sources.',
+        imgUrl: '',
+        cardType: 'demo',
+        styleClasses: 'od-card col-xs-12',
+	    config: [
+	    ]
+    });
+ })
+ .controller('DemoCardController', 
+ 	function($scope, $http, $log, _, OpenDashboard_API, RosterService) {
+	
+	$scope.course = OpenDashboard_API.getCourse();
+	$scope.lti = OpenDashboard_API.getInbound_LTI_Launch();
+
+	if ($scope.lti.ext.ext_ims_lis_memberships_url 
+		&& $scope.lti.ext.ext_ims_lis_memberships_id) {
+		
+		var basicLISData = {};
+		basicLISData.ext_ims_lis_memberships_url 
+			= $scope.lti.ext.ext_ims_lis_memberships_url;
+		basicLISData.ext_ims_lis_memberships_id 
+			= $scope.lti.ext.ext_ims_lis_memberships_id;
+		
+		RosterService
+		.getRoster($scope.contextMapping.id,
+			$scope.activeDashboard.id,$scope.card.id,basicLISData)
+		.then(
+			function (rosterData) {
+				if (rosterData) {
+					$scope.course.buildRoster(rosterData);					
+				}
+			}
+		);
+		
+	}
+	else {
+		$log.error('Card not configured for Roster');
+	}
+});
+
+})(angular);
+			</code>
+		</pre>
+	
+		<p>Note, cardType should match the name of your card directory.</p>
+
+		<h3>Create the HTML for your card</h3>
+		<p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/demo). 
+		Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
+		OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
+		
+		<pre>
+			<code>
+
+&lt;div class="col-xs-12" ng-controller="DemoCardController"&gt;
+	&lt;h1>Demo Card&lt;/h1&gt;
+&lt;/div&gt;			
+
+			</code>
+		</pre>
+
+		<h3>Update the AngularJS application to include your module</h3>
+
+		<p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
+		<pre>
+			<code>
+angular
+ .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework','angularCharts',
+ 'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <strong>'od.cards.demo'</strong>])
+			</code>
+		</pre>
+
+		<h3>Add your module js file to the main application page</h3>
+		<p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
+		
+		<pre>
+			<code>
+&lt;script src="../static/cards/demo/module.js" th:src="@{/cards/demo/module.js}"&gt;&lt;/script&gt;		
+			</code>
+		</pre>
+		
+      </section>
       <section>
         <h1>
             <a id="js-api" class="anchor" href="#js-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript API
