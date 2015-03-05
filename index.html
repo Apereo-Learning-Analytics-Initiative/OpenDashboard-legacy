@@ -21,6 +21,9 @@
         <a href="#new-card">Developing your own OpenDashboard Card</a>
         </p>
         <p class="view">
+        <a href="#services">Services</a>
+        </p>
+        <p class="view">
         <a href="#js-api">JavaScript API</a>
         </p>
         <p class="view">
@@ -72,23 +75,26 @@ angular
     });
  })
  .controller('DemoCardController', 
- 	function($scope, $http, $log, _, OpenDashboard_API, RosterService) {
+ 	function($scope, $http, $log, _, ContextService, RosterService) {
 	
-	$scope.course = OpenDashboard_API.getCourse();
-	$scope.lti = OpenDashboard_API.getInbound_LTI_Launch();
+	$scope.course = ContextService.getCourse();
+	$scope.lti = ContextService.getInbound_LTI_Launch();
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url 
 		&& $scope.lti.ext.ext_ims_lis_memberships_id) {
 		
 		var basicLISData = {};
-		basicLISData.ext_ims_lis_memberships_url 
-			= $scope.lti.ext.ext_ims_lis_memberships_url;
-		basicLISData.ext_ims_lis_memberships_id 
-			= $scope.lti.ext.ext_ims_lis_memberships_id;
+		basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
+		basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
 		
+		var options = {};
+		options.contextMappingId = $scope.contextMapping.id;
+		options.dashboardId = $scope.activeDashboard.id;
+		options.cardId = $scope.card.id;
+		options.basicLISData = basicLISData;
+
 		RosterService
-		.getRoster($scope.contextMapping.id,
-			$scope.activeDashboard.id,$scope.card.id,basicLISData)
+		.getRoster(options,null) // pass null so the default implementation is used
 		.then(
 			function (rosterData) {
 				if (rosterData) {
@@ -144,6 +150,128 @@ angular
 			</code>
 		</pre>
 		
+      </section>
+      <section>
+        <h1>
+            <a id="services" class="anchor" href="#services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Services
+        </h1>
+        <h2>ContextService</h2>
+        <p>Use this service to access the data about the current context such as the current user and course objects.</p>
+        <h3>Functions</h3>
+        <h4>getCourse</h4>
+       	<p>Returns the current Course object</p>
+        <h4>getCurrentUser</h4>
+       	<p>Returns the current User object</p>
+        <h4>getInbound_LTI_Launch</h4>
+       	<p>Returns an object containing the inbound LTI launch parameters</p>
+        <h2>EventService</h2>
+        <p>Use this service to access event data typically from an LRS</p>
+        <h3>Functions</h3>
+        <h4>getEventFromService</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>eventData : Object</li>
+        </ul>  
+        <p>Returns an Event object based on the external event</p>
+        <h2>DemographicsService</h2>
+        <p>Use this service to get demographic data about users</p>
+        <h3>Functions</h3>
+        <h4>getDemographics</h4>
+       	<p>Returns an array of Demographics objects for all users in the source system</p>
+        <h4>getDemographicsForUser</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>user_id : String</li>
+        </ul>  
+        <p>Returns a Demographics object for the given user</p>
+        <h5>Example</h5>
+        <pre>
+            <code>
+DemographicsService
+.getDemographics()
+.then(
+	function (demographicsData) {
+		$scope.demographics = demographicsData;
+	}
+	
+);
+            </code>
+        </pre>
+        <h2>OutcomesService</h2>
+        <p>Use this service to retrieve outcomes (line items and results) for the current context</p>
+        <h3>Functions</h3>
+        <h4>getOutcomes</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+            <li>impl : Function</li>
+        </ul>  
+        <p>Returns an array of line item objects which optionally can contain results</p>
+        <pre>
+        	<code>
+ {
+ "id":"li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
+ "type":"Assignment",
+ "title":"li-2",
+ "context":"de5db688-b7ec-449a-94d3-deb9af208f2b",
+ "maximumScore":52,
+ "results":[
+   {"id":"admin-li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
+   "user_id":"admin",
+   "score":15.228},
+   {"id":"e2d91b09-b62d-4db1-947f-3142df07cb16-li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
+   "user_id":"e2d91b09-b62d-4db1-947f-3142df07cb16",
+   "score":43.897}
+   ]
+}        	
+			</code>
+        </pre>
+        <h5>Example</h5>
+        <pre>
+            <code>
+OutcomesService
+.getOutcomes(options,null)
+.then(
+	function(outcomesData) {
+		$scope.outcomes = outcomesData;
+	}
+);
+            </code>
+        </pre>
+        <h2>RosterService</h2>
+        <p>Use this service to access the roster for the current context</p>
+        <h3>Functions</h3>
+        <h4>getRoster</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>options : Object</li>
+            <li>impl : Function</li>
+        </ul>  
+        <p>Returns an array of Member objects</p>
+        <h5>Example</h5>
+        <pre>
+            <code>
+var basicLISData = {};
+basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
+basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
+
+var options = {};
+options.contextMappingId = $scope.contextMapping.id;
+options.dashboardId = $scope.activeDashboard.id;
+options.cardId = $scope.card.id;
+options.basicLISData = basicLISData;
+
+RosterService
+.getRoster(options,null) // pass null so the default implementation is used
+.then(
+	function (rosterData) {
+		if (rosterData) {
+			$scope.course.buildRoster(rosterData);					
+		}
+	}
+);
+            </code>
+        </pre>
       </section>
       <section>
         <h1>
