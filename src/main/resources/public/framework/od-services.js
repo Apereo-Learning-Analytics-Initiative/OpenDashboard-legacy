@@ -92,6 +92,9 @@
 	.module('OpenDashboard')
 	.service('ContextMappingService', function($http, UUIDService, OpenDashboard_API) {
 		return {
+			createContextMappingInstance : function (options) {
+				return OpenDashboard_API.createContextMappingInstance(options);
+			},
 			create : function (contextMapping) {
 				var promise =
 				$http({
@@ -285,40 +288,22 @@
 		}
 	});
 	
-	angular.
-	module('OpenDashboard')
-	.service('RosterService', function($http, _, OpenDashboard_API) {
+	angular
+	.module('OpenDashboard')
+	.service('ContextService',function($log, $http, OpenDashboard_API) {
 		return {
-			getRoster: function(contextMappingId,dashboardId,cardId,options) {
-				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/card/'+cardId+'/roster';
-		    	var promise = $http({
-		    		method  : 'POST',
-		    		url		: url,
-		    		data    : JSON.stringify(options),
-		    		headers : { 'Content-Type': 'application/json'}
-		    	})
-		    	.then(function (response) {
-		    		if (response && response.data) {
-		    			var members = [];
-		    			angular.forEach(response.data, function(value,key) {
-		                    var member = OpenDashboard_API.createMemberInstance();
-		                    member.fromService(value);
-		                    members.push(member);
-		                });
-		    			
-			    		return members;		    			
-		    		}
-		    		
-		    		return null;
-		    	}, function () {return null;});
-				return promise;
+			getCourse : function () {
+				return OpenDashboard_API.getCourse();
+			},
+			getInbound_LTI_Launch : function () {
+				return OpenDashboard_API.getInbound_LTI_Launch();
+			},
+			getCurrentUser : function () {
+				return OpenDashboard_API.getCurrentUser();
 			}
 		}
-	});
-	
-	angular.
-	module('OpenDashboard')
-	.service('DemographicsService', function($http, _, OpenDashboard_API) {
+	})
+	.service('DemographicsService', function($log, $http, _, OpenDashboard_API) {
 		return {
 			getDemographics: function() {
 				var url = '/api/demographics';
@@ -329,6 +314,7 @@
 		    	})
 		    	.then(function (response) {
 		    		if (response && response.data) {
+		    			$log.debug(response.data);
 		    			var demographics = [];
 		    			angular.forEach(response.data, function(value,key) {
 		                    var demographic = OpenDashboard_API.createDemographicsInstance(value);
@@ -339,7 +325,10 @@
 		    		}
 		    		
 		    		return null;
-		    	}, function () {return null;});
+		    	}, function (error) {
+		    		$log.error(error);
+		    		return null;
+		    	});
 				return promise;
 			},
 			getDemographicsForUser: function(userId) {
@@ -360,28 +349,93 @@
 				return promise;
 			}			
 		}
-	});
-	
-	angular.
-	module('OpenDashboard')
-	.service('OutcomesService', function($http, _) {
+	})
+	.service('LTIService',function($log, $http, OpenDashboard_API) {
 		return {
-			getOutcomes: function(contextMappingId,dashboardId,cardId,options) {
-				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/card/'+cardId+'/outcomes';
-		    	var promise = $http({
-		    		method  : 'POST',
-		    		url		: url,
-		    		data    : JSON.stringify(options),
-		    		headers : { 'Content-Type': 'application/json'}
-		    	})
-		    	.then(function (response) {
-		    		if (response && response.data) {
-			    		return response.data;		    			
-		    		}
-		    		
-		    		return null;
-		    	}, function () {return null;});
-				return promise;
+		}
+	})
+	.service('EventService',function($log, $http, OpenDashboard_API) {
+		return {
+			getEventFromService : function (eventData) {
+				var event = OpenDashboard_API.createEventInstance();
+				event.fromService(eventData);
+				return event;
+			}
+		}
+	})
+	.service('OutcomesService', function($log, $http, OpenDashboard_API) {
+		return {
+			getOutcomes: function(options, impl) {
+			
+				$log.debug(options);
+				$log.debug(impl);
+				
+				if (impl) {
+					return impl($log, $http, OpenDashboard_API, options);
+				}
+				else {
+					// use default
+					var url = '/api/'+options.contextMappingId+'/db/'+options.dashboardId+'/card/'+options.cardId+'/outcomes';
+			    	var promise = $http({
+			    		method  : 'GET',
+			    		url		: url,
+			    		headers : { 'Content-Type': 'application/json'}
+			    	})
+			    	.then(function (response) {
+			    		if (response && response.data) {
+				    		return response.data;		    			
+			    		}
+			    		
+			    		$log.debug('No outcomes found for getOutcomes');
+			    		return null;
+			    	}, function (error) {
+			    		$log.error(error);
+			    		return null;
+			    	});
+					return promise;
+				}
+			}
+		}
+	})
+	.service('RosterService', function($log, $http, OpenDashboard_API) {
+		return {
+			getRoster: function(options, impl) {
+				
+				$log.debug(options);
+				$log.debug(impl);
+			
+				if (impl) {
+					return impl($log, $http, OpenDashboard_API, options);
+				}
+				else {
+					// use default implementation (Basic LIS w/ LTI)
+					var url = '/api/'+options.contextMappingId+'/db/'+options.dashboardId+'/card/'+options.cardId+'/roster';
+			    	var promise = $http({
+			    		method  : 'POST',
+			    		url		: url,
+			    		data    : JSON.stringify(options.basicLISData),
+			    		headers : { 'Content-Type': 'application/json'}
+			    	})
+			    	.then(function (response) {
+			    		if (response && response.data) {
+			    			var members = [];
+			    			angular.forEach(response.data, function(value,key) {
+			                    var member = OpenDashboard_API.createMemberInstance();
+			                    member.fromService(value);
+			                    members.push(member);
+			                });
+			    			
+				    		return members;		    			
+			    		}
+			    		$log.debug('No members found for getRoster');
+			    		return null;
+			    	}, function (error) {
+			    		$log.error(error);
+			    		return null;
+			    	});
+					return promise;
+
+				}				
 			}
 		}
 	});

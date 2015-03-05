@@ -20,26 +20,30 @@ angular
 	    ]
     });
  })
- .controller('RosterCardController', function($scope, $http, $log, _, OpenDashboard_API, RosterService, OpenLRSService, LearningAnalyticsProcessorService) {
+ .controller('RosterCardController', function($scope, $http, $log, _, ContextService, EventService, RosterService, OpenLRSService, LearningAnalyticsProcessorService) {
 	$scope.lapResults = null;
 	$scope.message = null;
 	$scope.queryString = null;
 	
-	$scope.course = OpenDashboard_API.getCourse();
-	$scope.lti = OpenDashboard_API.getInbound_LTI_Launch();
+	$scope.course = ContextService.getCourse();
+	$scope.lti = ContextService.getInbound_LTI_Launch();
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
-		$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
+		$scope.isStudent = ContextService.getCurrentUser().isStudent();
 		
 		var basicLISData = {};
 		basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
 		basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
 		
+		var options = {};
+		options.contextMappingId = $scope.contextMapping.id;
+		options.dashboardId = $scope.activeDashboard.id;
+		options.cardId = $scope.card.id;
+		options.basicLISData = basicLISData;
+		
 		var handleLRSResponse = function (statements) {
 			_.forEach(statements, function (statement) {
-				var event = OpenDashboard_API.createEventInstance();
-				event.fromService(statement);
-				$scope.course.addEvent(event);
+				$scope.course.addEvent(EventService.getEventFromService(statement));
 			});
 
 			var eventsGroupByUser = _.groupBy($scope.course.events,function(event){ return event.user_id; });
@@ -122,7 +126,7 @@ angular
 		};
 
 		if ($scope.isStudent) {
-			var userId = OpenDashboard_API.getCurrentUser().user_id;
+			var userId = ContextService.getCurrentUser().user_id;
 			OpenLRSService.getStatementsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
 				.then(handleLRSResponse);
 			LearningAnalyticsProcessorService.getResultsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
@@ -130,7 +134,7 @@ angular
 		}
 		else {
 			RosterService
-			.getRoster($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,basicLISData)
+			.getRoster(options, null)
 			.then(
 				function (rosterData) {
 					if (rosterData) {

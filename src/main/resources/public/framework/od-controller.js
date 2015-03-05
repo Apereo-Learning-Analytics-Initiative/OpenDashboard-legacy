@@ -4,15 +4,13 @@
     angular
     .module('OpenDashboard')
     .controller('NavigationController', function($log,$scope,
-                                            OpenDashboard_API) {
-    	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
+                                            ContextService) {
+    	$scope.isStudent = ContextService.getCurrentUser().isStudent();
     });
     
     angular
     .module('OpenDashboard')
-    .controller('OpenDashboardController', function($log, $scope, $location, 
-                                            OpenDashboard_API,
-                                            contextMapping) {
+    .controller('OpenDashboardController', function($log, $scope, $location,contextMapping) {
         $scope.contextMapping = contextMapping;
         // routing logic
         // TODO move to routes

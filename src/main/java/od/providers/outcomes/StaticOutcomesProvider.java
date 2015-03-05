@@ -4,19 +4,22 @@
 package od.providers.outcomes;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import od.model.outcomes.LineItem;
+import od.model.outcomes.Result;
+import od.providers.ProviderException;
+import od.providers.roster.RosterProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import od.model.outcomes.LineItem;
-import od.model.outcomes.Result;
-import od.model.roster.Member;
-import od.providers.ProviderException;
-import od.providers.roster.RosterProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
@@ -33,8 +36,17 @@ public class StaticOutcomesProvider implements OutcomesProvider {
 	@Override
 	public Set<LineItem> getOutcomesForCourse(Map<String, String> options,
 			String courseId) throws ProviderException {
-		Set<Member> members = rosterProvider.getRoster(options.get("ext_ims_lis_memberships_url"), options.get("ext_ims_lis_memberships_id"));
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+		Map<String,List<String>> all = null;
+		try {
+			all = objectMapper.readValue(this.getClass().getResourceAsStream("/rosters.json"),HashMap.class);
+		} 
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		List<String> members = all.get(courseId);
 		Set<LineItem> lineItems = new HashSet<LineItem>();
 		
 		for (int i = 0; i < 10; i++) {
@@ -49,10 +61,10 @@ public class StaticOutcomesProvider implements OutcomesProvider {
 
 		for (LineItem lineItem : lineItems) {
 			Set<Result> results = new HashSet<Result>();
-			for (Member member: members) {
+			for (String member: members) {
 				Result result = new Result();
-				result.setId(member.getUser_id()+"-"+lineItem.getId());
-				result.setUser_id(member.getUser_id());
+				result.setId(member+"-"+lineItem.getId());
+				result.setUser_id(member);
 				result.setScore(randomInRange(0, lineItem.getMaximumScore()));
 				results.add(result);
 			}

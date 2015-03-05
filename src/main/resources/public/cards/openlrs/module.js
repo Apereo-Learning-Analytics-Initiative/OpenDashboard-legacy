@@ -1,4 +1,4 @@
-(function() {
+(function(angular, JSON) {
 'use strict';
     
 angular
@@ -17,15 +17,15 @@ angular
         ]
     });
  })
-.controller('OpenLRSCardController', function($scope, $http, _, OpenDashboard_API, OpenLRSService) {
-	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
+.controller('OpenLRSCardController', function($scope, $http, _, ContextService, OpenLRSService) {
+	$scope.isStudent = ContextService.getCurrentUser().isStudent();
     $scope.statements = null;
     $scope.data = {};
     $scope.subset = null;
     $scope.activeStatement = null;
     $scope.groupedBy = 'DATE';
     $scope.groupedByValue = null;
-    $scope.courseName = OpenDashboard_API.getCourse().title;
+    $scope.courseName = ContextService.getCourse().title;
     $scope.queryString = null;
     
 	$scope.config = {
@@ -77,7 +77,7 @@ angular
 	
 	var user = null;
 	if ($scope.isStudent) {
-		user = OpenDashboard_API.getCurrentUser().user_id;
+		user = ContextService.getCurrentUser().user_id;
 	}
 	
 	var handleStatementResponse = function (statements) {
@@ -139,4 +139,4 @@ angular
         $scope.activeStatement = JSON.stringify(statement,undefined,2);
     };
 });
-})();
+})(angular, JSON);

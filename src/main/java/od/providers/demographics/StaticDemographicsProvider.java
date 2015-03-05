@@ -38,6 +38,7 @@ public class StaticDemographicsProvider implements DemographicsProvider {
 		String[][] all = null;
 		try {
 			all = objectMapper.readValue(this.getClass().getResourceAsStream("/students.json"),String[][].class);
+System.out.println(all);
 		} 
 		catch (Exception e) {
 			// TODO Auto-generated catch block

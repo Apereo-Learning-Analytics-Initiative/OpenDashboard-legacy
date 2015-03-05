@@ -50,6 +50,10 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 		return new this.Person(options);
 	};
 	
+	function createDemographicsInstance (options) {
+		return new this.Demographics(options);
+	};
+	
 	function getCurrentUser() {
 		if (!this.currentUser && this.inbound_lti_launch) {
 			this.currentUser = new this.Member()
@@ -83,7 +87,8 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 		createContextMappingInstance : createContextMappingInstance,
 		createMemberInstance : createMemberInstance,
 		createPersonInstance : createPersonInstance,
-		createEventInstance : createEventInstance
+		createEventInstance : createEventInstance,
+		createDemographicsInstance : createDemographicsInstance
 	};
   
 } )( window, JSON );

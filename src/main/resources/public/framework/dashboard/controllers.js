@@ -27,9 +27,9 @@
     angular
     .module('OpenDashboard')
     .controller('DashboardController', function($log, $scope, $location, $route,
-                                            _ , registry, OpenDashboard_API,
+                                            _ , registry, ContextService,
                                             contextMapping, dashboard) {
-    	$scope.isStudent = OpenDashboard_API.getCurrentUser().isStudent();
+    	$scope.isStudent = ContextService.getCurrentUser().isStudent();
     	$scope.showNavbar = false;
         $scope.showAddCard = ($route.current.params.addCard == 'true');
         $scope.contextMapping = contextMapping;
