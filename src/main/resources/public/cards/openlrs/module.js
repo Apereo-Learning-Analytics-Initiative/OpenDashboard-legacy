@@ -17,7 +17,7 @@ angular
         ]
     });
  })
-.controller('OpenLRSCardController', function($scope, $http, _, ContextService, OpenLRSService) {
+.controller('OpenLRSCardController', function($scope, $http, _, ContextService, EventService) {
 	$scope.isStudent = ContextService.getCurrentUser().isStudent();
     $scope.statements = null;
     $scope.data = {};
@@ -82,15 +82,15 @@ angular
 	
 	var handleStatementResponse = function (statements) {
     	$scope.statements = statements;
-		$scope.data.data = _.sortBy(OpenLRSService.groupByAndMap($scope.statements), function(obj){return obj.x;});
+		$scope.data.data = _.sortBy(EventService.groupByAndMap($scope.statements), function(obj){return obj.x;});
 	};
 	
 	if (user) {
-		OpenLRSService.getStatementsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,user)
+		EventService.getEventsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,user)
 		.then(handleStatementResponse);
 	}
 	else {
-		OpenLRSService.getStatements($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+		EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
 		.then(handleStatementResponse);
 	}
 		
@@ -111,7 +111,7 @@ angular
 				}
 			};
 
-            var sorted = _.sortBy(OpenLRSService.groupByAndMap($scope.statements,groupByStudent), function(obj){return obj.x;});
+            var sorted = _.sortBy(EventService.groupByAndMap($scope.statements,groupByStudent), function(obj){return obj.x;});
             angular.forEach(sorted, function(value,key){
                 value.u = value.x;
                 var x = value.x.split(':')[1];
@@ -120,7 +120,7 @@ angular
             $scope.data.data = sorted;
         }
         else {
-            $scope.data.data = _.sortBy(OpenLRSService.groupByAndMap($scope.statements), function(obj){return obj.x;});
+            $scope.data.data = _.sortBy(EventService.groupByAndMap($scope.statements), function(obj){return obj.x;});
         }
         
     };

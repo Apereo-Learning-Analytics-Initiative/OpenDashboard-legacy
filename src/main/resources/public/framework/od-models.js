@@ -195,6 +195,10 @@ var Constants = (function(window,undefined) {
 	    	this.user_image = options.user_image;
 	    	this.role = options.role;
 	    	this.roles = options.roles;
+			if (!options.roles) {
+				this.roles = options.role;
+			}
+
 	    	this.person = options.person;
 	    	this.events = options.events;
 	    	this.relative_activity_level = options.relative_activity_level;
@@ -223,6 +227,10 @@ var Constants = (function(window,undefined) {
 			this.user_image = member.user_image;
 			this.role = member.role;
 			this.roles = member.roles;
+			
+			if (!member.roles) {
+				this.roles = member.role;
+			}
 			
 			if (member.person) {			
 				var options = {};

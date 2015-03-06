@@ -9,10 +9,10 @@
         "cardType": "roster",
 	    "styleClasses": "od-card col-xs-12",
 	    "config": {
-	     "url":"http://localhost:8090",
+	     "url":"http://ec2-54-146-144-222.compute-1.amazonaws.com:8080",
 	     "key":"openlrs",
 	     "secret":"openlrs",
-	     "lap_url":"http://localhost:9999",
+	     "lap_url":"http://ec2-54-145-229-114.compute-1.amazonaws.com:8080",
 	     "lap_key":"username2",
 	     "lap_secret":"password2"
 	    }

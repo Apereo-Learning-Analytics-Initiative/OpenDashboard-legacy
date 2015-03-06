@@ -177,9 +177,9 @@
 	
 	angular.
 	module('OpenDashboard')
-	.service('OpenLRSService', function($http, _) {
+	.service('OpenLRSEventServiceStrategy', function($http, _) {
 		return {
-			getStatements: function(contextMappingId,dashboardId,cardId) {
+			getEvents: function(contextMappingId,dashboardId,cardId) {
 				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/openlrs/'+cardId+'/statements';
 		    	var promise = $http({
 		    		method  : 'GET',
@@ -195,7 +195,7 @@
 		    	}, function () {return null;});
 				return promise;
 			},
-			getStatementsForUser: function(contextMappingId,dashboardId,cardId,user) {
+			getEventsForUser: function(contextMappingId,dashboardId,cardId,user) {
 				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/openlrs/'+cardId+'/statements/'+user;
 		    	var promise = $http({
 		    		method  : 'GET',
@@ -246,7 +246,7 @@
 	
 	angular.
 	module('OpenDashboard')
-	.service('LearningAnalyticsProcessorService', function($http, _) {
+	.service('OAAILearningAnalyticsProcessorServiceStrategy', function($http, _) {
 		return {
 			getResults: function(contextMappingId,dashboardId,cardId) {
 				var url = '/api/'+contextMappingId+'/db/'+dashboardId+'/lap/'+cardId+'/risk';
@@ -350,16 +350,73 @@
 			}			
 		}
 	})
+	.service('LearningAnalyticsProcessorService',function($log, $http, OpenDashboard_API, OAAILearningAnalyticsProcessorServiceStrategy) {
+		var strategy = null;
+		
+		return {
+			setStrategy : function (lapStrategyToUse) {
+				strategy = lapStrategyToUse;
+			},
+			getResults: function(contextMappingId,dashboardId,cardId) {
+				
+				$log.debug('getResults');
+				$log.debug('context mapping id: '+contextMappingId);
+				$log.debug('dashboard id: '+dashboardId);
+				$log.debug('card id: '+cardId);
+				
+				if (strategy) {
+					return strategy.getResults(contextMappingId,dashboardId,cardId);
+				}
+				return OAAILearningAnalyticsProcessorServiceStrategy.getResults(contextMappingId,dashboardId,cardId);
+			},
+			getResultsForUser: function(contextMappingId,dashboardId,cardId,user) {
+				if (strategy) {
+					return strategy.getResultsForUser(contextMappingId,dashboardId,cardId,user);
+				}
+				return OAAILearningAnalyticsProcessorServiceStrategy.getResultsForUser(contextMappingId,dashboardId,cardId,user);
+			},
+			mapToRoster: function(roster,lapResults) {
+				if (strategy) {
+					return strategy.mapToRoster(roster,lapResults);
+				}
+				return OAAILearningAnalyticsProcessorServiceStrategy.mapToRoster(roster,lapResults);
+			}
+		}		
+	})
 	.service('LTIService',function($log, $http, OpenDashboard_API) {
 		return {
 		}
 	})
-	.service('EventService',function($log, $http, OpenDashboard_API) {
+	.service('EventService',function($log, $http, OpenDashboard_API, OpenLRSEventServiceStrategy) {
+		var strategy = null;
+		
 		return {
+			setStrategy : function(eventStrategyToUse) {
+				strategy = eventStrategyToUse;
+			},
 			getEventFromService : function (eventData) {
 				var event = OpenDashboard_API.createEventInstance();
 				event.fromService(eventData);
 				return event;
+			},
+			getEvents: function(contextMappingId,dashboardId,cardId) {
+				if (strategy) {
+					return strategy.getEvents(contextMappingId,dashboardId,cardId);
+				}
+				return OpenLRSEventServiceStrategy.getEvents(contextMappingId,dashboardId,cardId);
+			},
+			getEventsForUser: function(contextMappingId,dashboardId,cardId,user) {
+				if (strategy) {
+					return strategy.getEventsForUser(contextMappingId,dashboardId,cardId,user);
+				}
+				return OpenLRSEventServiceStrategy.getEventsForUser(contextMappingId,dashboardId,cardId,user);
+			},
+			groupByAndMap: function(eventData,groupByFunction,mapFunction) {
+				
+				if (strategy) {
+					return strategy.groupByAndMap(eventData,groupByFunction,mapFunction);
+				}
+				return OpenLRSEventServiceStrategy.groupByAndMap(eventData,groupByFunction,mapFunction);
 			}
 		}
 	})
