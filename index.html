@@ -164,15 +164,72 @@ angular
        	<p>Returns the current User object</p>
         <h4>getInbound_LTI_Launch</h4>
        	<p>Returns an object containing the inbound LTI launch parameters</p>
-        <h2>EventService</h2>
-        <p>Use this service to access event data typically from an LRS</p>
+        <h2>LearningAnalyticsProcessorService</h2>
+        <p>Use this service to access the output of a learning analytics processor for the given context. 
+        	The default strategy is to use the OAAI Learning Analytics Processor. The strategy can be configured using the setStrategy function</p>
         <h3>Functions</h3>
+        <h4>setStrategy</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>lapStrategyToUse : Service</li>
+        </ul>  
+        <p>Sets the concrete strategy implementation to be delegated to</p>
+        <h4>getResults</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>contextMappingId : String</li>
+            <li>dashboardId : String</li>
+            <li>cardId : String</li>
+        </ul>  
+        <p>Returns the output of a learning analytics processor for the given context</p>
+        <h4>getResultsForUser</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>contextMappingId : String</li>
+            <li>dashboardId : String</li>
+            <li>cardId : String</li>
+            <li>userId : String</li>
+        </ul>  
+        <p>Returns the output of a learning analytics processor for the given user in the context</p>
+        <h4>mapToRoster</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>roster : Array[Member]</li>
+            <li>lapResults : Array</li>
+        </ul>  
+        <p>Associate the lap results for each user in a roster</p>
+        <h2>EventService</h2>
+        <p>Use this service to access event data typically from an LRS. The default strategy uses OpenLRS but this can be configured using the setStrategy function</p>
+        <h3>Functions</h3>
+        <h4>setStrategy</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>strategyToUse : Service</li>
+        </ul>  
+        <p>Sets the concrete strategy implementation to be delegated to</p>
         <h4>getEventFromService</h4>
         <h5>Parameters</h5>
         <ul style="list-style-type:none">
             <li>eventData : Object</li>
         </ul>  
         <p>Returns an Event object based on the external event</p>
+        <h4>getEvents</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>contextMappingId : String</li>
+            <li>dashboardId : String</li>
+            <li>cardId : String</li>
+        </ul>  
+        <p>Returns the events as normalized Event objects for the given context</p>
+        <h4>getEventsForUser</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+            <li>contextMappingId : String</li>
+            <li>dashboardId : String</li>
+            <li>cardId : String</li>
+            <li>userId : String</li>
+        </ul>  
+        <p>Returns the events as normalized Event objects for the given user in the context</p>
         <h2>DemographicsService</h2>
         <p>Use this service to get demographic data about users</p>
         <h3>Functions</h3>
