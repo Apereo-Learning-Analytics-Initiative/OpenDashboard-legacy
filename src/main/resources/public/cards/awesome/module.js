@@ -7,7 +7,7 @@ angular
     registryProvider.register('awesome',{
         title: 'Awesome Card',
         description: 'This is our awesome card.',
-        imgUrl: '',
+        imgUrl: 'http://m.img.brothersoft.com/iphone/1818/538995818_icon175x175.jpg',
         cardType: 'awesome',
         styleClasses: 'od-card col-xs-12',
 	    config: [
