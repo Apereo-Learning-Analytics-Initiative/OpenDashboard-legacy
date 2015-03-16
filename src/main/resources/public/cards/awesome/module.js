@@ -10,11 +10,17 @@ angular
         imgUrl: 'http://m.img.brothersoft.com/iphone/1818/538995818_icon175x175.jpg',
         cardType: 'awesome',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-	    ]
+        config: [
+            {field:'lap_url',fieldName:'LAP URL',fieldType:'url',required:false},
+            {field:'lap_key',fieldName:'LAP Key',fieldType:'text',required:false},
+            {field:'lap_secret',fieldName:'LAP Secret',fieldType:'text',required:false},
+            {field:'url',fieldName:'OpenLRS URL',fieldType:'url',required:false},
+            {field:'key',fieldName:'OpenLRS Key',fieldType:'text',required:false},
+            {field:'secret',fieldName:'OpenLRS Secret',fieldType:'text',required:false}
+        ]
     });
  })
- .controller('AwesomeCardController', function($scope, $log, ContextService, RosterService, OutcomesService, DemographicsService) {
+ .controller('AwesomeCardController', function($scope, $log, ContextService, EventService, RosterService, OutcomesService, DemographicsService) {
 	
 	$scope.course = ContextService.getCourse();
 	$scope.lti = ContextService.getInbound_LTI_Launch();
@@ -57,8 +63,20 @@ angular
 			}
 			
 		);
-		
-	}
+
+        EventService
+        .getEvents($scope.contextMapping.id, $scope.activeDashboard.id, $scope.card.id)
+        .then(
+            function(statements) {
+                $scope.events = statements;
+                _.forEach($scope.events, function (event) {
+                    // make them pretty (http://www.adlnet.gov/expapi/*):
+                    event.verb.id = event.verb.id.split('/').pop();
+                    event.object.definition.type = event.object.definition.type.split('/').pop();
+                });
+            }
+        );
+    }
 	else {
 		$log.error('Card not configured for Roster');
 		$scope.message = 'No supporting roster service available';

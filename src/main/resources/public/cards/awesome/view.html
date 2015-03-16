@@ -1,23 +1,34 @@
 <div class="col-xs-12" ng-controller="AwesomeCardController">
-	<h1>Awesome Card</h1>
-	<h2>Roster (Course: {{course.id}})</h2>
-	<h3>Learners</h3>
-	<div class="col-xs-12" ng-repeat="learner in course.learners">
-		<div class="row">
-			<div class="col-xs-6">{{learner.user_id}}</div>
-			<div class="col-xs-6">{{learner.person.name_full}}</div>
-		</div>
-	</div>
-	<h2>Outcomes (Course: {{course.id}})</h2>
+    <h1>Awesome Card</h1>
+
+    <h2>Roster (Course: {{course.id}})</h2>
+
+    <h3>Learners</h3>
+
+    <div class="col-xs-12" ng-repeat="learner in course.learners">
+        <div class="row">
+            <div class="col-xs-6">{{learner.user_id}}</div>
+            <div class="col-xs-6">{{learner.person.name_full}}</div>
+        </div>
+    </div>
+    <h2>Outcomes (Course: {{course.id}})</h2>
 	<pre class="col-xs-12">
 		<code>
-{{outcomes}}
-		</code>
+            {{outcomes}}
+        </code>
 	</pre>
-	<h2>Demographics (all)</h2>
+    <h2>Demographics (all)</h2>
 	<pre class="col-xs-12">
 		<code>
-{{demographics}}
-		</code>
+            {{demographics}}
+        </code>
 	</pre>
+    <h2>Events (all)</h2>
+    <div class="col-xs-12" ng-repeat="event in events">
+        <div class="row">
+            <div class="col-xs-4">{{event.actor.name}}</div>
+            <div class="col-xs-4">{{event.verb.id}}</div>
+            <div class="col-xs-4">{{event.object.definition.type}}</div>
+        </div>
+    </div>
 </div>
