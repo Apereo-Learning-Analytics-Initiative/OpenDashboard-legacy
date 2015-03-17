@@ -59,6 +59,24 @@ angular
 		options.cardId = $scope.card.id;
 		options.basicLISData = basicLISData;
 
+        var getNeighbors = function(data, d) {
+            var learner = d.learner;
+            var neighbors = [];
+            _.forEach($scope.course.learners, function(l) {
+                if (l == learner) return;
+                var distance = 0;
+                for (var i = 0; i < 3; ++i) {
+                    var dx = (l.standards[i].grade - learner.standards[i].grade);
+                    var dy = (l.standards[i].events - learner.standards[i].events);
+                    distance += Math.sqrt(dx*dx + dy*dy);
+                }
+                neighbors.push({learner: l, distance: distance});
+            });
+            return _.sortBy(neighbors, function (n) {
+                return n.distance;
+            });
+        };
+
         var drawAwesomeness = function(data) {
             // just to have some space around items.
             var margins = {
@@ -155,7 +173,13 @@ angular
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html('<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard + ")</div>")
+                    var neighbors = getNeighbors(data, d).slice(0, 5);
+                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard + ")<br><br>Closest learners:<br>";
+                    _.forEach(neighbors, function(n) {
+                        tooltipstr += n.learner.person.name_full + '<br>';
+                    });
+                    tooltipstr += '</div>';
+                    tooltip.html(tooltipstr)
                         .style("left", (d3.event.pageX + 25) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                     var name_full = d.learner.person.name_full;
