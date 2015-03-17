@@ -21,6 +21,8 @@
         return result + 0.5;
     }
 
+    var versionTotal = 10;
+
 angular
 .module('od.cards.awesome', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
@@ -173,15 +175,18 @@ angular
                     if (outliers < 5){
                         grade = Math.round(random() * 20 + 80);
                     }
-                    var engagement = Math.round(grade / effortScale + random() * 10);
+                    var engagement = Math.round(grade / effortScale + random() * 5);
                     var historicalGrade = grade;
                     var historical = [];
-                    for (var j = 0; j < 30; ++j){
-                        historicalGrade += Math.round(Math.random() * 20 - 10);
+                    var historicalVelocity = random() - .5;
+                    for (var j = 0; j < versionTotal; ++j){
+                        historicalVelocity += (Math.round(Math.random() * .25 -.125))
+                        historicalVelocity = Math.min(1, Math.max(-1, historicalVelocity));
+                        historicalGrade += historicalVelocity;
                         historicalGrade = Math.max(0, Math.min(100, historicalGrade));
-                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 10);
-
-                        historical[j] = {events: historicalEngagement, grade: historicalGrade};
+                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 5);
+ 
+                        historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
                     }
 
                     var standardName;
@@ -395,12 +400,12 @@ angular
                         })
                         .style("opacity", .05);
                     // show historical data for this learner
-                    for (var version = 0; version < 30; ++version) {
+                    for (var version = 0; version < versionTotal; ++version) {
                         svg.selectAll('.node')
                             .select(function (dd, ii) {
                                 return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;
                             })
-                            .style("opacity", (40 - version) / 40);
+                            .style("opacity", (versionTotal - version) / versionTotal);
                     }
                 })
                 .on("mouseout", function(d) {
