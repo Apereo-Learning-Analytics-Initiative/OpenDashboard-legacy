@@ -82,17 +82,13 @@ angular
             // the domain define the min and max variables to show. In this case, it's the min and max prices of items.
             // this is made a compact piece of code due to d3.extent which gives back the max and min of the price variable within the dataset
             var x = d3.scale.linear()
-                .domain(d3.extent(data, function (d) {
-                    return d.events;
-                }))
+                .domain([0, 220])
                 // the range maps the domain to values from 0 to the width minus the left and right margins (used to space out the visualization)
                 .range([0, width - margins.left - margins.right]);
 
             // this does the same as for the y axis but maps from the rating variable to the height to 0.
             var y = d3.scale.linear()
-                .domain(d3.extent(data, function (d) {
-                    return d.grade;
-                }))
+                .domain([0, 220])
                 // Note that height goes first due to the weird SVG coordinate system
                 .range([height - margins.top - margins.bottom, 0]);
 
@@ -278,7 +274,7 @@ angular
                         historicalVelocity += (Math.round(Math.random() * .25 -.125));
                         historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
                         historicalGrade += historicalVelocity;
-                        historicalGrade = Math.max(0, Math.min(200, historicalGrade));
+                        historicalGrade = Math.max(0, Math.min(220, historicalGrade));
                         var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
  
                         historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
@@ -346,14 +342,26 @@ angular
             return data;
         };
 
+        var fetchOutcomesAndProceed = function() {
+            OutcomesService
+                .getOutcomes(options,null)
+                .then(
+                function(outcomesData) {
+                    $scope.outcomes = outcomesData;
+                    console.log(outcomesData);
+
+                    buildRosterUsageData();
+                    var data = transformData();
+                    console.log(data);
+                    drawAwesomeness(data);
+                }
+            );
+        };
+
         if ($scope.isStudent) {
             $scope.course.learners = [];
             $scope.course.learners.push(ContextService.getCurrentUser());
-            buildRosterUsageData();
-            var data = transformData();
-            console.log(data);
-            drawAwesomeness(data);
-
+            fetchOutcomesAndProceed();
         } else {
             RosterService
                 .getRoster(options, null) // pass null so the default implementation is used
@@ -364,20 +372,7 @@ angular
                         $scope.course.learners = _.sortBy($scope.course.learners, function (learner) {
                             return learner.user_id;
                         });
-
-                        OutcomesService
-                            .getOutcomes(options,null)
-                            .then(
-                            function(outcomesData) {
-                                $scope.outcomes = outcomesData;
-                                console.log(outcomesData);
-
-                                buildRosterUsageData();
-                                var data = transformData();
-                                console.log(data);
-                                drawAwesomeness(data);
-                            }
-                        );
+                        fetchOutcomesAndProceed();
                     }
                 }
             );
