@@ -205,19 +205,19 @@ angular
             console.log($scope.course.learners);
         };
 
-        RosterService
-            .getRoster(options, null)
-            .then(
-            function (rosterData) {
-                if (rosterData) {
-                    //$scope.course.buildRoster(rosterData);
-                    EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
-                        .then(handleLRSResponse);
-                    LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
-                        .then(handleLAPResponse);
-                }
-            }
-        );
+        //RosterService
+        //    .getRoster(options, null)
+        //    .then(
+        //    function (rosterData) {
+        //        if (rosterData) {
+        //            //$scope.course.buildRoster(rosterData);
+        //            EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+        //                .then(handleLRSResponse);
+        //            LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+        //                .then(handleLAPResponse);
+        //        }
+        //    }
+        //);
 
 		RosterService
 		.getRoster(options,null) // pass null so the default implementation is used
@@ -225,12 +225,12 @@ angular
 			function (rosterData) {
 				if (rosterData) {
 					$scope.course.buildRoster(rosterData);
-                    _.sortBy($scope.course.learners,function(learner){  return learner.user_id; });
+                    $scope.course.learners = _.sortBy($scope.course.learners, function(learner){  return learner.user_id; });
                     buildRosterUsageData();
                     var data = [];
                     _.forEach($scope.course.learners, function(learner) {
                         _.forEach(learner.standards, function(standard) {
-                            data.push({learner: learner, standard: standard.name, events: standard.events, grade:standard.grade})
+                            data.push({learner: learner, standard: standard.name, events: standard.events, grade:standard.grade, historical: standard.historical})
                         });
                     });
                     console.log(data);
@@ -338,6 +338,7 @@ angular
             // this is where we select the axis we created a few lines earlier. See how we select the axis item. in our svg we appended a g element with a x/y and axis class. To pull that back up, we do this svg select, then 'call' the appropriate axis object for rendering.
             svg.selectAll("g.y.axis").call(yAxis);
             svg.selectAll("g.x.axis").call(xAxis);
+
 
             // now, we can get down to the data part, and drawing stuff. We are telling D3 that all nodes (g elements with class node) will have data attached to them. The 'key' we use (to let D3 know the uniqueness of items) will be the name. Not usually a great key, but fine for this example.
             var leaner = svg.selectAll("g.node").data(data, function (d) {
