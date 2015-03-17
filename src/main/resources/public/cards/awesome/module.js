@@ -344,7 +344,7 @@ angular
             svg.append("text")
                 .attr("fill", "#414241")
                 .attr("text-anchor", "end")
-                .attr("x", width / 2 - 50)
+                .attr("x", width / 2 - 65)
                 .attr("y", 0)
                 .text("Achievement");
 
@@ -380,21 +380,26 @@ angular
                     return color(d.standard);
                 })
                 .on("mouseover", function(d) {
+                    //if (d.version !== 0) return;
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html('<div class="tooltipDiv">'+d.learner.person.name_full + "<br>(" + d.standard+")</div>")
+                    tooltip.html('<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard + ")</div>")
                         .style("left", (d3.event.pageX + 5) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                     var name_full = d.learner.person.name_full;
                     // hide other learners (only version == 0)
                     svg.selectAll('.node')
-                        .select(function(dd, i) { return (dd.version === 0) ? this : null;})
+                        .select(function (dd, i) {
+                            return (dd.version === 0) ? this : null;
+                        })
                         .style("opacity", .05);
                     // show historical data for this learner
                     for (var version = 0; version < 30; ++version) {
                         svg.selectAll('.node')
-                            .select(function(dd, ii) { return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;})
+                            .select(function (dd, ii) {
+                                return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;
+                            })
                             .style("opacity", (40 - version) / 40);
                     }
                 })
