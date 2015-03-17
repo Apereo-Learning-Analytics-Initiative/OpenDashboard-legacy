@@ -275,10 +275,10 @@ angular
                     var historical = [];
                     var historicalVelocity = random() * 2 - 1;
                     for (var j = 0; j < versionTotal; ++j){
-                        historicalVelocity += (Math.round(Math.random() * .25 -.125))
+                        historicalVelocity += (Math.round(Math.random() * .25 -.125));
                         historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
                         historicalGrade += historicalVelocity;
-                        historicalGrade = Math.max(0, Math.min(100, historicalGrade));
+                        historicalGrade = Math.max(0, Math.min(200, historicalGrade));
                         var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
  
                         historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
