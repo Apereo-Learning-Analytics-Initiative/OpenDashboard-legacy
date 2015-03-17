@@ -385,7 +385,7 @@ angular
                     return color(d.standard);
                 })
                 .on("mouseover", function(d) {
-                    //if (d.version !== 0) return;
+                    //if (d.version !== 0) { return; }
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
@@ -402,13 +402,14 @@ angular
                     // show historical data for this learner
                     for (var version = 0; version < versionTotal; ++version) {
                         svg.selectAll('.node')
-                            .select(function (dd, ii) {
+                            .select(function (dd, i) {
                                 return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;
                             })
                             .style("opacity", (versionTotal - version) / versionTotal);
                     }
                 })
                 .on("mouseout", function(d) {
+                    //if (d.version !== 0) { return; }
                     tooltip.transition()
                         .duration(500)
                         .style("opacity", 0);
