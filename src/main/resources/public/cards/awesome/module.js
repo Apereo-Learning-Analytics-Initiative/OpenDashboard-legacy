@@ -181,11 +181,11 @@ angular
                         .duration(200)
                         .style("opacity", .9);
                     var neighbors = getNeighbors(data, d).slice(0, 5);
-                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard.name + ")<br><br>Closest learners:<br>";
+                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full + "<br><br>Similar learners:<br><ol>";
                     _.forEach(neighbors, function(n) {
-                        tooltipstr += n.learner.person.name_full + '<br>';
+                        tooltipstr += '<li>' + n.learner.person.name_full + '</li>';
                     });
-                    tooltipstr += '</div>';
+                    tooltipstr += '</ol></div>';
                     tooltip.html(tooltipstr)
                         .style("left", (d3.event.pageX + 25) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
@@ -245,7 +245,7 @@ angular
                 .on("mouseover", function(d) {
                     svg.selectAll('.node')
                         .select(function(dd, i) {
-                            return (dd.standard != d) ? this : null;
+                            return (dd.standard.name != d[0]) ? this : null;
                         })
                         .style("opacity", 0);
                 })
