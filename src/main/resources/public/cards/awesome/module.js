@@ -259,14 +259,17 @@ angular
                         if (!result) continue; // no outcome for this learners & assignment
                         grade += result.score;
                     }
+                    var engagement = Math.round(grade / effortScale + random() * 40);
+
                     //var grade = Math.round(random() * 100);
                     if (outliers < 10){
                         grade = Math.round(random() * 20);
+                        engagement = Math.round(15 / effortScale + random() * 30);
                     }
                     if (outliers < 5){
                         grade = Math.round(random() * 20 + 200);
+                        engagement = Math.round(grade / effortScale + random() * 10);
                     }
-                    var engagement = Math.round(grade / effortScale + random() * 5);
                     var historicalGrade = grade;
                     var historical = [];
                     var historicalVelocity = random() * 2 - 1;
@@ -275,8 +278,10 @@ angular
                         historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
                         historicalGrade += historicalVelocity;
                         historicalGrade = Math.max(0, Math.min(220, historicalGrade));
-                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
- 
+                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 40);
+                        if (outliers < 10 && outliers >= 5){
+                            historicalEngagement = Math.round(15 / effortScale + random() * 30);
+                        }
                         historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
                     }
 
