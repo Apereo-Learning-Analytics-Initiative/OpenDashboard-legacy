@@ -297,8 +297,8 @@ angular
                 .style("opacity", 0);
 
             // we add the axes SVG component. At this point, this is just a placeholder. The actual axis will be added in a bit
-            svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + y.range()[0] + ")");
-            svg.append("g").attr("class", "y axis");
+            svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + y.range()[0] / 2 + ")");
+            svg.append("g").attr("class", "y axis").attr("transform", "translate(" + x.range()[1] / 2 + ", 0)");
 
             // this is our X axis label. Nothing too special to see here.
             svg.append("text")
@@ -312,7 +312,7 @@ angular
             svg.append("text")
                 .attr("fill", "#414241")
                 .attr("text-anchor", "end")
-                .attr("x", width / 2)
+                .attr("x", width / 2 - 50)
                 .attr("y", 0)
                 .text("Achievement");
 
@@ -378,15 +378,16 @@ angular
 
             // draw legend colored rectangles
             legend.append("rect")
-                .attr("x", width - 70)
+                .attr("x", width - 60)
+                .attr("y", height - 100)
                 .attr("width", 18)
                 .attr("height", 18)
                 .style("fill", color);
 
             // draw legend text
             legend.append("text")
-                .attr("x", width - 50)
-                .attr("y", 9)
+                .attr("x", width - 65)
+                .attr("y", height - 91)
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
                 .text(function(d) { return d;})
