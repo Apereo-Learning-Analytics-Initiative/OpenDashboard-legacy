@@ -59,238 +59,6 @@ angular
 		options.cardId = $scope.card.id;
 		options.basicLISData = basicLISData;
 
-        var handleLRSResponse = function (statements) {
-            _.forEach(statements, function (statement) {
-                $scope.course.addEvent(EventService.getEventFromService(statement));
-            });
-
-            var eventsGroupByUser = _.groupBy($scope.course.events,function(event){  return event.user_id; });
-            var eventsGroupByActivity = _.groupBy($scope.course.events,function(event){  return event.raw.object.id; });
-            console.log($scope.course.events);
-
-            _.forEach($scope.course.learners, function (learner) {
-                var learnerEvents = eventsGroupByUser[learner.user_id];
-                if (!learnerEvents) {
-                    // if no events were found try with email address
-                    if (learner.person.contact_email_primary) {
-                        learnerEvents = eventsGroupByUser[learner.person.contact_email_primary.split('@')[0]];
-                    }
-                }
-
-                learner.events = learnerEvents;
-                
-            });
-
-            var totalEventsForStudents = $scope.course.learners.reduce(function (total, learner) {
-                if (learner.events) {
-                    return total.concat(learner.events.length);
-                }
-                else {
-                    return total.concat(0);
-                }
-            },[]);
-
-            function median(values) {
-
-                values.sort( function(a,b) {return a - b;} );
-
-                var half = Math.floor(values.length/2);
-
-                if(values.length % 2)
-                    return values[half];
-                else
-                    return (values[half-1] + values[half]) / 2.0;
-            }
-
-            $scope.course.events_median = median(totalEventsForStudents);
-
-            _.forEach($scope.course.learners, function (learner) {
-                var activityLevel = 'Medium';
-
-                var median = $scope.course.events_median;
-                var lowrange = median * .5;
-                var highrange = median * 1.5;
-
-                var learnerTotal = learner.events ? learner.events.length : 0;
-
-                if (learnerTotal <= lowrange) {
-                    activityLevel = 'Low';
-                }
-                else if (learnerTotal >= highrange) {
-                    activityLevel = 'High';
-                }
-
-                learner.relative_activity_level = activityLevel;
-
-                if (learner.events && learner.events.length) {
-                    var moments = [];
-                    _.forEach(learner.events, function (event) {
-                        var ts = event.timestamp;
-                        moments.push(moment(ts));
-                    });
-
-                    var maxMoment = moment.max(moments);
-                    if (maxMoment) {
-                        learner.last_activity = maxMoment.fromNow();
-                    }
-                    else {
-                        learner.last_activity = 'No activity';
-                    }
-                }
-                else {
-                    learner.last_activity = 'No activity';
-                }
-            });
-
-        };
-
-
-        var handleLAPResponse = function (riskResults) {
-            _.forEach($scope.course.learners, function (learner) {
-                var risk = _.find(riskResults, { 'alternativeId': learner.user_id });
-                if (risk) {
-                    learner.risk = risk.modelRiskConfidence;
-                }
-            });
-        };
-
-        var buildRosterUsageData = function(){
-            seed(12345);
-            var outliers = 0;
-            _.forEach($scope.course.learners, function(learner){
-
-                var standards = [];
-                var effortScale = 5;
-                if (outliers < 10){
-                    effortScale = .75;
-                }
-                if (outliers < 5){
-                    effortScale = 20;
-                }
-                for (var i = 0; i < 3; ++i) {
-                    var grade = Math.round(random() * 100);
-                    if (outliers < 10){
-                        grade = Math.round(random() * 20);
-                    }
-                    if (outliers < 5){
-                        grade = Math.round(random() * 20 + 80);
-                    }
-                    var engagement = Math.round(grade / effortScale + random() * 5);
-                    var historicalGrade = grade;
-                    var historical = [];
-                    var historicalVelocity = random() * 2 - 1;
-                    for (var j = 0; j < versionTotal; ++j){
-                        historicalVelocity += (Math.round(Math.random() * .25 -.125))
-                        historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
-                        historicalGrade += historicalVelocity;
-                        historicalGrade = Math.max(0, Math.min(100, historicalGrade));
-                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
- 
-                        historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
-                    }
-
-                    var standardName;
-                    switch (i) {
-                        case 0:
-                            standardName = "Coding Ability";
-                            break;
-                        case 1:
-                            standardName = "Effective Communication";
-                            break;
-                        case 2:
-                            standardName = "Visual Ninja";
-                            break;
-                    }
-                    standards[i] = {name: standardName, events: engagement, grade: grade, historical: historical};
-                }
-                learner.standards = standards;
-                outliers++;
-
-            });
-            console.log($scope.course.learners);
-        };
-
-        //RosterService
-        //    .getRoster(options, null)
-        //    .then(
-        //    function (rosterData) {
-        //        if (rosterData) {
-        //            //$scope.course.buildRoster(rosterData);
-        //            EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
-        //                .then(handleLRSResponse);
-        //            LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
-        //                .then(handleLAPResponse);
-        //        }
-        //    }
-        //);
-
-		RosterService
-		.getRoster(options,null) // pass null so the default implementation is used
-		.then(
-			function (rosterData) {
-				if (rosterData) {
-					$scope.course.buildRoster(rosterData);
-                    $scope.course.learners = _.sortBy($scope.course.learners, function(learner){  return learner.user_id; });
-                    buildRosterUsageData();
-                    var data = [];
-                    _.forEach($scope.course.learners, function(learner) {
-                        _.forEach(learner.standards, function(standard) {
-                            data.push({
-                                learner: learner,
-                                standard: standard.name,
-                                events: standard.events,
-                                grade: standard.grade,
-                                version: 0
-                            });
-                            var i = 1;
-                            _.forEach(standard.historical, function (history) {
-                                data.push({
-                                    learner: learner,
-                                    standard: standard.name,
-                                    events: history.events,
-                                    grade: history.grade,
-                                    version: i
-                                });
-                                i += 1;
-                            });
-                        });
-                    });
-                    console.log(data);
-                    drawAwesomeness(data);
-                }
-			}
-		);
-		
-		//OutcomesService
-		//.getOutcomes(options,null)
-		//.then(
-		//	function(outcomesData) {
-		//		$scope.outcomes = outcomesData;
-		//	}
-		//);
-		//
-		//DemographicsService
-		//.getDemographics()
-		//.then(
-		//	function (demographicsData) {
-		//		$scope.demographics = demographicsData;
-		//	}
-		//
-		//);
-        //
-        //EventService
-        //.getEvents($scope.contextMapping.id, $scope.activeDashboard.id, $scope.card.id)
-        //.then(
-        //    function(statements) {
-        //        $scope.events = statements;
-        //        _.forEach($scope.events, function (event) {
-        //            // make them pretty (http://www.adlnet.gov/expapi/*):
-        //            event.verb.id = event.verb.id.split('/').pop();
-        //            event.object.definition.type = event.object.definition.type.split('/').pop();
-        //        });
-        //    }
-        //);
-
         var drawAwesomeness = function(data) {
             // just to have some space around items.
             var margins = {
@@ -464,6 +232,188 @@ angular
                 .style("text-anchor", "end")
                 .text(function(d) { return d;})
         };
+
+
+        var handleLAPResponse = function (riskResults) {
+            _.forEach($scope.course.learners, function (learner) {
+                var risk = _.find(riskResults, { 'alternativeId': learner.user_id });
+                if (risk) {
+                    learner.risk = risk.modelRiskConfidence;
+                }
+            });
+        };
+
+        var buildRosterUsageData = function(){
+            seed(12345);
+            var outliers = 0;
+            _.forEach($scope.course.learners, function(learner){
+
+                var standards = [];
+                var effortScale = 5;
+                if (outliers < 10){
+                    effortScale = .75;
+                }
+                if (outliers < 5){
+                    effortScale = 20;
+                }
+                for (var i = 0; i < 3; ++i) {
+                    var grade = Math.round(random() * 100);
+                    if (outliers < 10){
+                        grade = Math.round(random() * 20);
+                    }
+                    if (outliers < 5){
+                        grade = Math.round(random() * 20 + 80);
+                    }
+                    var engagement = Math.round(grade / effortScale + random() * 5);
+                    var historicalGrade = grade;
+                    var historical = [];
+                    var historicalVelocity = random() * 2 - 1;
+                    for (var j = 0; j < versionTotal; ++j){
+                        historicalVelocity += (Math.round(Math.random() * .25 -.125))
+                        historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
+                        historicalGrade += historicalVelocity;
+                        historicalGrade = Math.max(0, Math.min(100, historicalGrade));
+                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
+ 
+                        historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
+                    }
+
+                    var standardName;
+                    switch (i) {
+                        case 0:
+                            standardName = "Coding Ability";
+                            break;
+                        case 1:
+                            standardName = "Effective Communication";
+                            break;
+                        case 2:
+                            standardName = "Visual Ninja";
+                            break;
+                    }
+                    standards[i] = {name: standardName, events: engagement, grade: grade, historical: historical};
+                }
+                learner.standards = standards;
+                outliers++;
+
+            });
+            console.log($scope.course.learners);
+        };
+
+        //RosterService
+        //    .getRoster(options, null)
+        //    .then(
+        //    function (rosterData) {
+        //        if (rosterData) {
+        //            //$scope.course.buildRoster(rosterData);
+        //            EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+        //                .then(handleLRSResponse);
+        //            LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+        //                .then(handleLAPResponse);
+        //        }
+        //    }
+        //);
+
+        if ($scope.isStudent) {
+            $scope.course.learners = [];
+            $scope.course.learners.push(ContextService.getCurrentUser());
+            buildRosterUsageData();
+            var data = [];
+            _.forEach($scope.course.learners, function (learner) {
+                _.forEach(learner.standards, function (standard) {
+                    data.push({
+                        learner: learner,
+                        standard: standard.name,
+                        events: standard.events,
+                        grade: standard.grade,
+                        version: 0
+                    });
+                    var i = 1;
+                    _.forEach(standard.historical, function (history) {
+                        data.push({
+                            learner: learner,
+                            standard: standard.name,
+                            events: history.events,
+                            grade: history.grade,
+                            version: i
+                        });
+                        i += 1;
+                    });
+                });
+            });
+            console.log(data);
+            drawAwesomeness(data);
+
+        } else {
+            RosterService
+                .getRoster(options, null) // pass null so the default implementation is used
+                .then(
+                function (rosterData) {
+                    if (rosterData) {
+                        $scope.course.buildRoster(rosterData);
+                        $scope.course.learners = _.sortBy($scope.course.learners, function (learner) {
+                            return learner.user_id;
+                        });
+                        buildRosterUsageData();
+                        var data = [];
+                        _.forEach($scope.course.learners, function (learner) {
+                            _.forEach(learner.standards, function (standard) {
+                                data.push({
+                                    learner: learner,
+                                    standard: standard.name,
+                                    events: standard.events,
+                                    grade: standard.grade,
+                                    version: 0
+                                });
+                                var i = 1;
+                                _.forEach(standard.historical, function (history) {
+                                    data.push({
+                                        learner: learner,
+                                        standard: standard.name,
+                                        events: history.events,
+                                        grade: history.grade,
+                                        version: i
+                                    });
+                                    i += 1;
+                                });
+                            });
+                        });
+                        console.log(data);
+                        drawAwesomeness(data);
+                    }
+                }
+            );
+        }
+		
+		//OutcomesService
+		//.getOutcomes(options,null)
+		//.then(
+		//	function(outcomesData) {
+		//		$scope.outcomes = outcomesData;
+		//	}
+		//);
+		//
+		//DemographicsService
+		//.getDemographics()
+		//.then(
+		//	function (demographicsData) {
+		//		$scope.demographics = demographicsData;
+		//	}
+		//
+		//);
+        //
+        //EventService
+        //.getEvents($scope.contextMapping.id, $scope.activeDashboard.id, $scope.card.id)
+        //.then(
+        //    function(statements) {
+        //        $scope.events = statements;
+        //        _.forEach($scope.events, function (event) {
+        //            // make them pretty (http://www.adlnet.gov/expapi/*):
+        //            event.verb.id = event.verb.id.split('/').pop();
+        //            event.object.definition.type = event.object.definition.type.split('/').pop();
+        //        });
+        //    }
+        //);
+
 
     }
 	else {
