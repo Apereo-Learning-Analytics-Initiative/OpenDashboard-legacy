@@ -234,7 +234,23 @@ angular
                 .data(color.domain())
                 .enter().append("g")
                 .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+                .on("mouseover", function(d) {
+                    svg.selectAll('.node')
+                        .select(function(dd, i) {
+                            return (dd.standard != d) ? this : null;
+                        })
+                        .style("opacity", 0);
+                })
+                .on("mouseout", function(d){
+                    // show all learners back
+                    svg.selectAll('.node')
+                        .style("opacity", 1);
+                    // hide historical version
+                    svg.selectAll('.node')
+                        .select(function(dd, i) { return (dd.version !== 0) ? this : null;})
+                        .style("opacity", 0);
+                });
 
             // draw legend colored rectangles
             legend.append("rect")
@@ -243,6 +259,9 @@ angular
                 .attr("width", 18)
                 .attr("height", 18)
                 .style("fill", color);
+
+
+
 
             // draw legend text
             legend.append("text")
