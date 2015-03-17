@@ -347,8 +347,10 @@ angular
                 .getOutcomes(options,null)
                 .then(
                 function(outcomesData) {
-                    $scope.outcomes = outcomesData;
-                    console.log(outcomesData);
+                    $scope.outcomes = _.sortBy(outcomesData, function (outcome) {
+                        return outcome.id;
+                    });
+                    console.log($scope.outcomes);
 
                     buildRosterUsageData();
                     var data = transformData();
