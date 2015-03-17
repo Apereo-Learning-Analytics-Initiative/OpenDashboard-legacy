@@ -245,9 +245,9 @@ angular
             _.forEach($scope.course.learners, function(learner){
 
                 var standards = [];
-                var effortScale = 5;
+                var effortScale = 1;
                 if (outliers < 10){
-                    effortScale = .75;
+                    effortScale = .1;
                 }
                 if (outliers < 5){
                     effortScale = 20;
