@@ -260,12 +260,12 @@ angular
                         grade += result.score;
                     }
                     //var grade = Math.round(random() * 100);
-                    //if (outliers < 10){
-                    //    grade = Math.round(random() * 20);
-                    //}
-                    //if (outliers < 5){
-                    //    grade = Math.round(random() * 20 + 80);
-                    //}
+                    if (outliers < 10){
+                        grade = Math.round(random() * 20);
+                    }
+                    if (outliers < 5){
+                        grade = Math.round(random() * 20 + 200);
+                    }
                     var engagement = Math.round(grade / effortScale + random() * 5);
                     var historicalGrade = grade;
                     var historical = [];
