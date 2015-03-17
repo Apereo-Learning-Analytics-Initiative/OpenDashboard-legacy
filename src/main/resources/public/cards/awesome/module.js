@@ -23,6 +23,13 @@
 
     var versionTotal = 10;
 
+    var standardsData = [
+        {name: "Coding Ability", url: "http://asn.jesandco.org/resources/S2544035"},
+        {name: "Effective Communication", url: "http://asn.jesandco.org/resources/S2543798"},
+        {name: "Visual Ninja", url: "http://asn.jesandco.org/resources/S2544062"}
+    ];
+
+
 angular
 .module('od.cards.awesome', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
@@ -146,7 +153,7 @@ angular
 
             // now, we can get down to the data part, and drawing stuff. We are telling D3 that all nodes (g elements with class node) will have data attached to them. The 'key' we use (to let D3 know the uniqueness of items) will be the name. Not usually a great key, but fine for this example.
             var leaner = svg.selectAll("g.node").data(data, function (d) {
-                return [d.learner.person.name_full, d.standard, d.version];
+                return [d.learner.person.name_full, d.standard.url, d.version];
             });
 
             // we 'enter' the data, making the SVG group (to contain a circle and text) with a class node. This corresponds with what we told the data it should be above.
@@ -164,7 +171,7 @@ angular
                 .style("fill", function (d) {
                     // remember the ordinal scales? We use the colors scale to get a colour for our manufacturer. Now each node will be coloured
                     // by who makes the chocolate.
-                    return color(d.standard);
+                    return color([d.standard.name, d.standard.url]);
                 })
                 .select(function (dd, i) {
                     return (dd.version === 0) ? this : null;
@@ -174,7 +181,7 @@ angular
                         .duration(200)
                         .style("opacity", .9);
                     var neighbors = getNeighbors(data, d).slice(0, 5);
-                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard + ")<br><br>Closest learners:<br>";
+                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard.name + ")<br><br>Closest learners:<br>";
                     _.forEach(neighbors, function(n) {
                         tooltipstr += n.learner.person.name_full + '<br>';
                     });
@@ -264,12 +271,15 @@ angular
 
 
             // draw legend text
-            legend.append("text")
+            legend.append("a")
+                .attr("xlink:href", function(d) { return d[1]; })
+                .attr("target", "_blank")
+                .append("text")
                 .attr("x", width - 65)
                 .attr("y", height - 91)
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
-                .text(function(d) { return d;})
+                .text(function(d) { return d[0];});
         };
 
 
@@ -328,19 +338,7 @@ angular
                         historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
                     }
 
-                    var standardName;
-                    switch (i) {
-                        case 0:
-                            standardName = "Coding Ability";
-                            break;
-                        case 1:
-                            standardName = "Effective Communication";
-                            break;
-                        case 2:
-                            standardName = "Visual Ninja";
-                            break;
-                    }
-                    standards[i] = {name: standardName, events: engagement, grade: grade, historical: historical};
+                    standards[i] = {name: standardsData[i], events: engagement, grade: grade, historical: historical};
                 }
                 learner.standards = standards;
                 outliers++;
