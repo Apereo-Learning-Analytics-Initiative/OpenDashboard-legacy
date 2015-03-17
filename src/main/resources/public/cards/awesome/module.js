@@ -117,8 +117,8 @@ angular
             svg.append("text")
                 .attr("fill", "#414241")
                 .attr("text-anchor", "end")
-                .attr("x", width / 2 - 65)
-                .attr("y", 0)
+                .attr("x", width / 2 - 15)
+                .attr("y", -15)
                 .text("Achievement");
 
             // this is the actual definition of our x and y axes. The orientation refers to where the labels appear - for the x axis, below or above the line, and for the y axis, left or right of the line. Tick padding refers to how much space between the tick and the label. There are other parameters too - see https://github.com/mbostock/d3/wiki/SVG-Axes for more information
@@ -168,7 +168,7 @@ angular
                         .select(function (dd, i) {
                             return (dd.version === 0) ? this : null;
                         })
-                        .style("opacity", .05);
+                        .style("opacity", 0);
                     // show historical data for this learner
                     for (var version = 0; version < versionTotal; ++version) {
                         svg.selectAll('.node')
@@ -257,13 +257,19 @@ angular
                     effortScale = 20;
                 }
                 for (var i = 0; i < 3; ++i) {
-                    var grade = Math.round(random() * 100);
-                    if (outliers < 10){
-                        grade = Math.round(random() * 20);
+                    var grade = 0;
+                    for (var k = i; k < $scope.outcomes.length; k += 3) {
+                        var result = _.find($scope.outcomes[k].results, {'user_id': learner.user_id});
+                        if (!result) continue; // no outcome for this learners & assignment
+                        grade += result.score;
                     }
-                    if (outliers < 5){
-                        grade = Math.round(random() * 20 + 80);
-                    }
+                    //var grade = Math.round(random() * 100);
+                    //if (outliers < 10){
+                    //    grade = Math.round(random() * 20);
+                    //}
+                    //if (outliers < 5){
+                    //    grade = Math.round(random() * 20 + 80);
+                    //}
                     var engagement = Math.round(grade / effortScale + random() * 5);
                     var historicalGrade = grade;
                     var historical = [];
@@ -313,13 +319,10 @@ angular
         //    }
         //);
 
-        if ($scope.isStudent) {
-            $scope.course.learners = [];
-            $scope.course.learners.push(ContextService.getCurrentUser());
-            buildRosterUsageData();
+        var transformData = function() {
             var data = [];
-            _.forEach($scope.course.learners, function (learner) {
-                _.forEach(learner.standards, function (standard) {
+            _.forEach($scope.course.learners, function(learner) {
+                _.forEach(learner.standards, function(standard) {
                     data.push({
                         learner: learner,
                         standard: standard.name,
@@ -340,6 +343,14 @@ angular
                     });
                 });
             });
+            return data;
+        };
+
+        if ($scope.isStudent) {
+            $scope.course.learners = [];
+            $scope.course.learners.push(ContextService.getCurrentUser());
+            buildRosterUsageData();
+            var data = transformData();
             console.log(data);
             drawAwesomeness(data);
 
@@ -353,45 +364,25 @@ angular
                         $scope.course.learners = _.sortBy($scope.course.learners, function (learner) {
                             return learner.user_id;
                         });
-                        buildRosterUsageData();
-                        var data = [];
-                        _.forEach($scope.course.learners, function (learner) {
-                            _.forEach(learner.standards, function (standard) {
-                                data.push({
-                                    learner: learner,
-                                    standard: standard.name,
-                                    events: standard.events,
-                                    grade: standard.grade,
-                                    version: 0
-                                });
-                                var i = 1;
-                                _.forEach(standard.historical, function (history) {
-                                    data.push({
-                                        learner: learner,
-                                        standard: standard.name,
-                                        events: history.events,
-                                        grade: history.grade,
-                                        version: i
-                                    });
-                                    i += 1;
-                                });
-                            });
-                        });
-                        console.log(data);
-                        drawAwesomeness(data);
+
+                        OutcomesService
+                            .getOutcomes(options,null)
+                            .then(
+                            function(outcomesData) {
+                                $scope.outcomes = outcomesData;
+                                console.log(outcomesData);
+
+                                buildRosterUsageData();
+                                var data = transformData();
+                                console.log(data);
+                                drawAwesomeness(data);
+                            }
+                        );
                     }
                 }
             );
         }
 		
-		//OutcomesService
-		//.getOutcomes(options,null)
-		//.then(
-		//	function(outcomesData) {
-		//		$scope.outcomes = outcomesData;
-		//	}
-		//);
-		//
 		//DemographicsService
 		//.getDemographics()
 		//.then(
