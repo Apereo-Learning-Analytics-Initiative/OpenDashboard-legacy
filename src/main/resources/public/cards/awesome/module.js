@@ -230,7 +230,24 @@ angular
                     var data = [];
                     _.forEach($scope.course.learners, function(learner) {
                         _.forEach(learner.standards, function(standard) {
-                            data.push({learner: learner, standard: standard.name, events: standard.events, grade:standard.grade, historical: standard.historical})
+                            data.push({
+                                learner: learner,
+                                standard: standard.name,
+                                events: standard.events,
+                                grade: standard.grade,
+                                version: 0
+                            });
+                            var i = 1;
+                            _.forEach(standard.historical, function (history) {
+                                data.push({
+                                    learner: learner,
+                                    standard: standard.name,
+                                    events: history.events,
+                                    grade: history.grade,
+                                    version: i
+                                });
+                                i += 1;
+                            });
                         });
                     });
                     console.log(data);
@@ -342,7 +359,7 @@ angular
 
             // now, we can get down to the data part, and drawing stuff. We are telling D3 that all nodes (g elements with class node) will have data attached to them. The 'key' we use (to let D3 know the uniqueness of items) will be the name. Not usually a great key, but fine for this example.
             var leaner = svg.selectAll("g.node").data(data, function (d) {
-                return [d.learner.person.name_full, d.standard];
+                return [d.learner.person.name_full, d.standard, d.version];
             });
 
             // we 'enter' the data, making the SVG group (to contain a circle and text) with a class node. This corresponds with what we told the data it should be above.
@@ -366,23 +383,38 @@ angular
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html('<div class="tooltipDiv">'+d.learner.person.name_full + "<br>" + d.standard+"</div>")
+                    tooltip.html('<div class="tooltipDiv">'+d.learner.person.name_full + "<br>(" + d.standard+")</div>")
                         .style("left", (d3.event.pageX + 5) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                     var name_full = d.learner.person.name_full;
+                    // hide other learners (only version == 0)
                     svg.selectAll('.node')
+                        .select(function(dd, i) { return (dd.version === 0) ? this : null;})
                         .style("opacity", .05);
-                    svg.selectAll('.node')
-                        .select(function(dd, i) { return (name_full === dd.learner.person.name_full) ? this : null;})
-                        .style("opacity", 1);
+                    // show historical data for this learner
+                    for (var version = 0; version < 30; ++version) {
+                        svg.selectAll('.node')
+                            .select(function(dd, ii) { return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;})
+                            .style("opacity", (40 - version) / 40);
+                    }
                 })
                 .on("mouseout", function(d) {
                     tooltip.transition()
                         .duration(500)
                         .style("opacity", 0);
+                    // show all learners back
                     svg.selectAll('.node')
                         .style("opacity", 1);
+                    // hide historical version
+                    svg.selectAll('.node')
+                        .select(function(dd, i) { return (dd.version !== 0) ? this : null;})
+                        .style("opacity", 0);
                 });
+
+            // hide historical version
+            svg.selectAll('.node')
+                .select(function(dd, i) { return (dd.version !== 0) ? this : null;})
+                .style("opacity", 0);
 
             // now we add some text, so we can see what each item is.
             //leanerGroup.append("text")
