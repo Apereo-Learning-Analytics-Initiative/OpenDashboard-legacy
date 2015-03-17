@@ -153,12 +153,23 @@ angular
         };
 
         var buildRosterUsageData = function(){
+            seed(12345);
             _.forEach($scope.course.learners, function(learner){
                 var standards = [];
+                var grade = Math.round(random() * 100);
+                var engagement = Math.round(grade / 5 + random() * 10);
+                var historicalGrade = grade;
                 for (var i = 0; i < 3; ++i) {
-                    var grade = Math.round(random() * 100);
-                    var engagement = Math.round(grade / 5 + random() * 10);
-                    standards[i] = {events: engagement, grade: grade};
+                    var historical = [];
+                    for (var j = 0; j < 30; ++j){
+                        historicalGrade += Math.round(Math.random() * 20 - 10);
+                        historicalGrade = Math.max(0, Math.min(100, historicalGrade));
+                        var historicalEngagement = Math.round(historicalGrade / 5 + random() * 10);
+
+                        historical[j] = {events: historicalEngagement, grade: historicalGrade};
+                    }
+
+                    standards[i] = {events: engagement, grade: grade, historical: historical};
                 }
                 learner.standards = standards;
 
