@@ -384,8 +384,10 @@ angular
                     // by who makes the chocolate.
                     return color(d.standard);
                 })
+                .select(function (dd, i) {
+                    return (dd.version === 0) ? this : null;
+                })
                 .on("mouseover", function(d) {
-                    //if (d.version !== 0) { return; }
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
@@ -403,13 +405,12 @@ angular
                     for (var version = 0; version < versionTotal; ++version) {
                         svg.selectAll('.node')
                             .select(function (dd, i) {
-                                return (name_full === dd.learner.person.name_full && version == dd.version) ? this : null;
+                                return (name_full === dd.learner.person.name_full && version === dd.version) ? this : null;
                             })
                             .style("opacity", (versionTotal - version) / versionTotal);
                     }
                 })
                 .on("mouseout", function(d) {
-                    //if (d.version !== 0) { return; }
                     tooltip.transition()
                         .duration(500)
                         .style("opacity", 0);
@@ -426,6 +427,10 @@ angular
             svg.selectAll('.node')
                 .select(function(dd, i) { return (dd.version !== 0) ? this : null;})
                 .style("opacity", 0);
+
+            // order elements by z-index, so version == 0 is on top (latest in list)
+            svg.selectAll('.node')
+                .sort(function(a, b) { return b.version - a.version; });
 
             // now we add some text, so we can see what each item is.
             //leanerGroup.append("text")
