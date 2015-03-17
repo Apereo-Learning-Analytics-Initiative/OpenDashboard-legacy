@@ -178,13 +178,13 @@ angular
                     var engagement = Math.round(grade / effortScale + random() * 5);
                     var historicalGrade = grade;
                     var historical = [];
-                    var historicalVelocity = random() - .5;
+                    var historicalVelocity = random() * 2 - 1;
                     for (var j = 0; j < versionTotal; ++j){
                         historicalVelocity += (Math.round(Math.random() * .25 -.125))
-                        historicalVelocity = Math.min(1, Math.max(-1, historicalVelocity));
+                        historicalVelocity = Math.min(2, Math.max(-2, historicalVelocity));
                         historicalGrade += historicalVelocity;
                         historicalGrade = Math.max(0, Math.min(100, historicalGrade));
-                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 5);
+                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 2);
  
                         historical[j] = {events: historicalEngagement, grade: Math.round(historicalGrade)};
                     }
@@ -392,7 +392,7 @@ angular
                         .duration(200)
                         .style("opacity", .9);
                     tooltip.html('<div class="tooltipDiv">' + d.learner.person.name_full + "<br>(" + d.standard + ")</div>")
-                        .style("left", (d3.event.pageX + 5) + "px")
+                        .style("left", (d3.event.pageX + 25) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                     var name_full = d.learner.person.name_full;
                     // hide other learners (only version == 0)
