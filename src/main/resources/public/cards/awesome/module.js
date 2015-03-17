@@ -183,12 +183,12 @@ angular
                         .style("opacity", .9);
                     var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full +
                         "<br><br>Similar (on " + d.standard.name + "):<br><ol>";
-                    _.forEach(getNeighbors(d, true).slice(0, 5), function(n) {
-                        tooltipstr += '<li>' + n.learner.person.name_full + '</li>';
+                    _.forEach(getNeighbors(d, true).slice(0, 7), function(n) {
+                        tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
                     });
                     tooltipstr += "</ol>Similar (overall):<br><ol>";
-                    _.forEach(getNeighbors(d, false).slice(0, 5), function(n) {
-                        tooltipstr += '<li>' + n.learner.person.name_full + '</li>';
+                    _.forEach(getNeighbors(d, false).slice(0, 7), function(n) {
+                        tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
                     });
                     tooltipstr += '</ol></div>';
 
