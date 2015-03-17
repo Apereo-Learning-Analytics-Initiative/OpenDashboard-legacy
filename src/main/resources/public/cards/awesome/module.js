@@ -157,10 +157,11 @@ angular
 
             _.forEach($scope.course.learners, function(learner){
                 var standards = [];
-                var grade = Math.round(random() * 100);
-                var engagement = Math.round(grade / 5 + random() * 10);
-                var historicalGrade = grade;
+
                 for (var i = 0; i < 3; ++i) {
+                    var grade = Math.round(random() * 100);
+                    var engagement = Math.round(grade / 5 + random() * 10);
+                    var historicalGrade = grade;
                     var historical = [];
                     for (var j = 0; j < 30; ++j){
                         historicalGrade += Math.round(Math.random() * 20 - 10);
@@ -215,7 +216,7 @@ angular
                     var data = [];
                     _.forEach($scope.course.learners, function(learner) {
                         _.forEach(learner.standards, function(standard) {
-                            data.push({'learner': learner, standard: standard.name, events: standard.events, grade:standard.grade})
+                            data.push({learner: learner, standard: standard.name, events: standard.events, grade:standard.grade})
                         });
                     });
                     console.log(data);
