@@ -154,19 +154,32 @@ angular
 
         var buildRosterUsageData = function(){
             seed(12345);
-
+            var outliers = 0;
             _.forEach($scope.course.learners, function(learner){
-                var standards = [];
 
+                var standards = [];
+                var effortScale = 5;
+                if (outliers < 10){
+                    effortScale = .75;
+                }
+                if (outliers < 5){
+                    effortScale = 20;
+                }
                 for (var i = 0; i < 3; ++i) {
                     var grade = Math.round(random() * 100);
-                    var engagement = Math.round(grade / 5 + random() * 10);
+                    if (outliers < 10){
+                        grade = Math.round(random() * 20);
+                    }
+                    if (outliers < 5){
+                        grade = Math.round(random() * 20 + 80);
+                    }
+                    var engagement = Math.round(grade / effortScale + random() * 10);
                     var historicalGrade = grade;
                     var historical = [];
                     for (var j = 0; j < 30; ++j){
                         historicalGrade += Math.round(Math.random() * 20 - 10);
                         historicalGrade = Math.max(0, Math.min(100, historicalGrade));
-                        var historicalEngagement = Math.round(historicalGrade / 5 + random() * 10);
+                        var historicalEngagement = Math.round(historicalGrade / effortScale + random() * 10);
 
                         historical[j] = {events: historicalEngagement, grade: historicalGrade};
                     }
@@ -186,6 +199,7 @@ angular
                     standards[i] = {name: standardName, events: engagement, grade: grade, historical: historical};
                 }
                 learner.standards = standards;
+                outliers++;
 
             });
             console.log($scope.course.learners);
