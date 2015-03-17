@@ -154,6 +154,7 @@ angular
 
         var buildRosterUsageData = function(){
             seed(12345);
+
             _.forEach($scope.course.learners, function(learner){
                 var standards = [];
                 var grade = Math.round(random() * 100);
@@ -169,7 +170,19 @@ angular
                         historical[j] = {events: historicalEngagement, grade: historicalGrade};
                     }
 
-                    standards[i] = {events: engagement, grade: grade, historical: historical};
+                    var standardName;
+                    switch (i) {
+                        case 0:
+                            standardName = "Coding Ability";
+                            break;
+                        case 1:
+                            standardName = "Effective Communication";
+                            break;
+                        case 2:
+                            standardName = "Visual Ninja";
+                            break;
+                    }
+                    standards[i] = {name: standardName, events: engagement, grade: grade, historical: historical};
                 }
                 learner.standards = standards;
 
@@ -182,7 +195,7 @@ angular
             .then(
             function (rosterData) {
                 if (rosterData) {
-                    $scope.course.buildRoster(rosterData);
+                    //$scope.course.buildRoster(rosterData);
                     EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
                         .then(handleLRSResponse);
                     LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
@@ -197,6 +210,7 @@ angular
 			function (rosterData) {
 				if (rosterData) {
 					$scope.course.buildRoster(rosterData);
+                    _.sortBy($scope.course.learners,function(learner){  return learner.user_id; });
                     buildRosterUsageData();
 
                 }
