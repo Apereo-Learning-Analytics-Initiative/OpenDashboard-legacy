@@ -181,16 +181,19 @@ angular
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full +
-                        "<br><br>Similar (on " + d.standard.name + "):<br><ol>";
-                    _.forEach(getNeighbors(d, true).slice(0, 7), function(n) {
-                        tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
-                    });
-                    tooltipstr += "</ol>Similar (overall):<br><ol>";
-                    _.forEach(getNeighbors(d, false).slice(0, 7), function(n) {
-                        tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
-                    });
-                    tooltipstr += '</ol></div>';
+                    var tooltipstr = '<div class="tooltipDiv">' + d.learner.person.name_full;
+                    if (!$scope.isStudent) {
+                        tooltipstr += '<br><br>Similar (on ' + d.standard.name + '):<br><ol>';
+                        _.forEach(getNeighbors(d, true).slice(0, 7), function (n) {
+                            tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
+                        });
+                        tooltipstr += '</ol>Similar (overall):<br><ol>';
+                        _.forEach(getNeighbors(d, false).slice(0, 7), function (n) {
+                            tooltipstr += '<li>' + n.learner.person.name_full + ' (' + n.distance.toFixed(2) + ')</li>';
+                        });
+                        tooltipstr += '</ol>';
+                    }
+                    tooltipstr += '</div>';
 
                     tooltip.html(tooltipstr)
                         .style("left", (d3.event.pageX + 25) + "px")
