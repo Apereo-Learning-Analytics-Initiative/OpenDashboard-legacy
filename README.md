@@ -23,7 +23,8 @@ OpenDashboard is a Java application built with Spring Boot (http://docs.spring.i
 * mvn clean package (this produces opendash*.jar in the target folder)
 
 #### Application Properties
-There are two properties files in the application:
+There are three properties files in the application:
+application.properties
 application-mongo.properties
 application-redis.properties
 
@@ -32,10 +33,13 @@ The properties file used by the application is chosen automatically based on the
 Alternatively -Dspring.config.location can be used in the command line to override the packaged properties file.
 
 #### Run (in place for development purposes)
-Depending on whether mongo or redis is used, the active profile will need to be sent in as a command line arg.
-The profile needs to have two command line args, one for unit tests and once for runtime.
+If you want to use mongo or redis is used, the active profile will need to be sent in as a command line arg.
+Otherwise the default profile (inmemory data store) will be used.
+For mongo or redis profile needs to have two command line args, one for unit tests and once for runtime.
 * mvn -Drun.jvmArguments="-Dspring.profiles.active=mongo" -Dspring.profiles.active=mongo clean package spring-boot:run
 * mvn -Drun.jvmArguments="-Dspring.profiles.active=redis" -Dspring.profiles.active=redis clean package spring-boot:run
+Otherwise, for the default use
+* mvn clean package spring-boot:run
 
 #### Deploy
 Depending on whether mongo or redis is used, the active profile will need to be sent in as a command line arg
@@ -43,8 +47,9 @@ Depending on whether mongo or redis is used, the active profile will need to be 
 * java -jar -Dspring.profiles.active=redis target/opendash*.jar
 
 #### Test
-mvn -Dspring.profiles.active=mongo clean test
-mvn -Dspring.profiles.active=redis clean test
+* mvn clean test
+* mvn -Dspring.profiles.active=mongo clean test
+* mvn -Dspring.profiles.active=redis clean test
 
 This starts OpenDashboard on port 8080. Changing the server port (and other properties) can be done on the command line (http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 *************************************************************************************
