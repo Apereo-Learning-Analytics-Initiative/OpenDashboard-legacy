@@ -187,8 +187,8 @@
 		    		headers : { 'Content-Type': 'application/json'}
 		    	})
 		    	.then(function (response) {
-		    		if (response && response.data) {
-			    		return response.data;		    			
+		    		if (response && response.data && response.data.content) {
+			    		return response.data.content;		    			
 		    		}
 		    		
 		    		return null;
@@ -203,8 +203,8 @@
 		    		headers : { 'Content-Type': 'application/json'}
 		    	})
 		    	.then(function (response) {
-		    		if (response && response.data) {
-			    		return response.data;		    			
+		    		if (response && response.data && response.data.content) {
+			    		return response.data.content;		    			
 		    		}
 		    		
 		    		return null;

@@ -47,11 +47,14 @@ angular
 			});
 
 			var eventsGroupByUser = _.groupBy($scope.course.events,function(event){ return event.user_id; });
+		console.log(eventsGroupByUser);
 			_.forEach($scope.course.learners, function (learner) {
 				var learnerEvents = eventsGroupByUser[learner.user_id];
+		console.log(learnerEvents);
 				if (!learnerEvents) {
 					// if no events were found try with email address
 					if (learner.person.contact_email_primary) {
+		console.log(learner.person.contact_email_primary);
 						learnerEvents = eventsGroupByUser[learner.person.contact_email_primary.split('@')[0]];
 					}
 				}

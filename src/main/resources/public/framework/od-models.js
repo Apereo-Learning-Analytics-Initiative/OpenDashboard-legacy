@@ -320,39 +320,53 @@ var Constants = (function(window,undefined) {
 	    };
 	    
 	    this.fromService = function fromXAPI(xapi) {
-	    	this.type = XAPI;
-	    	this.raw = xapi;
-	    	this.timestamp = xapi.timestamp;
-			
-			if (xapi.actor) {
-				var mbox = xapi.actor.mbox;
-				if (mbox) {
-					var uid = mbox;
-					if (S(uid).contains(':')) {
-						uid = uid.split(':')[1];
+	    	
+	    	//console.log(xapi);
+	    	
+	    	if (xapi.eventFormatType) {
+	    	  this.type = xapi.eventFormatType;
+	    	  this.raw = xapi.raw;
+	    	  this.timestamp = xapi.timestamp;
+	    	  this.user_id = xapi.actor;
+	    	  this.object = xapi.object;
+	    	  this.verb = xapi.verb;
+	    	}
+	    	else {
+		    	this.type = XAPI;
+		    	this.raw = xapi;
+		    	this.timestamp = xapi.timestamp;
+				
+				if (xapi.actor) {
+					var mbox = xapi.actor.mbox;
+					if (mbox) {
+						var uid = mbox;
+						if (S(uid).contains(':')) {
+							uid = uid.split(':')[1];
+						}
+						
+						if (S(uid).contains('@')) {
+							uid = uid.split('@')[0];
+						}
+						
+						this.user_id = uid;
 					}
 					
-					if (S(uid).contains('@')) {
-						uid = uid.split('@')[0];
-					}
-					
-					this.user_id = uid;
+					this.name_full = xapi.actor.name;
 				}
 				
-				this.name_full = xapi.actor.name;
-			}
-			
-			if (xapi.verb) {
-				var xapiAction = xapi.verb.id;
-				var lastSlash = xapiAction.lastIndexOf('/');
-				this.action = xapiAction.substr(lastSlash + 1);
-			}
-			
-			if (xapi.object) {
-				var xapiObject = xapi.object.definition.type;
-				var lastSlash = xapiObject.lastIndexOf('/');
-				this.object = xapiObject.substr(lastSlash + 1);
-			}
+				if (xapi.verb) {
+					var xapiAction = xapi.verb.id;
+					var lastSlash = xapiAction.lastIndexOf('/');
+					this.action = xapiAction.substr(lastSlash + 1);
+				}
+				
+				if (xapi.object) {
+					var xapiObject = xapi.object.definition.type;
+					var lastSlash = xapiObject.lastIndexOf('/');
+					this.object = xapiObject.substr(lastSlash + 1);
+				}
+	    	}
+	    		    	
 		};
 
 	};
