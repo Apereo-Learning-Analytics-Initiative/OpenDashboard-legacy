@@ -1,7 +1,7 @@
 <div class="col-xs-12" ng-controller="DemoCardController">
 	<h1>Demo Card</h1>
 	<h2>Roster (Course: {{course.id}})</h2>
-	<h3>Learners</h3>
+	<h3 ng-show="course.learners">Learners</h3>
 	<div class="col-xs-12" ng-repeat="learner in course.learners">
 		<div class="row">
 			<div class="col-xs-6">{{learner.user_id}}</div>
@@ -18,6 +18,18 @@
 	<pre class="col-xs-12">
 		<code>
 {{demographics}}
+		</code>
+	</pre>
+	<h2>Assignments (Course: {{course.id}})</h2>
+	<pre class="col-xs-12">
+		<code>
+{{assignments}}
+		</code>
+	</pre>
+	<h2>Forums (Course: {{course.id}})</h2>
+	<pre class="col-xs-12">
+		<code>
+{{forums}}
 		</code>
 	</pre>
 </div>

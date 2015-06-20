@@ -496,6 +496,6 @@
 			}
 		}
 	});
-
+	
 })(angular, JSON, Math);
 

@@ -14,7 +14,7 @@ angular
 	    ]
     });
  })
- .controller('DemoCardController', function($scope, $log, ContextService, RosterService, OutcomesService, DemographicsService) {
+ .controller('DemoCardController', function($scope, $log, ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService) {
 	
 	$scope.course = ContextService.getCourse();
 	$scope.lti = ContextService.getInbound_LTI_Launch();
@@ -56,13 +56,41 @@ angular
 				$scope.demographics = demographicsData;
 			}
 			
-		);
-		
+		);		
 	}
 	else {
 		$log.error('Card not configured for Roster');
 		$scope.message = 'No supporting roster service available';
 	}
+	
+	var assignmentOptions = {};
+	assignmentOptions.contextMappingId = $scope.contextMapping.id;
+	assignmentOptions.dashboardId = $scope.activeDashboard.id;
+	assignmentOptions.cardId = $scope.card.id;
+	assignmentOptions.courseId = $scope.course.id;
+	
+	AssignmentService
+	.getAssignments(assignmentOptions)
+	.then(
+	    function(assignmentData) {
+	    	$scope.assignments = assignmentData;
+	    }
+	);
+	
+	var forumOptions = {};
+	forumOptions.contextMappingId = $scope.contextMapping.id;
+	forumOptions.dashboardId = $scope.activeDashboard.id;
+	forumOptions.cardId = $scope.card.id;
+	forumOptions.courseId = $scope.course.id;
+	
+	ForumDataService
+	.getForums(forumOptions)
+	.then(
+	    function(forumData) {
+	      $scope.forums = forumData;
+	    }
+	);
+
 });
 
 })(angular);
