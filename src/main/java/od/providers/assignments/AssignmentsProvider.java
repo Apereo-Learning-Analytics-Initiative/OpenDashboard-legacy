@@ -14,5 +14,5 @@ import od.providers.ProviderException;
  *
  */
 public interface AssignmentsProvider {
-	Set<Assignment> getAssignments(String url) throws ProviderException;
+	Set<Assignment> getAssignments(String url, String sessionId) throws ProviderException;
 }
