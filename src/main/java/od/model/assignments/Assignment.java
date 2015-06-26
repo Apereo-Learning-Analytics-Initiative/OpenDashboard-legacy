@@ -10,6 +10,7 @@ public class Assignment extends OpenDashboardModel {
 	private String status;
 	private String id;
 	private String instructions;
+	private String context;
 	
 	public String getTitle() {
 		return title;
@@ -34,5 +35,11 @@ public class Assignment extends OpenDashboardModel {
 	}
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
+	}
+	public String getContext() {
+		return context;
+	}
+	public void setContext(String context) {
+		this.context = context;
 	}
 }
