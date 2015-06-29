@@ -3,11 +3,19 @@
     
     angular
     .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework', 
-                              'angularCharts','od.cards.lti', 'od.cards.openlrs','od.cards.roster', 'od.cards.demo'])
+                              'angularCharts','pascalprecht.translate',
+                              'od.cards.lti', 'od.cards.openlrs','od.cards.roster', 'od.cards.demo'])
     .run(function($http, $log) {
         //TODO
         $log.log(sessionStorage.token);
         $http.defaults.headers.common['X-OD-AUTH'] = sessionStorage.token;
+    })
+    .config(function($translateProvider, $translatePartialLoaderProvider) {
+        $translateProvider.useLoader('$translatePartialLoader', {
+            urlTemplate: '/framework/translations/{lang}/{part}.json'
+          });
+
+        $translateProvider.preferredLanguage('en_us');
     })
     .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
         $routeProvider

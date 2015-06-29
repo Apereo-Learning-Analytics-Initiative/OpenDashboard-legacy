@@ -3,8 +3,11 @@
     
     angular
     .module('OpenDashboard')
-    .controller('WelcomeController', function($log, $scope, $location,
+    .controller('WelcomeController', function($log, $scope, $location, $translate, $translatePartialLoader, 
     											ContextService, ContextMappingService) {    
+    	$translatePartialLoader.addPart('welcome');
+        $translate.refresh();
+
         $scope.isStudent = ContextService.getCurrentUser().isStudent();
         
         $scope.saveContextMapping = function() {

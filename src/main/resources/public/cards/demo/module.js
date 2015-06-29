@@ -14,8 +14,10 @@ angular
 	    ]
     });
  })
- .controller('DemoCardController', function($scope, $log, ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService) {
-	
+ .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
+	 ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService) {
+    $translatePartialLoader.addPart('demo-card');
+    $translate.refresh();
 	$scope.course = ContextService.getCourse();
 	$scope.lti = ContextService.getInbound_LTI_Launch();
 

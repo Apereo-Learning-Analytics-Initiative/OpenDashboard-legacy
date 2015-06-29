@@ -10,7 +10,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('OpenDashboardController', function($log, $scope, $location,contextMapping) {
+    .controller('OpenDashboardController', function($log, $scope, $location, contextMapping) {
         $scope.contextMapping = contextMapping;
         // routing logic
         // TODO move to routes

@@ -1,0 +1,7 @@
+{
+"LABEL_WELCOME": "Welcome to OpenDashboard",
+"TEXT_WELCOME_LEAD": "See your most important data in a glance.",
+"TEXT_WELCOME_INFO": "OpenDashboard is a collection of data views - we call them cards - that give you an overview of the reports and metrics you care about most.",
+"BUTTON_GET_STARTED": "Get Started",
+"TEXT_OD_NOT_CONFIGURED": "OpenDashboard has not yet been configured. Please check back later."
+}
