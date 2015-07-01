@@ -4,22 +4,11 @@
 	angular
 	.module('OpenDashboard')
 	.service('AssignmentService', function($log, $http, OpenDashboard_API) {
-		var strategy = null;
 
 		return {
-			setStrategy : function(strategyToUse) {
-			  strategy = strategyToUse;
-		    },
 			getAssignments: function(options) {
 				
-				$log.debug(options);
-			
-				if (strategy) {
-					return strategy.getAssignments(options);
-				}
-				else {
-					// use default implementation
-					var url = '/api/'+options.contextMappingId+'/db/'+options.dashboardId+'/card/'+options.cardId+'/assignments';
+					var url = '/api/assignments';
 			    	var promise = $http({
 			    		method  : 'POST',
 			    		url		: url,
@@ -30,10 +19,6 @@
 			    		if (response && response.data) {
 			    			var assignments = [];
 			    			angular.forEach(response.data, function(value,key) {
-			    				// TODO
-			                    // var assignment =
-								// OpenDashboard_API.createAssignmentInstance();
-			                    // assignment.fromService(value);
 			                    assignments.push(value);
 			                });
 			    			
@@ -46,8 +31,6 @@
 			    		return null;
 			    	});
 					return promise;
-
-				}				
 			}
 		}
 	});

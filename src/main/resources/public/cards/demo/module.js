@@ -15,7 +15,7 @@ angular
     });
  })
  .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
-	 ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService) {
+	 ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService, CourseDataService) {
     $translatePartialLoader.addPart('demo-card');
     $translate.refresh();
 	$scope.course = ContextService.getCourse();
@@ -23,18 +23,18 @@ angular
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
 		
-		var basicLISData = {};
-		basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
-		basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
 		
 		var options = {};
 		options.contextMappingId = $scope.contextMapping.id;
 		options.dashboardId = $scope.activeDashboard.id;
 		options.cardId = $scope.card.id;
-		options.basicLISData = basicLISData;
+		options.courseId = $scope.course.id;
+		options.strategy = 'BASIC_LIS';
+		options.strategyHost = $scope.lti.ext.ext_ims_lis_memberships_url;
+		options.strategyKey = $scope.lti.ext.ext_ims_lis_memberships_id;
 
 		RosterService
-		.getRoster(options,null) // pass null so the default implementation is used
+		.getRoster(options)
 		.then(
 			function (rosterData) {
 				if (rosterData) {
@@ -42,56 +42,64 @@ angular
 				}
 			}
 		);
-		
-		OutcomesService
-		.getOutcomes(options,null)
-		.then(
-			function(outcomesData) {
-				$scope.outcomes = outcomesData;
-			}
-		);
-		
-		DemographicsService
-		.getDemographics()
-		.then(
-			function (demographicsData) {
-				$scope.demographics = demographicsData;
-			}
-			
-		);		
 	}
 	else {
 		$log.error('Card not configured for Roster');
 		$scope.message = 'No supporting roster service available';
 	}
 	
-	var assignmentOptions = {};
-	assignmentOptions.contextMappingId = $scope.contextMapping.id;
-	assignmentOptions.dashboardId = $scope.activeDashboard.id;
-	assignmentOptions.cardId = $scope.card.id;
-	assignmentOptions.courseId = $scope.course.id;
+	var providerOptions = {};
+	providerOptions.contextMappingId = $scope.contextMapping.id;
+	providerOptions.dashboardId = $scope.activeDashboard.id;
+	providerOptions.cardId = $scope.card.id;
+	providerOptions.courseId = $scope.course.id;
+
+	OutcomesService
+	.getOutcomesForCourse(providerOptions)
+	.then(
+		function(outcomesData) {
+			$scope.outcomes = outcomesData;
+		}
+	);
 	
 	AssignmentService
-	.getAssignments(assignmentOptions)
+	.getAssignments(providerOptions)
 	.then(
 	    function(assignmentData) {
 	    	$scope.assignments = assignmentData;
 	    }
 	);
 	
-	var forumOptions = {};
-	forumOptions.contextMappingId = $scope.contextMapping.id;
-	forumOptions.dashboardId = $scope.activeDashboard.id;
-	forumOptions.cardId = $scope.card.id;
-	forumOptions.courseId = $scope.course.id;
-	
-	ForumDataService
-	.getForums(forumOptions)
+//	var forumOptions = {};
+//	forumOptions.contextMappingId = $scope.contextMapping.id;
+//	forumOptions.dashboardId = $scope.activeDashboard.id;
+//	forumOptions.cardId = $scope.card.id;
+//	forumOptions.courseId = $scope.course.id;
+//	
+//	ForumDataService
+//	.getForums(forumOptions)
+//	.then(
+//	    function(forumData) {
+//	      $scope.forums = forumData;
+//	    }
+//	);
+//	
+	CourseDataService
+	.getContexts(providerOptions)
 	.then(
-	    function(forumData) {
-	      $scope.forums = forumData;
+	    function(contextsData) {
+	      $scope.contexts = contextsData;
 	    }
 	);
+
+	CourseDataService
+	.getContext(providerOptions, providerOptions.courseId)
+	.then(
+	    function(contextData) {
+	      $scope.contextData = contextData;
+	    }
+	);
+
 
 });
 
