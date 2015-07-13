@@ -70,20 +70,21 @@ angular
 	    }
 	);
 	
-//	var forumOptions = {};
-//	forumOptions.contextMappingId = $scope.contextMapping.id;
-//	forumOptions.dashboardId = $scope.activeDashboard.id;
-//	forumOptions.cardId = $scope.card.id;
-//	forumOptions.courseId = $scope.course.id;
-//	
-//	ForumDataService
-//	.getForums(forumOptions)
-//	.then(
-//	    function(forumData) {
-//	      $scope.forums = forumData;
-//	    }
-//	);
-//	
+	ForumDataService
+	.getForums(providerOptions)
+	.then(
+	    function(forumData) {
+	      $scope.forums = forumData;
+	      ForumDataService
+	      .getMessages(providerOptions,$scope.forums[0].topics[0].id)
+	      .then(
+	    	function (messagesData) {
+	    	  $scope.messages = messagesData;
+	    	}
+	      );
+	    }
+	);
+	
 	CourseDataService
 	.getContexts(providerOptions)
 	.then(

@@ -1,30 +1,31 @@
+/**
+ * 
+ */
 package od.forum;
-
-import java.util.List;
 
 import od.model.OpenDashboardModel;
 
-public class Forum extends OpenDashboardModel {
+/**
+ * @author ggilbert
+ *
+ */
+public class Topic extends OpenDashboardModel {
 
   private static final long serialVersionUID = 1L;
-
   private String title;
-  private List<Topic> topics;
-
+  private String count;
+  
   public String getTitle() {
     return title;
   }
-
   public void setTitle(String title) {
     this.title = title;
   }
-
-  public List<Topic> getTopics() {
-    return topics;
+  public String getCount() {
+    return count;
   }
-
-  public void setTopics(List<Topic> topics) {
-    this.topics = topics;
+  public void setCount(String count) {
+    this.count = count;
   }
 
 }
