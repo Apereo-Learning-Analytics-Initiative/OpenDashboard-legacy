@@ -56,11 +56,12 @@
 }
 
 .od-card-box {
-    min-height: 150px;
+    height: 150px;
     text-align: center;
     padding: 5px;
     background-color: #FFFFFF;
     cursor: pointer;
+    margin-top: 5px;
 }
 .od-card-box > img {
     max-height: 50px;

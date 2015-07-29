@@ -3,8 +3,8 @@
     
     angular
     .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework', 
-                              'angularCharts','pascalprecht.translate',
-                              'od.cards.lti', 'od.cards.openlrs','od.cards.roster', 'od.cards.demo'])
+                              'angularCharts', 'ngVis', 'pascalprecht.translate',
+                              'od.cards.lti', 'od.cards.openlrs','od.cards.roster', 'od.cards.demo', 'od.cards.snapp'])
     .run(function($http, $log) {
         //TODO
         $log.log(sessionStorage.token);

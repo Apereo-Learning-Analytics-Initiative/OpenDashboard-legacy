@@ -11,6 +11,7 @@
     <title>OpenDashboard</title>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'></link>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" th:href="@{/css/lib/bootstrap.min.css}"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.css"></link>
     <link rel="stylesheet" th:href="@{/css/od.css}"></link>
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js" th:src="@{/js/lib/lodash.underscore.min.js}"></script>
@@ -39,7 +40,7 @@
     <div class="container-fluid ng-view">
     </div>
     
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js" th:src="@{/js/lib/jquery.min.js}"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js" th:src="@{/js/lib/bootstrap.min.js}"></script>
     <script type="text/javascript" src="http://demos.amitavroy.com/learningci/assets/js/xml2json.js" charset="UTF-8"></script>
 	
@@ -57,6 +58,9 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
     <script th:src="@{/js/lib/angular-dc.min.js}"></script>
     <script th:src="@{/js/lib/angular-charts.min.js}"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.js"></script>
+    <script th:src="@{/js/lib/angular-vis.js}"></script>
     
     <script th:src="@{/framework/od-framework.js}"></script>
     <script th:src="@{/framework/od-app.js}"></script>
@@ -86,5 +90,7 @@
     <script src="../static/cards/roster/module.js" th:src="@{/cards/roster/module.js}"></script>
     <!-- Demo -->
     <script src="../static/cards/demo/module.js" th:src="@{/cards/demo/module.js}"></script>
+    <!-- SNAPP -->
+    <script src="../static/cards/snapp/module.js" th:src="@{/cards/snapp/module.js}"></script>
 </body>
 </html>

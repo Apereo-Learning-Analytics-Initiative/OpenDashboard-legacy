@@ -15,6 +15,7 @@ public class Message extends OpenDashboardModel {
   private String author;
   private String title;
   private String created;
+  private String replyTo;
   
   public String getAuthor() {
     return author;
@@ -33,6 +34,12 @@ public class Message extends OpenDashboardModel {
   }
   public void setCreated(String created) {
     this.created = created;
+  }
+  public String getReplyTo() {
+    return replyTo;
+  }
+  public void setReplyTo(String replyTo) {
+    this.replyTo = replyTo;
   }
 
 }

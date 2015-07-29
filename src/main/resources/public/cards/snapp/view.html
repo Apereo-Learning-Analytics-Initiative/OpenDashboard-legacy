@@ -1,0 +1,21 @@
+<div class="row" ng-controller="SnappCardController">
+
+  <div class="col-xs-12 col-md-6" ng-show="step == '1'">
+    <h3 translate="SNAPP_CARD_FORUMLIST_TITLE"></h3>
+    <p translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
+    <div class="list-group">
+      <a href="#" class="list-group-item" ng-repeat="forum in forums | orderBy:'title'" ng-click="selectForum(forum);">{{forum.title}}</a>
+    </div>
+  </div>
+  <div class="col-xs-12 col-md-6" ng-show="step == '2'">
+    <h3 translate="SNAPP_CARD_TOPICSLIST_TITLE"></h3>
+    <p translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
+    <div class="list-group">
+      <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
+    </div>
+  </div>
+   <div class="col-xs-12" style="height: 600px;">
+    <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
+   </div>
+
+</div>
