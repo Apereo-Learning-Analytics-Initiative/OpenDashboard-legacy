@@ -102,6 +102,12 @@ angular
         	   edge.value = value.length;
         	   edge.title = value.length + ' messages';
         	   edgeData.push(edge);
+               edge.smooth = {
+                                type: "discrete",
+                                forceDirection : "none",
+                                roundness: 0
+                             },
+               edge.length = 300; // one hundred is too small
            });
            
           //console.log(edgeData);
