@@ -57,13 +57,13 @@ angular
 	 .then(
 	     function (messagesData) {
 		  $scope.messages = messagesData;
-//console.log($scope.messages);		  
+//$log.debug($scope.messages);		  
 		  var messagesByAuthor = _.groupBy($scope.messages, function (message) { return message.author;});
 		  
 		  var nodeData = [];
 		  _.forEach(messagesByAuthor, function(value,key){
-//			  console.log(key);
-//			  console.log(value);
+//			  $log.debug(key);
+//			  $log.debug(value);
 			  var data = {};
 			  data.id = key;
 			  data.value = value.length;
@@ -71,7 +71,7 @@ angular
 			  nodeData.push(data);
 		  });
 		  
-//console.log(nodeData);
+//$log.debug(nodeData);
 
 		  $scope.step = '3';
 		   // graph
@@ -86,21 +86,21 @@ angular
 
 			   return message.id + "::" + replyTo;
 		   });
-//console.log(messagesById);
+//$log.debug(messagesById);
            var edgeData = [];
            _.forEach(messagesById, function (value,key) {
-        	   //console.log(value);
-        	   //console.log(key);
+        	   //$log.debug(value);
+        	   //$log.debug(key);
         	   
         	   var ids = key.split("::");
-        	   //console.log(ids[0]);
-        	   //console.log(ids[1]);
+        	   //$log.debug(ids[0]);
+        	   //$log.debug(ids[1]);
         	   
         	   var edge = {};
         	   edge.from = _.result(_.findWhere($scope.messages,{id:ids[0]}), 'author');
         	   edge.to = _.result(_.findWhere($scope.messages,{id:ids[1]}), 'author');
         	   edge.value = value.length;
-        	   edge.title = value.length + ' messages';
+        	   //edge.title = value.length + ' messages';
         	   edgeData.push(edge);
                edge.smooth = {
                                 type: "discrete",
@@ -110,7 +110,7 @@ angular
                edge.length = 300; // one hundred is too small
            });
            
-          //console.log(edgeData);
+          //$log.debug(edgeData);
 		  var edges = new vis.DataSet(edgeData);
 
 		  // create a network
@@ -119,7 +119,19 @@ angular
 		    edges: edges
 		  }; 
 		  
+		  var selectNodeFunction = function(properties) {
+			$log.debug(properties);
+			if (properties && properties.nodes && properties.nodes.length == 1) {
+			  var nodeKey = properties.nodes[0];
+			  // use this to get the list of messages for the user
+			  // eg messagesByAuthor [nodeKey]
+			  // add the nodeKey and messages to $scope
+			}
+		  };
+		  
+		  
 		  $scope.graphEvents = {
+		    selectNode: selectNodeFunction
 		  }; 
 		  
 		  $scope.graphOptions = {

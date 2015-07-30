@@ -14,8 +14,19 @@
       <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
     </div>
   </div>
+  <div class="row">
    <div class="col-xs-12" style="height: 600px;">
     <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
    </div>
+  </div>
+  <div class="row" ng-show="selectedNode">
+   <div class="col-xs-12">
+    {{selectedNode}}
+    <!-- name -->
+    <!-- number of messages -->
+    <!-- maybe number of replies -->
+    <!-- ? -->
+   </div>
+  </div>
 
 </div>
