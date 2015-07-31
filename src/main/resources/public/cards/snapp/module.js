@@ -154,7 +154,7 @@ angular
               $scope.numberMessages = 'messages sent: ' + messageSent[selectedNodeName];
               $scope.numberReplies = 'replies sent: ' + repliesSent[selectedNodeName];
               $scope.intializedThread = 'started thread ' + intializedThread[selectedNodeName];
-
+              $scope.isNodeSelected = '1'
               // note that the visjs event library is not wrapped in angular
               // therefore after every change that is to update the DOM
               // (within the controller) we must "apply" this change to the scope.
@@ -167,6 +167,7 @@ angular
             $scope.numberMessages = null;
             $scope.numberReplies = null;
             $scope.intializedThread = null;
+            $scope.isNodeSelected = '0'
             $scope.$apply();
           }
 		  
