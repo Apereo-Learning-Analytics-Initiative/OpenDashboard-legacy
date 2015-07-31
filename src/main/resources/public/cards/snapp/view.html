@@ -19,13 +19,21 @@
     <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
    </div>
   </div>
-  <div class="row">
+  <div class="row" ng-show="isNodeSelected == '1'">
    <div class="col-xs-12">
-    {{nodeId}} <br />
-    {{numberMessages}} <br />
-    {{numberReplies}} <br />
-    {{intializedThread}}
-   </div>
+      <div class="media">
+        <div class="pull-left">
+            <!-- TODO allow for individual user images-->
+            <!-- icon source: http://sixrevisions.com/freebies/icons/free-icons-1000/ -->
+            <img class="img-thumbnail" alt="64x64" src="../../../img/64x64.png" data-holder-rendered="true" style="width: 64px; height: 64px;">
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading">{{nodeId}}</h4>
+          {{numberMessages}} <br />
+          {{numberReplies}} <br />
+          {{intializedThread}}
+        </div>
+      </div>
   </div>
 
 </div>
