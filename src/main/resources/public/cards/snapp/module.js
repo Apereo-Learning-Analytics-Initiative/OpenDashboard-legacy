@@ -62,8 +62,8 @@ angular
 		  
 		  var nodeData = [];
 		  _.forEach(messagesByAuthor, function(value,key){
-//			  $log.debug(key);
-//			  $log.debug(value);
+			  //$log.debug('label:' + key);
+			  //$log.debug('value: ' + value);
 			  var data = {};
 			  data.id = key;
 			  data.value = value.length;
@@ -89,8 +89,8 @@ angular
 //$log.debug(messagesById);
            var edgeData = [];
            _.forEach(messagesById, function (value,key) {
-        	   //$log.debug(value);
-        	   //$log.debug(key);
+        	  //$log.debug('key:' + key);
+              //$log.debug('value: ' + value);
         	   
         	   var ids = key.split("::");
         	   //$log.debug(ids[0]);
