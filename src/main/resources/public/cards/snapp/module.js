@@ -62,8 +62,8 @@ angular
 		  
 		  var nodeData = [];
 		  _.forEach(messagesByAuthor, function(value,key){
-//			  $log.debug(key);
-//			  $log.debug(value);
+			  //$log.debug('label:' + key);
+			  //$log.debug('value: ' + value);
 			  var data = {};
 			  data.id = key;
 			  data.value = value.length;
@@ -88,9 +88,12 @@ angular
 		   });
 //$log.debug(messagesById);
            var edgeData = [];
+           var messageSent = [];
+           var repliesSent = [];
+           var intializedThread = [];
            _.forEach(messagesById, function (value,key) {
-        	   //$log.debug(value);
-        	   //$log.debug(key);
+        	  //$log.debug('key:' + key);
+              //$log.debug('value: ' + value);
         	   
         	   var ids = key.split("::");
         	   //$log.debug(ids[0]);
@@ -100,16 +103,39 @@ angular
         	   edge.from = _.result(_.findWhere($scope.messages,{id:ids[0]}), 'author');
         	   edge.to = _.result(_.findWhere($scope.messages,{id:ids[1]}), 'author');
         	   edge.value = value.length;
-        	   //edge.title = value.length + ' messages';
-        	   edgeData.push(edge);
                edge.smooth = {
                                 type: "discrete",
                                 forceDirection : "none",
                                 roundness: 0
                              },
                edge.length = 300; // one hundred is too small
+               edgeData.push(edge);
+
+               // determine the number of total number of messages sent 
+               if (isNaN(messageSent[edge.from])){
+                    messageSent[edge.from] = 1;
+               }else{
+                     messageSent[edge.from]++;
+               }
+
+               // if edge to is undefined then will be the initial message for the thread
+               if (!_.isUndefined(edge.to)){
+                   if (isNaN(repliesSent[edge.from])){
+                        repliesSent[edge.from] = 1;
+                   }else{
+                         repliesSent[edge.from]++;
+                   }
+               }else{
+                    // only one will be undefined and will have init the thread
+                   intializedThread[edge.from] = 'true';
+               }
+
+               // will only be undefined if not initialized yet or has been set to true
+               if(_.isUndefined(intializedThread[edge.from])){
+                    intializedThread[edge.from] = 'false';
+               }
            });
-           
+
           //$log.debug(edgeData);
 		  var edges = new vis.DataSet(edgeData);
 
@@ -122,16 +148,32 @@ angular
 		  var selectNodeFunction = function(properties) {
 			$log.debug(properties);
 			if (properties && properties.nodes && properties.nodes.length == 1) {
-			  var nodeKey = properties.nodes[0];
-			  // use this to get the list of messages for the user
-			  // eg messagesByAuthor [nodeKey]
-			  // add the nodeKey and messages to $scope
+			  var selectedNodeName = properties.nodes[0];
+
+              $scope.nodeId = selectedNodeName;
+              $scope.numberMessages = 'messages sent: ' + messageSent[selectedNodeName];
+              $scope.numberReplies = 'replies sent: ' + repliesSent[selectedNodeName];
+              $scope.intializedThread = 'started thread ' + intializedThread[selectedNodeName];
+              $scope.isNodeSelected = '1'
+              // note that the visjs event library is not wrapped in angular
+              // therefore after every change that is to update the DOM
+              // (within the controller) we must "apply" this change to the scope.
+              $scope.$apply();
 			}
 		  };
-		  
+
+          var deselectNodeFunction = function() {
+            $scope.nodeId = null;
+            $scope.numberMessages = null;
+            $scope.numberReplies = null;
+            $scope.intializedThread = null;
+            $scope.isNodeSelected = '0'
+            $scope.$apply();
+          }
 		  
 		  $scope.graphEvents = {
-		    selectNode: selectNodeFunction
+		    selectNode: selectNodeFunction,
+            deselectNode: deselectNodeFunction
 		  }; 
 		  
 		  $scope.graphOptions = {
