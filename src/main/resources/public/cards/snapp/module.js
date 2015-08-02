@@ -149,12 +149,13 @@ angular
 			$log.debug(properties);
 			if (properties && properties.nodes && properties.nodes.length == 1) {
 			  var selectedNodeName = properties.nodes[0];
+			  
+			  var studentNodeView = {};
+			  studentNodeView.nodeId = selectedNodeName;
+			  studentNodeView.numberMessages = messageSent[selectedNodeName];
+			  studentNodeView.numberReplies = repliesSent[selectedNodeName];
 
-              $scope.nodeId = selectedNodeName;
-              $scope.numberMessages = 'messages sent: ' + messageSent[selectedNodeName];
-              $scope.numberReplies = 'replies sent: ' + repliesSent[selectedNodeName];
-              $scope.intializedThread = 'started thread ' + intializedThread[selectedNodeName];
-              $scope.isNodeSelected = '1'
+			  $scope.studentNodeView = studentNodeView;
               // note that the visjs event library is not wrapped in angular
               // therefore after every change that is to update the DOM
               // (within the controller) we must "apply" this change to the scope.
@@ -163,11 +164,7 @@ angular
 		  };
 
           var deselectNodeFunction = function() {
-            $scope.nodeId = null;
-            $scope.numberMessages = null;
-            $scope.numberReplies = null;
-            $scope.intializedThread = null;
-            $scope.isNodeSelected = '0'
+        	$scope.studentNodeView = null;
             $scope.$apply();
           }
 		  

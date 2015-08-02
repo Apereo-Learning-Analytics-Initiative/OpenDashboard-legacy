@@ -1,39 +1,66 @@
 <div class="row" ng-controller="SnappCardController">
-
-  <div class="col-xs-12 col-md-6" ng-show="step == '1'">
-    <h3 translate="SNAPP_CARD_FORUMLIST_TITLE"></h3>
-    <p translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
-    <div class="list-group">
-      <a href="#" class="list-group-item" ng-repeat="forum in forums | orderBy:'title'" ng-click="selectForum(forum);">{{forum.title}}</a>
-    </div>
-  </div>
-  <div class="col-xs-12 col-md-6" ng-show="step == '2'">
-    <h3 translate="SNAPP_CARD_TOPICSLIST_TITLE"></h3>
-    <p translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
-    <div class="list-group">
-      <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
-    </div>
-  </div>
-  <div class="row">
-   <div class="col-xs-12" style="height: 600px;">
-    <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
-   </div>
-  </div>
-  <div class="row" ng-show="isNodeSelected == '1'">
-   <div class="col-xs-12">
-      <div class="media">
-        <div class="pull-left">
-            <!-- TODO allow for individual user images-->
-            <!-- icon source: http://sixrevisions.com/freebies/icons/free-icons-1000/ -->
-            <img class="img-thumbnail" alt="64x64" src="../../../img/64x64.png" data-holder-rendered="true" style="width: 64px; height: 64px;">
-        </div>
-        <div class="media-body">
-          <h4 class="media-heading">{{nodeId}}</h4>
-          {{numberMessages}} <br />
-          {{numberReplies}} <br />
-          {{intializedThread}}
+  <div class="col-xs-12">
+    
+    <!-- Select Forum (step 1) -->
+    <div class="row" ng-show="step == '1'">
+      <div class="col-xs-12 col-md-6">
+         <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title" translate="SNAPP_CARD_FORUMLIST_TITLE"></h3>
+          </div>    
+          <div class="panel-body">
+            <!-- TODO - improve these instructions see snapp-card.json -->
+            <p translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
+            <div class="list-group">
+              <a href="#" class="list-group-item" ng-repeat="forum in forums | orderBy:'title'" ng-click="selectForum(forum);">{{forum.title}}</a>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    
+    <!-- Select Topic (step 2) -->
+    <div class="row" ng-show="step == '2'">
+      <div class="col-xs-12 col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title" translate="SNAPP_CARD_TOPICSLIST_TITLE"></h3>
+          </div>    
+          <div class="panel-body">
+            <!-- TODO - improve these instructions see snapp-card.json -->
+            <p translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
+            <div class="list-group">
+              <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
+             </div>
+          </div>
+        </div>        
+      </div>
+    </div>
+    
+    <!-- Visualization -->
+    <div class="row">
+     <div class="col-xs-12" style="height: 600px;">
+      <!-- TODO add Forum and Topic title -->
+      <!-- Make these links clickable such that clicking the forum returns to step 1 above and topic returns to step 2 -->
+      <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
+     </div>
+    </div>
+    <div class="row" ng-show="studentNodeView">
+     <div class="col-xs-12">
+      <div class="media">
+          <div class="pull-left">
+              <!-- TODO allow for individual user images-->
+              <!-- icon source: http://sixrevisions.com/freebies/icons/free-icons-1000/ -->
+              <img class="media-object" alt="64x64" src="../../../img/64x64.png" data-holder-rendered="true" style="width: 64px; height: 64px;">
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">{{studentNodeView.nodeId}}</h4>
+            <h5>{{studentNodeView.numberMessages}} <span translate="SNAPP_CARD_MESSAGES_SENT"></span></h5>
+            <h5>{{studentNodeView.numberReplies}} <span translate="SNAPP_CARD_REPLIES_SENT"></span></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </div>
-
 </div>
