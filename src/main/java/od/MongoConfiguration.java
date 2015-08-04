@@ -24,14 +24,11 @@ import od.repository.mongo.MultiTenantMongoDbFactory;
  */
 @Profile("mongo")
 @Configuration
-@EnableWebSecurity
 public class MongoConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(MongoConfiguration.class);
     @Autowired 
     private MongoMultiTenantFilter mongoFilter;
 
-    @Autowired
-    MongoTemplate mongoTemplate;
     @Bean
     public FilterRegistrationBean mongoFilterBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -44,17 +41,14 @@ public class MongoConfiguration {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(final Mongo mongo) throws Exception {
-        return new MongoTemplate(mongoDbFactory(mongo));
+    public MongoTemplate mongoTemplate(final Mongo mongo, MultiTenantMongoDbFactory dbFactory) throws Exception {
+        MongoTemplate template = new MongoTemplate(mongoDbFactory(mongo));
+        dbFactory.setMongoTemplate(template);
+        return template;
     }
 
     @Bean
     public MultiTenantMongoDbFactory mongoDbFactory(final Mongo mongo) throws Exception {
         return new MultiTenantMongoDbFactory(mongo, "defaultDatabase");
-    }
-    
-    public void setMongoDatbase(String consumerKey) {
-        logger.debug("Setting Mongo DB to consumerKey:" + consumerKey);
-        MultiTenantMongoDbFactory.setDatabaseNameForCurrentThread(consumerKey);
     }
 }
