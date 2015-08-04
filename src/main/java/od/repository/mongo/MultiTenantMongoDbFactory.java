@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
@@ -27,10 +28,9 @@ public class MultiTenantMongoDbFactory extends SimpleMongoDbFactory {
     private final String defaultName;
     private static final Logger logger = LoggerFactory.getLogger(MultiTenantMongoDbFactory.class);
 
-    private MongoTemplate mongoTemplate;
-
     private static final ThreadLocal<String> dbName = new ThreadLocal<String>();
     private static final HashMap<String, Object> databaseIndexMap = new HashMap<String, Object>();
+    private MongoTemplate mongoTemplate = null;
 
     public MultiTenantMongoDbFactory(final Mongo mongo, final String defaultDatabaseName) {
         super(mongo, defaultDatabaseName);

@@ -30,25 +30,15 @@ import od.MongoConfiguration;
 public class MongoMultiTenantFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantFilter.class);
 
-    @Value("${auth.oauth.key}")
-    private String key;
-    @Value("${auth.oauth.secret}")
-    private String secret;
-
-    @Autowired
-    MongoConfiguration mongoConfig;
-    @Autowired
-    PersonRepository personRepository;
-    
     @Override
     protected void doFilterInternal(HttpServletRequest req,
            HttpServletResponse res, FilterChain fc)
            throws ServletException, IOException {
-
      LaunchRequest launchRequest = new LaunchRequest(req.getParameterMap());
 
      String consumerKey = launchRequest.getOauth_consumer_key();
-     mongoConfig.setMongoDatbase(consumerKey);
+     MultiTenantMongoDbFactory.setDatabaseNameForCurrentThread(consumerKey);
+
 
      fc.doFilter(req, res);
     }
