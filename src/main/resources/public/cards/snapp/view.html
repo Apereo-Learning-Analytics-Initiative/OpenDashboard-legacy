@@ -38,10 +38,16 @@
     </div>
     
     <!-- Visualization -->
-    <div class="row">
-     <div class="col-xs-12" style="height: 600px;">
-      <!-- TODO add Forum and Topic title -->
-      <!-- Make these links clickable such that clicking the forum returns to step 1 above and topic returns to step 2 -->
+    <div class="row" ng-show="step == '3'">
+     <div class="col-xs-12" style="height: 600px;" >
+      <h5>
+      <div class="panel panel-default">
+          <ol class="breadcrumb">
+              <li><a href="#" ng-click="reloadRoute();">{{selectedForum.title}}</a></li>
+              <li><a href="#" ng-click="graphEvents.deselectNodeNoApply(); selectForum(selectedForum);">{{selectedTopic.title}}</a></li>
+          </ol>
+        </div>
+      </h5>
       <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
      </div>
     </div>

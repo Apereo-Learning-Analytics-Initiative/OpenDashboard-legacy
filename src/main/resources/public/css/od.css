@@ -94,3 +94,12 @@
 .p-b-sm {
 	padding-bottom: 5px;
 }
+
+.breadcrumb {
+    background-color: #FFFFFF;
+}
+
+.breadcrumb>li+li:before {
+    color: #CCCCCC;
+    content: "\276F\00a0";
+}

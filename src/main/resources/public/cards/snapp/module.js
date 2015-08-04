@@ -15,7 +15,7 @@ angular
     });
  })
  .controller('SnappCardController', function($scope, $log, _, $translate, $translatePartialLoader,
-	 ContextService, ForumDataService) {
+	$route, ContextService, ForumDataService) {
 	 
    $translatePartialLoader.addPart('snapp-card');
    $translate.refresh();
@@ -44,6 +44,10 @@ angular
          $scope.forums = forumData;
 	   }
     );
+
+    $scope.reloadRoute = function() {
+        $route.reload();
+    };
    
    $scope.selectForum = function(forum) {
 	 $scope.selectedForum = forum;  
@@ -146,7 +150,7 @@ angular
 		  }; 
 		  
 		  var selectNodeFunction = function(properties) {
-			$log.debug(properties);
+			//$log.debug(properties);
 			if (properties && properties.nodes && properties.nodes.length == 1) {
 			  var selectedNodeName = properties.nodes[0];
 			  
@@ -163,16 +167,25 @@ angular
 			}
 		  };
 
+          // Angular will natively call apply when the page changes
+          // as part of the dirty-checking digest mechanism
+          // use when called within module
           var deselectNodeFunction = function() {
-        	$scope.studentNodeView = null;
+            $scope.studentNodeView = null;
             $scope.$apply();
-          }
-		  
-		  $scope.graphEvents = {
-		    selectNode: selectNodeFunction,
-            deselectNode: deselectNodeFunction
-		  }; 
-		  
+          };
+
+          // use when called from view
+          var deselectNodeFunctionNoApply = function() {
+            $scope.studentNodeView = null;
+          };
+
+          $scope.graphEvents = {
+            selectNode: selectNodeFunction,
+            deselectNode: deselectNodeFunction,
+            deselectNodeNoApply: deselectNodeFunctionNoApply
+          };
+
 		  $scope.graphOptions = {
 		    nodes: {
 			  shape: 'dot',
