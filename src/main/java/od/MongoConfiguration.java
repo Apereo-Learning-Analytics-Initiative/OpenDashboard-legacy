@@ -1,7 +1,10 @@
 package od;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+
+import javax.servlet.DispatcherType;
 
 import od.repository.mongo.MongoMultiTenantFilter;
 import od.repository.mongo.MultiTenantMongoDbFactory;
@@ -43,6 +46,7 @@ public class MongoConfiguration {
     urls.add("/cm/*");
     registrationBean.setUrlPatterns(urls);
     registrationBean.setOrder(3);
+    registrationBean.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
     return registrationBean;
   }
 

@@ -14,15 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
 import lti.LaunchRequest;
-import od.exception.MissingHeaderException;
+import od.exception.MissingCookieException;
+import od.utils.AppControllerAdvice;
 
 /**
  * @author jbrown
@@ -63,10 +66,11 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
       }
       else {
             try {
-                throw new MissingHeaderException(cookieName);
-            } catch (MissingHeaderException e) {
-                logger.error(String.format("Header not found: %s", cookieName));
-                e.printStackTrace();
+                throw new MissingCookieException(cookieName);
+            } catch (Exception e) {
+                logger.error(e.getMessage(),e);
+                res.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                return;
             }
       }
     }
