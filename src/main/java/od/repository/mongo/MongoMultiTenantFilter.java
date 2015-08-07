@@ -11,17 +11,21 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lti.LaunchRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
+
+import lti.LaunchRequest;
+import od.exception.MissingCookieException;
+import od.utils.AppControllerAdvice;
 
 /**
  * @author jbrown
@@ -32,14 +36,9 @@ import org.springframework.web.util.WebUtils;
 public class MongoMultiTenantFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantFilter.class);
   
-  @Value("${od.tenantCookieName:OD_T}")
+  @Value("${od.tenantCookieName}")
   private String cookieName;
   
-  //TODO - apply this or something similar so we can disable
-  // the filter when we want to
-  @Value("${od.tenantEnabled:false}")
-  private boolean multiTenantEnabled;
-
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
     logger.debug("applying MongoMultiTenantFilter");
@@ -66,8 +65,13 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
         databaseName = cookie.getValue();
       }
       else {
-        // TODO for now we'll just use the default database name
-        // but at eventually we may want to throw an exception here
+            try {
+                throw new MissingCookieException(cookieName);
+            } catch (Exception e) {
+                logger.error(e.getMessage(),e);
+                res.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                return;
+            }
       }
     }
     

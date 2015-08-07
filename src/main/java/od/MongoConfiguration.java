@@ -1,7 +1,10 @@
 package od;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+
+import javax.servlet.DispatcherType;
 
 import od.repository.mongo.MongoMultiTenantFilter;
 import od.repository.mongo.MultiTenantMongoDbFactory;
@@ -9,6 +12,7 @@ import od.repository.mongo.MultiTenantMongoDbFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,19 +29,24 @@ import com.mongodb.Mongo;
 @Configuration
 public class MongoConfiguration {
   private static final Logger logger = LoggerFactory.getLogger(MongoConfiguration.class);
+
+  @Value("${od.tenantEnabled}")
+  private boolean multiTenantEnabled;
   @Autowired
   private MongoMultiTenantFilter mongoFilter;
 
   @Bean
   public FilterRegistrationBean mongoFilterBean() {
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+    registrationBean.setEnabled(multiTenantEnabled);
     registrationBean.setFilter(mongoFilter);
     List<String> urls = new ArrayList<String>(1);
-    // TODO - we should apply this a little more selectively
-    // no need to apply it to: "/cards/**", "/css/**", "/framework/**", "/img/**", "/js/**"
-    urls.add("/*");
+    urls.add("/");
+    urls.add("/api/*");
+    urls.add("/cm/*");
     registrationBean.setUrlPatterns(urls);
-    registrationBean.setOrder(2);
+    registrationBean.setOrder(3);
+    registrationBean.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
     return registrationBean;
   }
 
