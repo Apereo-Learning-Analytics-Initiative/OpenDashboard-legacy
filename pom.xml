@@ -104,7 +104,8 @@
                 <configuration>
                   <!-- Toggle to Run Tests -->
                   <groups>od.test.groups.ControllerUnitTests,
-                          od.test.groups.ModelUnitTests
+                          od.test.groups.ModelUnitTests,
+                          od.test.groups.MongoUnitTests
                   </groups>
                   <excludedGroups></excludedGroups>
                   <includes>
