@@ -1,13 +1,10 @@
-package od;
+package od.repository.mongo;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.DispatcherType;
-
-import od.repository.mongo.MongoMultiTenantFilter;
-import od.repository.mongo.MultiTenantMongoDbFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,20 +22,31 @@ import com.mongodb.Mongo;
  * @author jbrown
  *
  */
-@Profile("mongo")
+@Profile("mongo-multitenant")
 @Configuration
-public class MongoConfiguration {
-  private static final Logger logger = LoggerFactory.getLogger(MongoConfiguration.class);
+public class MongoMultiTenantConfiguration {
+  private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantConfiguration.class);
+  
+  @Autowired private MongoMultiTenantFilter mongoFilter;
+  
+  @Value("${od.defaultDatabaseName:od_default}")
+  private String dbName;
 
-  @Value("${od.tenantEnabled}")
-  private boolean multiTenantEnabled;
-  @Autowired
-  private MongoMultiTenantFilter mongoFilter;
+  @Bean
+  public MongoTemplate mongoTemplate(final Mongo mongo, MultiTenantMongoDbFactory dbFactory) throws Exception {
+    MongoTemplate template = new MongoTemplate(mongoDbFactory(mongo));
+    dbFactory.setMongoTemplate(template);
+    return template;
+  }
 
+  @Bean
+  public MultiTenantMongoDbFactory mongoDbFactory(final Mongo mongo) throws Exception {
+    return new MultiTenantMongoDbFactory(mongo, dbName);
+  }
+  
   @Bean
   public FilterRegistrationBean mongoFilterBean() {
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-    registrationBean.setEnabled(multiTenantEnabled);
     registrationBean.setFilter(mongoFilter);
     List<String> urls = new ArrayList<String>(1);
     urls.add("/");
@@ -50,15 +58,4 @@ public class MongoConfiguration {
     return registrationBean;
   }
 
-  @Bean
-  public MongoTemplate mongoTemplate(final Mongo mongo, MultiTenantMongoDbFactory dbFactory) throws Exception {
-    MongoTemplate template = new MongoTemplate(mongoDbFactory(mongo));
-    dbFactory.setMongoTemplate(template);
-    return template;
-  }
-
-  @Bean
-  public MultiTenantMongoDbFactory mongoDbFactory(final Mongo mongo) throws Exception {
-    return new MultiTenantMongoDbFactory(mongo, "defaultDatabase");
-  }
 }
