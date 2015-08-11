@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.web.util.CookieGenerator;
 
 import com.mongodb.Mongo;
 
@@ -42,6 +43,11 @@ public class MongoMultiTenantConfiguration {
   @Bean
   public MultiTenantMongoDbFactory mongoDbFactory(final Mongo mongo) throws Exception {
     return new MultiTenantMongoDbFactory(mongo, dbName);
+  }
+  
+  @Bean
+  public CookieGenerator cookieGenerator(){
+    return new CookieGenerator();
   }
   
   @Bean

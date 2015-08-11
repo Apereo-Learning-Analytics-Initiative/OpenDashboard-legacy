@@ -39,9 +39,12 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
   
   @Value("${od.tenantCookieName:OD_T}")
   private String cookieName;
-    
+  
+  @Autowired
+  CookieGenerator cookieGenerator;
+  
   @Override
-  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
+  public void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
     logger.debug("applying MongoMultiTenantFilter");
     
     String databaseName = null;
@@ -52,7 +55,6 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
     if (launchRequest != null && StringUtils.isNotBlank(launchRequest.getOauth_consumer_key())) {
       logger.debug("is LTI launch");
       databaseName = launchRequest.getOauth_consumer_key();
-      CookieGenerator cookieGenerator = new CookieGenerator();
       cookieGenerator.setCookieName(cookieName);
       cookieGenerator.setCookiePath("/");
       cookieGenerator.setCookieMaxAge(86400);

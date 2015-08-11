@@ -12,15 +12,19 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
 import od.exception.MissingCookieException;
@@ -41,42 +45,55 @@ public class MongoMultiTenantFilterTest extends MongoTests{
     @Mock
     FilterChain fc;
     @Mock
-    MultiTenantMongoDbFactory multiTenantMongoDbFactory;
-    @Mock
-    WebUtils webUtils;
+    CookieGenerator cookieGenerator;
     @InjectMocks
     MongoMultiTenantFilter mongoMultiTenantFilter;
+    
+    Exception exception;
     
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        //Populate @Value
         ReflectionTestUtils.setField(mongoMultiTenantFilter, "cookieName", COOKIE_NAME);
     }
-
-    @SuppressWarnings("static-access")
-    @Test
-    public void doInternalFilterWillSetDatabaseNameForCurrentThreadAndCallDoFilterOnLtiLaunch() throws ServletException, IOException, MissingCookieException{
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter("oauth_consumer_key", OATH_CONSUMER_KEY);
-        
-        mongoMultiTenantFilter.doFilterInternal(mockRequest, res, fc);
-        
-        verify(fc, times(1)).doFilter(mockRequest, res);
-        verify(multiTenantMongoDbFactory, times(1)).setDatabaseNameForCurrentThread(OATH_CONSUMER_KEY);
+    
+    // Mockito will fail on a successive test, if the tests are simple
+    // Use the below validation to ensure the failure was due to the correct test
+    @After
+    public void validate() {
+        Mockito.validateMockitoUsage();
     }
 
     @SuppressWarnings("static-access")
     @Test
-    public void doInternalFilterWillSetDatabaseNameForCurrentThreadAndCallDoFilterNotOnLtiLaunch() throws ServletException, IOException, MissingCookieException{
+    public void doInternalFilterWillSetCookieCallDoFilterOnLtiLaunch() throws ServletException, IOException, MissingCookieException{
         MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.setParameter("oauth_consumer_key", OATH_CONSUMER_KEY);
+
+        mongoMultiTenantFilter.doFilterInternal(request, res, fc);
+
+        verify(cookieGenerator, times(1)).setCookieName(COOKIE_NAME);
+        verify(cookieGenerator, times(1)).setCookiePath("/");
+        verify(cookieGenerator, times(1)).setCookieMaxAge(86400);
+        verify(cookieGenerator, times(1)).addCookie(res, Base64.encodeBase64String(OATH_CONSUMER_KEY.getBytes("UTF-8")));
+
+        verify(fc, times(1)).doFilter(request, res);
+    }
+
+    @SuppressWarnings("static-access")
+    @Test
+    public void doInternalFilterWillNotThrowExceptionWhenGivenExpectedCookieNameNotOnLtiLaunch() throws ServletException, IOException, MissingCookieException{
+        MockHttpServletRequest request = new MockHttpServletRequest();
         Cookie testCookie = new Cookie(COOKIE_NAME, OATH_CONSUMER_KEY);
         request.setParameter("oauth_consumer_key", "");
         request.setCookies(testCookie);
-        
-        mongoMultiTenantFilter.doFilter(request, response, fc);
-        verify(multiTenantMongoDbFactory, times(1)).setDatabaseNameForCurrentThread(OATH_CONSUMER_KEY);
+        try{
+            mongoMultiTenantFilter.doFilterInternal(request, res, fc);
+        }catch (Exception ex){
+            exception = ex;
+        }
+        verify(fc, times(1)).doFilter(request, res);
+        assertEquals(null, exception);
     }
 
     @Test(expected = MissingCookieException.class)
@@ -90,7 +107,7 @@ public class MongoMultiTenantFilterTest extends MongoTests{
         //Ensure test object is correct
         assertEquals(WebUtils.getCookie(request, COOKIE_NAME), null);
 
-        mongoMultiTenantFilter.doFilter(request, response, fc);
+        mongoMultiTenantFilter.doFilterInternal(request, response, fc);
     }
 
     @Test(expected = MissingCookieException.class)
@@ -104,6 +121,6 @@ public class MongoMultiTenantFilterTest extends MongoTests{
         //Ensure test object is correct
         assertEquals(WebUtils.getCookie(request, COOKIE_NAME).getValue(), "");
 
-        mongoMultiTenantFilter.doFilter(request, response, fc);
+        mongoMultiTenantFilter.doFilterInternal(request, response, fc);
     }
 }
