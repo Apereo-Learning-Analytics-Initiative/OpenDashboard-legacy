@@ -18,6 +18,7 @@ public class SakaiTopicMessage extends OpenDashboardModel {
   private String messageId;
   private String createdOn;
   private String title;
+  private String replyTo;
   
   public String getAuthoredBy() {
     return authoredBy;
@@ -44,12 +45,19 @@ public class SakaiTopicMessage extends OpenDashboardModel {
     this.title = title;
   }
   
+  public String getReplyTo() {
+    return replyTo;
+  }
+  public void setReplyTo(String replyTo) {
+    this.replyTo = replyTo;
+  }
   public Message toMessage() {
     Message message = new Message();
     message.setId(this.messageId);
     message.setAuthor(this.authoredBy);
     message.setCreated(this.createdOn);
-    message.setId(this.messageId);
+    message.setTitle(this.title);
+    message.setReplyTo(this.replyTo);
     
     return message;
   }

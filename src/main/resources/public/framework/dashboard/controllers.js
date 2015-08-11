@@ -59,5 +59,13 @@
         };
         
     });
+    
+    angular
+    .module('OpenDashboard')
+    .controller('ErrorController', function($log, $scope, $location, $translate, $translatePartialLoader, errorCode) {
+        $translatePartialLoader.addPart('error');
+        $translate.refresh();
+        $scope.errorCode = errorCode;
+    });
 
 })(angular);

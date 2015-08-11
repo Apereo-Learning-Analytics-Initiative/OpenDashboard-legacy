@@ -56,11 +56,12 @@
 }
 
 .od-card-box {
-    min-height: 150px;
+    height: 150px;
     text-align: center;
     padding: 5px;
     background-color: #FFFFFF;
     cursor: pointer;
+    margin-top: 5px;
 }
 .od-card-box > img {
     max-height: 50px;
@@ -92,4 +93,13 @@
 
 .p-b-sm {
 	padding-bottom: 5px;
+}
+
+.spinner {
+	position: fixed; 
+	width: 100%; 
+	height: 100%; 
+	background: black url('/img/spinner.gif') center center no-repeat; 
+	opacity: .5; 
+	z-index: 500;
 }

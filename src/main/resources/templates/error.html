@@ -22,24 +22,10 @@
                 <img class="center-block m-t od-logo" alt="" src="/img/od.png"></img>
             </div>
             <div class="col-xs-10">
-                <h3 class="text-center">Oops!</h3>
-                <h4 class="text-center">Something happened that won't allow you to see your dashboard. Sorry!</h4>
-                <div class="form-group" th:if="${error} != null">
-                    <h4 class="text-center" th:text="'Error Type: ' + ${error}">Bad</h4>
-                </div>
-                <div class="form-group" th:if="${status} != null">
-                    <h4 class="text-center" th:text="'Error Status: ' + ${status}">500</h4>
-                </div>
-                <div class="form-group" th:if="${response} != null">
-                    <div class="form-group" th:if="${response.url} != null">
-                        <h4 class="text-center" th:text="'Error Url: ' + ${response.url}">Error Url</h4>
-                    </div>
-                    <div class="form-group" th:if="${response.errors} != null">
-                        <h4 class="text-center" th:text="'Error: ' + ${response.errors}">Error</h4>
-                    </div>
-                    <div class="form-group" th:if="${response.data} != null">
-                        <h4 class="text-center" style="visibility:hidden;" th:text="'Error Data: ' + ${response.data}">Error Data</h4>
-                    </div>
+                <h3 class="text-center">Hi, sorry about that.</h3>
+                <h4 class="text-center">Something happened that won't allow you to see your dashboard. Some details are below.</h4>
+                <div class="form-group" th:if="${message} != null">
+                    <h4 class="text-center" th:text="#{${message}}">Bad</h4>
                 </div>
             </div>
         </div>

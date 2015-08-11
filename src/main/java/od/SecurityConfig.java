@@ -18,6 +18,7 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,18 +34,44 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	@Autowired private OAuthFilter oAuthFilter;
+  
+  @Autowired
+  private OAuthFilter oAuthFilter;
+  @Autowired
+  private ExceptionFilter exceptionFilter;
 
-	@Bean
-	public FilterRegistrationBean oAuthFilterBean() {
-		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-		registrationBean.setFilter(oAuthFilter);
-		List<String> urls = new ArrayList<String>(1);
-		urls.add("/");
-		registrationBean.setUrlPatterns(urls);
-		registrationBean.setOrder(2);
-		return registrationBean;
-	}
+  /*
+   * Order of precedence
+   * 
+   * 1. exceptionFilter (handles exceptions thrown in downstream filters)
+   * 2. oAuthFilter
+   * 3. mongoFilterBean
+   */
+  
+  @Bean
+  public FilterRegistrationBean exceptionFilterBean() {
+    FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+    registrationBean.setFilter(exceptionFilter);
+    List<String> urls = new ArrayList<String>(1);
+    urls.add("/");
+    urls.add("/api/*");
+    urls.add("/cm/*");
+    registrationBean.setUrlPatterns(urls);
+    registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    return registrationBean;
+  }
+
+  @Bean
+  public FilterRegistrationBean oAuthFilterBean() {
+    FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+    registrationBean.setFilter(oAuthFilter);
+    List<String> urls = new ArrayList<String>(1);
+    urls.add("/");
+    registrationBean.setUrlPatterns(urls);
+    registrationBean.setOrder(2);
+    return registrationBean;
+  }
+
 
     @Order(99)
     @Configuration
