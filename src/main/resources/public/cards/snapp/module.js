@@ -5,7 +5,7 @@ angular
 .module('od.cards.snapp', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
     registryProvider.register('snapp',{
-        title: 'SNAPP Card',
+        title: 'Discussion Forum Visualization',
         description: 'TBD',
         imgUrl: '',
         cardType: 'snapp',
