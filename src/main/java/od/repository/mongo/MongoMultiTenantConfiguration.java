@@ -14,10 +14,13 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.util.CookieGenerator;
 
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 /**
  * @author jbrown
@@ -25,13 +28,28 @@ import com.mongodb.Mongo;
  */
 @Profile("mongo-multitenant")
 @Configuration
-public class MongoMultiTenantConfiguration {
+@EnableMongoRepositories({"od.repository.mongo"})
+public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration{
   private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantConfiguration.class);
   
   @Autowired private MongoMultiTenantFilter mongoFilter;
   
   @Value("${od.defaultDatabaseName:od_default}")
   private String dbName;
+  
+  @Value("${od.mongoHost:localhost}")
+  private String host;
+  
+  @Override
+  @Bean
+  public Mongo mongo() throws Exception {
+      return new MongoClient(host);
+  }
+
+  @Override
+  protected String getDatabaseName() {
+      return dbName;
+  }
 
   @Bean
   public MongoTemplate mongoTemplate(final Mongo mongo, MultiTenantMongoDbFactory dbFactory) throws Exception {
