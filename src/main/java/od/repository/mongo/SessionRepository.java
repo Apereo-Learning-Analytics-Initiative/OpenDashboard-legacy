@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author ggilbert
  *
  */
-@Repository
 @Profile("mongo")
 public interface SessionRepository extends MongoRepository<Session, String>, SessionRepositoryInterface {
 

@@ -33,7 +33,6 @@ import org.springframework.stereotype.Repository;
  * @author ggilbert
  *
  */
-@Repository
 @Profile("redis")
 public class SessionRepository implements SessionRepositoryInterface {
     private static final Logger logger = LoggerFactory.getLogger(SessionRepository.class);
