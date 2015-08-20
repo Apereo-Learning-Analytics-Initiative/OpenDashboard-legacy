@@ -13,12 +13,17 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" th:href="@{/css/lib/bootstrap.min.css}"></link>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.css"></link>
     <link rel="stylesheet" th:href="@{/css/od.css}"></link>
+    <link rel="stylesheet" th:href="@{/css/lib/keen-dashboards.css}"></link>
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js" th:src="@{/js/lib/lodash.underscore.min.js}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" th:src="@{/js/lib/string.min.js}" charset="UTF-8"></script>
-
     <script th:src="@{/framework/od-api-module.js}"></script>    
     <script th:src="@{/framework/od-models.js}"></script>
+    <script th:src="@{/js/lib/holder.js}"></script>
+    <script th:inline="javascript">
+      Holder.add_theme("blue", { background:"#fff", foreground:"#a7a7a7", size:10 });
+    </script>
+    <script th:src="@{/js/lib/keen.min.js}"></script>
     <script th:inline="javascript">
     /*<![CDATA[*/
         var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/ null;
