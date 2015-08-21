@@ -95,6 +95,18 @@
 	padding-bottom: 5px;
 }
 
+.chart-stage {
+    text-align: center;
+}
+
+.glyphicon-dashboard {
+    font-size: 175px;
+}
+
+.chart-notes {
+    height: 45px;
+}
+
 .spinner {
 	position: fixed; 
 	width: 100%; 

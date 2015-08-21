@@ -13,9 +13,8 @@
                             <div class="chart-wrapper" ng-click="addCard(card.cardType)">
                                 <div class="chart-title">{{card.title}}</div>
                                 <div class="chart-stage">
-                                    <!-- TODO Need to add an image placeholder holder.js doesn't seem to be working-->
-                                    <div ng-if="(card.imgUrl == '')"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></div>
-                                    <img ng-if="(card.imgUrl !== '')" ng-src="{{card.imgUrl}}" class="img-responsive">
+                                    <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
+                                </div>
                                  <div class="chart-notes">{{card.description}}</div>
                             </div>
                         </div>
