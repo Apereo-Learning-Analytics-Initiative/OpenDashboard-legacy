@@ -6,6 +6,7 @@ package od.roster;
 import java.util.Set;
 
 import od.providers.ProviderOptions;
+import od.providers.roster.RosterProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

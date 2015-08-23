@@ -29,7 +29,7 @@ import com.mongodb.MongoClient;
 @Profile("mongo-multitenant")
 @Configuration
 @EnableMongoRepositories({"od.repository.mongo"})
-public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration{
+public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration {
   private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantConfiguration.class);
   
   @Autowired private MongoMultiTenantFilter mongoFilter;

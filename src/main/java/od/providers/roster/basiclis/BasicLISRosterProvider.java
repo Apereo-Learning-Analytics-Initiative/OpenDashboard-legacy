@@ -1,27 +1,33 @@
 /**
  * 
  */
-package od.roster.basiclis;
+package od.providers.roster.basiclis;
 
 import java.io.ByteArrayInputStream;
 import java.security.ProviderException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
 import od.providers.ProviderOptions;
+import od.providers.config.DefaultProviderConfiguration;
+import od.providers.config.KeyValueProviderConfigurationOption;
+import od.providers.config.ProviderConfiguration;
+import od.providers.config.ProviderConfigurationOption;
+import od.providers.roster.RosterProvider;
 import od.roster.Member;
 import od.roster.Person;
-import od.roster.RosterProvider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -58,12 +64,43 @@ public class BasicLISRosterProvider implements RosterProvider {
   // tag names for the xml data
   static final String[] rosterDetailInfo = { PERSON_CONTACT_EMAIL_PRIMARY, ROLE, ROLES, LIS_RESULT_SOURCEDID, PERSON_NAME_FAMILY, PERSON_NAME_FULL,
       PERSON_NAME_GIVEN, PERSON_SOURCEDID, USER_ID, USER_IMAGE };
-
+  
+  private static final String KEY = "roster_basiclis";
+  private static final String NAME = "Basic LIS Roster";
+  private ProviderConfiguration providerConfiguration;
+  
   private RestTemplate restTemplate = new RestTemplate();
   @Value("${auth.oauth.key}")
   private String key;
   @Value("${auth.oauth.secret}")
   private String secret;
+  
+  @PostConstruct
+  public void init() {
+    ProviderConfigurationOption key = new KeyValueProviderConfigurationOption("OAuth Consumer Key", null, ProviderConfigurationOption.TEXT_TYPE, true);
+    ProviderConfigurationOption secret = new KeyValueProviderConfigurationOption("Secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true);
+    
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    options.add(key);
+    options.add(secret);
+    
+    providerConfiguration = new DefaultProviderConfiguration(options);
+  }
+
+  @Override
+  public String getKey() {
+    return KEY;
+  }
+
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public ProviderConfiguration getProviderConfiguration() {
+    return providerConfiguration;
+  }
 
   @Override
   public Set<Member> getRoster(ProviderOptions options) {
@@ -144,5 +181,4 @@ public class BasicLISRosterProvider implements RosterProvider {
 
     return memberSet;
   }
-
 }
