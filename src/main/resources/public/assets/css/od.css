@@ -1,0 +1,117 @@
+.od {
+    width: 100%;
+    height: auto;
+}
+
+.od-img-thumb {
+    max-height: 50px;
+}
+
+.od-logo {
+    max-width:100px;
+    margin-bottom: 40px;
+}
+
+.od-left {
+    height: 100%;
+    min-height: 480px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.od-left-nav {
+}
+
+.od-left-nav-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.od-left-nav-item.active {
+    background-color: #F0F0F0;
+}
+
+
+.od-left-nav-item a,
+.od-left-nav-item a:HOVER {
+    padding-left: 10px;
+    text-decoration: none;
+    font-weight:bold;
+    color: #000000;
+}
+
+.od-content {
+    height: 100%;
+    min-height: 800px;
+    background-color: #F0F0F0;
+}
+
+.od-card {
+    background-color: #FFFFFF;
+}
+
+.od-card-add {
+    background-color: #FFFFFF;
+    padding: 10px;
+}
+
+.od-card-box {
+    height: 150px;
+    text-align: center;
+    padding: 5px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    margin-top: 5px;
+}
+.od-card-box > img {
+    max-height: 50px;
+}
+/* MARGINS */
+
+.m-t {
+    margin-top: 10px;
+}
+
+.m-r-l {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+/* PADDING */
+
+.p-t {
+	padding-top: 10px;
+}
+
+.p-b {
+	padding-bottom: 10px;
+}
+
+.p-t-sm {
+	padding-top: 5px;
+}
+
+.p-b-sm {
+	padding-bottom: 5px;
+}
+
+.chart-stage {
+    text-align: center;
+}
+
+.glyphicon-dashboard {
+    font-size: 175px;
+}
+
+.chart-notes {
+    height: 45px;
+}
+
+.spinner {
+	position: fixed; 
+	width: 100%; 
+	height: 100%; 
+	background: black url('/assets/img/spinner.gif') center center no-repeat; 
+	opacity: .5; 
+	z-index: 500;
+}
