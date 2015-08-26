@@ -1,52 +1,66 @@
-<div class="col-xs-12" ng-controller="DemoCardController">
-	<h1 translate="DEMO_CARD_TITLE"></h1>
-    <h1>Available data for Course: {{course.id}}</h1>
-	<h2>Roster</h2>
-	<pre class="col-xs-12">
-		<code>
-{{course.learners}}
-		</code>
-	</pre>
-	<h2>Outcomes</h2>
-	<pre class="col-xs-12">
-		<code>
-{{outcomes}}
-		</code>
-	</pre>
-	<h2>Assignments</h2>
-	<pre class="col-xs-12">
-		<code>
-{{assignments}}
-		</code>
-	</pre>
-	<h2>Forums</h2>
-	<pre class="col-xs-12">
-		<code>
-{{forums}}
-		</code>
-	</pre>
-	<h2>Forum Messages (1st forum, 1st topic)</h2>
-	<pre class="col-xs-12">
-		<code>
-{{messages}}
-		</code>
-	</pre>
-	<h2>All Courses</h2>
-	<pre class="col-xs-12">
-		<code>
-{{contexts}}
-		</code>
-	</pre>
-	<h2>Just this Courses</h2>
-	<pre class="col-xs-12">
-		<code>
-{{contextData}}
-		</code>
-	</pre>
-  <h2>LTI Context</h2>
-  <pre class="col-xs-12">
-    <code>
-{{course}}
-    </code>
-  </pre>
+<div class="container-fluid" ng-controller="DemoCardController">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Roster</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{course.learners}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Outcomes</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{outcomes}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Assignments</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{assignments}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Forums</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{forums}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Forum Messages (1st forum, 1st topic)</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{messages}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">All Courses</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{contexts}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">Just this Course</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{contextData}}</code></pre></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="chart-wrapper">
+                <div class="chart-title">LTI Context</div>
+                <div class="chart-stage"><pre class="col-xs-12"><code>{{course}}</code></pre></div>
+            </div>
+        </div>
+    </div>
 </div>

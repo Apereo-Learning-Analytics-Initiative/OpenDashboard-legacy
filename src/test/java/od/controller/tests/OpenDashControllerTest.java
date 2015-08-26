@@ -68,7 +68,7 @@ public class OpenDashControllerTest extends ControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testObjectMapper.writeValueAsString(launchRequest)))
                         .andExpect(status().isOk())
-                        .andExpect(view().name("od"))
+                        .andExpect(view().name("index"))
                         .andExpect(model().size(2))
                         .andExpect(model().attributeExists("inbound_lti_launch_request", "token"));
     }
@@ -99,7 +99,7 @@ public class OpenDashControllerTest extends ControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testObjectMapper.writeValueAsString(launchRequest)))
                         .andExpect(status().isOk())
-                        .andExpect(view().name("od"))
+                        .andExpect(view().name("index"))
                         .andExpect(model().size(0));
     }
 

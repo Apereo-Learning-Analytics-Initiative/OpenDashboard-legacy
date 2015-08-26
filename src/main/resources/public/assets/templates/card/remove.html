@@ -1,0 +1,28 @@
+<div class="row">            
+    <div class="col-xs-10 col-lg-11 od-content">
+    
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <h1>Remove card</h1>
+                <p class="lead">
+                    Are you sure you want to remove this card?
+                </p>
+                <div class="media od-card-add">
+                      <a class="pull-left" href="#">
+                        <img class="media-object od-img-thumb" ng-src="{{card.imgUrl}}" alt="...">
+                      </a>
+                      <div class="media-body">
+                        <h4 class="media-heading">{{card.title}}</h4>
+                        {{card.description}}
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-t">
+            <div class="col-xs-12 col-md-6">
+                <button class="btn btn-primary" ng-click="removeCard()">Remove Card</button>
+                  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
