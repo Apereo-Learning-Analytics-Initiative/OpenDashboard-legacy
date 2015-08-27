@@ -79,13 +79,13 @@ public class OpenDashController {
     // context through this attribute
     request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-    return "od";
+    return "index";
   }
 
   @Secured({ "ROLE_INSTRUCTOR", "ROLE_STUDENT" })
-  @RequestMapping(value = { "/", "/cm/**" }, method = RequestMethod.GET)
+  @RequestMapping(value = { "/", "/cm/**", "/welcome" }, method = RequestMethod.GET)
   public String routes(Model model) {
-    return "od";
+    return "index";
   }
 
   public boolean hasInstructorRole(List<String> instructorRoles, String roles) {

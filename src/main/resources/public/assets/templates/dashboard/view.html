@@ -1,0 +1,16 @@
+<div ng-show="activeDashboard && activeDashboard.cards && activeDashboard.cards.length > 0">
+    <div class="row" ng-repeat="card in activeDashboard.cards">
+        <div class="col-xs-12" >
+            <div class="chart-wrapper">
+                <div class="chart-title">
+                  {{card.title}}
+                  <small class="pull-right"><a ui-sref="index.removeCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})">Remove</a></small>
+                  <small class="pull-right"><a ui-sref="index.editCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})" class="pull-left" style="margin-right: 10px;">Edit</a></small>
+                </div>
+                <div class="chart-stage">
+                  <div ng-include="'/cards/'+card.cardType+'/view.html'"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

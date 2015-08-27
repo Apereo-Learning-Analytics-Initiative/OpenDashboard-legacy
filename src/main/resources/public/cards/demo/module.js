@@ -7,7 +7,6 @@ angular
     registryProvider.register('demo',{
         title: 'Demo Card',
         description: 'This card demonstrates how to retrieve data from various sources.',
-        imgUrl: '',
         cardType: 'demo',
         styleClasses: 'od-card col-xs-12',
 	    config: [
@@ -15,7 +14,7 @@ angular
     });
  })
  .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
-	 ContextService, RosterService, OutcomesService, DemographicsService, AssignmentService, ForumDataService, CourseDataService) {
+	 ContextService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
     $translatePartialLoader.addPart('demo-card');
     $translate.refresh();
 	$scope.course = ContextService.getCourse();
