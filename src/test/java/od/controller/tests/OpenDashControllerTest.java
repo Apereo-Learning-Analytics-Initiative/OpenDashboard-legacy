@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import lti.LaunchRequest;
-import od.controllers.OpenDashController;
+import od.OpenDashController;
 import od.repository.SessionRepositoryInterface;
 import od.utils.Response;
 
@@ -33,7 +33,7 @@ public class OpenDashControllerTest extends ControllerTests {
     @Mock
     private SessionRepositoryInterface sessionRepository;
     @Mock
-    private od.model.Session openDashSession;
+    private od.framework.model.Session openDashSession;
     @Mock
     private AuthenticationManager authenticationManager;
 
@@ -59,7 +59,7 @@ public class OpenDashControllerTest extends ControllerTests {
     @Test
     public void doesLtiReturnProperModelAndViewWhenGivenValidInput() throws Exception {
         LaunchRequest launchRequest = this.createLaunchRequest();
-        given(sessionRepository.save((od.model.Session)anyObject())).willReturn(openDashSession);
+        given(sessionRepository.save((od.framework.model.Session)anyObject())).willReturn(openDashSession);
         given(openDashSession.getId()).willReturn("sessionId");
 
         mockMvc.perform(post("/")

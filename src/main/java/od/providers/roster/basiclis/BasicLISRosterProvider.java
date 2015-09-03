@@ -26,10 +26,10 @@ import od.providers.config.KeyValueProviderConfigurationOption;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.roster.RosterProvider;
-import od.roster.Member;
-import od.roster.Person;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.lai.Member;
+import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +46,7 @@ import org.w3c.dom.NodeList;
  * @author ggilbert
  *
  */
-@Component
+@Component("roster_basiclis")
 public class BasicLISRosterProvider implements RosterProvider {
 
   private static final Logger log = LoggerFactory.getLogger(BasicLISRosterProvider.class);
@@ -163,7 +163,7 @@ public class BasicLISRosterProvider implements RosterProvider {
             member.setRoles(nestedMap.get(ROLES));
             member.setUser_id(nestedMap.get(USER_ID));
             member.setUser_image(nestedMap.get(USER_IMAGE));
-            Person person = new Person();
+            PersonImpl person = new PersonImpl();
             person.setContact_email_primary(nestedMap.get(PERSON_CONTACT_EMAIL_PRIMARY));
             person.setName_family(nestedMap.get(PERSON_NAME_FAMILY));
             person.setName_full(nestedMap.get(PERSON_NAME_FULL));

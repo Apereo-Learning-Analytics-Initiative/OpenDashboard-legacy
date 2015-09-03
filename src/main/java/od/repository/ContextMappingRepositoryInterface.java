@@ -1,6 +1,6 @@
 package od.repository;
 
-import od.model.ContextMapping;
+import od.framework.model.ContextMapping;
 
 public interface ContextMappingRepositoryInterface {
     ContextMapping findOne(final String key);

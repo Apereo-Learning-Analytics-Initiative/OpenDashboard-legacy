@@ -28,7 +28,7 @@
 }
 
 .od-left-nav-item.active {
-    background-color: #F0F0F0;
+    background-color: #FFF;
 }
 
 
@@ -43,7 +43,7 @@
 .od-content {
     height: 100%;
     min-height: 800px;
-    background-color: #F0F0F0;
+    background-color: #FFF;
 }
 
 .od-card {
@@ -72,6 +72,10 @@
     margin-top: 10px;
 }
 
+.m-b {
+  margin-bottom: 10px;
+}
+
 .m-r-l {
     margin-right: 10px;
     margin-left: 10px;
@@ -93,18 +97,6 @@
 
 .p-b-sm {
 	padding-bottom: 5px;
-}
-
-.chart-stage {
-    text-align: center;
-}
-
-.glyphicon-dashboard {
-    font-size: 175px;
-}
-
-.chart-notes {
-    height: 45px;
 }
 
 .spinner {

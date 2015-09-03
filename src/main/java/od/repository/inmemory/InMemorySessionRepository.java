@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import od.model.Session;
+import od.framework.model.Session;
 import od.repository.SessionRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;

@@ -1,6 +1,6 @@
 package od.repository;
 
-import od.model.Session;
+import od.framework.model.Session;
 
 
 public interface SessionRepositoryInterface {

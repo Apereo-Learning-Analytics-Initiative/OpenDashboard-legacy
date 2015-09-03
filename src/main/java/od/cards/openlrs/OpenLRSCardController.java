@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import od.cards.InvalidCardConfigurationException;
-import od.model.Card;
-import od.model.ContextMapping;
+import od.exception.InvalidCardConfigurationException;
+import od.framework.model.Card;
+import od.framework.model.ContextMapping;
 import od.repository.ContextMappingRepositoryInterface;
 
 import org.apache.commons.codec.binary.Base64;

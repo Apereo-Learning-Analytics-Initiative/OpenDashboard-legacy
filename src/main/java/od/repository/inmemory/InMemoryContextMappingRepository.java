@@ -6,11 +6,11 @@ package od.repository.inmemory;
 import java.util.HashMap;
 import java.util.Map;
 
+import od.framework.model.ContextMapping;
+import od.repository.ContextMappingRepositoryInterface;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import od.model.ContextMapping;
-import od.repository.ContextMappingRepositoryInterface;
 
 /**
  * @author ggilbert

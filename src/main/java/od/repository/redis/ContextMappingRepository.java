@@ -7,8 +7,8 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import od.model.ContextMapping;
-import od.model.Dashboard;
+import od.framework.model.ContextMapping;
+import od.framework.model.Dashboard;
 import od.repository.ContextMappingRepositoryInterface;
 import od.repository.redis.model.RedisContextMapping;
 import od.repository.redis.utils.KeyUtils;

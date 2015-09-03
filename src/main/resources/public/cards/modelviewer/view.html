@@ -1,0 +1,35 @@
+<div class="col-xs-12" ng-controller="ModelViewerCardController">
+  <div class="chart-wrapper">
+    <div class="chart-title">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 p-t p-b">
+          <h4 class="text-center"
+            ng-show="!modeloutput || modeloutput.length == 0">No model output
+            available for {{course.title}}</h4>
+          <h4 ng-show="modeloutput">Model output for {{course.title}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="chart-stage">
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Learner</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                ng-repeat="row in modeloutput">
+                <td>{{row.student_id}}</td>
+                <td>{{row.risk_score}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

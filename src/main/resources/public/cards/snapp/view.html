@@ -1,57 +1,63 @@
 <div class="row" ng-controller="SnappCardController">
-  <div class="col-xs-12">
-    
-    <!-- Select Forum (step 1) -->
-    <div class="row" ng-show="step == '1'">
-      <div class="col-xs-12 col-md-6">
-         <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" translate="SNAPP_CARD_FORUMLIST_TITLE"></h3>
-          </div>    
-          <div class="panel-body">
-            <!-- TODO - improve these instructions see snapp-card.json -->
-            <p translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
-            <div class="list-group">
-              <a href="#" class="list-group-item" ng-repeat="forum in forums | orderBy:'title'" ng-click="selectForum(forum);">{{forum.title}}</a>
-            </div>
-          </div>
-        </div>
+  <div class="col-xs-12 col-md-4" ng-show="!selectedForum.title || !selectedTopic.title">
+   <div class="chart-wrapper">
+    <div class="chart-title" translate="SNAPP_CARD_CONFIGURATION"></div>
+    <div class="chart-stage">
+    <div class="list-group">
+      <a href="#" class="list-group-item" ng-class="{'active':step == '1', 'list-group-item-success':selectedForum.title}">
+        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP1">Step 1</h4>
+        <p class="list-group-item-text" translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
+      </a>
+      <a href="#" class="list-group-item" ng-class="{'active':step == '2', 'list-group-item-success':selectedTopic.title}">
+        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP2">Step 2</h4>
+        <p class="list-group-item-text" translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
+      </a>
+    </div> 
+    </div>
+    </div> 
+  </div>
+  <div class="col-xs-12 col-md-8">
+   <div class="chart-wrapper" ng-show="step == '1'">
+    <div class="chart-title" translate="SNAPP_CARD_FORUMLIST_TITLE"></div>
+    <div class="chart-stage">
+      <div class="list-group">
+        <a href="#" class="list-group-item" ng-repeat="forum in forums | orderBy:'title'" ng-click="selectForum(forum);">{{forum.title}}</a>
       </div>
     </div>
-    
-    <!-- Select Topic (step 2) -->
-    <div class="row" ng-show="step == '2'">
-      <div class="col-xs-12 col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title" translate="SNAPP_CARD_TOPICSLIST_TITLE"></h3>
-          </div>    
-          <div class="panel-body">
-            <!-- TODO - improve these instructions see snapp-card.json -->
-            <p translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
-            <div class="list-group">
-              <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
-             </div>
-          </div>
-        </div>        
+   </div>
+    <div class="chart-wrapper" ng-show="step == '2'">
+      <div class="chart-title" translate="SNAPP_CARD_TOPICSLIST_TITLE"></div>
+      <div class="chart-stage">
+        <div class="list-group">
+          <a href="#" class="list-group-item" ng-repeat="topic in selectedForum.topics | orderBy:'title'" ng-click="selectTopic(topic);">{{topic.title}}</a>
+         </div>
       </div>
-    </div>
-    
+    </div>        
+  </div>
+
+  <div class="col-xs-12" ng-show="selectedForum.title && selectedTopic.title">    
     <!-- Visualization -->
     <div class="row">
-     <div class="col-xs-12" style="height: 600px;">
-      <!-- TODO add Forum and Topic title -->
-      <!-- Make these links clickable such that clicking the forum returns to step 1 above and topic returns to step 2 -->
-      <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
+     <div class="col-xs-12 col-md-8" >
+      <div class="chart-wrapper">
+        <div class="chart-stage" style="height: 600px;">
+          <ol class="breadcrumb">
+            <li><a href="#" ng-click="forum();">{{selectedForum.title}}</a></li>
+            <li><a href="#" ng-click="topic();">{{selectedTopic.title}}</a></li>
+          </ol>
+          <vis-network data="graphData" options="graphOptions" events="graphEvents"></vis-network>
+        </div>
+      </div>
      </div>
-    </div>
-    <div class="row" ng-show="studentNodeView">
-     <div class="col-xs-12">
+     <div class="col-xs-12 col-md-4" ng-show="studentNodeView">
+     <div class="chart-wrapper">
+      <div class="chart-title" translate="SNAPP_CARD_SELECTED_NODE"></div>
+      <div class="chart-stage m-t">
       <div class="media">
           <div class="pull-left">
               <!-- TODO allow for individual user images-->
               <!-- icon source: http://sixrevisions.com/freebies/icons/free-icons-1000/ -->
-              <img class="media-object" alt="64x64" src="../../../img/64x64.png" data-holder-rendered="true" style="width: 64px; height: 64px;">
+              <img class="media-object" alt="64x64" src="/assets/img/64x64.png" data-holder-rendered="true" style="width: 64px; height: 64px;">
           </div>
           <div class="media-body">
             <h4 class="media-heading">{{studentNodeView.nodeId}}</h4>
@@ -59,6 +65,8 @@
             <h5>{{studentNodeView.numberReplies}} <span translate="SNAPP_CARD_REPLIES_SENT"></span></h5>
           </div>
         </div>
+      </div>
+     </div>
       </div>
     </div>
     

@@ -1,41 +1,38 @@
 <div class="row">            
-    <div class="col-xs-10 col-lg-11 od-content">
-    
-        <div class="row">
-            <div class="col-xs-12 col-md-6">
-                <h1>Add card</h1>
-                <p class="lead">
-                    Configure the card and add it to your dashboard.
-                </p>
-                <div class="media od-card-add">
-                      <a class="pull-left" href="#">
-                        <img class="media-object od-img-thumb" ng-src="{{card.imgUrl}}">
-                      </a>
-                      <div class="media-body">
-                        <h4 class="media-heading">{{card.title}}</h4>
-                        {{card.description}}
-                      </div>
-                </div>
+    <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+          <h3>Add card</h3>
+          <h5>Configure the card and add it to your dashboard.</h5>
+        </div>
+        <div class="chart-stage">
+          <div class="row m-t">
+              <div class="col-xs-12">
+                  <div class="media">
+                    <div class="media-body">
+                      <h4 class="media-heading">{{card.title}}</h4>
+                      {{card.description}}
+                    </div>
+                  </div>
+              </div>
+          </div>
+        <div class="row m-t">
+            <div class="col-xs-12 ">
+              <form name="cardForm" class="m-t od-card-add" novalidate="novalidate">
+                <div class="form-group" ng-repeat="c in card.config">
+                  <label for="{{c.field}}">{{c.fieldName}}</label>
+                  <div>
+                      <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
+                  </div>
+                </div>		                  
+              </form>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-8">
-            	<div class="row ">
-            		<div class="col-xs-12">
-		                <form name="cardForm" class="m-t od-card-add" novalidate="novalidate">
-		                  <div class="form-group" ng-repeat="c in card.config">
-		                    <label for="{{c.field}}">{{c.fieldName}}</label>
-		                    <div>
-		                        <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
-		                    </div>
-		                  </div>
-		                  
-		                  <button class="btn btn-primary" ng-click="addCard()">Add Card</button>
-		                  <button class="btn btn-link" ng-click="cancel()">Cancel</button>
-		                </form>
-            		</div>
-            	</div>
-            </div>
         </div>
+        <div class="chart-notes">
+          <button class="btn btn-primary" ng-click="addCard()">Add Card</button>
+          <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+        </div>
+      </div>        
     </div>
 </div>

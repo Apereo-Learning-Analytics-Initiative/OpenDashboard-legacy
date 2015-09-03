@@ -14,8 +14,8 @@ import java.util.Map;
 import lti.LaunchRequest;
 import od.cards.openlrs.OpenLRSCardController;
 import od.cards.openlrs.OpenLRSCardController.RestTemplateFactoryInterface;
-import od.model.Card;
-import od.model.ContextMapping;
+import od.framework.model.Card;
+import od.framework.model.ContextMapping;
 import od.repository.ContextMappingRepositoryInterface;
 import od.utils.Response;
 
