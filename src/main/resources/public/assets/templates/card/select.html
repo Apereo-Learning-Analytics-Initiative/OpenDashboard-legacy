@@ -1,11 +1,12 @@
 <div class="row">            
-  <div class="col-xs-12">
-      <div>
-          <h1>Add cards</h1>
-          <p class="lead">
-              Select the visualization and data view cards that you want to appear on your dashboard.
-          </p>
-          <div class="container-fluid">
+    <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+          <h3>Add Cards</h3>
+          <h5>Select the visualization and data view cards that you want to appear on your dashboard.</h5>
+        </div>
+        <div class="chart-stage">
+          <div class="container-fluid m-t">
               <div class="row">
                   <div class="col-sm-6 col-md-4" ng-repeat="(key, card) in cards">
                       <div class="chart-wrapper" ng-click="addCard(card.cardType)">
@@ -15,6 +16,7 @@
                   </div>
               </div>
           </div>
-      </div>
-  </div>    
+        </div>
+      </div>        
+    </div>
 </div>

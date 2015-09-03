@@ -1,20 +1,22 @@
 <div class="row">            
-    <div class="col-xs-10 col-lg-11 od-content">
-        <div class="col-xs-12 col-lg-6">
-            <h1 translate="LABEL_WELCOME"></h1>
-            <p class="lead" translate="TEXT_WELCOME_LEAD">
-                See your most important data in a glance.
-            </p>
-        
-            <div class="well">
-                <span translate="TEXT_WELCOME_INFO">OpenDashboard is a collection of data views - we call them cards - that give you an overview of the reports and metrics you care about most.</span>
-                <br>
-                <br>
-                <button ng-if="!isStudent" class="btn btn-primary btn-large" ng-click="saveContextMapping()" translate="BUTTON_GET_STARTED">Get Started</button>
-                <p class="lead" ng-if="isStudent" translate="TEXT_OD_NOT_CONFIGURED">OpenDashboard has not yet been configured. Please check back later.</p>
-        
-            </div>
+    <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+          <h3 translate="LABEL_WELCOME"></h3>
+          <h5 translate="TEXT_WELCOME_LEAD"></h5>
         </div>
+        <div class="chart-stage">
+          <div class="row m-t">
+              <div class="col-xs-12">
+                <p class="lead" translate="TEXT_WELCOME_INFO"></p>
+                <p class="lead" ng-if="isStudent" translate="TEXT_OD_NOT_CONFIGURED"></p>
+              </div>
+          </div>
+        </div>
+        <div class="chart-notes">
+          <button ng-if="!isStudent" class="btn btn-primary btn-large" ng-click="saveContextMapping()" translate="BUTTON_GET_STARTED">Get Started</button>
+        </div>
+      </div>        
     </div>
 </div>
 

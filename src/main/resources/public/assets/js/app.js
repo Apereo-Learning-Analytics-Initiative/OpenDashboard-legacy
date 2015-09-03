@@ -40,8 +40,8 @@ angular
 
 
 angular
-.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngCookies', 'pascalprecht.translate', 'ui-notification',
-                              'od.cards.lti', 'od.cards.openlrs','od.cards.roster', 'od.cards.demo', 'od.cards.snapp']);
+.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
+                              'od.cards.lti', 'od.cards.eventviewer','od.cards.roster', 'od.cards.demo', 'od.cards.snapp','od.cards.modelviewer']);
 
 angular
 .module('OpenDashboard')

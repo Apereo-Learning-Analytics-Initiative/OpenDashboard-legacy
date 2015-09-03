@@ -5,7 +5,7 @@ package od.repository.redis.model;
 
 import java.util.Date;
 
-import od.model.OpenDashboardModel;
+import od.framework.model.OpenDashboardModel;
 
 
 /**

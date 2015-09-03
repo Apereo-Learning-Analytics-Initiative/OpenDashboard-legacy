@@ -1,0 +1,41 @@
+<div class="col-xs-12" ng-controller="EventViewerCardController">
+  <div class="chart-wrapper">
+    <div class="chart-title">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 p-t p-b">
+          <h4 class="text-center"
+            ng-show="!events || events.length == 0">No activity
+            available for {{courseName}}</h4>
+          <h4 ng-show="events">Learning Activity for {{courseName}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="chart-stage">
+      <div class="row">
+        <div class="col-xs-12 col-md-8">
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Actor</th>
+                <th>Verb</th>
+                <th>Object</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                ng-repeat="event in events | orderBy:'timestamp'"
+                ng-click="expandEvent(event)">
+                <td>{{event.actor}}</td>
+                <td>{{event.verb}}</td>
+                <td>{{event.object}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="colx-xs-12 col-md-4" ng-show="activeEvent">
+          <pre>{{activeEvent.raw}}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

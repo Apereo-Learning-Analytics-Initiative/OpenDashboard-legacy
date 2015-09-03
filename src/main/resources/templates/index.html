@@ -62,6 +62,13 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.7.2/angular-translate-loader-partial.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
   
+  <!-- TODO upgrade -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.js"></script>
+  
+  <script type="text/javascript" th:src="@{/assets/js/lib/angular-vis.js}"></script>  
   <script type="text/javascript" th:src="@{/assets/js/lib/angular-notification-min.js}"></script>
   
   <script type="text/javascript" th:src="@{/assets/js/lib/holder.js}"></script>
@@ -81,31 +88,20 @@
   <script type="text/javascript" th:src="@{/assets/js/welcome-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/dashboard-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/card-ctrl.js}"></script>
-  
-<!--   <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js" -->
-<!--     th:src="@{/js/lib/d3.js}"></script> -->
-<!--   <script -->
-<!--     src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script> -->
-<!--   <script -->
-<!--     src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script> -->
-<!--   <script th:src="@{/js/lib/angular-dc.min.js}"></script> -->
-<!--   <script th:src="@{/js/lib/angular-charts.min.js}"></script> -->
-
-<!--   <script -->
-<!--     src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.js"></script> -->
-<!--   <script th:src="@{/js/lib/angular-vis.js}"></script> -->
-
 
   <script type="text/javascript" th:src="@{/assets/js/roster-service.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/assignment-service.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/forum-service.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/course-service.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/outcomes-service.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/event-service.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/modeloutput-service.js}"></script>
 
   <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/openlrs/module.js}"></script>
+  <script type="text/javascript" th:src="@{/cards/eventviewer/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/roster/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/demo/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/snapp/module.js}"></script>
+  <script type="text/javascript" th:src="@{/cards/modelviewer/module.js}"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import lti.LaunchRequest;
-import od.model.Session;
+import od.framework.model.Session;
 import od.repository.SessionRepositoryInterface;
 import od.repository.redis.model.RedisLaunchRequest;
 import od.repository.redis.utils.KeyUtils;
@@ -28,7 +28,6 @@ import org.springframework.data.redis.hash.JacksonHashMapper;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisMap;
-import org.springframework.stereotype.Repository;
 /**
  * @author ggilbert
  *

@@ -11,9 +11,9 @@ import java.util.SortedMap;
 
 import lti.LaunchRequest;
 import lti.ProxiedLaunch;
-import od.cards.lti.LTIProxyController;
-import od.model.Card;
-import od.model.ContextMapping;
+import od.framework.model.Card;
+import od.framework.model.ContextMapping;
+import od.providers.api.LTIProxyController;
 import od.repository.ContextMappingRepositoryInterface;
 import od.utils.Response;
 

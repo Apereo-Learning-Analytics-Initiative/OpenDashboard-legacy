@@ -5,9 +5,8 @@ angular
 .module('od.cards.lti', ['OpenDashboardAPI', 'OpenDashboardRegistry'])
 .config(function(registryProvider){
     registryProvider.register('lti',{
-        title: 'LTI',
-        description: 'Use this card to launch out to an LTI tool',
-        imgUrl: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8F5Og94mVZUAFy7fMqcmv5NZUJMqH8j0FcgvFzete2Z5YJClgDQ',
+        title: 'Learning Tool Interoperability',
+        description: 'Use this card to launch out to an LTI tool provider',
         cardType: 'lti',
         styleClasses: 'od-card col-xs-12',
         config: [

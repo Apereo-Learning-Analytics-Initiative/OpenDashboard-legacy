@@ -1,14 +1,12 @@
-/**
- * 
- */
 package org.apereo.lai;
 
-import java.io.Serializable;
+import java.util.Date;
 
-/**
- * @author ggilbert
- *
- */
-public interface ModelOutput extends Serializable {
-  String getLearner();
+public interface ModelOutput {
+
+  String getStudentId();
+  String getCourseId();
+  String getRisk_score();
+  Date getCreated_date();
+
 }

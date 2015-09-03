@@ -20,7 +20,7 @@ angular
 	    ]
     });
  })
- .controller('RosterCardController', function($scope, $http, $log, _, ContextService, EventService, RosterService, LearningAnalyticsProcessorService) {
+ .controller('RosterCardController', function($scope, $http, $log, _, ContextService, EventService, RosterService, ModelOutputDataService) {
 	$scope.lapResults = null;
 	$scope.message = null;
 	$scope.queryString = null;
@@ -31,15 +31,13 @@ angular
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
 		$scope.isStudent = ContextService.getCurrentUser().isStudent();
 		
-		var basicLISData = {};
-		basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
-		basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
-		
 		var options = {};
 		options.contextMappingId = $scope.contextMapping.id;
 		options.dashboardId = $scope.activeDashboard.id;
 		options.cardId = $scope.card.id;
-		options.basicLISData = basicLISData;
+		options.strategy = 'roster_basiclis';
+		options.strategyHost = $scope.lti.ext.ext_ims_lis_memberships_url;
+		options.strategyKey = $scope.lti.ext.ext_ims_lis_memberships_id;
 		
 		var handleLRSResponse = function (statements) {
 			_.forEach(statements, function (statement) {
@@ -135,8 +133,8 @@ angular
 			var userId = ContextService.getCurrentUser().user_id;
 			EventService.getEventsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
 				.then(handleLRSResponse);
-			LearningAnalyticsProcessorService.getResultsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
-				.then(handleLAPResponse);
+//			LearningAnalyticsProcessorService.getResultsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
+//				.then(handleLAPResponse);
 		}
 		else {
 			RosterService
@@ -147,8 +145,8 @@ angular
 						$scope.course.buildRoster(rosterData);					
 						EventService.getEvents($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
 							.then(handleLRSResponse);
-						LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
-							.then(handleLAPResponse);
+//						LearningAnalyticsProcessorService.getResults($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id)
+//							.then(handleLAPResponse);
 					}
 				}
 			);

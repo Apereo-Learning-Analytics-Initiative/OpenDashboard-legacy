@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import od.controllers.rest.ContextMappingController;
-import od.model.ContextMapping;
+import od.framework.api.ContextMappingController;
+import od.framework.model.ContextMapping;
 import od.repository.ContextMappingRepositoryInterface;
 import od.utils.Response;
 

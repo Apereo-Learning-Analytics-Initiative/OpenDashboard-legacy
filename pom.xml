@@ -64,7 +64,11 @@
         <dependency>
 			<groupId>org.springframework.ws</groupId>
 			<artifactId>spring-ws-core</artifactId>
-		</dependency>        
+		</dependency> 
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+        </dependency>
 		<dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

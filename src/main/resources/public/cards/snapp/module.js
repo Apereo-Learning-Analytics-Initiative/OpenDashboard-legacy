@@ -6,8 +6,7 @@ angular
  .config(function(registryProvider){
     registryProvider.register('snapp',{
         title: 'Discussion Forum Visualization',
-        description: 'TBD',
-        imgUrl: '',
+        description: 'Use this card to create a network graph of a discussion forum',
         cardType: 'snapp',
         styleClasses: 'od-card col-xs-12',
 	    config: [
@@ -44,6 +43,17 @@ angular
          $scope.forums = forumData;
 	   }
     );
+   
+   $scope.forum = function() {
+	   $scope.step = '1';
+	   $scope.selectedForum = null;
+	   $scope.selectedTopic = null; 
+   };
+
+   $scope.topic = function() {
+	   $scope.step = '2';
+	   $scope.selectedTopic = null; 
+   };
    
    $scope.selectForum = function(forum) {
 	 $scope.selectedForum = forum;  
