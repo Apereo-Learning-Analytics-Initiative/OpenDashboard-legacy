@@ -13,6 +13,123 @@
 		    	return _p8() + _p8(true) + _p8(true) + _p8();
 			}
 		};
+	})
+	.service('SessionService', function($log, $http, OpenDashboard_API, _) {
+		
+		var ROLE_ADMIN = 'ROLE_ADMIN';
+		var ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR';
+		var ROLE_STUDENT = 'ROLE_STUDENT';
+		
+		var authenticated = false;
+		var ltiSession = false;
+		var authorities = null;
+		
+		var checkRole = function(role) {
+		  var hasRole = false;
+		  if (authorities) {
+			$log.debug(authorities);
+			var values = _.map(authorities, function(authority){ return authority['authority'];});
+			$log.debug(values);
+            var indexOf = _.indexOf(values,role);
+            $log.debug(indexOf);
+            if (indexOf >= 0) {
+            	hasRole = true;
+            }
+		  }
+		  return hasRole;
+		}
+		
+		return {
+		  isAuthenticated : function () {
+		    return authenticated;
+		  },
+		  isLTISession : function () {
+		    return ltiSession;
+		  },
+		  hasAdminRole : function () {
+			  return checkRole(ROLE_ADMIN);
+		  },
+		  hasInstructorRole : function () {
+			  return checkRole(ROLE_INSTRUCTOR);
+		  },
+		  hasStudentRole : function () {
+			  return checkRole(ROLE_STUDENT);
+		  },
+		  authenticate : function(credentials) {
+						  
+		    var headers = {'Content-Type' : 'application/json'};
+		        
+			if (credentials) {
+			  headers['Authorization'] = "Basic " + btoa(credentials.username + ":" + credentials.password);
+			  if (credentials.tenant) {
+			    headers['X-OD-TENANT'] = credentials.tenant;
+			  }        	
+			}
+				
+			var promise = $http({
+			  method : 'GET',
+			  url : '/user',
+			  headers : headers})
+			  .then(function(response) {
+			    if (response && response.data
+			      && response.data.authenticated 
+			      && response.data.name) {
+			    	$log.debug(response);
+			    	authenticated = response.data.authenticated;
+			    	authorities = response.data.authorities;
+			    	
+			    	if (response.data.launchRequest) {
+			    		ltiSession = true;
+				    	OpenDashboard_API.setInbound_LTI_Launch(response.data.launchRequest);
+			    	}
+			    	
+					return authenticated;
+			    }
+			    return false;
+			  }, 
+			  function(error) {
+			    $log.error(error);
+			    return false;
+			});
+			return promise;
+		  },
+		  getCourse : function () {
+		    return OpenDashboard_API.getCourse();
+		  },
+		  getInbound_LTI_Launch : function () {
+			return OpenDashboard_API.getInbound_LTI_Launch();
+		  },
+		  getCurrentUser : function () {
+			return OpenDashboard_API.getCurrentUser();
+		  }
+		}
+	})
+	.service('FeatureFlagService', function($log, $http) {
+	    return {
+	      isFeatureActive : function(featureKey) {
+	        var headers = {'Content-Type' : 'application/json'};
+	        
+			var promise = $http({
+				  method : 'GET',
+				  url : '/features/' + featureKey,
+				  headers : headers
+				})
+				.then(function(response) {
+				  if (response && response.data) {
+					var val = response.data[featureKey];				
+					$log.log(val)
+					return (val && val.toLowerCase() === 'true');
+				  }
+				  $log.debug(response);
+				  return false;
+				}, 
+				function(error) {
+				  $log.error(error);
+				  return false;
+				});
+				return promise;
+	      }
+		}
 	});
 	
 	angular
@@ -177,22 +294,6 @@
 			}
 		}
 	});
-	
-	angular
-	.module('OpenDashboard')
-	.service('ContextService',function($log, $http, OpenDashboard_API) {
-		return {
-			getCourse : function () {
-				return OpenDashboard_API.getCourse();
-			},
-			getInbound_LTI_Launch : function () {
-				return OpenDashboard_API.getInbound_LTI_Launch();
-			},
-			getCurrentUser : function () {
-				return OpenDashboard_API.getCurrentUser();
-			}
-		}
-	});
-	
+		
 })(angular, JSON, Math);
 

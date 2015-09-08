@@ -14,12 +14,12 @@ angular
     });
  })
  .controller('SnappCardController', function($scope, $log, _, $translate, $translatePartialLoader,
-	 ContextService, ForumDataService) {
+ SessionService, ForumDataService) {
 	 
    $translatePartialLoader.addPart('snapp-card');
    $translate.refresh();
    
-   $scope.course = ContextService.getCourse();
+   $scope.course = SessionService.getCourse();
    
    // workflow - TODO replace with routes
    $scope.step = '1';

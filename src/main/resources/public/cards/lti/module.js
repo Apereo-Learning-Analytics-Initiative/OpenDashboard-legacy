@@ -16,11 +16,11 @@ angular
         ]
     });
 })
-.controller('LtiCardController', function($scope, $timeout, ContextService, LtiProxyService) {
+.controller('LtiCardController', function($scope, $timeout, SessionService, LtiProxyService) {
     $scope.readyToLaunch = false;
     $scope.outboundLaunch = null;
 
-    LtiProxyService.post($scope.contextMapping.id,$scope.card.id,ContextService.getInbound_LTI_Launch())
+    LtiProxyService.post($scope.contextMapping.id,$scope.card.id,SessionService.getInbound_LTI_Launch())
         .then(function(proxiedLaunch){
             $scope.outboundLaunch = proxiedLaunch;
             $timeout(function() {

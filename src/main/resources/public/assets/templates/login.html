@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="row">
+    <div id="loginModal" class="modal show" tabindex="-1" role="dialog"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <p ng-show="validationError" class="text-danger" translate="USERNAME_PASSWORD_MISMATCH_ERROR"></p>
+            <form name="loginForm" class="form col-md-12 center-block" ng-submit="login()" novalidate>
+              <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
+                <input type="text" class="form-control input-lg"
+                  placeholder="Username" name="username" ng-model="credentials.username" required></input>
+                <p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block" translate="USERNAME_REQUIRED_ERROR"></p>
+              </div>
+              <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
+                <input type="password" class="form-control input-lg"
+                  placeholder="Password" name="password" ng-model="credentials.password" required></input>
+                <p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block" translate="PASSWORD_REQUIRED_ERROR"></p>
+              </div>
+              <div class="form-group" ng-show="isMultiTenant">
+                  <select class="form-control input-lg" name="tenant" ng-model="credentials.tenant" ng-required="isMultiTenant">
+                    <option value="" disabled="disabled" selected="selected" style="display:none;" translate="SELECT_INSTITUTION"></option>
+                    <option value="tenant1">Institution 1</option>
+                    <option value="tenant2">Institution 2</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg" translate="SIGN_IN" ng-disabled="loginForm.$invalid"></button>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer" style="border-top: 0px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

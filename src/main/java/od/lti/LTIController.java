@@ -1,7 +1,7 @@
 /**
  *
  */
-package od;
+package od.lti;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,8 @@ import lti.LaunchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,32 +31,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Controller
-public class OpenDashController {
-  private static final Logger logger = LoggerFactory.getLogger(OpenDashController.class);
+public class LTIController {
+  private static final Logger logger = LoggerFactory.getLogger(LTIController.class);
 
   @Autowired
+  @Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
-
-  @RequestMapping(value = { "/" }, method = RequestMethod.POST)
+  
+  @RequestMapping(value = { "/lti" }, method = RequestMethod.POST)
   public String lti(HttpServletRequest request, Model model) {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
-    model.addAttribute("inbound_lti_launch_request", launchRequest);
 
     String uuid = UUID.randomUUID().toString();
     model.addAttribute("token", uuid);
 
-    // Create a token using spring provided class :
-    // org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+    // Create a token using spring provided class : LTIAuthenticationToken
     String role = null;
-    if (hasInstructorRole(null, launchRequest.getRoles())) {
+    if (LTIController.hasInstructorRole(null, launchRequest.getRoles())) {
       role = "ROLE_INSTRUCTOR";
     } else {
       role = "ROLE_STUDENT";
     }
 
-    String credentials = launchRequest.getUser_id() + ":" + uuid + ":" + role;
-
-    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(credentials, uuid,
+    LTIAuthenticationToken token = new LTIAuthenticationToken(launchRequest, launchRequest.getOauth_consumer_key(), launchRequest.toJSON(), uuid,
         AuthorityUtils.commaSeparatedStringToAuthorityList(role));
 
     // generate session if one doesn't exist
@@ -68,8 +64,7 @@ public class OpenDashController {
     // one).
     token.setDetails(new WebAuthenticationDetails(request));
 
-    // authenticationManager injected as spring bean, you can use custom or
-    // spring provided authentication manager
+    // authenticationManager injected as spring bean, : LTIAuthenticationProvider
     Authentication authentication = authenticationManager.authenticate(token);
 
     // Need to set this as thread locale as available throughout
@@ -82,13 +77,7 @@ public class OpenDashController {
     return "index";
   }
 
-  @Secured({ "ROLE_INSTRUCTOR", "ROLE_STUDENT" })
-  @RequestMapping(value = { "/", "/cm/**", "/welcome" }, method = RequestMethod.GET)
-  public String routes(Model model) {
-    return "index";
-  }
-
-  public boolean hasInstructorRole(List<String> instructorRoles, String roles) {
+  public static boolean hasInstructorRole(List<String> instructorRoles, String roles) {
 
     if (instructorRoles == null) {
       instructorRoles = new ArrayList<String>();
@@ -107,13 +96,5 @@ public class OpenDashController {
     }
 
     return false;
-  }
-
-  public AuthenticationManager getAuthenticationManager() {
-    return authenticationManager;
-  }
-
-  public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-    this.authenticationManager = authenticationManager;
   }
 }

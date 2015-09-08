@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import lti.LaunchRequest;
-import od.OpenDashController;
+import od.lti.LTIController;
 import od.repository.SessionRepositoryInterface;
 import od.utils.Response;
 
@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class OpenDashControllerTest extends ControllerTests {
-    private static final Logger logger = LoggerFactory.getLogger(OpenDashControllerTest.class);
+public class LTIControllerTests extends ControllerTests {
+    private static final Logger logger = LoggerFactory.getLogger(LTIControllerTests.class);
 
     @Mock
     private SessionRepositoryInterface sessionRepository;
@@ -38,7 +38,7 @@ public class OpenDashControllerTest extends ControllerTests {
     private AuthenticationManager authenticationManager;
 
     @InjectMocks
-    private OpenDashController openDashController;
+    private LTIController ltiController;
 
     private MockMvc mockMvc;
     private Response serviceFailureExpectedResponse;
@@ -52,8 +52,8 @@ public class OpenDashControllerTest extends ControllerTests {
         MockitoAnnotations.initMocks(this);
         session = this.createSession();
         serviceFailureExpectedResponse = createServiceCallExceptionExpectedResponse();
-        openDashController.setAuthenticationManager(authenticationManager);
-        this.mockMvc = this.createMockMvc(openDashController);
+        //openDashController.setAuthenticationManager(authenticationManager);
+        this.mockMvc = this.createMockMvc(ltiController);
     }
 
     @Test
@@ -62,24 +62,23 @@ public class OpenDashControllerTest extends ControllerTests {
         given(sessionRepository.save((od.framework.model.Session)anyObject())).willReturn(openDashSession);
         given(openDashSession.getId()).willReturn("sessionId");
 
-        mockMvc.perform(post("/")
+        mockMvc.perform(post("/lti")
                         .session(session)
                         .param("roles", "Instructor,Administrator,urn:lti:instrole:ims/lis/Administrator,urn:lti:sysrole:ims/lis/Administrator")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testObjectMapper.writeValueAsString(launchRequest)))
                         .andExpect(status().isOk())
                         .andExpect(view().name("index"))
-                        .andExpect(model().size(2))
-                        .andExpect(model().attributeExists("inbound_lti_launch_request", "token"));
+                        .andExpect(model().size(1));
     }
 
     @Test
     public void doesLtiReturnExceptionWhenExceptionIsThrown() throws JsonProcessingException, Exception {
         LaunchRequest launchRequest = this.createLaunchRequest();
-        serviceFailureExpectedResponse.setUrl("http://localhost/");
+        serviceFailureExpectedResponse.setUrl("http://localhost/lti");
         given(authenticationManager.authenticate((Authentication)anyObject())).willThrow(new RuntimeException(EXCEPTION_MESSAGE));
 
-        MvcResult actualResult = mockMvc.perform(post("/")
+        MvcResult actualResult = mockMvc.perform(post("/lti")
                                 .session(session)
                                 .param("roles", "Instructor,Administrator,urn:lti:instrole:ims/lis/Administrator,urn:lti:sysrole:ims/lis/Administrator")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -89,18 +88,4 @@ public class OpenDashControllerTest extends ControllerTests {
         Response actualResponse = this.getResponseFromMockMvcModelAndViewResult(actualResult);
         validateActualResponseAgainstExpectedResponse(serviceFailureExpectedResponse, actualResponse);
     }
-
-    @Test
-    public void doesRoutesReturnProperModelAndViewWhenGivenValidInput() throws Exception {
-        LaunchRequest launchRequest = this.createLaunchRequest();
-
-        mockMvc.perform(get("/")
-                        .session(session)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(testObjectMapper.writeValueAsString(launchRequest)))
-                        .andExpect(status().isOk())
-                        .andExpect(view().name("index"))
-                        .andExpect(model().size(0));
-    }
-
 }

@@ -12,18 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
-import od.exception.MissingCookieException;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -34,50 +30,62 @@ import org.springframework.web.util.WebUtils;
 @Component
 public class MongoMultiTenantFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(MongoMultiTenantFilter.class);
+  private static final String TENANT_PARAMETER = "X-OD-TENANT";
   
-  @Value("${od.tenantCookieName:OD_T}")
-  private String cookieName;
+  @Value("${od.defaultDatabaseName:od_default}")
+  private String defaultDatabase;
   
-  @Autowired
-  CookieGenerator cookieGenerator;
+  @Value("${od.useDefaultDatabaseName:true}")
+  private String useDefaultDatabaseName;
   
   @Override
   public void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
     logger.debug("applying MongoMultiTenantFilter");
+    logger.debug("allow defaultDatabase: "+useDefaultDatabaseName);
     
-    String databaseName = null;
     MultiTenantMongoDbFactory.clearDatabaseNameForCurrentThread();
-    
+    String tenant = req.getHeader(TENANT_PARAMETER);
+    Cookie tenantCookie = WebUtils.getCookie(req, TENANT_PARAMETER);
     LaunchRequest launchRequest = new LaunchRequest(req.getParameterMap());
     
     if (launchRequest != null && StringUtils.isNotBlank(launchRequest.getOauth_consumer_key())) {
-      logger.debug("is LTI launch");
-      databaseName = launchRequest.getOauth_consumer_key();
-      cookieGenerator.setCookieName(cookieName);
-      cookieGenerator.setCookiePath("/");
-      cookieGenerator.setCookieMaxAge(86400);
-      cookieGenerator.addCookie(res, Base64.encodeBase64String(databaseName.getBytes("UTF-8")));
+      tenant = launchRequest.getOauth_consumer_key();
+      tenantCookie = new Cookie(TENANT_PARAMETER, tenant);
+      tenantCookie.setPath("/");
+      res.addCookie(tenantCookie);
+      logger.debug("Tenant value from LTI launch");
     }
-    else {
-      logger.debug("not LTI launch");
-      Cookie cookie = WebUtils.getCookie(req, cookieName);
-      if (cookie != null && StringUtils.isNotBlank(cookie.getValue())) {
-        logger.debug("got cookie: "+cookieName);
-        databaseName = new String(Base64.decodeBase64(cookie.getValue()));
+    else if (StringUtils.isBlank(tenant) && tenantCookie == null) {
+      // Don't know who the tenant is
+      if (Boolean.valueOf(useDefaultDatabaseName)) {
+        logger.warn("No tenant available in request. Using default database.");
+        tenant = defaultDatabase;
       }
       else {
-        throw new MissingCookieException(cookieName);
+        throw new od.exception.MissingTenantException("No tenant available in request and default database disabled.");
+      }
+    }
+    else if (StringUtils.isBlank(tenant) && tenantCookie != null) {
+      tenant = tenantCookie.getValue();
+      logger.debug("Tenant value from cookie");
+    }
+    else if (StringUtils.isNotBlank(tenant) && tenantCookie == null) {
+      tenantCookie = new Cookie(TENANT_PARAMETER, tenant);
+      tenantCookie.setPath("/");
+      res.addCookie(tenantCookie);
+      logger.debug("Tenant value from header");
+    }
+    else {
+      // header and cookie
+      String tenantValueFromCookie = tenantCookie.getValue();
+      if (!tenant.equals(tenantValueFromCookie)) {
+        tenantCookie = new Cookie(TENANT_PARAMETER, tenant);
+        tenantCookie.setPath("/");
+        res.addCookie(tenantCookie);
       }
     }
     
-    if (StringUtils.isNotBlank(databaseName)) {
-      logger.info("setting database name: " + databaseName);
-      MultiTenantMongoDbFactory.setDatabaseNameForCurrentThread(databaseName);
-    }
-    else {
-      logger.info("using default database");
-    }
-
     fc.doFilter(req, res);
   }
+  
 }
