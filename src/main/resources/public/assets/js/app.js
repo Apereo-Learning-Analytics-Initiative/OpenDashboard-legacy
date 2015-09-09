@@ -161,19 +161,38 @@ angular
 	
 	// Application routes
 	$stateProvider
+	    .state('login', {
+	        url: '/login',
+	        templateUrl: '/assets/templates/login.html',
+	        resolve:{
+	    	  isMultiTenant : function (FeatureFlagService) {
+	    		return FeatureFlagService.isFeatureActive('multitenant');
+	    	  }	
+	     	},
+	        controller: 'LoginCtrl'
+	    })
 	    .state('index', {
 	        url: '/',
 	        templateUrl: '/assets/templates/index.html',
 		    resolve:{
 		      contextMapping: function(ContextMappingService, OpenDashboard_API) {
 		        var inbound_lti_launch_request = OpenDashboard_API.getInbound_LTI_Launch();
-		        return ContextMappingService.get(inbound_lti_launch_request.oauth_consumer_key, inbound_lti_launch_request.context_id);
-		      },
-		      isStudent: function(ContextService) {
-		    	return ContextService.getCurrentUser().isStudent();  
+		        if (inbound_lti_launch_request) {
+		          return ContextMappingService.get(inbound_lti_launch_request.oauth_consumer_key, inbound_lti_launch_request.context_id);
+		        }
+		        else {
+		          return null;
+		        }
 		      }
 	     	},
 	        controller: 'IndexCtrl'
+	    })
+	    .state('index.admin', {
+	        url: 'direct/admin',
+	        templateUrl: '/assets/templates/admin.html',
+		    resolve:{
+	     	},
+	        controller: function () {}
 	    })
 	    .state('index.welcome', {
 	        url: 'welcome',
@@ -181,6 +200,13 @@ angular
 		    resolve:{
 	     	},
 	        controller: 'WelcomeController'
+	    })
+	    .state('index.courselist', {
+	        url: 'direct/courselist',
+	        templateUrl: '/assets/templates/courselist.html',
+		    resolve:{
+	     	},
+	        controller: function () {}
 	    })
 	    .state('index.addDashboard', {
 	        url: 'cm/:cmid/addDashboard',

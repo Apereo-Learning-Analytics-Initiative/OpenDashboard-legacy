@@ -14,11 +14,11 @@ angular
     });
  })
  .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
-	 ContextService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
+	 SessionService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
     $translatePartialLoader.addPart('demo-card');
     $translate.refresh();
-	$scope.course = ContextService.getCourse();
-	$scope.lti = ContextService.getInbound_LTI_Launch();
+	$scope.course = SessionService.getCourse();
+	$scope.lti = SessionService.getInbound_LTI_Launch();
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
 		

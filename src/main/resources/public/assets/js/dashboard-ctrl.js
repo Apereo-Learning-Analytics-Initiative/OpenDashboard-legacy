@@ -25,8 +25,7 @@
     angular
     .module('OpenDashboard')
     .controller('DashboardController', function($log, $scope, $state,
-                                            _ , registry, ContextService,
-                                            contextMapping, dashboard) {
+                                            _ , registry, contextMapping, dashboard) {
 
     	$scope.showNavbar = false;
         $scope.contextMapping = contextMapping;

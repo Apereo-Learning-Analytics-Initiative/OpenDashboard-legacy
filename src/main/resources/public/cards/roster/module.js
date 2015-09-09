@@ -20,16 +20,16 @@ angular
 	    ]
     });
  })
- .controller('RosterCardController', function($scope, $http, $log, _, ContextService, EventService, RosterService, ModelOutputDataService) {
+ .controller('RosterCardController', function($scope, $http, $log, _, SessionService, EventService, RosterService, ModelOutputDataService) {
 	$scope.lapResults = null;
 	$scope.message = null;
 	$scope.queryString = null;
 	
-	$scope.course = ContextService.getCourse();
-	$scope.lti = ContextService.getInbound_LTI_Launch();
+	$scope.course = SessionService.getCourse();
+	$scope.lti = SessionService.getInbound_LTI_Launch();
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
-		$scope.isStudent = ContextService.getCurrentUser().isStudent();
+		$scope.isStudent = SessionService.hasStudentRole();
 		
 		var options = {};
 		options.contextMappingId = $scope.contextMapping.id;
@@ -130,7 +130,7 @@ angular
 		};
 
 		if ($scope.isStudent) {
-			var userId = ContextService.getCurrentUser().user_id;
+			var userId = SessionService.getCurrentUser().user_id;
 			EventService.getEventsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)
 				.then(handleLRSResponse);
 //			LearningAnalyticsProcessorService.getResultsForUser($scope.contextMapping.id,$scope.activeDashboard.id,$scope.card.id,userId)

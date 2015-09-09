@@ -28,24 +28,16 @@
 
 <script th:inline="javascript">
   /*<![CDATA[*/
-  var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/null;
-  if (inbound_lti_launch_request && typeof (sessionStorage) !== "undefined") {
-    sessionStorage.setItem('inbound_lti_launch', JSON
-        .stringify(inbound_lti_launch_request));
-  }
-
   var od_token = /*[[${token}]]*/null;
   if (od_token && typeof (sessionStorage) !== "undefined") {
     sessionStorage.setItem('token', od_token);
   }
-
-  OpenDashboardApi.setInbound_LTI_Launch(inbound_lti_launch_request);
   /*]]>*/
 </script>
 
 </head>
 
-<body id="ng-app" class="application">
+<body id="ng-app" class="application" ng-controller="AuthCtrl">
   <div loading-widget="" class="spinner"></div>
   <div class="ui-view"></div>
 
@@ -82,20 +74,16 @@
   <script type="text/javascript" th:src="@{/assets/js/lib/keen.min.js}"></script>
   
   <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/auth-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/login-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/directives.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/services.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/framework-services.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/index-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/welcome-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/dashboard-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/card-ctrl.js}"></script>
 
-  <script type="text/javascript" th:src="@{/assets/js/roster-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/assignment-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/forum-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/course-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/outcomes-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/event-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/modeloutput-service.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/data-services.js}"></script>
 
   <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/eventviewer/module.js}"></script>

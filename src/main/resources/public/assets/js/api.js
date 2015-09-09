@@ -21,7 +21,10 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 	
 	function getLTIToolLaunch() {
 		if (!this.inbound_lti_launch) {
-			this.inbound_lti_launch = JSON.parse(window.sessionStorage.getItem('inbound_lti_launch'));
+			var ltiJson = window.sessionStorage.getItem('inbound_lti_launch');
+			if (ltiJson && ltiJson !== 'undefined') {
+			  this.inbound_lti_launch = JSON.parse(ltiJson);
+			}
 		}
 		return this.inbound_lti_launch;
 	};
@@ -50,10 +53,6 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 		return new this.Person(options);
 	};
 	
-	function createDemographicsInstance (options) {
-		return new this.Demographics(options);
-	};
-	
 	function getCurrentUser() {
 		if (!this.currentUser && this.inbound_lti_launch) {
 			this.currentUser = new this.Member()
@@ -62,14 +61,6 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 		return this.currentUser;
 	};
 	
-	/**
-	 * Events
-	 */
-		
-	 function createEventInstance (options) {
-		return new this.Event(options);
-	};
-
 	/**
 	 * Framework
 	 */
@@ -86,9 +77,7 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 		getCurrentUser : getCurrentUser,
 		createContextMappingInstance : createContextMappingInstance,
 		createMemberInstance : createMemberInstance,
-		createPersonInstance : createPersonInstance,
-		createEventInstance : createEventInstance,
-		createDemographicsInstance : createDemographicsInstance
+		createPersonInstance : createPersonInstance
 	};
   
 } )( window, JSON );

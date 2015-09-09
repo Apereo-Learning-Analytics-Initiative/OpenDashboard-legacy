@@ -16,17 +16,17 @@ angular
         ]
     });
  })
-.controller('EventViewerCardController', function($scope, $http, _, ContextService, EventService) {
-	$scope.isStudent = ContextService.getCurrentUser().isStudent();
+.controller('EventViewerCardController', function($scope, $http, _, SessionService, EventService) {
+	$scope.isStudent = SessionService.hasStudentRole();
     $scope.events = null;
     $scope.activeEvent = null;
-    $scope.courseName = ContextService.getCourse().title;
+    $scope.courseName = SessionService.getCourse().title;
     $scope.queryString = null;	
-	$scope.course = ContextService.getCourse();
+	$scope.course = SessionService.getCourse();
 
 	var user = null;
 	if ($scope.isStudent) {
-		user = ContextService.getCurrentUser().user_id;
+		user = SessionService.getCurrentUser().user_id;
 	}
 	
 	var handleResponse = function (events) {

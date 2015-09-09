@@ -4,12 +4,12 @@
     angular
     .module('OpenDashboard')
     .controller('WelcomeController', function($log, $scope, $state, $translate, $translatePartialLoader, 
-    											ContextService, ContextMappingService) {    
+    											SessionService, ContextMappingService) {    
     	$translatePartialLoader.addPart('welcome');
         $translate.refresh();
         
         $scope.saveContextMapping = function() {
-            var inbound_lti_launch_request = ContextService.getInbound_LTI_Launch();
+            var inbound_lti_launch_request = SessionService.getInbound_LTI_Launch();
             
             // TODO handle non-context case
             var cm_options = {};

@@ -17,16 +17,16 @@ angular
     });
  })
  .controller('ModelViewerCardController', function($scope, $log, $translate, 
-               $translatePartialLoader, ModelOutputDataService, ContextService) {
+               $translatePartialLoader, ModelOutputDataService, SessionService) {
     $translatePartialLoader.addPart('modelviewer-card');
     $translate.refresh();
     
     $scope.modeloutput = null;
-    $scope.course = ContextService.getCourse();
+    $scope.course = SessionService.getCourse();
     
 	var user = null;
 	if ($scope.isStudent) {
-		user = ContextService.getCurrentUser().user_id;
+		user = SessionService.getCurrentUser().user_id;
 	}
 	
 	var handleResponse = function (output) {
