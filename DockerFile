@@ -19,7 +19,7 @@ RUN \
   rm -rf /var/cache/oracle-jdk8-installer
 
 # Create a directory for the app to live
-#RUN mkdir opt/opendash/
+RUN mkdir opt/opendash/
 
 # Copy the app from the host to the docker.
 #ADD target.tar.gz /opt/opendash/
