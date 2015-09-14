@@ -28,8 +28,5 @@ ADD target.tar.gz /opt/opendash/
 EXPOSE 8080
 
 # CMD will be called when starting this container.
-<<<<<<< HEAD:Dockerfile
 CMD java -jar -Djava.security.egd=file:/dev/./urandom opt/opendash/target/opendash-0.1-SNAPSHOT.jar
-=======
-#CMD java -jar opt/opendash/target/opendash-0.1-SNAPSHOT.jar
->>>>>>> ddc5fb9efe89af9b12eaa2ad4f23e69441d468b0:Dockerfile
+
