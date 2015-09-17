@@ -22,11 +22,12 @@ RUN \
 RUN mkdir opt/opendash/
 
 # Copy the app from the host to the docker.
-ADD target.tar.gz /opt/opendash/
+ADD target/*.jar /opt/opendash/
 
 # Open the docker port. (Still have to map the host port with run command)
 EXPOSE 8080
 
 # CMD will be called when starting this container.
-CMD java -jar -Djava.security.egd=file:/dev/./urandom opt/opendash/target/opendash-0.1-SNAPSHOT.jar
+WORKDIR /opt/opendash/
+CMD java -server -jar -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=mongo-multitenant opendash-0.1-SNAPSHOT.jar
 

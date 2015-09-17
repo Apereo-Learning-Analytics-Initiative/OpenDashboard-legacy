@@ -21,6 +21,7 @@ import org.springframework.web.util.CookieGenerator;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 /**
  * @author jbrown
@@ -37,13 +38,13 @@ public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration {
   @Value("${od.defaultDatabaseName:od_default}")
   private String dbName;
   
-  @Value("${od.mongoHost:localhost}")
-  private String host;
+  @Value("${spring.data.mongodb.uri:mongodb://localhost}")
+  private String dbUri;
   
   @Override
   @Bean
   public Mongo mongo() throws Exception {
-      return new MongoClient(host);
+      return new MongoClient(new MongoClientURI(dbUri));
   }
 
   @Override
