@@ -1,0 +1,9 @@
+{
+"LABEL_EDIT":"Edit",
+"LABEL_REMOVE":"Remove",
+"TEXT_ADD_DASHBOARD_HEADER":"Add a new dashboard",
+"TEXT_ADD_DASHBOARD_MESSAGE":"Start from scratch with a new dashboard.",
+"ERROR_TITLE_REQUIRED":"Title is required.",
+"LABEL_TITLE":"Title",
+"BUTTON_SAVE":"Save"
+}

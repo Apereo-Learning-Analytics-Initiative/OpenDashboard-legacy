@@ -1,15 +1,19 @@
 <div class="row" ng-controller="SnappCardController">
+  <div class="col-xs-12">
+    <div ng-show="isError" class="alert alert-danger" role="alert" translate="{{errorMessage}}">...</div>
+  </div>
+  
   <div class="col-xs-12 col-md-4" ng-show="!selectedForum.title || !selectedTopic.title">
    <div class="chart-wrapper">
     <div class="chart-title" translate="SNAPP_CARD_CONFIGURATION"></div>
     <div class="chart-stage">
     <div class="list-group">
       <a href="#" class="list-group-item" ng-class="{'active':step == '1', 'list-group-item-success':selectedForum.title}">
-        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP1">Step 1</h4>
+        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP1"></h4>
         <p class="list-group-item-text" translate="SNAPP_CARD_FORUMLIST_INSTRUCTIONS"></p>
       </a>
       <a href="#" class="list-group-item" ng-class="{'active':step == '2', 'list-group-item-success':selectedTopic.title}">
-        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP2">Step 2</h4>
+        <h4 class="list-group-item-heading" translate="SNAPP_CARD_STEP2"></h4>
         <p class="list-group-item-text" translate="SNAPP_CARD_TOPICSLIST_INSTRUCTIONS"></p>
       </a>
     </div> 

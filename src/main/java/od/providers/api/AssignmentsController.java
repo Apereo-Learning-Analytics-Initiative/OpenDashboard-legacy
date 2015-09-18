@@ -39,7 +39,7 @@ public class AssignmentsController {
 			log.debug("options " + options);
 		}
 		
-    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider(AssignmentsProvider.DEFAULT);
+    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider();
 		
 		return assignmentsProvider.getAssignments(options);
 	}

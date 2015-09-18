@@ -1,0 +1,8 @@
+{
+"LABEL_LAST_ACTIVITY":"Last Activity",
+"LABEL_STUDENT_NAME":"Student Name",
+"LABEL_ACTIVITY_LEVEL":"Activity Level",
+"LABEL_RISK_ASSESSMENT":"Risk Assessment",
+"ERROR_NO_PROVIDER_ROSTER":"Unable to access roster data because no roster data providers are configured. Contact your system administrator."
+
+}

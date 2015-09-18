@@ -1,12 +1,12 @@
 <div class="col-xs-12" ng-controller="ModelViewerCardController">
+<div ng-show="isError" class="alert alert-danger" role="alert" translate="{{errorMessage}}">...</div>
   <div class="chart-wrapper">
     <div class="chart-title">
       <div class="row">
         <div class="col-xs-12 col-md-6 p-t p-b">
           <h4 class="text-center"
-            ng-show="!modeloutput || modeloutput.length == 0">No model output
-            available for {{course.title}}</h4>
-          <h4 ng-show="modeloutput">Model output for {{course.title}}</h4>
+            ng-show="!modeloutput || modeloutput.length == 0" translate="TEXT_NO_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
+          <h4 ng-show="modeloutput" translate="TEXT_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
         </div>
       </div>
     </div>
@@ -16,8 +16,8 @@
           <table class="table table-hover table-condensed">
             <thead>
               <tr>
-                <th>Learner</th>
-                <th>Risk</th>
+                <th translate="LABEL_LEARNER"></th>
+                <th translate="LABEL_RISK"></th>
               </tr>
             </thead>
             <tbody>

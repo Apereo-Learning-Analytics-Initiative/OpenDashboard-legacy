@@ -13,7 +13,7 @@ import org.springframework.http.HttpHeaders;
  * @author ggilbert
  *
  */
-public abstract class BaseProvider {
+public abstract class BaseProvider implements Provider {
   
   protected HttpHeaders createHeadersWithBasicAuth(final String username, final String password){
     return new HttpHeaders(){

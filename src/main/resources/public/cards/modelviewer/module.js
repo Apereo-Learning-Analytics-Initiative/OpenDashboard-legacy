@@ -9,11 +9,8 @@ angular
         description: 'Use this card to view model output.',
         cardType: 'modelviewer',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-          {field:'url',fieldName:'URL',fieldType:'url',required:true},
-          {field:'key',fieldName:'Key',fieldType:'text',required:true},
-          {field:'secret',fieldName:'Secret',fieldType:'text',required:true}
-	    ]
+	    config: [],
+	    requires:['MODELOUTPUT']
     });
  })
  .controller('ModelViewerCardController', function($scope, $log, $translate, 
@@ -29,8 +26,20 @@ angular
 		user = SessionService.getCurrentUser().user_id;
 	}
 	
-	var handleResponse = function (output) {
-    	$scope.modeloutput = output;
+	var handleResponse = function (response) {
+		if (response.isError) {
+		  $scope.isError = true;
+		  if (response.data && response.data.data) {
+			$scope.errorMessage = response.data.data;
+		  }
+		  else {
+			  $scope.errorMessage = "ERROR_GENERAL";
+		  }
+		}
+		else {
+		  $scope.modeloutput = response;
+		}
+    	
 	};
 	
 	var options = {};

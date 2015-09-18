@@ -13,14 +13,17 @@ import javax.annotation.PostConstruct;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.providers.BaseProvider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.api.PageWrapper;
 import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
+import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
 import od.repository.ContextMappingRepositoryInterface;
+import od.repository.ProviderDataRepositoryInterface;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
@@ -30,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -50,35 +52,33 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final String NAME = "OpenLRS";
   private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
+  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
   private RestTemplate restTemplate;
   
   @PostConstruct
   public void init() {
-    
     LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
-    
+    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
+    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
+    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "OpenLRS Base URL", "LABEL_OPENLRS_BASE_URL", false);
+    options.add(key);
+    options.add(secret);
+    options.add(baseUrl);
+
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
   
-  @Override
-  public Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
-        
-    Map<String, String> urlVariables = new HashMap<String, String>();
-    urlVariables.put("contextId", options.getCourseId());
-    
-    ContextMapping contextMapping = contextMappingRepository.findOne(options.getContextMappingId());
-    Card card = contextMapping.findCard(options.getCardId());
-    Map<String,Object> config = card.getConfig();
-    
-    String url = getUrl((String)config.get("url"), "/api/context/{contextId}", pageable);
+  private PageImpl<Event> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
+    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+
+    String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
     
     restTemplate = new RestTemplate();
     
     ParameterizedTypeReference<PageWrapper<EventImpl>> responseType = new ParameterizedTypeReference<PageWrapper<EventImpl>>() {};
     
     PageWrapper<EventImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth((String)config.get("key"), (String)config.get("secret"))), 
+        new HttpEntity(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"))), 
         responseType, urlVariables).getBody();
     log.debug(pageWrapper.toString());
     List<Event> events = null;
@@ -87,6 +87,15 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     }
     
     return new PageImpl<Event>(events, pageable, pageWrapper.getTotalElements());
+
+  }
+  
+  @Override
+  public Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
+    Map<String, String> urlVariables = new HashMap<String, String>();
+    urlVariables.put("contextId", options.getCourseId());
+
+    return fetch(urlVariables, pageable, "/api/context/{contextId}");
   }
 
   @Override
@@ -95,52 +104,17 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("userId", options.getUserId());
     
-    ContextMapping contextMapping = contextMappingRepository.findOne(options.getContextMappingId());
-    Card card = contextMapping.findCard(options.getCardId());
-    Map<String,Object> config = card.getConfig();
-    String url = getUrl((String)config.get("url"), "/api/user/{userId}", pageable);
-
-    restTemplate = new RestTemplate();
-    ParameterizedTypeReference<PageWrapper<EventImpl>> responseType = new ParameterizedTypeReference<PageWrapper<EventImpl>>() {};
-
-    PageWrapper<EventImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth((String)config.get("key"), (String)config.get("secret"))), 
-        responseType, urlVariables).getBody();
-    log.debug(pageWrapper.toString());
-    List<Event> events = null;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      events = new LinkedList<Event>(pageWrapper.getContent());
-    }
-    
-    return new PageImpl<Event>(events, pageable, pageWrapper.getTotalElements());
+    return fetch(urlVariables, pageable, "/api/user/{userId}");
   }
 
   @Override
   public Page<Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
     
-    
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("userId", options.getUserId());
     urlVariables.put("contextId", options.getCourseId());
     
-    ContextMapping contextMapping = contextMappingRepository.findOne(options.getContextMappingId());
-    Card card = contextMapping.findCard(options.getCardId());
-    Map<String,Object> config = card.getConfig();
-    String url = getUrl((String)config.get("url"), "/api/user/{userId}/context/{contextId}", pageable);
-    
-    restTemplate = new RestTemplate();
-    ParameterizedTypeReference<PageWrapper<EventImpl>> responseType = new ParameterizedTypeReference<PageWrapper<EventImpl>>() {};
-
-    PageWrapper<EventImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth((String)config.get("key"), (String)config.get("secret"))), 
-        responseType, urlVariables).getBody();
-    log.debug(pageWrapper.toString());
-    List<Event> events = null;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      events = new LinkedList<Event>(pageWrapper.getContent());
-    }
-    
-    return new PageImpl<Event>(events, pageable, pageWrapper.getTotalElements());
+    return fetch(urlVariables, pageable, "/api/user/{userId}/context/{contextId}");
   }
   
   @Override

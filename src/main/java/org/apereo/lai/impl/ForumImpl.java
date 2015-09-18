@@ -2,9 +2,9 @@ package org.apereo.lai.impl;
 
 import java.util.List;
 
-import org.apereo.lai.Forum;
-
 import od.framework.model.OpenDashboardModel;
+
+import org.apereo.lai.Forum;
 
 public class ForumImpl extends OpenDashboardModel implements Forum {
 

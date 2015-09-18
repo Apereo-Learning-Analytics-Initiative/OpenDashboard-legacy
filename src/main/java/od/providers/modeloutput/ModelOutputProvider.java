@@ -17,8 +17,6 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ModelOutputProvider extends Provider {
   
-  static final String DEFAULT = "modeloutput_lap";
-  
   Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String course, Pageable page) throws ProviderException;
   Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String student, Pageable page) throws ProviderException;
 }

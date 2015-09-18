@@ -20,18 +20,21 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
+import od.providers.ProviderData;
 import od.providers.ProviderOptions;
 import od.providers.config.DefaultProviderConfiguration;
-import od.providers.config.KeyValueProviderConfigurationOption;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
+import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.roster.RosterProvider;
+import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
 import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -70,15 +73,12 @@ public class BasicLISRosterProvider implements RosterProvider {
   private ProviderConfiguration providerConfiguration;
   
   private RestTemplate restTemplate = new RestTemplate();
-  @Value("${auth.oauth.key}")
-  private String key;
-  @Value("${auth.oauth.secret}")
-  private String secret;
-  
+  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+
   @PostConstruct
   public void init() {
-    ProviderConfigurationOption key = new KeyValueProviderConfigurationOption("OAuth Consumer Key", null, ProviderConfigurationOption.TEXT_TYPE, true);
-    ProviderConfigurationOption secret = new KeyValueProviderConfigurationOption("Secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true);
+    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("oauth_consumer_key", null, ProviderConfigurationOption.TEXT_TYPE, true, "OAuth Consumer Key", "LABEL_OAUTH_CONSUMER_KEY",  true);
+    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     
     LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
     options.add(key);
@@ -104,6 +104,8 @@ public class BasicLISRosterProvider implements RosterProvider {
 
   @Override
   public Set<Member> getRoster(ProviderOptions options) {
+    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+
     String url = options.getStrategyHost();
     String rosterIdentifier = options.getStrategyKey();
     
@@ -116,14 +118,14 @@ public class BasicLISRosterProvider implements RosterProvider {
     map.add("lti_version", "LTI-1p0");
     map.add("lti_message_type", "basic-lis-readmembershipsforcontext");
     map.add("id", rosterIdentifier);
-    map.add(OAuthUtil.CONSUMER_KEY_PARAM, key);
+    map.add(OAuthUtil.CONSUMER_KEY_PARAM, providerData.findValueForKey("oauth_consumer_key"));
     map.add(OAuthUtil.SIGNATURE_METHOD_PARAM, "HMAC-SHA1");
     map.add(OAuthUtil.VERSION_PARAM, "1.0");
     map.add(OAuthUtil.TIMESTAMP_PARAM, new Long((new Date().getTime()) / 1000).toString());
     map.add(OAuthUtil.NONCE_PARAM, UUID.randomUUID().toString());
     try {
       map.add(OAuthUtil.SIGNATURE_PARAM,
-          new OAuthMessageSigner().sign(secret, OAuthUtil.mapToJava("HMAC-SHA1"), "POST", url, new TreeMap<String, String>(map.toSingleValueMap())));
+          new OAuthMessageSigner().sign(providerData.findValueForKey("secret"), OAuthUtil.mapToJava("HMAC-SHA1"), "POST", url, new TreeMap<String, String>(map.toSingleValueMap())));
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new ProviderException(e);

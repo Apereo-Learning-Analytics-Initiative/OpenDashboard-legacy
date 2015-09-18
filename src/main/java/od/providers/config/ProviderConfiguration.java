@@ -11,4 +11,5 @@ import java.util.LinkedList;
  */
 public interface ProviderConfiguration {
   LinkedList<ProviderConfigurationOption> getOptions();
+  ProviderConfigurationOption getByKey(final String key);
 }

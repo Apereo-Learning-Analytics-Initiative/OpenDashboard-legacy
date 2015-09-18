@@ -15,4 +15,5 @@ public interface ProviderConfigurationOption {
   
   boolean isRequired();
   String getType();
+  String getKey();
 }

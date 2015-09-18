@@ -39,7 +39,7 @@ public class ForumsController {
     if (log.isDebugEnabled()) {
       log.debug(providerOptions.toString());
     }
-    ForumsProvider forumsProvider = providerService.getForumsProvider(ForumsProvider.DEFAULT);
+    ForumsProvider forumsProvider = providerService.getForumsProvider();
     return forumsProvider.getForums(providerOptions);
   }
   
@@ -51,7 +51,7 @@ public class ForumsController {
       log.debug(providerOptions.toString());
       log.debug("topic id: "+id);
     }
-    ForumsProvider forumsProvider = providerService.getForumsProvider(ForumsProvider.DEFAULT);
+    ForumsProvider forumsProvider = providerService.getForumsProvider();
     return forumsProvider.getMessages(providerOptions, id);
   }
 

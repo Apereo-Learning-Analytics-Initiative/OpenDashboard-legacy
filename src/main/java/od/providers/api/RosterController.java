@@ -38,7 +38,7 @@ public class RosterController {
 		if (log.isDebugEnabled()) {
 			log.debug(options.toString());
 		}
-    RosterProvider rosterProvider = providerService.getRosterProvider(RosterProvider.DEFAULT);
+    RosterProvider rosterProvider = providerService.getRosterProvider();
 
 		return rosterProvider.getRoster(options);
 	}

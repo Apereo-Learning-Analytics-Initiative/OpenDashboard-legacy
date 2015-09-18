@@ -17,7 +17,6 @@ import org.apereo.lai.impl.MessageImpl;
  *
  */
 public interface ForumsProvider extends Provider {
-  static final String DEFAULT = "forums_sakai";
 	List<ForumImpl> getForums(ProviderOptions options) throws ProviderException;
 	List<MessageImpl> getMessages(ProviderOptions options, String topicId) throws ProviderException;
 }

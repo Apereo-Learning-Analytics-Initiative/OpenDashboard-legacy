@@ -18,7 +18,12 @@ function LoginCtrl($log, $scope, $state, $translate, $translatePartialLoader, Se
           // TODO fix this validate message
           $scope.validationError = !data;
           if(data) {
-        	$state.go('index');
+  		    if (SessionService.hasAdminRole()) {
+  		      $state.go('index.admin');
+  		    }
+  		    else {
+  		      $state.go('index.courselist');
+  		    }
         	return;
           }
           return;

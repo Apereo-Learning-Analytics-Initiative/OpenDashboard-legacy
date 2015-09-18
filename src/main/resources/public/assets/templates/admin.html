@@ -1,21 +1,33 @@
 <div class="row">
   <div class="col-xs-12">
     <div class="chart-wrapper">
-      <div class="chart-title">
-      </div>
       <div class="chart-stage">
-        <div class="col-md-2">
+        <div class="col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a href="#">Data Providers</a></li>
-            <li><a href="#">Configure Dashboards</a></li>
-            <li><a href="#">Settings</a></li>
+            <li ui-sref-active-eq="active"><a ui-sref="index.admin"
+              translate="LABEL_DATA_PROVIDERS" id="LINK_DATA_PROVIDERS"></a></li>
+            <li><a href="#"
+              translate="LABEL_PRECONFIGURED_DASHBOARDS"></a></li>
+            <li><a href="#" translate="LABEL_SETTINGS"></a></li>
           </ul>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10 ui-view">
+          <div class="container-fluid m-t">
+            <div class="row">
+              <div class="col-sm-6 col-md-4 od-providertype-box"
+                ng-repeat="(key, providerType) in providerTypes"
+                ng-click="selectProviderType(providerType.type)">
+                <div class="chart-wrapper">
+                  <div class="chart-title"
+                    translate="{{providerType.key}}"></div>
+                  <div class="chart-notes"
+                    translate="{{providerType.desc}}"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="chart-notes">
-      </div>
-    </div>        
+    </div>
   </div>
 </div>

@@ -135,82 +135,28 @@
 	angular
 	.module('OpenDashboard')
 	.service('DashboardService', function($q, ContextMappingService, UUIDService, _ ){
-		var activeContextMapping = null;
-		var activeDashboard = null;
-		var activeCard = null;
 		
 		return {
-			getActiveContextMapping: function () {
-			  return activeContextMapping;
-		    },
 			getContextMappingById: function(contextMappingId) {
 				var deferred = $q.defer();
 				
-				if (activeContextMapping && activeContextMapping.id === contextMappingId) {
-					deferred.resolve(activeContextMapping);
-				}
-				else {
-					ContextMappingService.getById(contextMappingId)
-					.then(
-						function(contextMapping) {
-							activeContextMapping = contextMapping;
-							deferred.resolve(activeContextMapping);
-						},
-						function(error) {
-							deferred.reject();
-						}
-					);
-				}
+				ContextMappingService.getById(contextMappingId)
+				.then(
+					function(contextMapping) {
+						deferred.resolve(contextMapping);
+					},
+					function(error) {
+						deferred.reject();
+					}
+				);
 				return deferred.promise;
-			},
-			getActiveDashboard: function(contextMappingId, dashboardId) {
-				var deferred = $q.defer();
-				if (activeDashboard && activeDashboard.id === dashboardId) {
-					deferred.resolve(activeDashboard);
-				}
-				else {
-					this.getContextMappingById(contextMappingId)
-					.then(
-						function(contextMapping){
-							activeDashboard = _.find(contextMapping.dashboards,function(dashboard){return dashboard.id === dashboardId;});
-							deferred.resolve(activeDashboard);
-						},
-						function(error){
-							deferred.reject();
-						}
-					);
-				}
-				return deferred.promise;
-			},
-			getActiveCard: function(contextMappingId, dashboardId, cardId) {
-				var deferred = $q.defer();
-				if (activeCard && activeCard.id === cardId) {
-					deferred.resolve(activeCard);
-				}
-				else {
-					this.getActiveDashboard(contextMappingId, dashboardId)
-					.then(
-						function(activeDashboard){
-							activeCard = _.find(activeDashboard.cards,function(card){return card.id === cardId;});
-							deferred.resolve(activeCard);
-						},
-						function(error){
-							deferred.reject();
-						}
-					);
-				}
-				return deferred.promise;
-			},
-			removeCard : function(card, dashboard, contextMapping) {
-				dashboard.cards = _.reject(dashboard.cards,{'id': card.id});
-				return ContextMappingService.update(contextMapping);
 			}
 		}
 	});
 	
 	angular
 	.module('OpenDashboard')
-	.service('ContextMappingService', function($http, UUIDService, OpenDashboard_API) {
+	.service('ContextMappingService', function($http, UUIDService, OpenDashboard_API, _) {
 		return {
 			createContextMappingInstance : function (options) {
 				return OpenDashboard_API.createContextMappingInstance(options);
@@ -249,12 +195,24 @@
 				}
 			},
 			addCard: function(contextMapping, dashboard, card) {
-				if (contextMapping && dashboard) {
+				if (contextMapping && contextMapping.dashboards) {
 					card.id = UUIDService.generate();
-					if (!dashboard.cards) {
-						dashboard.cards = [];
+					
+					var db = _.find(contextMapping.dashboards,{'id':dashboard.id});
+
+					if (!db.cards) {
+						db.cards = [];
 					}
-					dashboard.cards.push(card);
+					db.cards.push(card);
+					
+					return this.update(contextMapping);
+				}
+			},
+			removeCard : function(contextMapping, dashboard, card) {
+				if (contextMapping && contextMapping.dashboards) {
+					
+					var db = _.find(contextMapping.dashboards,{'id':dashboard.id});
+					db.cards = _.reject(db.cards,{'id': card.id});
 					return this.update(contextMapping);
 				}
 			},

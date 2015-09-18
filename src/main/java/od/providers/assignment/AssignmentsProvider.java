@@ -16,7 +16,5 @@ import org.apereo.lai.impl.AssignmentImpl;
  *
  */
 public interface AssignmentsProvider extends Provider {
-  static final String DEFAULT = "assignments_sakai";
-  
 	List<AssignmentImpl> getAssignments(ProviderOptions options) throws ProviderException;
 }

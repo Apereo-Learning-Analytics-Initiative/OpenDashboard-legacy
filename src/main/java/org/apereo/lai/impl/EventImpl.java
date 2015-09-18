@@ -5,7 +5,6 @@ package org.apereo.lai.impl;
 
 import od.framework.model.OpenDashboardModel;
 
-import org.apereo.lai.Demographic;
 import org.apereo.lai.Event;
 
 /**

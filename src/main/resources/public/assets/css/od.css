@@ -107,3 +107,13 @@
 	opacity: .5; 
 	z-index: 500;
 }
+
+/* PROVIDERS */
+
+.od-providertype-box {
+  cursor: pointer;
+}
+
+.od-provider-box {
+}
+

@@ -1,0 +1,15 @@
+<div class="container-fluid m-t">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 od-provider-box" ng-repeat="provider in providers" ng-init="isConfigured = isConfigured(provider.key)">
+            <div class="chart-wrapper">
+                <div class="chart-title"><span translate="{{provider.name}}"></span><span ng-show="isConfigured" class="pull-right glyphicon glyphicon-ok" style="color:green"></span></div>
+                <div class="chart-stage" translate="{{provider.desc}}"></div>
+                <div class="chart-notes">
+                  <button ng-show="!isConfigured" class="btn btn-primary" translate="BUTTON_CONFIGURE" id="BUTTON_CONFIGURE" ng-click="configureProvider(providerType, provider.key);"></button>
+                  <button ng-show="isConfigured" class="btn btn-primary" translate="BUTTON_EDIT_CONFIGURE" id="BUTTON_EDIT_CONFIGURE" ng-click="editProvider(providerType, provider.key);"></button>
+                  <button ng-show="isConfigured" class="btn btn-link" translate="LABEL_DELETE_CONFIGURE" id="BUTTON_DELETE_CONFIGURE" ng-click="deleteProvider(providerType, provider.key);"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

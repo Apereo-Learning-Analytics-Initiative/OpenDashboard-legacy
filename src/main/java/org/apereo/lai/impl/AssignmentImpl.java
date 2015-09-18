@@ -1,8 +1,8 @@
 package org.apereo.lai.impl;
 
-import org.apereo.lai.Assignment;
-
 import od.framework.model.OpenDashboardModel;
+
+import org.apereo.lai.Assignment;
 
 public class AssignmentImpl extends OpenDashboardModel implements Assignment {
 

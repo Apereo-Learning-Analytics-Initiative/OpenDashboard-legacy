@@ -16,6 +16,5 @@ import org.apereo.lai.impl.LineItemImpl;
  *
  */
 public interface OutcomesProvider extends Provider {
-  static final String DEFAULT = "outcomes_sakai";
 	List<LineItemImpl> getOutcomesForCourse(ProviderOptions options) throws ProviderException;
 }

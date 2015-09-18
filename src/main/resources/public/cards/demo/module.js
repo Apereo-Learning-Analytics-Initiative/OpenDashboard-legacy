@@ -9,14 +9,16 @@ angular
         description: 'This card demonstrates how to retrieve data from various sources.',
         cardType: 'demo',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-	    ]
+	    config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true}],
+	    requires: [],
+	    uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
     });
  })
  .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
 	 SessionService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
     $translatePartialLoader.addPart('demo-card');
     $translate.refresh();
+    
 	$scope.course = SessionService.getCourse();
 	$scope.lti = SessionService.getInbound_LTI_Launch();
 

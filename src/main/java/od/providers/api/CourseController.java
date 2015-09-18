@@ -38,7 +38,7 @@ public class CourseController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider(CourseProvider.DEFAULT);
+    CourseProvider courseProvider = providerService.getCourseProvider();
 
     return courseProvider.getContexts(options);
   }
@@ -51,7 +51,7 @@ public class CourseController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider(CourseProvider.DEFAULT);
+    CourseProvider courseProvider = providerService.getCourseProvider();
 
     return courseProvider.getContext(options);
   }
