@@ -38,7 +38,7 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider(EventProvider.DEFAULT);
+    EventProvider eventProvider = providerService.getEventProvider();
 
     return eventProvider.getEventsForCourse(options, new PageRequest(page, size));
   }
@@ -52,7 +52,7 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider(EventProvider.DEFAULT);
+    EventProvider eventProvider = providerService.getEventProvider();
 
     return eventProvider.getEventsForUser(options, new PageRequest(page, size));
   }
@@ -66,7 +66,7 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider(EventProvider.DEFAULT);
+    EventProvider eventProvider = providerService.getEventProvider();
 
     return eventProvider.getEventsForCourseAndUser(options, new PageRequest(page, size));
   }

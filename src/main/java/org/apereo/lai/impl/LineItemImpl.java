@@ -5,9 +5,9 @@ package org.apereo.lai.impl;
 
 import java.util.List;
 
-import org.apereo.lai.LineItem;
-
 import od.framework.model.OpenDashboardModel;
+
+import org.apereo.lai.LineItem;
 
 /**
  * @author ggilbert

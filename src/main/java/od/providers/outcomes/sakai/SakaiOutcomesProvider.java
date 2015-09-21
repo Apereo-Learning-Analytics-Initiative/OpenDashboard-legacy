@@ -3,21 +3,21 @@
  */
 package od.providers.outcomes.sakai;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
-import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
-import od.providers.config.ProviderConfigurationOption;
 import od.providers.outcomes.OutcomesProvider;
 import od.providers.sakai.BaseSakaiProvider;
+import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.LineItemImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -33,28 +33,21 @@ public class SakaiOutcomesProvider extends BaseSakaiProvider implements Outcomes
   private static final String KEY = "outcomes_sakai";
   private static final String NAME = "Sakai Outcomes Web Service";
   private ProviderConfiguration providerConfiguration;
-  
+  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+
   @PostConstruct
   public void init() {
-    
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
-    
-    providerConfiguration = new DefaultProviderConfiguration(options);
+    providerConfiguration = getDefaultSakaiProviderConfiguration();
   }
-
 
   @Override
   public List<LineItemImpl> getOutcomesForCourse(ProviderOptions options) throws ProviderException {
-    
+    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+
     List<LineItemImpl> lineItems = null;
     
-    String host = options.getStrategyHost();
-    if (StringUtils.isBlank(host)) {
-      host = this.sakaiHost;
-    }
-    
-    String url = fullUrl(host, StringUtils.replace(ENTITY_URI, "{ID}", options.getCourseId()));
-    ResponseEntity<SakaiGradebook> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(url), SakaiGradebook.class);
+    String url = fullUrl(providerData, StringUtils.replace(ENTITY_URI, "{ID}", options.getCourseId()));
+    ResponseEntity<SakaiGradebook> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiGradebook.class);
     
     if (messageResponse != null) {
       SakaiGradebook sakaiGradebook = messageResponse.getBody();

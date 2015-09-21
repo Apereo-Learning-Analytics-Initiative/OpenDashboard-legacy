@@ -12,7 +12,7 @@ angular
         config: [
           {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true},
           {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true},
-          {field:'secret',fieldName:'Consumer Secret',fieldType:'text',required:true}
+          {field:'secret',fieldName:'Consumer Secret',fieldType:'password',required:true}
         ]
     });
 })

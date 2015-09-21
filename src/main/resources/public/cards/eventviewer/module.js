@@ -9,14 +9,15 @@ angular
         description: 'Use this card to view learning events.',
         cardType: 'eventviewer',
         styleClasses: 'od-card col-xs-12',
-        config: [
-          {field:'url',fieldName:'URL',fieldType:'url',required:true},
-          {field:'key',fieldName:'Key',fieldType:'text',required:true},
-          {field:'secret',fieldName:'Secret',fieldType:'text',required:true}
-        ]
+        config: [],
+        requires: ["EVENT"]
     });
  })
-.controller('EventViewerCardController', function($scope, $http, _, SessionService, EventService) {
+.controller('EventViewerCardController', function($scope, $translate, $translatePartialLoader, _, SessionService, EventService) {
+    $translatePartialLoader.addPart('eventviewer-card');
+    $translate.refresh();
+    
+	$scope.isError = false;
 	$scope.isStudent = SessionService.hasStudentRole();
     $scope.events = null;
     $scope.activeEvent = null;
@@ -29,8 +30,19 @@ angular
 		user = SessionService.getCurrentUser().user_id;
 	}
 	
-	var handleResponse = function (events) {
-    	$scope.events = events;
+	var handleResponse = function (response) {
+		if (response.isError) {
+		  $scope.isError = true;
+		  if (response.data && response.data.data) {
+			$scope.errorMessage = response.data.data;
+		  }
+		  else {
+			  $scope.errorMessage = "ERROR_GENERAL";
+		  }
+		}
+		else {
+		  $scope.events = response;
+		}
 	};
 	
 	var options = {};

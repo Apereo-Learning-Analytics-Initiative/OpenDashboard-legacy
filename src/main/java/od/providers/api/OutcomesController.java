@@ -37,7 +37,7 @@ public class OutcomesController {
 		if (log.isDebugEnabled()) {
 			log.debug(providerOptions.toString());
 		}
-    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider(OutcomesProvider.DEFAULT);
+    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider();
 
 		return outcomesProvider.getOutcomesForCourse(providerOptions);
 	}

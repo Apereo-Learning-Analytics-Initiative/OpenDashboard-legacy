@@ -26,7 +26,7 @@
                 if (dashboards && dashboards.length > 0) {
                     var dashboard = dashboards[0];
                     $log.log('default dashboard: '+dashboard);
-                    url = url + '/' + dashboard.id;
+    				$state.go('index.dashboard', {cmid:cm.id,dbid:dashboard.id});
                 }
                 else {
                   // no dashboards

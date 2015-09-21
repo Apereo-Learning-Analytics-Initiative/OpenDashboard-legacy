@@ -1,0 +1,18 @@
+{
+"LABEL_USER_KEY":"User Key",
+"LABEL_SECRET":"Secret",
+"LABEL_SAKAI_BASE_URL":"Sakai Base URL",
+
+"LABEL_KEY":"Key",
+
+"LABEL_OPENLRS_BASE_URL":"OpenLRS Base URL",
+"LABEL_LAP_BASE_URL":"LAP Base URL",
+"LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key",
+
+"BUTTON_SAVE":"Save",
+"BUTTON_CANCEL":"Cancel",
+"BUTTON_DELETE":"Delete",
+
+"TEXT_CONFIRM_DELETEPROVIDER":"Are you sure?",
+"TEXT_CONFIRM_DELETEPROVIDER_BODY": "Cards that are dependent on this provider configuration will no longer display properly."
+}

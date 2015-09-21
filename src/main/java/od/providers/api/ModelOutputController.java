@@ -40,7 +40,7 @@ public class ModelOutputController {
       log.debug("options " + options);
     }
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(ModelOutputProvider.DEFAULT);
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
     return modelOutputProvider.getModelOutputForCourse(options, courseId, new PageRequest(page, size));
   }
@@ -55,7 +55,7 @@ public class ModelOutputController {
       log.debug("options " + options);
     }
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(ModelOutputProvider.DEFAULT);
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
     return modelOutputProvider.getModelOutputForStudent(options, userId, new PageRequest(page, size));
   }

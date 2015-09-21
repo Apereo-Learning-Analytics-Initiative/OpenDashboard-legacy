@@ -11,5 +11,7 @@
 "SNAPP_CARD_FORUMLIST_TITLE":"Available Forums",
 "SNAPP_CARD_TOPICSLIST_TITLE":"Available Topics",
 "SNAPP_CARD_CONFIGURATION":"Configuration",
-"SNAPP_CARD_SELECTED_NODE":"Selected Node"
+"SNAPP_CARD_SELECTED_NODE":"Selected Node",
+"ERROR_NO_PROVIDER_FORUM":"Unable to access forum data because no forum data providers are configured. Contact your system administrator."
+
 }

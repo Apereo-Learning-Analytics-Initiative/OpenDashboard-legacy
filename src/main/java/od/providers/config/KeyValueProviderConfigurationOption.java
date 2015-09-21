@@ -7,27 +7,15 @@ package od.providers.config;
  * @author ggilbert
  *
  */
-public class KeyValueProviderConfigurationOption implements ProviderConfigurationOption {
+abstract class KeyValueProviderConfigurationOption implements ProviderConfigurationOption {
   
-  private String key;
-  private String value;
-  private String type;
-  private boolean isRequired;
-
-  public KeyValueProviderConfigurationOption(String key, String value, String type, boolean isRequired) {
-    super();
-    this.key = key;
-    this.value = value;
-    this.type = type;
-    this.isRequired = isRequired;
-  }
+  protected String key;
+  protected String defaultValue;
+  protected String type;
+  protected boolean isRequired;
 
   public String getKey() {
     return key;
-  }
-
-  public String getValue() {
-    return value;
   }
 
   @Override
@@ -40,4 +28,7 @@ public class KeyValueProviderConfigurationOption implements ProviderConfiguratio
     return isRequired;
   }
 
+  public String getDefaultValue() {
+    return defaultValue;
+  }
 }

@@ -3,7 +3,6 @@
  */
 package od.providers.modeloutput.lap;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,16 +14,17 @@ import javax.annotation.PostConstruct;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.providers.BaseProvider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.api.PageWrapper;
 import od.providers.config.DefaultProviderConfiguration;
-import od.providers.config.KeyValueProviderConfigurationOption;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
-import od.providers.events.openlrs.OpenLRSEventProvider;
+import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.repository.ContextMappingRepositoryInterface;
+import od.repository.ProviderDataRepositoryInterface;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.ModelOutput;
@@ -63,21 +63,44 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   private static final String NAME = "Apereo Learning Analytics Processor";
   private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
+  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
   private RestTemplate restTemplate;
   
   @PostConstruct
   public void init() {
-    ProviderConfigurationOption key = new KeyValueProviderConfigurationOption("OAuth Consumer Key", null, ProviderConfigurationOption.TEXT_TYPE, true);
-    ProviderConfigurationOption secret = new KeyValueProviderConfigurationOption("Secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true);
-    ProviderConfigurationOption baseUrl = new KeyValueProviderConfigurationOption("Base URL", null, ProviderConfigurationOption.URL_TYPE, true);
     
+    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
+    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
+    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "LAP Base URL", "LABEL_LAP_BASE_URL", false);
+
     LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
     options.add(key);
     options.add(secret);
     options.add(baseUrl);
     
     providerConfiguration = new DefaultProviderConfiguration(options);
+  }
+  
+  private PageImpl<ModelOutput> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
+    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+
+    String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
+    
+    restTemplate = new RestTemplate();
+    
+    ParameterizedTypeReference<PageWrapper<ModelOutputImpl>> responseType = new ParameterizedTypeReference<PageWrapper<ModelOutputImpl>>() {};
+    
+    PageWrapper<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
+        new HttpEntity(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"))), 
+        responseType, urlVariables).getBody();
+    log.debug(pageWrapper.toString());
+    List<ModelOutput> output = null;
+    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
+      output = new LinkedList<ModelOutput>(pageWrapper.getContent());
+    }
+    
+    return new PageImpl<ModelOutput>(output, pageable, pageWrapper.getTotalElements());
+
   }
 
   @Override
@@ -100,26 +123,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("id", course);
     
-    ContextMapping contextMapping = contextMappingRepository.findOne(options.getContextMappingId());
-    Card card = contextMapping.findCard(options.getCardId());
-    Map<String,Object> config = card.getConfig();
-    
-    String url = getUrl((String)config.get("url"), "/api/output/course/{id}", pageable);
-    
-    restTemplate = new RestTemplate();
-    
-    ParameterizedTypeReference<PagedResources<ModelOutputImpl>> responseType = new ParameterizedTypeReference<PagedResources<ModelOutputImpl>>() {};
-    
-    PagedResources<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth((String)config.get("key"), (String)config.get("secret"))), 
-        responseType, urlVariables).getBody();
-    log.debug(pageWrapper.toString());
-    List<ModelOutput> modeloutput = null;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      modeloutput = new LinkedList<ModelOutput>(pageWrapper.getContent());
-    }
-    
-    return new PageImpl<ModelOutput>(modeloutput, pageable, pageWrapper.getMetadata().getTotalElements());
+    return fetch(urlVariables, pageable, "/api/output/course/{id}");
   }
 
   @Override
@@ -127,26 +131,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("id", student);
     
-    ContextMapping contextMapping = contextMappingRepository.findOne(options.getContextMappingId());
-    Card card = contextMapping.findCard(options.getCardId());
-    Map<String,Object> config = card.getConfig();
-    
-    String url = getUrl((String)config.get("url"), "/api/output/student/{id}", pageable);
-    
-    restTemplate = restTemplate();
-    
-    ParameterizedTypeReference<PagedResources<ModelOutputImpl>> responseType = new ParameterizedTypeReference<PagedResources<ModelOutputImpl>>() {};
-    
-    PagedResources<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth((String)config.get("key"), (String)config.get("secret"))), 
-        responseType, urlVariables).getBody();
-    log.debug(pageWrapper.toString());
-    List<ModelOutput> modeloutput = null;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      modeloutput = new LinkedList<ModelOutput>(pageWrapper.getContent());
-    }
-    
-    return new PageImpl<ModelOutput>(modeloutput, pageable, pageWrapper.getMetadata().getTotalElements());
+    return fetch(urlVariables, pageable, "/api/output/student/{id}");
   }
   
   private RestTemplate restTemplate() {

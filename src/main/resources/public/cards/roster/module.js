@@ -10,17 +10,16 @@ angular
         imgUrl: '',
         cardType: 'roster',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-		    {field:'lap_url',fieldName:'LAP URL',fieldType:'url',required:false},
-		    {field:'lap_key',fieldName:'LAP Key',fieldType:'text',required:false},
-		    {field:'lap_secret',fieldName:'LAP Secret',fieldType:'text',required:false},
-		    {field:'url',fieldName:'OpenLRS URL',fieldType:'url',required:false},
-		    {field:'key',fieldName:'OpenLRS Key',fieldType:'text',required:false},
-		    {field:'secret',fieldName:'OpenLRS Secret',fieldType:'text',required:false}
-	    ]
+	    config: [],
+	    requires: ['ROSTER'],
+	    uses: ['EVENT','MODELOUTPUT']
     });
  })
- .controller('RosterCardController', function($scope, $http, $log, _, SessionService, EventService, RosterService, ModelOutputDataService) {
+ .controller('RosterCardController', function($scope, $translate, $translatePartialLoader, $log, _, SessionService, EventService, RosterService, ModelOutputDataService) {
+	 
+	$translatePartialLoader.addPart('roster-card');
+    $translate.refresh();
+
 	$scope.lapResults = null;
 	$scope.message = null;
 	$scope.queryString = null;
@@ -154,8 +153,8 @@ angular
 		
 	}
 	else {
-		$log.error('Card not configured for Roster');
-		$scope.message = 'No supporting roster service available';
+		$scope.isError = true;
+		$scope.errorMessage = 'ERROR_NO_PROVIDER_ROSTER';
 	}
 });
 

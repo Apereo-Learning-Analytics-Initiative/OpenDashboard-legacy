@@ -1,0 +1,27 @@
+<div class="container-fluid m-t">
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <div class="chart-wrapper">
+              <div class="chart-title" translate="{{provider.name}}"></div>
+              <div class="chart-stage">
+                <div class="row m-t">
+                  <div class="col-xs-12 ">
+                    <form name="providerDataForm" class="" novalidate="novalidate" ng-show="provider.providerConfiguration && provider.providerConfiguration.options">
+                      <div class="form-group" ng-repeat="option in provider.providerConfiguration.options">
+                        <label for="{{option.key}}" translate="{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></label>
+                        <div>
+                            <input type="{{option.type}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="config[option.key]">
+                        </div>
+                      </div>  
+                      <button class="btn btn-primary" type="button"
+                        ng-disabled="!providerDataForm.$valid || submitted" ng-click="save();" translate="BUTTON_SAVE" id="CONFIGUREPROVIDER_SAVE"></button>
+                      <button class="btn btn-link" type="button"
+                        onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="CONFIGUREPROVIDER_CANCEL"></button>                              
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>

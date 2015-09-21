@@ -191,8 +191,72 @@ angular
 	        url: 'direct/admin',
 	        templateUrl: '/assets/templates/admin.html',
 		    resolve:{
+	    	  providerTypes : function(ProviderService) {
+	    	    return ProviderService.getProviderTypes();
+	    	  }
 	     	},
-	        controller: function () {}
+	        controller: 'AdminCtrl'
+	    })
+	    .state('index.admin.providers', {
+	        url: '/:providerType',
+	        templateUrl: '/assets/templates/admin/providerlist.html',
+		    resolve:{
+	    	  providerType : function($stateParams) {
+	    	    return $stateParams.providerType;
+	          },
+	    	  providers : function(ProviderService, $stateParams) {
+	    	    return ProviderService.getProviders($stateParams.providerType);
+	    	  },
+	    	  providerData : function(ProviderService,$stateParams) {
+	    		return ProviderService.getProviderDataByType($stateParams.providerType);  
+	    	  }
+	     	},
+	        controller: 'ProviderListCtrl'
+	    })
+	    .state('index.admin.configureprovider', {
+	        url: '/:providerType/:providerKey',
+	        templateUrl: '/assets/templates/admin/configureprovider.html',
+		    resolve:{
+	    	  providerType : function($stateParams) {
+	    	    return $stateParams.providerType;
+	          },
+	    	  provider : function(ProviderService, $stateParams) {
+	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+	    	  }
+	     	},
+	        controller: 'ConfigureProviderCtrl'
+	    })
+	    .state('index.admin.editconfigureprovider', {
+	        url: '/:providerType/:providerKey/edit',
+	        templateUrl: '/assets/templates/admin/editconfigureprovider.html',
+		    resolve:{
+	    	  providerType : function($stateParams) {
+	    	    return $stateParams.providerType;
+	          },
+	    	  provider : function(ProviderService, $stateParams) {
+	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+	    	  },
+	    	  providerData : function(ProviderService,$stateParams) {
+	    	    return ProviderService.getProviderDataByKey($stateParams.providerType,$stateParams.providerKey);  
+	    	  }
+	     	},
+	        controller: 'EditConfigureProviderCtrl'
+	    })
+	    .state('index.admin.deleteconfigureprovider', {
+	        url: '/:providerType/:providerKey/delete',
+	        templateUrl: '/assets/templates/admin/deleteconfigureprovider.html',
+		    resolve:{
+	    	  providerType : function($stateParams) {
+	    	    return $stateParams.providerType;
+	          },
+	    	  provider : function(ProviderService, $stateParams) {
+	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+	    	  },
+	    	  providerData : function(ProviderService,$stateParams) {
+	    	    return ProviderService.getProviderDataByKey($stateParams.providerType,$stateParams.providerKey);  
+	    	  }
+	     	},
+	        controller: 'DeleteConfigureProviderCtrl'
 	    })
 	    .state('index.welcome', {
 	        url: 'welcome',
@@ -225,8 +289,8 @@ angular
 		      contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
-              dashboard: function($stateParams, DashboardService) {
-                return DashboardService.getActiveDashboard($stateParams.cmid, $stateParams.dbid);
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
               }
 	     	},
 	        controller: 'DashboardController'
@@ -238,8 +302,8 @@ angular
 		      contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
-              dashboard: function($stateParams, DashboardService) {
-                return DashboardService.getActiveDashboard($stateParams.cmid, $stateParams.dbid);
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
               }
 	     	},
 	        controller: 'SelectCardController'
@@ -251,8 +315,8 @@ angular
 		      contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
-              dashboard: function($stateParams, DashboardService) {
-                return DashboardService.getActiveDashboard($stateParams.cmid, $stateParams.dbid);
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
               },
 	          card: function($stateParams, registry) {
             	return angular.copy(registry.registry[$stateParams.cardType]);
@@ -268,11 +332,11 @@ angular
 		      contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
-              dashboard: function($stateParams, DashboardService) {
-                return DashboardService.getActiveDashboard($stateParams.cmid, $stateParams.dbid);
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
               },
-	          card: function($stateParams, DashboardService) {
-            	return DashboardService.getActiveCard($stateParams.cmid, $stateParams.dbid, $stateParams.cid);
+	          cardId: function($stateParams) {
+            	return $stateParams.cid;
               }
               
 	     	},
@@ -285,11 +349,11 @@ angular
 		      contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
-              dashboard: function($stateParams, DashboardService) {
-                return DashboardService.getActiveDashboard($stateParams.cmid, $stateParams.dbid);
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
               },
-	          card: function($stateParams, DashboardService) {
-            	return DashboardService.getActiveCard($stateParams.cmid, $stateParams.dbid, $stateParams.cid);
+	          cardId: function($stateParams) {
+            	return $stateParams.cid;
               }
               
 	     	},

@@ -1,8 +1,8 @@
 package org.apereo.lai.impl;
 
-import org.apereo.lai.ForumTopic;
-
 import od.framework.model.OpenDashboardModel;
+
+import org.apereo.lai.ForumTopic;
 
 public class ForumTopicImpl extends OpenDashboardModel implements ForumTopic {
 

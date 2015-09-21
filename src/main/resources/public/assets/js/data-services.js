@@ -1,6 +1,177 @@
 (function(angular, JSON, Math) {
   'use strict';
+  
+  var genericHandleError = function (error) {
+	if (error) {
+	  error['isError'] = true;
+	}
+	return error;
+  };
 	
+   angular
+	.module('OpenDashboard')
+	.service('ProviderService', function($log, $http, OpenDashboard_API) {
+
+		return {
+			getProviderTypes : function() {
+			  // TODO - make this dynamic
+			  var providers = [];
+			  var assignmentProviders = {
+			    type : 'ASSIGNMENT',
+			    key : 'LABEL_ASSIGNMENT_PROVIDERS_KEY',
+			    desc : 'LABEL_ASSIGNMENT_PROVIDERS_DESC'
+			  };
+			  var courseProviders = {
+			    type : 'COURSE',
+			    key : 'LABEL_COURSE_PROVIDERS_KEY',
+			    desc : 'LABEL_COURSE_PROVIDERS_DESC'
+			  };
+			  var eventProviders = {
+			    type : 'EVENT',
+			    key : 'LABEL_EVENT_PROVIDERS_KEY',
+			    desc : 'LABEL_EVENT_PROVIDERS_DESC'
+			  };
+			  var forumsProviders = {
+			    type : 'FORUM',
+			    key : 'LABEL_FORUM_PROVIDERS_KEY',
+				desc : 'LABEL_FORUM_PROVIDERS_DESC'                         
+			  };
+			  var modelOutputProviders = {
+			    type : 'MODELOUTPUT',
+			    key : 'LABEL_MODELOUTPUT_PROVIDERS_KEY',
+			    desc : 'LABEL_MODELOUTPUT_PROVIDERS_DESC'
+			  };
+			  var outcomesProviders = {
+			    type : 'OUTCOME',
+			    key : 'LABEL_OUTCOMES_PROVIDERS_KEY',
+			    desc : 'LABEL_OUTCOMES_PROVIDERS_DESC'
+			  };
+			  var rosterProviders = {
+			    type : 'ROSTER',
+			    key : 'LABEL_ROSTER_PROVIDERS_KEY',
+			    desc : 'LABEL_ROSTER_PROVIDERS_DESC'
+			  };
+			  
+			  providers.push(assignmentProviders);
+			  providers.push(courseProviders);
+			  providers.push(eventProviders);
+			  providers.push(forumsProviders);
+			  providers.push(modelOutputProviders);
+			  providers.push(outcomesProviders);
+			  providers.push(rosterProviders);
+			  
+			  return providers;
+		    },
+			getProviders: function(type) {
+				
+					var url = '/api/providers/'+type;
+			    	var promise = $http({
+			    		method  : 'GET',
+			    		url		: url,
+			    		headers : { 'Content-Type': 'application/json'}
+			    	})
+			    	.then(function (response) {
+			    		if (response && response.data) {
+				    		return response.data;		    			
+			    		}
+			    		$log.debug('No providers found for '+type);
+			    		return null;
+			    	}, genericHandleError);
+					return promise;
+			},
+			getProvider: function(type,key) {
+				
+				var url = '/api/providers/'+type+'/'+key;
+				var promise = $http({
+					method  : 'GET',
+					url		: url,
+					headers : { 'Content-Type': 'application/json'}
+				})
+				.then(function (response) {
+					if (response && response.data) {
+						return response.data;		    			
+					}
+					$log.debug('No provider found for '+type+' '+key);
+					return null;
+				}, genericHandleError);
+				return promise;
+			},
+			getProviderDataByKey: function(type,key) {
+				
+				var url = '/api/providerdata/'+type+'/'+key;
+				var promise = $http({
+					method  : 'GET',
+					url		: url,
+					headers : { 'Content-Type': 'application/json'}
+				})
+				.then(function (response) {
+					if (response && response.data) {
+						return response.data;		    			
+					}
+					$log.debug('No provider data found for '+type+' '+key);
+					return null;
+				}, genericHandleError);
+				return promise;
+			},
+			getProviderDataByType: function(type) {
+				
+				var url = '/api/providerdata/'+type;
+				var promise = $http({
+					method  : 'GET',
+					url		: url,
+					headers : { 'Content-Type': 'application/json'}
+				})
+				.then(function (response) {
+					if (response && response.data) {
+						return response.data;		    			
+					}
+					$log.debug('No provider data found for '+type);
+					return null;
+				}, genericHandleError);
+				return promise;
+			},
+			create : function (providerData) {
+				var promise =
+				$http({
+			        method  : 'POST',
+			        url     : '/api/providerdata',
+			        data    : JSON.stringify(providerData),
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			},
+			update: function (providerData) {
+				var promise =
+				$http({
+			        method  : 'PUT',
+			        url     : '/api/providerdata/'+providerData.type+'/'+providerData.key,
+			        data    : JSON.stringify(providerData),
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			},
+			remove: function (providerData) {
+				var promise =
+				$http({
+			        method  : 'DELETE',
+			        url     : '/api/providerdata/'+providerData.type+'/'+providerData.key,
+			        data    : JSON.stringify(providerData),
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			}
+		}
+	});
+
   	angular
 	.module('OpenDashboard')
 	.service('AssignmentService', function($log, $http, OpenDashboard_API) {
@@ -26,10 +197,7 @@
 			    		}
 			    		$log.debug('No assignments found for course');
 			    		return null;
-			    	}, function (error) {
-			    		$log.error(error);
-			    		return null;
-			    	});
+			    	}, genericHandleError);
 					return promise;
 			}
 		}
@@ -61,10 +229,7 @@
 			    		}
 			    		$log.debug('No contexts found for user');
 			    		return null;
-			    	}, function (error) {
-			    		$log.error(error);
-			    		return null;
-			    	});
+			    	}, genericHandleError);
 					return promise;
 				},
 				getContext: function(options, contextId) {				
@@ -84,10 +249,7 @@
 						}
 						$log.debug('No contexts found for user');
 						return null;
-					}, function (error) {
-						$log.error(error);
-						return null;
-					});
+					}, genericHandleError);
 					return promise;
 				 }		
 			}
@@ -119,10 +281,7 @@
 			    		  return response.data.content;	    	
 			    		}
 			    		return null;
-			    	}, function (error) {
-			    		$log.error(error);
-			    		return null;
-			    	});
+			    	}, genericHandleError);
 					return promise;
 				},
 				getEventsForUser : function (options, userId, page, size) {
@@ -146,10 +305,7 @@
 			    		  return response.data.content;		    	
 			    		}
 			    		return null;
-			    	}, function (error) {
-			    		$log.error(error);
-			    		return null;
-			    	});
+			    	}, genericHandleError);
 					return promise;
 				},
 				getEventsForCourseAndUser : function (options, courseId, userId, page, size) {
@@ -174,10 +330,7 @@
 			    		  return response.data.content;	    	
 			    		}
 			    		return null;
-			    	}, function (error) {
-			    		$log.error(error);
-			    		return null;
-			    	});
+			    	}, genericHandleError);
 					return promise;
 				},
 				groupByAndMap: function(events,groupByFunction,mapFunction) {
@@ -234,10 +387,7 @@
 				    		}
 				    		$log.debug('No forums found for course');
 				    		return null;
-				    	}, function (error) {
-				    		$log.error(error);
-				    		return null;
-				    	});
+				    	}, genericHandleError);
 						return promise;
 					},
 					getMessages: function(options, topicId) {
@@ -258,10 +408,7 @@
 							}
 							$log.debug('No messages found for course');
 							return null;
-						}, function (error) {
-							$log.error(error);
-							return null;
-						});
+						}, genericHandleError);
 						return promise;
 					}
 				}
@@ -290,16 +437,11 @@
 				    	})
 				    	.then(function (response) {
 				    		if (response && response.data) {
-				    			console.log('****');
-				    			console.log(response);
 				    			return response.data.content;		    	
 				    		}
 				    		$log.debug('No model output');
 				    		return null;
-				    	}, function (error) {
-				    		$log.error(error);
-				    		return null;
-				    	});
+				    	}, genericHandleError);
 						return promise;
 					},
 					getModelOutputForUser: function(options,userId,page,size) {
@@ -325,10 +467,7 @@
 							}
 							$log.debug('No model output');
 							return null;
-						}, function (error) {
-							$log.error(error);
-							return null;
-						});
+						}, genericHandleError);
 						return promise;
 					}
 				}
@@ -354,10 +493,7 @@
 				    		
 				    		$log.debug('No outcomes found for getOutcomesForCourse');
 				    		return null;
-				    	}, function (error) {
-				    		$log.error(error);
-				    		return null;
-				    	});
+				    	}, genericHandleError);
 						return promise;
 					}
 				}
@@ -389,10 +525,7 @@
 				    		}
 				    		$log.debug('No members found for getRoster');
 				    		return null;
-				    	}, function (error) {
-				    		$log.error(error);
-				    		return null;
-				    	});
+				    	}, genericHandleError);
 						return promise;
 					}
 				}

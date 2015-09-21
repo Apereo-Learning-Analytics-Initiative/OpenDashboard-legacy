@@ -16,6 +16,5 @@ import org.apereo.lai.Member;
  *
  */
 public interface RosterProvider extends Provider {
-  static final String DEFAULT = "roster_basiclis";
 	Set<Member> getRoster(ProviderOptions options) throws ProviderException;
 }

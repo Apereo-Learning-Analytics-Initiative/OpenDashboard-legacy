@@ -5,10 +5,9 @@ angular
 .controller('IndexCtrl',
 
 function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, SessionService, ContextMappingService) {
-  $log.debug('index ctrl');
-
   $scope.contextMapping = null;
   $scope.activeDashboard = null;
+  var currentState = $state.current;
 
   var doRouting = function () {
       if (SessionService.isLTISession()) {
@@ -35,14 +34,6 @@ function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, Se
 			  }
 			}
     	})
-	  }
-	  else {
-	    if (SessionService.hasAdminRole()) {
-	      $state.go('index.admin');
-	    }
-	    else {
-	      $state.go('index.courselist');
-	    }
 	  }
       return;
   };

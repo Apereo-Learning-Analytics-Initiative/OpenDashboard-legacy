@@ -1,0 +1,20 @@
+{
+"LABEL_DATA_PROVIDERS":"Data Providers",
+"LABEL_PRECONFIGURED_DASHBOARDS":"Configure Dashboards",
+"LABEL_SETTINGS":"Settings",
+
+"LABEL_ASSIGNMENT_PROVIDERS_KEY":"Assignment Data Providers",
+"LABEL_ASSIGNMENT_PROVIDERS_DESC":"Access assignments such as homework and related submission data.",
+"LABEL_COURSE_PROVIDERS_KEY":"Course Data Providers",
+"LABEL_COURSE_PROVIDERS_DESC":"Access course data such as title.",
+"LABEL_EVENT_PROVIDERS_KEY":"Event Data Providers",
+"LABEL_EVENT_PROVIDERS_DESC":"Access learning event data for courses and users.",
+"LABEL_FORUM_PROVIDERS_KEY":"Forum Data Providers",
+"LABEL_FORUM_PROVIDERS_DESC":"Access discussion threads and forum posts.",
+"LABEL_MODELOUTPUT_PROVIDERS_KEY":"Analytics Model Output Data Providers",
+"LABEL_MODELOUTPUT_PROVIDERS_DESC":"Access model output from systems like the Apereo Learning Analytics Processor.",
+"LABEL_OUTCOMES_PROVIDERS_KEY":"Outcomes Data Providers",
+"LABEL_OUTCOMES_PROVIDERS_DESC":"Access line item and result data.",
+"LABEL_ROSTER_PROVIDERS_KEY":"Roster Data Providers",
+"LABEL_ROSTER_PROVIDERS_DESC":"Access the roster of a course or section."
+}

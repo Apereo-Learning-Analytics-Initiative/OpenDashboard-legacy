@@ -3,9 +3,9 @@
  */
 package org.apereo.lai.impl;
 
-import org.apereo.lai.Result;
-
 import od.framework.model.OpenDashboardModel;
+
+import org.apereo.lai.Result;
 
 /**
  * @author ggilbert

@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import od.providers.config.ProviderDataConfigurationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -21,6 +23,16 @@ public class AppControllerAdvice {
     private static final String X_REQUESTED_WITH_HEADER_NAME = "X-Requested-With";
     private static final String X_REQUESTED_WITH_AJAX_VALUE = "XMLHttpRequest";
     private static final Logger logger = LoggerFactory.getLogger(AppControllerAdvice.class);
+    
+    @ExceptionHandler(ProviderDataConfigurationException.class)
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    public @ResponseBody Response handleProviderDataConfigException(HttpServletRequest request, ProviderDataConfigurationException ex) {
+      Response response = new Response();
+      response.setErrors(Arrays.asList(ex.getMessage()));
+      response.setData("ERROR_NO_PROVIDER_"+StringUtils.substringAfterLast(ex.getMessage(), ": "));
+      response.setUrl(request.getRequestURL().toString());
+      return response;
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
