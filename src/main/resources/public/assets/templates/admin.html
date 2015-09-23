@@ -14,14 +14,16 @@
         <div class="col-md-10 ui-view">
           <div class="container-fluid m-t">
             <div class="row">
-              <div class="col-sm-6 col-md-4 od-providertype-box"
-                ng-repeat="(key, providerType) in providerTypes"
-                ng-click="selectProviderType(providerType.type)">
+              <div class="col-xs-12 col-sm-6 col-md-4 od-providertype-box"
+                ng-repeat="(key, providerType) in providerTypes">
                 <div class="chart-wrapper">
                   <div class="chart-title"
                     translate="{{providerType.key}}"></div>
-                  <div class="chart-notes"
+                  <div class="chart-notes od-providertype-box-desc"
                     translate="{{providerType.desc}}"></div>
+                  <div class="chart-notes">
+                    <button class="btn btn-primary" translate="BUTTON_CONFIGURE" id="BUTTON_CONFIGURE" ng-click="selectProviderType(providerType.type);"></button>
+                  </div>
                 </div>
               </div>
             </div>

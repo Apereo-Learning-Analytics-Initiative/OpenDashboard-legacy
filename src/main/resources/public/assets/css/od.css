@@ -111,9 +111,13 @@
 /* PROVIDERS */
 
 .od-providertype-box {
-  cursor: pointer;
 }
 
 .od-provider-box {
+}
+
+.od-providertype-box-desc {
+  height: 50px;
+  overflow: hidden;
 }
 
