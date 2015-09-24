@@ -12,7 +12,7 @@
                   <div class="form-group col-xs-12" ng-class="{ 'has-error' : (addDashboardForm.title.$dirty && addDashboardForm.title.$invalid) || (addDashboardForm.title.$dirty && addDashboardForm.title.$error.required) }">
                     <label for="title" translate="LABEL_TITLE"></label>
                     <input type="text" class="form-control" id="title" name="title" placeholder="Give your dashboard a title" 
-                        data-ng-model="dashboard.title" ng-model-options="{debounce: 200}" ng-change="onDashboardTitleAdd('addDashboardForm', 'title', dashboard.title)" required="required">
+                        data-ng-model="dashboard.title" ng-model-options="{debounce: 200}" ng-change="onDashboardTitleAdd('addDashboardForm', 'title', dashboard.title)" id="INPUT_ADD_DASHBOARD_TITLE" required="required">
                     <p ng-show="addDashboardForm.title.$dirty && addDashboardForm.title.$error.required" class="help-block" translate="ERROR_TITLE_REQUIRED"></p>
                     <p ng-show="addDashboardForm.title.$dirty && addDashboardForm.title.$invalid" class="help-block" translate="ERROR_DASHBOARD_EXISTS">/p>
                   </div>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="chart-notes">
-          <button ng-disabled="addDashboardForm.$invalid || addDashboardForm.title.$error.required" class="btn btn-primary" ng-click="save()" translate="BUTTON_SAVE"></button>
+          <button ng-disabled="addDashboardForm.$invalid || addDashboardForm.title.$error.required" class="btn btn-primary" ng-click="save()" translate="BUTTON_SAVE" id="BUTTON_ADD_DASHBOARD_SAVE"></button>
         </div>
       </div>        
     </div>

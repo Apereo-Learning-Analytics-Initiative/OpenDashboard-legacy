@@ -5,9 +5,9 @@
                 <div class="chart-title"><span translate="{{provider.name}}"></span><span ng-show="isConfigured" class="pull-right glyphicon glyphicon-ok" style="color:green"></span></div>
                 <div class="chart-stage" translate="{{provider.desc}}"></div>
                 <div class="chart-notes">
-                  <button ng-show="!isConfigured" class="btn btn-primary" translate="BUTTON_CONFIGURE" id="BUTTON_CONFIGURE" ng-click="configureProvider(providerType, provider.key);"></button>
-                  <button ng-show="isConfigured" class="btn btn-primary" translate="BUTTON_EDIT_CONFIGURE" id="BUTTON_EDIT_CONFIGURE" ng-click="editProvider(providerType, provider.key);"></button>
-                  <button ng-show="isConfigured" class="btn btn-link" translate="LABEL_DELETE_CONFIGURE" id="BUTTON_DELETE_CONFIGURE" ng-click="deleteProvider(providerType, provider.key);"></button>
+                  <button ng-show="!isConfigured" class="btn btn-primary" translate="BUTTON_CONFIGURE" id="BUTTON_PROVIDERLIST_ADMIN_CONFIGURE" ng-click="configureProvider(providerType, provider.key);"></button>
+                  <button ng-show="isConfigured" class="btn btn-primary" translate="BUTTON_EDIT_CONFIGURE" id="BUTTON_PROVIDERLIST_ADMIN_EDIT_CONFIGURE" ng-click="editProvider(providerType, provider.key);"></button>
+                  <button ng-show="isConfigured" class="btn btn-link" translate="LABEL_DELETE_CONFIGURE" id="BUTTON_PROVIDERLIST_ADMIN_DELETE_CONFIGURE" ng-click="deleteProvider(providerType, provider.key);"></button>
                 </div>
             </div>
         </div>
