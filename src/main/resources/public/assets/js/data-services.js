@@ -530,6 +530,15 @@
 					}
 				}
 			});
-
-	
+			angular.
+			module('OpenDashboard')
+			.service('dataService', function ($log) {
+		        return {
+		            checkUniqueValue: function (dashboards, field, value) {
+		                if(value == undefined)
+		                    value = "";
+		                return ( _.result(_.find(dashboards,field, value), field) === undefined);
+		            }
+		        }
+		     });
 })(angular, JSON, Math);

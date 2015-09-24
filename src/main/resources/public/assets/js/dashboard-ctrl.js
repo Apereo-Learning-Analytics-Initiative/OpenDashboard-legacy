@@ -4,7 +4,7 @@
     angular
     .module('OpenDashboard')
     .controller('AddDashboardController', function($log, $scope, $state, $translate, $translatePartialLoader, Notification,
-                                            ContextMappingService, contextMapping) {
+                                            ContextMappingService, contextMapping, dataService) {
     	$translatePartialLoader.addPart('dashboard');
         $translate.refresh();
         $scope.$parent.contextMapping = contextMapping;
@@ -22,6 +22,16 @@
                     $log.error(error);
                     Notification.error('Unable to add dashboard.');
                 });
+        };
+        
+        $scope.onDashboardTitleAdd = function(form, field, model){
+        	var dashboardForm = $scope[form];
+        	var unique = dataService.checkUniqueValue($scope.contextMapping.dashboards, field, model);
+        	dashboardForm[field].$invalid = !unique;
+        	dashboardForm[field].$valid = unique;
+        	dashboardForm.$invalid = !unique;
+        	dashboardForm.$valid = unique;
+        	
         };
     });
     
