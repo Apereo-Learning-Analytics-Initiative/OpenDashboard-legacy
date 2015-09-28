@@ -8,7 +8,7 @@
 "SAKAI_OUTCOMES_WEB_SERVICE_NAME":"Sakai Outcomes Web Service",
 "SAKAI_OUTCOMES_WEB_SERVICE_DESC":"Use web services exposed by Sakai to retrieve outcome data.",
 "BASIC_LIS_ROSTER_NAME":"Basic LIS Roster",
-"BASIC_LIS_ROSTER_DESC":"Retrieve data from web services exposed by the Basic LIS Roster.",
+"BASIC_LIS_ROSTER_DESC":"Retrieve roster data from a web service that supports Basic Learner Information Services format.",
 "OPEN_LRS_NAME":"Apereo OpenLRS",
 "OPEN_LRS_DESC":"Retrieve data from web services exposed by the Apereo Learning Record Store.",
 "APEREO_LAP_NAME":"Apereo Learning Analytics Processor",
