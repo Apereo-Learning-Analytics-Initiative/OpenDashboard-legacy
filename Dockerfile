@@ -21,9 +21,6 @@ RUN \
 # Create a directory for the app to live
 RUN mkdir opt/opendash/
 
-# Copy the app from the host to the docker.
-COPY target/*.jar /opt/opendash/
-
 # Open the docker port. (Still have to map the host port with run command)
 EXPOSE 8080
 
