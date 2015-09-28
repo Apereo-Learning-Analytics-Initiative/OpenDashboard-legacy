@@ -1,4 +1,18 @@
 {
+"SAKAI_ASSIGNMENT_WEB_SERVICE_NAME":"Sakai assignment web service",
+"SAKAI_ASSIGNMENT_WEB_SERVICE_DESC":"Use web services exposed by Sakai to retrieve assignment data.",
+"SAKAI_COURSES_WEB_SERVICE_NAME":"Sakai Courses Web Service",
+"SAKAI_COURSES_WEB_SERVICE_DESC":"Use web services exposed by Sakai to retrieve course data.",
+"SAKAI_FORUMS_WEB_SERVICE_NAME":"Sakai Forums Web Service",
+"SAKAI_FORUMS_WEB_SERVICE_DESC":"Use web services exposed by Sakai to retrieve forum data.",
+"SAKAI_OUTCOMES_WEB_SERVICE_NAME":"Sakai Outcomes Web Service",
+"SAKAI_OUTCOMES_WEB_SERVICE_DESC":"Use web services exposed by Sakai to retrieve outcome data.",
+"BASIC_LIS_ROSTER_NAME":"Basic LIS Roster",
+"BASIC_LIS_ROSTER_DESC":"Retrieve data from web services exposed by the Basic LIS Roster.",
+"OPEN_LRS_NAME":"Apereo OpenLRS",
+"OPEN_LRS_DESC":"Retrieve data from web services exposed by the Apereo Learning Record Store.",
+"APEREO_LAP_NAME":"Apereo Learning Analytics Processor",
+"APEREO_LAP_DESC":"Retrieve analytics model output data from web services exposed by the Apereo Learning Analytics Processor.",
 "BUTTON_CONFIGURE":"Configure",
 "BUTTON_EDIT_CONFIGURE":"Edit Configuration",
 "LABEL_DELETE_CONFIGURE":"Delete Configuration"

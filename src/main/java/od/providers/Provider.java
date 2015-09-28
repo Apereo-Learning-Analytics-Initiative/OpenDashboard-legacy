@@ -12,5 +12,6 @@ import od.providers.config.ProviderConfiguration;
 public interface Provider {
   String getKey();
   String getName();
+  String getDesc();
   ProviderConfiguration getProviderConfiguration();
 }

@@ -33,7 +33,9 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
   private final String ENTITY_URI ="/direct/site/{ID}.json";
   
   private static final String KEY = "courses_sakai";
-  private static final String NAME = "Sakai Courses Web Service";
+  private static final String BASE = "SAKAI_COURSES_WEB_SERVICE";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
@@ -71,6 +73,11 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
   }
 
   @Override
+  public String getDesc() {
+    return DESC;
+}
+
+@Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }

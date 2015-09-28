@@ -60,7 +60,9 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   private static final Logger log = LoggerFactory.getLogger(LAPModelOutputProvider.class);
   
   private static final String KEY = "modeloutput_lap";
-  private static final String NAME = "Apereo Learning Analytics Processor";
+  private static final String BASE = "APEREO_LAP";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
@@ -111,6 +113,11 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   @Override
   public String getName() {
     return NAME;
+  }
+
+  @Override
+  public String getDesc() {
+    return DESC;
   }
 
   @Override

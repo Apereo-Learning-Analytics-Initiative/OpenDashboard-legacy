@@ -31,7 +31,9 @@ public class SakaiOutcomesProvider extends BaseSakaiProvider implements Outcomes
   private final String ENTITY_URI = "/direct/grades/gradebook/{ID}.json";
   
   private static final String KEY = "outcomes_sakai";
-  private static final String NAME = "Sakai Outcomes Web Service";
+  private static final String BASE = "SAKAI_OUTCOMES_WEB_SERVICE";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
@@ -67,6 +69,10 @@ public class SakaiOutcomesProvider extends BaseSakaiProvider implements Outcomes
     return NAME;
   }
 
+  @Override
+  public String getDesc() {
+    return DESC;
+  }
   @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;

@@ -69,7 +69,9 @@ public class BasicLISRosterProvider implements RosterProvider {
       PERSON_NAME_GIVEN, PERSON_SOURCEDID, USER_ID, USER_IMAGE };
   
   private static final String KEY = "roster_basiclis";
-  private static final String NAME = "Basic LIS Roster";
+  private static final String BASE = "BASIC_LIS_ROSTER";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
   private RestTemplate restTemplate = new RestTemplate();
@@ -95,6 +97,11 @@ public class BasicLISRosterProvider implements RosterProvider {
   @Override
   public String getName() {
     return NAME;
+  }
+
+  @Override
+  public String getDesc() {
+    return DESC;
   }
 
   @Override

@@ -49,7 +49,9 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final Logger log = LoggerFactory.getLogger(OpenLRSEventProvider.class);
 
   private static final String KEY = "events_openlrs";
-  private static final String NAME = "OpenLRS";
+  private static final String BASE = "OPEN_LRS";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
@@ -128,6 +130,11 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   }
 
   @Override
+  public String getDesc() {
+    return DESC;
+}
+
+@Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }

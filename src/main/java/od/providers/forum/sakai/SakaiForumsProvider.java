@@ -37,7 +37,9 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
   private final String MESSAGES_URI = "/direct/forum_message/topic/{ID}.json";
 
   private static final String KEY = "forums_sakai";
-  private static final String NAME = "Sakai Forums Web Service";
+  private static final String BASE = "SAKAI_FORUMS_WEB_SERVICE";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
@@ -95,6 +97,11 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
   @Override
   public String getName() {
     return NAME;
+  }
+
+  @Override
+  public String getDesc() {
+    return DESC;
   }
 
   @Override

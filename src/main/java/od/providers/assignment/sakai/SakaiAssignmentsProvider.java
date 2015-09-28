@@ -33,7 +33,9 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
   private final String COLLECTION_URI = "/direct/assignment/site/{ID}.json";
   
   private static final String KEY = "assignments_sakai";
-  private static final String NAME = "Sakai Assignments Web Service";
+  private static final String BASE = "SAKAI_ASSIGNMENT_WEB_SERVICE";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
@@ -60,6 +62,11 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
   @Override
   public String getName() {
     return NAME;
+  }
+
+  @Override
+  public String getDesc() {
+      return DESC;
   }
 
   @Override
