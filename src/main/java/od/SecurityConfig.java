@@ -111,6 +111,10 @@ public class SecurityConfig {
       .authorizeRequests()
         .antMatchers("/features/**", "/", "/login").permitAll()
         .anyRequest().authenticated()
+      .and()
+        .logout()
+        .invalidateHttpSession(true)
+        .deleteCookies("ODSESSIONID", "X-OD-TENANT")
       .and().csrf().csrfTokenRepository(csrfTokenRepository())
       .and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
     }

@@ -101,6 +101,11 @@
 		  },
 		  getCurrentUser : function () {
 			return OpenDashboard_API.getCurrentUser();
+		  },
+		  logout : function() {
+		    authenticated = false;
+		    ltiSession = false;
+		    authorities = null;
 		  }
 		}
 	})

@@ -20,13 +20,15 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li ng-show="!isStudent && contextMapping">
-            <a ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD">
-              <span class="glyphicon glyphicon-plus"></span> Dashboard
+            <a class="glyphicon glyphicon-plus" ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="DASHBOARD">
             </a>
           </li>
           <li ng-show="!isStudent && contextMapping && activeDashboard">
-            <a ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD">
-              <span class="glyphicon glyphicon-plus"></span> Card
+            <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="CARD">
+            </a>
+          </li>
+           <li ng-show="!isLtiSession">
+            <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LOGOUT">
             </a>
           </li>
         </ul>

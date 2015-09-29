@@ -4,7 +4,10 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, SessionService, ContextMappingService) {
+function IndexCtrl($scope, $http, $state, $translate, $translatePartialLoader, $log, SessionService, ContextMappingService) {
+  $translatePartialLoader.addPart('index');
+  $translate.refresh();
+  
   $scope.contextMapping = null;
   $scope.activeDashboard = null;
   var currentState = $state.current;
@@ -40,7 +43,8 @@ function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, Se
   
   
   if (SessionService.isAuthenticated()) {
-	$scope.isStudent = SessionService.hasStudentRole();
+    $scope.isStudent = SessionService.hasStudentRole();
+    $scope.isLtiSession = SessionService.isLTISession();
     doRouting();
   }
   else {
@@ -64,7 +68,14 @@ function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, Se
 	  );
   }
   
-  
-  
+  $scope.logout = function() {
+    $http.post('logout', {}).success(function() {
+      SessionService.logout();
+      $state.go('login');
+    }).error(function(data) {
+      SessionService.logout();
+      $state.go('login');
+    });
+  };
 
 });
