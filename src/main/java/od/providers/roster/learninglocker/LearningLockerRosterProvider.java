@@ -37,7 +37,9 @@ import od.repository.ProviderDataRepositoryInterface;
 public class LearningLockerRosterProvider implements RosterProvider {
 
   private static final String KEY = "roster_learninglocker";
-  private static final String NAME = "Learning Locker Roster";
+  private static final String BASE = "LEARNING_LOCKER_ROSTER";
+  private static final String NAME = String.format("%s_NAME", BASE);
+  private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
   private RestTemplate restTemplate = new RestTemplate();
@@ -65,6 +67,11 @@ public class LearningLockerRosterProvider implements RosterProvider {
   @Override
   public String getName() {
     return NAME;
+  }
+
+  @Override
+  public String getDesc() {
+    return DESC;
   }
 
   @Override

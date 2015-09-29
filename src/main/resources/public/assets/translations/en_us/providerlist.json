@@ -11,6 +11,8 @@
 "BASIC_LIS_ROSTER_DESC":"Retrieve roster data from a web service that supports Basic Learner Information Services format.",
 "OPEN_LRS_NAME":"Apereo OpenLRS",
 "OPEN_LRS_DESC":"Retrieve data from web services exposed by the Apereo Learning Record Store.",
+"LEARNING_LOCKER_ROSTER_NAME":"Learning Locker Roster",
+"LEARNING_LOCKER_ROSTER_DESC":"Retrieve roster data from web services exposed by Learning Locker.",
 "APEREO_LAP_NAME":"Apereo Learning Analytics Processor",
 "APEREO_LAP_DESC":"Retrieve analytics model output data from web services exposed by the Apereo Learning Analytics Processor.",
 "BUTTON_CONFIGURE":"Configure",

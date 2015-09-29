@@ -9,6 +9,8 @@
 "LABEL_LAP_BASE_URL":"LAP Base URL",
 "LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key",
 
+"LABEL_LEARNINGLOCKER_BASE_URL":"Learning Locker Base URL",
+
 "BUTTON_SAVE":"Save",
 "BUTTON_CANCEL":"Cancel",
 "BUTTON_DELETE":"Delete",

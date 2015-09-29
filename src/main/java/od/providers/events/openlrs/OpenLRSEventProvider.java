@@ -10,8 +10,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import od.framework.model.Card;
-import od.framework.model.ContextMapping;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -22,7 +20,6 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
-import od.repository.ContextMappingRepositoryInterface;
 import od.repository.ProviderDataRepositoryInterface;
 
 import org.apereo.lai.Event;
