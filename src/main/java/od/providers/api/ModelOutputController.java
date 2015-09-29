@@ -3,6 +3,7 @@
  */
 package od.providers.api;
 
+import od.TenantService;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.modeloutput.ModelOutputProvider;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ModelOutputController {
   private static final Logger log = LoggerFactory.getLogger(ModelOutputController.class);
   @Autowired private ProviderService providerService;
+  @Autowired private TenantService tenantService;
   
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/modeloutput/course/{courseId}", method = RequestMethod.POST)
@@ -42,7 +44,7 @@ public class ModelOutputController {
     
     ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
-    return modelOutputProvider.getModelOutputForCourse(options, courseId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForCourse(options, tenantService.getTenant(), courseId, new PageRequest(page, size));
   }
   
   @Secured({"ROLE_INSTRUCTOR","ROLE_STUDENT"})
@@ -57,7 +59,7 @@ public class ModelOutputController {
     
     ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
-    return modelOutputProvider.getModelOutputForStudent(options, userId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForStudent(options, tenantService.getTenant(), userId, new PageRequest(page, size));
   }
 
 }

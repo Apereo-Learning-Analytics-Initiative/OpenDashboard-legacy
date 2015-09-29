@@ -88,7 +88,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
       events = new LinkedList<Event>(pageWrapper.getContent());
     }
     
-    return new PageImpl<Event>(events, pageable, pageWrapper.getTotalElements());
+    return new PageImpl<Event>(events, pageable, pageWrapper.getPage().getTotalElements());
 
   }
   

@@ -3,28 +3,42 @@
   <div class="chart-wrapper">
     <div class="chart-title">
       <div class="row">
-        <div class="col-xs-12 col-md-6 p-t p-b">
-          <h4 class="text-center"
-            ng-show="!modeloutput || modeloutput.length == 0" translate="TEXT_NO_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
+        <div class="col-xs-12 col-md-6 p-t p-b">          
           <h4 ng-show="modeloutput" translate="TEXT_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
         </div>
       </div>
     </div>
     <div class="chart-stage">
       <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-8 col-xs-12">
+          <h4 ng-show="!modeloutput || modeloutput.length == 0" translate="TEXT_NO_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
+          <bubble-cloud
+          	diameter="480"
+          	watch="true"
+          	data="chart_data"
+          	value-attr="score"
+          	label-attr="name"
+          	fill-color-fn="fill_color"
+          	label-color-fn="label_color"
+          	tooltip-format-fn="tooltip_format"
+          ></bubble>        
+        </div>
+        <div class="col-md-4 col-xs-12">
           <table class="table table-hover table-condensed">
             <thead>
               <tr>
-                <th translate="LABEL_LEARNER"></th>
-                <th translate="LABEL_RISK"></th>
+                <th class="col-md-8 col-xs-6" translate="LABEL_LEARNER"></th>
+                <th class="col-md-4 col-xs-6"  translate="LABEL_RISK"></th>
               </tr>
             </thead>
             <tbody>
               <tr
                 ng-repeat="row in modeloutput">
-                <td>{{row.student_id}}</td>
-                <td>{{row.risk_score}}</td>
+                <td class="col-md-10 col-xs-6">{{findNameFromId(row.student_id)}}</td>
+                <td class="col-md-2 col-xs-6">
+                  <span class="glyphicon glyphicon-align-justify" 
+                ng-class="{'text-info':row.risk_score == 'LOW RISK','text-success':row.risk_score == 'NO RISK','text-danger':row.risk_score == 'HIGH RISK', 'text-warning':row.risk_score == 'MEDIUM RISK'}" style="font-size: 2em;"></span>
+                </td>
               </tr>
             </tbody>
           </table>

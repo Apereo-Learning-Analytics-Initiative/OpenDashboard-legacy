@@ -17,6 +17,6 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ModelOutputProvider extends Provider {
   
-  Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String course, Pageable page) throws ProviderException;
-  Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String student, Pageable page) throws ProviderException;
+  Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable page) throws ProviderException;
+  Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable page) throws ProviderException;
 }

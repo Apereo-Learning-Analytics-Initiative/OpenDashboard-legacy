@@ -3,7 +3,8 @@
  */
 package od.providers.modeloutput.lap;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +12,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import od.framework.model.Card;
-import od.framework.model.ContextMapping;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -23,12 +22,10 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.modeloutput.ModelOutputProvider;
-import od.repository.ContextMappingRepositoryInterface;
 import od.repository.ProviderDataRepositoryInterface;
 
-import org.apereo.lai.Event;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.ModelOutput;
-import org.apereo.lai.impl.EventImpl;
 import org.apereo.lai.impl.ModelOutputImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +34,15 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
@@ -64,6 +58,8 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
+  
+  private static final String LAP_OAUTH_TOKEN_URI = "/oauth/token";
   
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
   private RestTemplate restTemplate;
@@ -84,25 +80,38 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   }
   
   private PageImpl<ModelOutput> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
+    
+    log.debug("{}",urlVariables);
+    log.debug("{}",uri);
+    
     ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
 
     String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
     
-    restTemplate = new RestTemplate();
-    
+    ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+    resourceDetails.setClientId(providerData.findValueForKey("key"));
+    resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
+    resourceDetails.setAccessTokenUri(getUrl(providerData.findValueForKey("base_url"), LAP_OAUTH_TOKEN_URI, null));
+    DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+
+    OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
+    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     ParameterizedTypeReference<PageWrapper<ModelOutputImpl>> responseType = new ParameterizedTypeReference<PageWrapper<ModelOutputImpl>>() {};
     
-    PageWrapper<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"))), 
-        responseType, urlVariables).getBody();
+    PageWrapper<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType, urlVariables).getBody();
     log.debug(pageWrapper.toString());
     List<ModelOutput> output = null;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
       output = new LinkedList<ModelOutput>(pageWrapper.getContent());
     }
+    else {
+      output = new ArrayList<ModelOutput>();
+    }
     
-    return new PageImpl<ModelOutput>(output, pageable, pageWrapper.getTotalElements());
-
+    return new PageImpl<ModelOutput>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
   @Override
@@ -126,31 +135,20 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   }
 
   @Override
-  public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String course, Pageable pageable) throws ProviderException {
+  public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("id", course);
+    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
     
-    return fetch(urlVariables, pageable, "/api/output/course/{id}");
+    return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?onlyLastRun=true");
   }
 
   @Override
-  public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String student, Pageable pageable) throws ProviderException {
+  public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<String, String>();
     urlVariables.put("id", student);
+    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
     
-    return fetch(urlVariables, pageable, "/api/output/student/{id}");
+    return fetch(urlVariables, pageable, "/api/outpu/{tenant}t/student/{id}");
   }
-  
-  private RestTemplate restTemplate() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    mapper.registerModule(new Jackson2HalModule());
-
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    //converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/hal+json"));
-    converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
-    converter.setObjectMapper(mapper);
-    return new RestTemplate(Collections.<HttpMessageConverter<?>> singletonList(converter));
-   }
-
 }

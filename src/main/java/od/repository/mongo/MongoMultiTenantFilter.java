@@ -12,10 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
+import od.TenantService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -38,12 +40,14 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
   @Value("${od.useDefaultDatabaseName:true}")
   private String useDefaultDatabaseName;
   
+  @Autowired private TenantService tenantService;
+  
   @Override
   public void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
     logger.debug("applying MongoMultiTenantFilter");
     logger.debug("allow defaultDatabase: "+useDefaultDatabaseName);
     
-    MultiTenantMongoDbFactory.clearDatabaseNameForCurrentThread();
+    //MultiTenantMongoDbFactory.clearDatabaseNameForCurrentThread();
     String tenant = req.getHeader(TENANT_PARAMETER);
     Cookie tenantCookie = WebUtils.getCookie(req, TENANT_PARAMETER);
     LaunchRequest launchRequest = new LaunchRequest(req.getParameterMap());
@@ -85,6 +89,9 @@ public class MongoMultiTenantFilter extends OncePerRequestFilter {
       }
     }
     
+    logger.debug("{}", tenant);
+    tenantService.setTenant(tenant);
+    //MultiTenantMongoDbFactory.setDatabaseNameForCurrentThread(tenant);
     fc.doFilter(req, res);
   }
   

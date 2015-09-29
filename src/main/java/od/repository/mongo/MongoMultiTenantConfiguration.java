@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.DispatcherType;
 
+import od.TenantService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration {
   protected String getDatabaseName() {
       return dbName;
   }
-
+  
   @Bean
   public MongoTemplate mongoTemplate(final Mongo mongo, MultiTenantMongoDbFactory dbFactory) throws Exception {
     MongoTemplate template = new MongoTemplate(mongoDbFactory(mongo));
@@ -77,6 +79,7 @@ public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration {
     urls.add("/lti");
     urls.add("/api/*");
     urls.add("/cm/*");
+    urls.add("/user");
     registrationBean.setUrlPatterns(urls);
     registrationBean.setOrder(3);
     registrationBean.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));

@@ -27,6 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
+import od.TenantService;
 import od.exception.MissingCookieException;
 import od.exception.MissingTenantException;
 import od.repository.mongo.MongoMultiTenantFilter;
@@ -44,6 +45,8 @@ public class MongoMultiTenantFilterTest extends MongoTests{
     HttpServletResponse res;
     @Mock
     FilterChain fc;
+    @Mock
+    TenantService tenantService;
     @InjectMocks
     MongoMultiTenantFilter mongoMultiTenantFilter;
     
