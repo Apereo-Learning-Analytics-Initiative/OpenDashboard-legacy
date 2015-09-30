@@ -23,6 +23,7 @@
 		var authenticated = false;
 		var ltiSession = false;
 		var authorities = null;
+		var loggedOut = false;
 		
 		var checkRole = function(role) {
 		  var hasRole = false;
@@ -40,6 +41,9 @@
 		}
 		
 		return {
+		  isLoggedOut : function () {
+		    return loggedOut;
+		  },
 		  isAuthenticated : function () {
 		    return authenticated;
 		  },
@@ -75,6 +79,7 @@
 			      && response.data.authenticated 
 			      && response.data.name) {
 			    	$log.debug(response);
+			    	loggedOut = false;
 			    	authenticated = response.data.authenticated;
 			    	authorities = response.data.authorities;
 			    	
@@ -106,6 +111,7 @@
 		    authenticated = false;
 		    ltiSession = false;
 		    authorities = null;
+		    loggedOut = true;
 		  }
 		}
 	})

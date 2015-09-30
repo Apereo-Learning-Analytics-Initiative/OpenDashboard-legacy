@@ -5,5 +5,6 @@
 "PASSWORD_REQUIRED_ERROR": "Password is required.",
 "USERNAME_PASSWORD_MISMATCH_ERROR": "The username and password do not match our records, please try again.",
 "USERNAME": "Username",
-"PASSWORD": "Password"
+"PASSWORD": "Password",
+"USER_LOGGED_OUT":"You have been logged out."
 }

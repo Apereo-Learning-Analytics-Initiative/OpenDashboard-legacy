@@ -34,4 +34,6 @@ function LoginCtrl($log, $scope, $state, $translate, $translatePartialLoader, Se
         }
       );
   };
+  $scope.loggedOut = SessionService.isLoggedOut();
+  
 });
