@@ -6,5 +6,6 @@
 "ERROR_TITLE_REQUIRED":"Title is required.",
 "ERROR_DASHBOARD_EXISTS":"Dashboard title is already used. Please choose another title.",
 "LABEL_TITLE":"Title",
-"BUTTON_SAVE":"Save"
+"BUTTON_SAVE":"Save",
+"BUTTON_CANCEL":"CANCEL"
 }

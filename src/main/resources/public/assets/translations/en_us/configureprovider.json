@@ -18,18 +18,19 @@
 "TEXT_CONFIRM_DELETEPROVIDER":"Are you sure?",
 "TEXT_CONFIRM_DELETEPROVIDER_BODY": "Cards that are dependent on this provider configuration will no longer display properly.",
 
-"REQUIRED_LABEL_USER_KEY":"User Key is required",
-"REQUIRED_LABEL_KEY":"Key is required",
-"REQUIRED_LABEL_SECRET":"Secret is required",
-"REQUIRED_LABEL_SAKAI_BASE_URL":"Sakai Base URL is required",
-"REQUIRED_LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key is required",
-"REQUIRED_LABEL_LAP_BASE_URL":"LAP Base URL is required",
-"REQUIRED_LABEL_OPENLRS_BASE_URL":"OpenLRS Base URL is required",
+"ERROR_REQUIRED_LABEL_USER_KEY":"User Key is required",
+"ERROR_REQUIRED_LABEL_KEY":"Key is required",
+"ERROR_REQUIRED_LABEL_SECRET":"Secret is required",
+"ERROR_REQUIRED_LABEL_SAKAI_BASE_URL":"Sakai Base URL is required",
+"ERROR_REQUIRED_LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key is required",
+"ERROR_REQUIRED_LABEL_LAP_BASE_URL":"LAP Base URL is required",
+"ERROR_REQUIRED_LABEL_OPENLRS_BASE_URL":"OpenLRS Base URL is required",
+"ERROR_REQUIRED_LABEL_LEARNINGLOCKER_BASE_URL":"Learning Locker Base URL is required",
 
-"MAX_LENGTH_LABEL_USER_KEY":"User Key must be less than 100 characters",
-"MAX_LENGTH_LABEL_KEY":"Key must be less than 100 characters",
-"MAX_LENGTH_LABEL_SECRET":"Secret must be less than 100 characters",
-"MAX_LENGTH_LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key must be less than 100 characters",
+"ERROR_MAX_LENGTH_LABEL_USER_KEY":"User Key must be less than 100 characters",
+"ERROR_MAX_LENGTH_LABEL_KEY":"Key must be less than 100 characters",
+"ERROR_MAX_LENGTH_LABEL_SECRET":"Secret must be less than 100 characters",
+"ERROR_MAX_LENGTH_LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key must be less than 100 characters",
 
-"URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com"
+"ERROR_URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com"
 }

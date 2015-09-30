@@ -26,11 +26,11 @@
                   || (cardForm.{{c.field}}.$error.url) }">
                       <input type="{{c.fieldType}}" ng-maxlength="{{(c.fieldType !== 'url') ? 99 : undefined}}"class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
                        <!-- Required Text -->
-                       <p ng-show="cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.required" class="help-block" translate="REQUIRED_{{c.translatableLabelKey}}"></p>
+                       <p ng-show="cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{c.translatableLabelKey}}"></p>
                        <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
-                       <p ng-show="{{(c.fieldType !== 'url')}} && cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.maxlength" class="help-block" translate="MAX_LENGTH_{{c.translatableLabelKey}}"></p>
+                       <p ng-show="{{(c.fieldType !== 'url')}} && cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{c.translatableLabelKey}}"></p>
                        <!-- Help Text URL must be in correct format -->
-                       <p ng-show="cardForm.{{c.field}}.$error.url" class="help-block" translate="URL_FORMAT"></p>
+                       <p ng-show="cardForm.{{c.field}}.$error.url" class="help-block" translate="ERROR_URL_FORMAT"></p>
                 </div>                      
               </form>
             </div>

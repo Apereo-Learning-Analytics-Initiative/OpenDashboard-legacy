@@ -16,14 +16,14 @@
 "CONSUMER_KEY":"Consumer key",
 "CONSUMER_SECRET":"Consumer secret",
 
-"REQUIRED_EXAMPLE_FIELD":"Example Field is required",
-"REQUIRED_LAUNCH_URL":"Launch URL is required",
-"REQUIRED_CONSUMER_KEY":"Consumer key is required",
-"REQUIRED_CONSUMER_SECRET":"Consumer secret is required",
+"ERROR_REQUIRED_EXAMPLE_FIELD":"Example Field is required",
+"ERROR_REQUIRED_LAUNCH_URL":"Launch URL is required",
+"ERROR_REQUIRED_CONSUMER_KEY":"Consumer key is required",
+"ERROR_REQUIRED_CONSUMER_SECRET":"Consumer secret is required",
 
-"MAX_LENGTH_EXAMPLE_FIELD":"Example Field must be less than 100 characters",
-"MAX_LENGTH_CONSUMER_KEY":"Consumer key must be less than 100 characters",
-"MAX_LENGTH_CONSUMER_SECRET":"Consumer secret must be less than 100 characters",
+"ERROR_MAX_LENGTH_EXAMPLE_FIELD":"Example Field must be less than 100 characters",
+"ERROR_MAX_LENGTH_CONSUMER_KEY":"Consumer key must be less than 100 characters",
+"ERROR_MAX_LENGTH_CONSUMER_SECRET":"Consumer secret must be less than 100 characters",
 
-"URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com"
+"ERROR_URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com"
 }
