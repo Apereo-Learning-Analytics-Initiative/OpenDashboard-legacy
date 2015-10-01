@@ -108,10 +108,22 @@
 			return OpenDashboard_API.getCurrentUser();
 		  },
 		  logout : function() {
-		    authenticated = false;
-		    ltiSession = false;
-		    authorities = null;
-		    loggedOut = true;
+            var promise =
+              $http({
+              method  : 'POST',
+              url     : '/logout',
+              headers : { 'Content-Type': 'application/json' }
+              })
+              .then(function (response) {
+                  authenticated = false;
+                  ltiSession = false;
+                  authorities = null;
+                  return response.data;
+              },
+              function (error) {
+                  return false;
+              });
+              return promise;
 		  }
 		}
 	})

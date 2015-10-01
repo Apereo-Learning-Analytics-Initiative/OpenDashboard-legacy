@@ -27,7 +27,7 @@
             <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="CARD">
             </a>
           </li>
-           <li ng-show="!isLtiSession">
+           <li ng-show="!isLtiSession && isAuthenticated">
             <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LOGOUT">
             </a>
           </li>

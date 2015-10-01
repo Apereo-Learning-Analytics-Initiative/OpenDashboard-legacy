@@ -41,6 +41,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -116,7 +117,17 @@ public class SecurityConfig {
         .invalidateHttpSession(true)
         .deleteCookies("ODSESSIONID", "X-OD-TENANT")
       .and().csrf().csrfTokenRepository(csrfTokenRepository())
-      .and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+      /**
+       * 
+       * TODO revisit after updating to Spring Security 4.1 
+       * Currently the SessionManagementFilter is added here instead of the CsrfFilter 
+       * Two session tokens are generated, one token is created before login and one token is created after.
+       * The Csrf doesn't update with the second token.
+       * Logout does not work as a side effect.
+       * @link https://github.com/dsyer/spring-security-angular/issues/15
+       * 
+       * */
+      .and().addFilterAfter(csrfHeaderFilter(), SessionManagementFilter.class);
     }
     
     @Override

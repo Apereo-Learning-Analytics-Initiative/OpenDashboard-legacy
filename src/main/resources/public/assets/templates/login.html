@@ -5,18 +5,18 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
-            <p ng-show="validationError" class="text-danger" translate="USERNAME_PASSWORD_MISMATCH_ERROR"></p>
-            <p ng-show="loggedOut" class="text-danger" translate="USER_LOGGED_OUT"></p>
             <form name="loginForm" class="form col-md-12 center-block" ng-submit="login()" novalidate>
+              <p ng-show="validationError" class="alert alert-danger" translate="ALERT_DANGER_USERNAME_PASSWORD_MISMATCH"></p>
+              <p ng-show="hasLoggedOut && !validationError" class="alert alert-success" translate="ALERT_SUCCESS_LOGOUT_{{hasLoggedOut}}"></p>
               <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
                 <input type="text" class="form-control input-lg"
                   placeholder="Username" name="username" ng-model="credentials.username" id="INPUT_LOGIN_USERNAME" required></input>
-                <p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block" translate="USERNAME_REQUIRED_ERROR"></p>
+                <p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block" translate="ERROR_USERNAME_REQUIRED"></p>
               </div>
               <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
                 <input type="password" class="form-control input-lg"
                   placeholder="Password" name="password" ng-model="credentials.password" id="INPUT_LOGIN_PASSWORD" required></input>
-                <p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block" translate="PASSWORD_REQUIRED_ERROR"></p>
+                <p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block" translate="ERROR_PASSWORD_REQUIRED"></p>
               </div>
               <div class="form-group" ng-show="isMultiTenant">
                   <select class="form-control input-lg" name="tenant" ng-model="credentials.tenant" ng-required="isMultiTenant" id="DROPDOWN_LOGIN_SELECT_INSTITUTION">

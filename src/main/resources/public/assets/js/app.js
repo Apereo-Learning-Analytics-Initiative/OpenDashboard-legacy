@@ -162,15 +162,16 @@ angular
 	// Application routes
 	$stateProvider
 	    .state('login', {
-	        url: '/login',
-	        templateUrl: '/assets/templates/login.html',
-	        resolve:{
-	    	  isMultiTenant : function (FeatureFlagService) {
-	    		return FeatureFlagService.isFeatureActive('multitenant');
-	    	  }	
-	     	},
-	        controller: 'LoginCtrl'
-	    })
+          url: '/login',
+          templateUrl: '/assets/templates/login.html',
+          params: { loggedOutMessage : null },
+          resolve:{
+            isMultiTenant : function (FeatureFlagService) {
+              return FeatureFlagService.isFeatureActive('multitenant');
+            }
+          },
+          controller: 'LoginCtrl'
+        })
 	    .state('index', {
 	        url: '/',
 	        templateUrl: '/assets/templates/index.html',
