@@ -140,7 +140,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     urlVariables.put("id", course);
     urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
     
-    return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?onlyLastRun=true");
+    return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
   }
 
   @Override

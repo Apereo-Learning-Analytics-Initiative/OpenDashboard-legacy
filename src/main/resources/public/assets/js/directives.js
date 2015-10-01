@@ -139,24 +139,22 @@
 						function get_flattened_data() {
 
 							var data = $scope.data;
-
-							if (_(data).isArray()) {
+							if (_.isArray(data)) {
 
 								var groupAttr = $scope.groupAttr;
 								if (!groupAttr)
 									throw new Error(
 											'group-attr is required on <bubble>');
 
-								data = _($scope.data).groupBy(function(item) {
+								data = _.groupBy($scope.data, function(item) {
 									return item[groupAttr];
 								});
 							}
 
 							var flattened_data = [];
 
-							_(data).each(function(items, group) {
-
-								_(items).each(function(item) {
+							_.forOwn(data, function(items,group) {
+								_.forEach(items, function(item) {
 									flattened_data.push({
 										group : group,
 										object : item
@@ -164,7 +162,6 @@
 								});
 
 							});
-
 							return flattened_data;
 
 						}
@@ -194,7 +191,7 @@
 
 							if ($scope.fillColorFn) {
 								var fillColorFn = $scope.$parent[$scope.fillColorFn];
-								if (!_(fillColorFn).isFunction())
+								if (!_.isFunction(fillColorFn))
 									throw new Error(
 											'fill-color-fn attr must be a function in the parent scope');
 								$scope.fill_color_fn = fillColorFn;
@@ -204,7 +201,7 @@
 
 							if ($scope.labelColorFn) {
 								var labelColorFn = $scope.$parent[$scope.labelColorFn];
-								if (!_(labelColorFn).isFunction())
+								if (!_.isFunction(labelColorFn))
 									throw new Error(
 											'label-color-fn attr must be a function in the parent scope');
 								$scope.label_color_fn = labelColorFn;
@@ -216,7 +213,7 @@
 
 							if ($scope.tooltipFormatFn) {
 								var tooltipFormatFn = $scope.$parent[$scope.tooltipFormatFn];
-								if (!_(tooltipFormatFn).isFunction())
+								if (!_.isFunction(tooltipFormatFn))
 									throw new Error(
 											'tool-tip-format-fn attr must be a function in the parent scope');
 								$scope.tooltip_format_fn = tooltipFormatFn;

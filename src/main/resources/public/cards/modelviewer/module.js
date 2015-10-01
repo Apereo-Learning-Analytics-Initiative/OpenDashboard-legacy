@@ -38,8 +38,8 @@ angular
 		}
 		return name;
 	};
-	
-	$scope.fill_color = function (group) {
+
+    $scope.fill_color = function (group) {
 	  var fillColor = '#d9534f';
 	  
 	  if (group === 'no') {
@@ -91,6 +91,7 @@ angular
       return tooltip;
     };
 
+
     RosterService.getRoster(options)
     .then(function(members) {
     	$scope.members = members;
@@ -111,6 +112,7 @@ angular
 			  }
 			}
 			else {
+				
 			  $scope.modeloutput = response;
 			  
 			  var noRisk = [];
@@ -120,33 +122,36 @@ angular
 			  
 			  angular.forEach($scope.modeloutput, function (output) {
 				  var obj = {};
-				  obj.name = $scope.findNameFromId(output.student_id);
+				  obj['name'] = $scope.findNameFromId(output.student_id);
 				  
 		          if (output.risk_score == 'NO RISK') {
-		        	obj.score = 1;
+		        	obj['score'] = 1;
 		            noRisk.push(obj);
 		          }
 		          else if (output.risk_score == 'LOW RISK') {
-		        	obj.score = 2;
+		        	obj['score'] = 2;
 		            lowRisk.push(obj);
 		          }
 		          else if (output.risk_score == 'MEDIUM RISK') {
-		        	obj.score = 3;
+		        	obj['score'] = 3;
 		            mediumRisk.push(obj);
 		          }
 		          else {
-		        	obj.score = 4;
+		        	obj['score'] = 4;
 		            highRisk.push(obj);
 		          }
 		          		          
-		          $scope.chart_data = {
-			        no: noRisk,
-			        low: lowRisk,
-			        medium : mediumRisk,
-			        high : highRisk
-		          };
 			  });
-
+			  
+	          $scope.chart_data = {
+		        no: noRisk,
+		        low: lowRisk,
+		        medium : mediumRisk,
+		        high : highRisk
+	          };
+	          
+	        //console.log($scope.chart_data);
+			  
 			}
 		};
 	
