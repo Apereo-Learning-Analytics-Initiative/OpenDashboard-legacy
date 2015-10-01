@@ -9,14 +9,22 @@
                     <form name="providerDataForm" class="" novalidate="novalidate" ng-show="provider.providerConfiguration && provider.providerConfiguration.options">
                       <div class="form-group" ng-repeat="option in provider.providerConfiguration.options">
                         <label for="{{option.key}}" translate="{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></label>
-                        <div>
-                            <input type="{{option.type}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="config[option.key]">
+                        <div ng-class="{ 'has-error' : (providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required)
+                        || ({{(option.type !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength)
+                        || (providerDataForm.{{option.key}}.$error.url) }">
+                            <input type="{{option.type}}" ng-maxlength="{{(option.key !== 'url') ? 99 : undefined}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="config[option.key]">
+                            <!-- Required Text -->
+                            <p ng-show="providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></p>
+                            <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                            <p ng-show="{{(option.type !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></p>
+                            <!-- Help Text URL must be in correct format -->
+                            <p ng-show="providerDataForm.{{option.key}}.$error.url" class="help-block" translate="ERROR_URL_FORMAT"></p>
                         </div>
                       </div>  
                       <button class="btn btn-primary" type="button"
                         ng-disabled="!providerDataForm.$valid || submitted" ng-click="save();" translate="BUTTON_SAVE" id="CONFIGUREPROVIDER_ADMIN_SAVE"></button>
                       <button class="btn btn-link" type="button"
-                        onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="CONFIGUREPROVIDER_ADMIN_CANCEL"></button>                              
+                        onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="CONFIGUREPROVIDER_ADMIN_CANCEL"></button>
                     </form>
                   </div>
                 </div>

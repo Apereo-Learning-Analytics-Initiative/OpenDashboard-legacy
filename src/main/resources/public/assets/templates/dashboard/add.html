@@ -22,7 +22,7 @@
         </div>
         <div class="chart-notes">
           <button ng-disabled="addDashboardForm.$invalid || addDashboardForm.title.$error.required" class="btn btn-primary" ng-click="save()" translate="BUTTON_SAVE" id="BUTTON_ADD_DASHBOARD_SAVE"></button>
-          <button class="btn btn-link" ng-click="cancel()" translate="BUTTON_CANCEL" id="BUTTON_ADD_DASHBOARD_CANCEL"></button>
+          <button class="btn btn-link" onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_ADD_DASHBOARD_CANCEL"></button>
         </div>
       </div>
     </div>

@@ -20,17 +20,24 @@
             <div class="col-xs-12 ">
               <form name="cardForm" class="m-t od-card-add" novalidate="novalidate">
                 <div class="form-group" ng-repeat="c in cardConfig">
-                  <label for="{{c.field}}">{{c.fieldName}}</label>
-                  <div>
-                      <input type="{{c.fieldType}}" class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="card.config[c.field]">
-                  </div>
+                  <label translate="{{c.translatableLabelKey}}"></label>
+                  <div ng-class="{ 'has-error' : (cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.required)
+                  || ({{(c.fieldType !== 'url')}} && cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.maxlength)
+                  || (cardForm.{{c.field}}.$error.url) }">
+                      <input type="{{c.fieldType}}" ng-maxlength="{{(c.fieldType !== 'url') ? 99 : undefined}}"class="form-control" id="{{c.field}}" name="{{c.field}}" ng-required="{{c.required}}" ng-model="newConfig[c.field]">
+                       <!-- Required Text -->
+                       <p ng-show="cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{c.translatableLabelKey}}"></p>
+                       <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                       <p ng-show="{{(c.fieldType !== 'url')}} && cardForm.{{c.field}}.$dirty && cardForm.{{c.field}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{c.translatableLabelKey}}"></p>
+                       <!-- Help Text URL must be in correct format -->
+                       <p ng-show="cardForm.{{c.field}}.$error.url" class="help-block" translate="ERROR_URL_FORMAT"></p>
                 </div>                      
               </form>
             </div>
         </div>
         </div>
         <div class="chart-notes">
-          <button class="btn btn-primary" ng-click="editCard()" translate="BUTTON_SAVE" id="BUTTON_EDIT_CARD_SAVE"></button>
+          <button ng-disabled="!cardForm.$valid" class="btn btn-primary" ng-click="editCard()" translate="BUTTON_SAVE" id="BUTTON_EDIT_CARD_SAVE"></button>
           <button class="btn btn-link" ng-click="cancel()" translate="BUTTON_CANCEL" id="BUTTON_EDIT_CARD_CANCEL"></button>
         </div>
       </div>        

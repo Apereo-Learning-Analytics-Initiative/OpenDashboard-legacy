@@ -24,10 +24,6 @@
                 });
         };
         
-        $scope.cancel = function() {
-            $state.go('index.selectCard', {cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
-        };
-        
         $scope.onDashboardTitleAdd = function(form, field, model){
         	var dashboardForm = $scope[form];
         	var unique = dataService.checkUniqueValue($scope.contextMapping.dashboards, field, model);
