@@ -117,7 +117,8 @@ function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _
 	$scope.provider = provider;
 	$scope.providerType = providerType;
 	$scope.providerData = providerData;
-	
+
+	debugger;
 	$scope.getTranslatableLabel = function (key) {
 	  var label = null;
 	  
@@ -136,6 +137,18 @@ function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _
 	  return label;
 	}
 	
+    $scope.getType = function (key) {
+      var type = null;
+      
+      if (provider.providerConfiguration && provider.providerConfiguration.options) {
+        var option = _.find(provider.providerConfiguration.options,{'key':key});
+        if (option && option.type) {
+            type = option.type;  
+        }
+      }
+      
+      return type;
+    }
 	
 	$scope.save = function () {
 	  $scope.submitted = true;

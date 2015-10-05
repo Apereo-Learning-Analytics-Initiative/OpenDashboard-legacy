@@ -7,16 +7,16 @@
                 <div class="row m-t">
                   <div class="col-xs-12 ">
                     <form name="providerDataForm" class="" novalidate="novalidate">
-                      <div class="form-group" ng-repeat="option in provider.providerConfiguration.options">
-                        <label for="{{option.key}}" translate="{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></label>
+                     <div class="form-group" ng-repeat="option in providerData.options">
+                        <label for="{{option.key}}" translate="{{getTranslatableLabel(option.key)}}"></label>
                         <div ng-class="{ 'has-error' : (providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required)
                         || ({{(option.type !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength)
                         || (providerDataForm.{{option.key}}.$error.url) }">
-                            <input type="{{option.type}}" ng-maxlength="{{(option.key !== 'url') ? 99 : undefined}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="config[option.key]">
+                            <input type="{{getType(option.key)}}" ng-maxlength="{{(getType(option.key) !== 'url') ? 99 : undefined}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="option.value">
                             <!-- Required Text -->
-                            <p ng-show="providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></p>
+                            <p ng-show="providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{getTranslatableLabel(option.key)}}"></p>
                             <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
-                            <p ng-show="{{(option.type !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{option.translatableLabelKey ? option.translatableLabelKey : option.key}}"></p>
+                            <p ng-show="{{(getType(option.key) !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{getTranslatableLabel(option.key)}}"></p>
                             <!-- Help Text URL must be in correct format -->
                             <p ng-show="providerDataForm.{{option.key}}.$error.url" class="help-block" translate="ERROR_URL_FORMAT"></p>
                         </div>
