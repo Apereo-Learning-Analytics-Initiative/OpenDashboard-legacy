@@ -257,10 +257,11 @@ describe('the framework-services test', function () {
                 http,
                 httpBackend,
                 scope,
-                UUIdService;
+                UUIdService,
+                mockContextMapping;
         var contextMapping = {'key': 'contextKey'};
         var contextMapValue = {'key': 'contextKey', 'context': 'contextValue'};
-        var contextMapId = {'id':'123'};
+        var contextMapId = {'id': '123'};
 
         //Any thing you need to do before or after is declared first
         beforeEach(inject(function (ContextMappingService, $http, $httpBackend, $rootScope, $q, UUIDService) {
@@ -270,6 +271,22 @@ describe('the framework-services test', function () {
             scope = $rootScope.$new();
             UUIdService = UUIDService;
 
+            spyOn(UUIdService, 'generate').and.callThrough();
+
+            mockContextMapping = {
+                id: "mockId",
+                key: "mockKey",
+                dashboards: null,
+                context: 'mockContext',
+                modified: null
+            };
+
+            mockContextMapping.addDashboard = function addDashboard(dashboard) {
+                if (!this.dashboards) {
+                    this.dashboards = [];
+                }
+                this.dashboards.push(dashboard);
+            };
         }));
 
         //First test should always prove that you have the service your testing
@@ -380,49 +397,87 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
         });
-        
-       describe('ContextMappingService.addDashboard', function () {
-            var dashboard = {'id':"test"};
-            var contextMapping = {'id':'12','key':'123','dashboards':'test','context':'context','modified':'0'};
 
-           contextMapping.addDashboard = function addDashboard(dashboard) {
-	    	if (!contextMapping.dashboards) {
-	    		contextMapping.dashboards = [];
-	    	}
-	    };
-            
-            /*it('should call UUIDService.generate()', function () {
-                spyOn(UUIdService, 'generate');
-                service.addDashboard(contextMapping, dashboard);
-                expect(UUIdService.generate()).toHaveBeenCalled();
-            });*/
+        describe('ContextMappingService.addDashboard', function () {
+            it('should set dashboard.id when give a defined context mapping', function () {
+                var dashboard = {id: null};
+                expect(dashboard.id).toBeNull();
+                service.addDashboard(mockContextMapping, dashboard);
+                expect(dashboard.id).not.toBeNull();
+            });
+
+            it('should not set dashboard.id when give an undefined context mapping', function () {
+                var dashboard = {id: null};
+                expect(dashboard.id).toBeNull();
+                service.addDashboard(undefined, dashboard);
+                expect(dashboard.id).toBeNull();
+            });
+
+            it('should not set dashboard.id when give a null value context mapping', function () {
+                var dashboard = {id: null};
+                expect(dashboard.id).toBeNull();
+                service.addDashboard(null, dashboard);
+                expect(dashboard.id).toBeNull();
+            });
+
+            //2
+            it('should call UUIDService.generate when given valid context mapping', function () {
+                var dashboard = {id: null};
+                expect(UUIdService.generate).not.toHaveBeenCalled();
+                service.addDashboard(mockContextMapping, dashboard);
+                expect(UUIdService.generate).toHaveBeenCalled();
+            });
+
+            it('should not call UUIDService.generate when given an undefined context mapping', function () {
+                var dashboard = {id: null};
+                expect(UUIdService.generate).not.toHaveBeenCalled();
+                service.addDashboard(undefined, dashboard);
+                expect(UUIdService.generate).not.toHaveBeenCalled();
+            });
+
+            it('should not call UUIDService.generate when given null value context mapping', function () {
+                var dashboard = {id: null};
+                expect(UUIdService.generate).not.toHaveBeenCalled();
+                service.addDashboard(null, dashboard);
+                expect(UUIdService.generate).not.toHaveBeenCalled();
+            });
+
+            it('should add a dashboard with valid id to contextMapping.dashboards', function () {
+                var dashboard = {id: null};
+                service.addDashboard(mockContextMapping, dashboard);
+                expect(dashboard).not.toBeNull();
+                expect(mockContextMapping.dashboards).not.toBeNull();
+                expect(mockContextMapping.dashboards).toEqual([dashboard]);
+            });
+
+            it('should call the ContextMappingService.update with an updated contextMapping', function () {
+                spyOn(service, 'update');
+                var dashboard = {id: null};
+                service.addDashboard(mockContextMapping, dashboard);
+
+                expect(service.update).toHaveBeenCalledWith(mockContextMapping);
+            });
+
+            it('should return expected response from ContextMappingService.update', function () {
+                var testResponse = {"testValue": true, "mockUser": "admin"};
+                var dashboard = {id: null};
+
+                spyOn(service, 'update').and.callThrough();
+                httpBackend.when('PUT', '/api/consumer/' + mockContextMapping.key + '/context/' + mockContextMapping.context)
+                        .respond({"testValue": true,
+                            "mockUser": "admin"
+                        });
+                service.addDashboard(mockContextMapping, dashboard).then(function (response) {
+                    expect(response).toEqual(testResponse);
+                },
+                        function (error) {
+                            expect(response).toBeUndefined();
+                        });
+                httpBackend.flush();
+            });
         });
-        //});
-        
-        /*describe('ContextMappingService.addCard', function() {
-            var dashboard = {'id':"test"};
-            var contextMapping = {'id':''};
-            var card = {'name':'test'};
 
-            it('should call generate', function() {
-               spyOn(UUIdService, 'generate');
-                service.addCard(contextMapping, dashboard, card); 
-                expect(UUIdService.generate()).toHaveBeenCalled();
-            });
-        });*/
-        /*describe('ContextMappingService.removeCard', function() {
-            var dashboard = {'id':"test"};
-            var contextMapping = {'id':''};
-            var card = {'name':'test'};
-
-            it('should call generate', function() {
-               spyOn(UUIdService, 'generate');
-                service.addCard(contextMapping, dashboard, card); 
-                expect(UUIdService.generate()).toHaveBeenCalled();
-            });
-        });*/
-        
-        describe('ContextMappingService.get', function() {
+        describe('ContextMappingService.get', function () {
             it('should not be equal to the contextMap when key does not match in response', function () {
                 httpBackend.when('GET', '/api/consumer/Key/context/context').respond({'contextMappingValue': 'false', 'context': 'contextValue'});
 
@@ -448,10 +503,10 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
         });
-        
-        describe('ContextMappingService.getById', function() {
+
+        describe('ContextMappingService.getById', function () {
             it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/cm/123').respond({'id':'123'});
+                httpBackend.when('GET', '/api/cm/123').respond({'id': '124'});
 
                 service.getById("123")
                         .then(function (response) {
@@ -463,7 +518,7 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
             it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/cm/123').respond({'id':'123'});
+                httpBackend.when('GET', '/api/cm/123').respond({'id': '123'});
 
                 service.getById("123")
                         .then(function (response) {
