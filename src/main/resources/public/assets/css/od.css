@@ -66,6 +66,12 @@
 .od-card-box > img {
     max-height: 50px;
 }
+
+.od-card-box-desc {
+  height: 50px;
+  text-overflow: ellipsis;
+}
+
 /* MARGINS */
 
 .m-t {

@@ -11,6 +11,8 @@
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;
+
+        var activeDashboard = $scope.$parent.activeDashboard;
         
         $scope.addCard = function(cardType) {
           $log.log('add card type: '+cardType);
@@ -36,6 +38,26 @@
                   });
           }
         };
+        
+        $scope.isConfigured = function(cardType) {
+          var isConfigured = false;
+          var card = _.find(activeDashboard.cards, {'cardType':cardType});
+          if(card){
+            return true;
+          }
+          return isConfigured;
+        }
+        
+        $scope.editCard = function(cardType) {
+          var card = _.find(activeDashboard.cards, {'cardType':cardType});
+          if(card){
+            $state.go('index.editCard', {cmid:$scope.$parent.contextMapping.id,dbid:activeDashboard.id,cid:card.id});
+          }
+          else{
+            Notification.error('Unable to edit card. A card of type ' + cardType + ' does not exist.');
+          }
+        };
+        
     });
 
     angular
