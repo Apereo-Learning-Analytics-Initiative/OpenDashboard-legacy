@@ -1,0 +1,52 @@
+<div class="row">            
+    <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+          <h3 translate="TEXT_ADD_PRECONFIGURED_DASHBOARD_HEADER"></h3>
+          <h5 translate="TEXT_ADD_PRECONFIGURED_DASHBOARD_MESSAGE"></h5>
+        </div>
+        <div class="chart-stage">
+          <div class="row m-t">
+              <div class="col-xs-12 col-md-8">
+                <form name="addPreconfiguredDashboardForm" role="form" novalidate="novalidate">
+                  <div class="form-group col-xs-12" ng-class="{ 'has-error' : (addPreconfiguredDashboardForm.title.$dirty && addPreconfiguredDashboardForm.title.$invalid) || (addPreconfiguredDashboardForm.title.$dirty && addPreconfiguredDashboardForm.title.$error.required) }">
+                    <label for="title" translate="LABEL_TITLE"></label>
+                    <input type="text" class="form-control" id="INPUT_ADD_PRECONFIGURED_DASHBOARD_FORM_TITLE" name="title"  
+                        ng-model="dashboard.title" title-unique="" required="required">
+                    <p ng-show="addPreconfiguredDashboardForm.title.$dirty && addPreconfiguredDashboardForm.title.$error.required" class="help-block" translate="ERROR_TITLE_REQUIRED"></p>
+                    <p ng-show="addPreconfiguredDashboardForm.title.$dirty && addPreconfiguredDashboardForm.title.$error.unique" class="help-block" translate="ERROR_DASHBOARD_EXISTS"></p>
+                  </div>
+                </form>
+              </div>
+          </div>
+          <hr/>
+          <div class="row m-t">
+              <div class="col-xs-12">
+                <label translate="TEXT_ADD_PRECONFIGURED_DASHBOARD_SELECT_CARDS_PROMPT"></label>
+              </div>
+              <div class="col-sm-6 col-md-4" ng-repeat="(key, card) in cards" ng-show="card.config.length == 0">
+                  <div class="chart-wrapper">
+                      <div class="chart-title">
+                        <div class="row">
+                          <div class="col-xs-6">{{card.title}}</div>
+                          <div class="col-xs-6">
+                            <span ng-show="isConfigured(card.cardType)" class="pull-right glyphicon glyphicon-ok" style="color:green"></span>
+                          </div>
+                        </div>
+                      </div>
+                       <div class="chart-stage">{{card.description}}</div>
+                       <div class="chart-notes">
+                        <a ng-show="!isConfigured(card.cardType)" href="#" ng-click="addCard(card);"><span class="glyphicon glyphicon-plus"></span> <span translate="LABEL_ADD"></span></a>
+                        <a ng-show="isConfigured(card.cardType)" href="#" ng-click="removeCard(card);"><span class="glyphicon glyphicon-remove"></span> <span translate="LABEL_REMOVE"></span></a>
+                       </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="chart-notes">
+          <button ng-disabled="addPreconfiguredDashboardForm.$invalid || addPreconfiguredDashboardForm.title.$error.required" class="btn btn-primary" ng-click="save()" translate="BUTTON_SAVE" id="BUTTON_ADD_PRECONFIGURED_DASHBOARD_SAVE"></button>
+          <button class="btn btn-link" onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_ADD_PRECONFIGURED_DASHBOARD_CANCEL"></button>
+        </div>
+      </div>
+    </div>
+</div>

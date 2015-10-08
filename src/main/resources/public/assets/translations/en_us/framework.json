@@ -1,0 +1,46 @@
+{
+"BUTTON_CONFIGURE":"Configure",
+"BUTTON_SAVE":"Save",
+"BUTTON_CANCEL":"Cancel",
+"BUTTON_EDIT":"Edit",
+"BUTTON_DELETE":"Delete",
+
+"LABEL_EDIT":"Edit",
+"LABEL_REMOVE":"Remove",
+"LABEL_TITLE":"Title",
+"LABEL_DATA_PROVIDERS":"Data Providers",
+"LABEL_PRECONFIGURED_DASHBOARDS":"Configure Dashboards",
+"LABEL_SETTINGS":"Settings",
+"LABEL_ADD":"Add",
+
+"LABEL_ASSIGNMENT_PROVIDERS_KEY":"Assignment Data Providers",
+"LABEL_ASSIGNMENT_PROVIDERS_DESC":"Access assignments such as homework and related submission data.",
+"LABEL_COURSE_PROVIDERS_KEY":"Course Data Providers",
+"LABEL_COURSE_PROVIDERS_DESC":"Access course data such as title.",
+"LABEL_EVENT_PROVIDERS_KEY":"Event Data Providers",
+"LABEL_EVENT_PROVIDERS_DESC":"Access learning event data for courses and users.",
+"LABEL_FORUM_PROVIDERS_KEY":"Forum Data Providers",
+"LABEL_FORUM_PROVIDERS_DESC":"Access discussion threads and forum posts.",
+"LABEL_MODELOUTPUT_PROVIDERS_KEY":"Analytics Model Output Data Providers",
+"LABEL_MODELOUTPUT_PROVIDERS_DESC":"Access model output from systems like the Apereo Learning Analytics Processor.",
+"LABEL_OUTCOMES_PROVIDERS_KEY":"Outcomes Data Providers",
+"LABEL_OUTCOMES_PROVIDERS_DESC":"Access line item and result data.",
+"LABEL_ROSTER_PROVIDERS_KEY":"Roster Data Providers",
+"LABEL_ROSTER_PROVIDERS_DESC":"Access the roster of a course or section.",
+
+"TEXT_ADD_DASHBOARD_HEADER":"Add a new dashboard",
+"TEXT_ADD_DASHBOARD_MESSAGE":"Start from scratch with a new dashboard.",
+"TEXT_PRECONFIGURED_DASHBOARDS" : "Preconfigured Dashboards",
+"TEXT_PRECONFIGURED_DASHBOARD" : "Preconfigured Dashboard",
+"TEXT_ADD_PRECONFIGURED_DASHBOARD_HEADER":"Add a new preconfigured dashboard",
+"TEXT_ADD_PRECONFIGURED_DASHBOARD_MESSAGE":"This dashboard will be automatically added on first time access from a new course.",
+"TEXT_REMOVE_PRECONFIGURED_DASHBOARD_CONFIRM":"Are you sure you want to delete this dashboard?",
+"TEXT_REMOVE_PRECONFIGURED_DASHBOARD_MESSAGE":"This dashboard will no longer be automatically added. Existing dashboards will not be removed.",
+"TEXT_ADD_PRECONFIGURED_DASHBOARD_SELECT_CARDS_PROMPT":"Select the cards you want to make available on this dashboard",
+"TEXT_NO_PRECONFIGURED_DASHBOARDS":"No preconfigured dashboards",
+"TEXT_EDIT_PRECONFIGURED_DASHBOARD_HEADER":"Edit preconfigured dashboard",
+
+"ERROR_TITLE_REQUIRED":"Title is required.",
+"ERROR_DASHBOARD_EXISTS":"Dashboard title is already used. Please choose another title."
+
+}

@@ -200,3 +200,177 @@ function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _
 	}
 	
 });
+
+angular
+.module('OpenDashboard')
+.controller('PreconfigureDashboardsCtrl',
+
+function PreconfigureDashboardsCtrl($scope, $state, $translate, $translatePartialLoader, _, preconfiguredDashboards) {
+	$translatePartialLoader.addPart('framework');
+	$translate.refresh();
+	
+	$scope.preconfiguredDashboards = preconfiguredDashboards;
+});
+
+angular
+.module('OpenDashboard')
+.controller('AddPreconfiguredDashboardCtrl',
+
+function AddPreconfiguredDashboardCtrl($log, $scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, registry) {
+	$translatePartialLoader.addPart('framework');
+	$translate.refresh();
+	$scope.cards = registry.registry;
+	$scope.dashboard = {};
+	
+	  $scope.isConfigured = function(cardType) {
+		var isConfigured = false;
+		
+		if ($scope.dashboard.cards) {
+		  var indx = _.find($scope.dashboard.cards,{'cardType':cardType});
+		  if (indx) isConfigured = true;
+		}
+		
+		return isConfigured;
+	  }
+	
+	$scope.addCard = function(card) {
+		$log.debug($scope.cards);
+	    $log.debug(card);
+	    $log.debug(card.cardType);
+        var newCard = angular.copy($scope.cards[card.cardType]);
+        $log.debug(newCard);
+        
+        var cardConfig = newCard.config;
+        if (cardConfig && cardConfig.length > 0) {
+          // TODO
+        }
+        else {
+          newCard.config = {};
+          if (!$scope.dashboard.cards) {
+            $scope.dashboard.cards = [];
+          }
+          $scope.dashboard.cards.push(newCard);
+        }
+	};
+	
+	$scope.removeCard = function(card) {
+	  $scope.dashboard.cards = _.reject($scope.dashboard.cards,{'cardType':card.cardType});
+	};
+	
+	$scope.save = function () {
+	  $scope.submitted = true;
+	  DashboardService
+	  .createPreconfigured($scope.dashboard)
+	  .then(
+		function(data) {
+		  Notification.success('Preconfigured dashboard created');
+		  $scope.submitted = false;
+		  $state.go('index.admin.dashboards', { reload: true });
+		},
+		function(error) {
+		  Notification.error('Unable to create preconfigured dashboard');
+		  $scope.submitted = false;
+		}
+		
+		
+	  );
+	};
+	
+});
+
+angular
+.module('OpenDashboard')
+.controller('EditPreconfiguredDashboardCtrl',
+
+function EditPreconfiguredDashboardCtrl($log, $scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, registry, preconfiguredDashboard) {
+	$translatePartialLoader.addPart('framework');
+	$translate.refresh();
+	$scope.cards = registry.registry;
+	$scope.dashboard = preconfiguredDashboard;
+	
+	  $scope.isConfigured = function(cardType) {
+		var isConfigured = false;
+		
+		if ($scope.dashboard.cards) {
+		  var indx = _.find($scope.dashboard.cards,{'cardType':cardType});
+		  if (indx) isConfigured = true;
+		}
+		
+		return isConfigured;
+	  }
+	
+	$scope.addCard = function(card) {
+		$log.debug($scope.cards);
+	    $log.debug(card);
+	    $log.debug(card.cardType);
+        var newCard = angular.copy($scope.cards[card.cardType]);
+        $log.debug(newCard);
+        
+        var cardConfig = newCard.config;
+        if (cardConfig && cardConfig.length > 0) {
+          // TODO
+        }
+        else {
+          newCard.config = {};
+          if (!$scope.dashboard.cards) {
+            $scope.dashboard.cards = [];
+          }
+          $scope.dashboard.cards.push(newCard);
+        }
+	};
+	
+	$scope.removeCard = function(card) {
+	  $scope.dashboard.cards = _.reject($scope.dashboard.cards,{'cardType':card.cardType});
+	};
+	
+	$scope.save = function () {
+	  $scope.submitted = true;
+	  DashboardService
+	  .updatePreconfigured($scope.dashboard)
+	  .then(
+		function(data) {
+		  Notification.success('Preconfigured dashboard updated');
+		  $scope.submitted = false;
+		  $state.go('index.admin.dashboards', { reload: true });
+		},
+		function(error) {
+		  Notification.error('Unable to create preconfigured dashboard');
+		  $scope.submitted = false;
+		}
+		
+		
+	  );
+	};
+	
+});
+
+angular
+.module('OpenDashboard')
+.controller('RemovePreconfiguredDashboardCtrl',
+
+function RemovePreconfiguredDashboardCtrl($scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, preconfiguredDashboard) {
+	$translatePartialLoader.addPart('framework');
+	$translate.refresh();
+	
+	$scope.preconfiguredDashboard = preconfiguredDashboard;
+	
+	$scope.remove = function () {
+	  $scope.submitted = true;
+	  DashboardService
+	  .removePreconfigured($scope.preconfiguredDashboard.id)
+	  .then(
+		function(data) {
+		  Notification.success('Preconfigured dashboard removed');
+		  $scope.submitted = false;
+		  $state.go('index.admin.dashboards', { reload: true });
+		},
+		function(error) {
+		  Notification.error('Unable to remove preconfigured dashboard');
+		  $scope.submitted = false;
+		}
+		
+		
+	  );
+	};
+	
+});

@@ -198,6 +198,43 @@ angular
 	     	},
 	        controller: 'AdminCtrl'
 	    })
+	    .state('index.admin.dashboards', {
+	        url: '/dashboards',
+	        templateUrl: '/assets/templates/admin/preconfiguredDashboards.html',
+		    resolve:{
+	    	  preconfiguredDashboards : function(DashboardService) {
+	    	    return DashboardService.getPreconfigured();
+	          }
+	     	},
+	        controller: 'PreconfigureDashboardsCtrl'
+	    })
+	    .state('index.admin.addpreconfigureddashboard', {
+	        url: '/dashboards/add',
+	        templateUrl: '/assets/templates/admin/addPreconfiguredDashboard.html',
+		    resolve:{
+	     	},
+	        controller: 'AddPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.editpreconfigureddashboard', {
+	        url: '/dashboards/edit/:id',
+	        templateUrl: '/assets/templates/admin/editPreconfiguredDashboard.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
+    	        return DashboardService.getPreconfiguredById($stateParams.id);
+              }
+	     	},
+	        controller: 'EditPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.removepreconfigureddashboard', {
+	        url: '/dashboards/remove/:id',
+	        templateUrl: '/assets/templates/admin/removePreconfiguredDashboard.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
+    	        return DashboardService.getPreconfiguredById($stateParams.id);
+              }
+	     	},
+	        controller: 'RemovePreconfiguredDashboardCtrl'
+	    })
 	    .state('index.admin.providers', {
 	        url: '/:providerType',
 	        templateUrl: '/assets/templates/admin/providerlist.html',

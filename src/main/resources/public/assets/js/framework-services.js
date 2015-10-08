@@ -157,7 +157,7 @@
 	
 	angular
 	.module('OpenDashboard')
-	.service('DashboardService', function($q, ContextMappingService, UUIDService, _ ){
+	.service('DashboardService', function($q, $http, ContextMappingService, UUIDService, _ ){
 		
 		return {
 			getContextMappingById: function(contextMappingId) {
@@ -173,6 +173,92 @@
 					}
 				);
 				return deferred.promise;
+			},
+			createPreconfigured : function (dashboard) {
+				var promise =
+				$http({
+			        method  : 'POST',
+			        url     : '/api/preconfigure',
+			        data    : JSON.stringify(dashboard),
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			},
+			updatePreconfigured: function (dashboard) {
+				var promise =
+				$http({
+			        method  : 'PUT',
+			        url     : '/api/preconfigure/'+dashboard.id,
+			        data    : JSON.stringify(dashboard),
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			},
+			removePreconfigured: function (id) {
+				var promise =
+				$http({
+			        method  : 'DELETE',
+			        url     : '/api/preconfigure/'+id,
+			        headers : { 'Content-Type': 'application/json' }
+				})
+				.then(function (response) {
+					return response.data;
+				});
+				return promise;
+			},
+			getPreconfigured : function () {
+				var promise =
+				$http({
+			        method  : 'GET',
+			        url     : '/api/preconfigure'
+				})
+				.then(function (response) {
+					if (response.data) {
+						return response.data;
+					}
+					else {
+						return null;
+					}
+				});
+				return promise;
+			},
+			getPreconfiguredById: function (id) {
+				var promise =
+				$http({
+			        method  : 'GET',
+			        url     : '/api/preconfigure/'+id
+				})
+				.then(function (response) {
+					if (response.data) {
+						return response.data;
+					}
+					else {
+						return null;
+					}
+				});
+				return promise;
+			},
+			checkTitle: function (title) {
+				var promise =
+				$http({
+			        method  : 'GET',
+			        url     : '/api/preconfigure/checktitle/'+title
+				})
+				.then(function (response) {
+					if (response.data) {
+						return response.data.exists;
+					}
+					else {
+						return false;
+					}
+				});
+				return promise;
 			}
 		}
 	});

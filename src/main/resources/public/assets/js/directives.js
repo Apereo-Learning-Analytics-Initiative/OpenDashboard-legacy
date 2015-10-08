@@ -42,7 +42,24 @@
 							}
 						};
 					})
-			.directive('bubbleCloud', function() {
+				.directive('titleUnique', function(DashboardService) {
+				      return {
+				           restrict: 'A',
+				           require: 'ngModel',
+				           link: function (scope, element, attrs, ngModel) {
+				                element.bind('blur', function (e) {
+				                     //ngModel.$loading = true;
+				                     DashboardService
+				                     .checkTitle(element.val())
+				                     .then(function(exists){
+				                       //ngModel.$loading = false;
+				                       ngModel.$setValidity('unique', !exists);
+				                     });
+				                });
+				           }
+				      };
+				})
+				.directive('bubbleCloud', function() {
 
 				return {
 
