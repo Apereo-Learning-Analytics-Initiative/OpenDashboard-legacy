@@ -152,7 +152,10 @@ public class SecurityConfig {
           .and()
           .withUser("instructor").password("instructor").roles("INSTRUCTOR")
           .and()
-          .withUser("admin").password("admin").roles("INSTRUCTOR","ADMIN");
+          .withUser("admin").password("admin").roles("INSTRUCTOR","ADMIN")
+          //Test Admin set up for functional testing purposes
+          .and()
+          .withUser("test_admin").password("admin").roles("INSTRUCTOR","ADMIN");
     }
     
     @Primary
