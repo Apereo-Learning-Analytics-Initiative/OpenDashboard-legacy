@@ -1,3 +1,17 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -20,15 +34,15 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li ng-show="!isStudent && contextMapping">
-            <a class="glyphicon glyphicon-plus" ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="DASHBOARD">
+            <a class="glyphicon glyphicon-plus" ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="LABEL_DASHBOARD">
             </a>
           </li>
           <li ng-show="!isStudent && contextMapping && activeDashboard">
-            <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="CARD">
+            <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_CARD">
             </a>
           </li>
            <li ng-show="!isLtiSession && isAuthenticated">
-            <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LOGOUT">
+            <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT">
             </a>
           </li>
         </ul>

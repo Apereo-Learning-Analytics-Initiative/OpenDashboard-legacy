@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 'use strict';
 
 angular
@@ -40,7 +54,7 @@ angular
 
 
 angular
-.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
+.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
                               'od.cards.lti', 'od.cards.eventviewer','od.cards.roster', 'od.cards.demo', 'od.cards.snapp','od.cards.modelviewer']);
 
 angular
@@ -62,6 +76,8 @@ angular
       });
 
     $translateProvider.preferredLanguage('en_us');
+    $translateProvider.useSanitizeValueStrategy('sanitize');
+    $translatePartialLoaderProvider.addPart('framework');
 })
 .config(function ($httpProvider, requestNotificationProvider) {
     $httpProvider.interceptors.push(function ($q) {
@@ -197,6 +213,43 @@ angular
 	    	  }
 	     	},
 	        controller: 'AdminCtrl'
+	    })
+	    .state('index.admin.dashboards', {
+	        url: '/dashboards',
+	        templateUrl: '/assets/templates/admin/preconfiguredDashboards.html',
+		    resolve:{
+	    	  preconfiguredDashboards : function(DashboardService) {
+	    	    return DashboardService.getPreconfigured();
+	          }
+	     	},
+	        controller: 'PreconfigureDashboardsCtrl'
+	    })
+	    .state('index.admin.addpreconfigureddashboard', {
+	        url: '/dashboards/add',
+	        templateUrl: '/assets/templates/admin/addPreconfiguredDashboard.html',
+		    resolve:{
+	     	},
+	        controller: 'AddPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.editpreconfigureddashboard', {
+	        url: '/dashboards/edit/:id',
+	        templateUrl: '/assets/templates/admin/editPreconfiguredDashboard.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
+    	        return DashboardService.getPreconfiguredById($stateParams.id);
+              }
+	     	},
+	        controller: 'EditPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.removepreconfigureddashboard', {
+	        url: '/dashboards/remove/:id',
+	        templateUrl: '/assets/templates/admin/removePreconfiguredDashboard.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
+    	        return DashboardService.getPreconfiguredById($stateParams.id);
+              }
+	     	},
+	        controller: 'RemovePreconfiguredDashboardCtrl'
 	    })
 	    .state('index.admin.providers', {
 	        url: '/:providerType',
