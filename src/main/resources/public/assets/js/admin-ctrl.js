@@ -18,9 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('AdminCtrl',
 
-function AdminCtrl($scope, $state, $translate, $translatePartialLoader, providerTypes) {
-  $translatePartialLoader.addPart('admin');
-  $translate.refresh();
+function AdminCtrl($scope, $state, providerTypes) {
 
   $scope.providerTypes = providerTypes;
   
@@ -34,9 +32,7 @@ angular
 .module('OpenDashboard')
 .controller('ProviderListCtrl',
 
-function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _, providerType, providers, providerData) {
-  $translatePartialLoader.addPart('providerlist');
-  $translate.refresh();
+function ProviderListCtrl($scope, $state, _, providerType, providers, providerData) {
 
   $scope.providers = providers;
   $scope.providerType = providerType;
@@ -72,9 +68,7 @@ angular
 .module('OpenDashboard')
 .controller('ConfigureProviderCtrl',
 
-function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _, ProviderService, Notification, providerType, provider) {
-	$translatePartialLoader.addPart('configureprovider');
-	$translate.refresh();
+function ProviderListCtrl($scope, $state, _, ProviderService, Notification, providerType, provider) {
 	
 	$scope.config = {};
 	$scope.submitted = false;
@@ -121,9 +115,7 @@ angular
 .module('OpenDashboard')
 .controller('EditConfigureProviderCtrl',
 
-function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _, ProviderService, Notification, providerType, provider, providerData) {
-	$translatePartialLoader.addPart('configureprovider');
-	$translate.refresh();
+function ProviderListCtrl($scope, $state, _, ProviderService, Notification, providerType, provider, providerData) {
 	
 	$scope.config = {};
 	$scope.submitted = false;
@@ -132,7 +124,6 @@ function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _
 	$scope.providerType = providerType;
 	$scope.providerData = providerData;
 
-	debugger;
 	$scope.getTranslatableLabel = function (key) {
 	  var label = null;
 	  
@@ -186,9 +177,7 @@ angular
 .module('OpenDashboard')
 .controller('DeleteConfigureProviderCtrl',
 
-function ProviderListCtrl($scope, $state, $translate, $translatePartialLoader, _, ProviderService, Notification, providerType, provider, providerData) {
-	$translatePartialLoader.addPart('configureprovider');
-	$translate.refresh();
+function ProviderListCtrl($scope, $state, _, ProviderService, Notification, providerType, provider, providerData) {
 	
 	$scope.config = {};
 	$scope.submitted = false;
@@ -219,9 +208,7 @@ angular
 .module('OpenDashboard')
 .controller('PreconfigureDashboardsCtrl',
 
-function PreconfigureDashboardsCtrl($scope, $state, $translate, $translatePartialLoader, _, preconfiguredDashboards) {
-	$translatePartialLoader.addPart('framework');
-	$translate.refresh();
+function PreconfigureDashboardsCtrl($scope, $state, _, preconfiguredDashboards) {
 	
 	$scope.preconfiguredDashboards = preconfiguredDashboards;
 });
@@ -230,9 +217,7 @@ angular
 .module('OpenDashboard')
 .controller('AddPreconfiguredDashboardCtrl',
 
-function AddPreconfiguredDashboardCtrl($log, $scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, registry) {
-	$translatePartialLoader.addPart('framework');
-	$translate.refresh();
+function AddPreconfiguredDashboardCtrl($log, $scope, $state, _, DashboardService, Notification, registry) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = {};
 	
@@ -296,9 +281,7 @@ angular
 .module('OpenDashboard')
 .controller('EditPreconfiguredDashboardCtrl',
 
-function EditPreconfiguredDashboardCtrl($log, $scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, registry, preconfiguredDashboard) {
-	$translatePartialLoader.addPart('framework');
-	$translate.refresh();
+function EditPreconfiguredDashboardCtrl($log, $scope, $state, _, DashboardService, Notification, registry, preconfiguredDashboard) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = preconfiguredDashboard;
 	
@@ -362,10 +345,8 @@ angular
 .module('OpenDashboard')
 .controller('RemovePreconfiguredDashboardCtrl',
 
-function RemovePreconfiguredDashboardCtrl($scope, $state, $translate, $translatePartialLoader, _, DashboardService, Notification, preconfiguredDashboard) {
-	$translatePartialLoader.addPart('framework');
-	$translate.refresh();
-	
+function RemovePreconfiguredDashboardCtrl($scope, $state, _, DashboardService, Notification, preconfiguredDashboard) {
+
 	$scope.preconfiguredDashboard = preconfiguredDashboard;
 	
 	$scope.remove = function () {

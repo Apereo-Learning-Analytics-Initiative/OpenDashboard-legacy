@@ -24,9 +24,9 @@ angular
         cardType: 'lti',
         styleClasses: 'od-card col-xs-12',
         config: [
-          {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true,translatableLabelKey:'LAUNCH_URL'},
-          {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true,translatableLabelKey:'CONSUMER_KEY'},
-          {field:'secret',fieldName:'Consumer Secret',fieldType:'password',required:true,translatableLabelKey:'CONSUMER_SECRET'}
+          {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true,translatableLabelKey:'LABEL_LAUNCH_URL'},
+          {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true,translatableLabelKey:'LABEL_CONSUMER_KEY'},
+          {field:'secret',fieldName:'Consumer Secret',fieldType:'password',required:true,translatableLabelKey:'LABEL_CONSUMER_SECRET'}
         ]
     });
 })

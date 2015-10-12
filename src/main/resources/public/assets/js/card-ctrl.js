@@ -17,11 +17,7 @@
         
     angular
     .module('OpenDashboard')
-    .controller('SelectCardController', function($log, $scope, $state,$translate, $translatePartialLoader, Notification,
-                                            _ , registry, ContextMappingService,
-                                            contextMapping, dashboardId) {
-    	$translatePartialLoader.addPart('card');
-        $translate.refresh();
+    .controller('SelectCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;
@@ -76,11 +72,7 @@
 
     angular
     .module('OpenDashboard')
-    .controller('AddCardController', function($log, $scope, $state, $translate, $translatePartialLoader, Notification,
-                                            _ , registry, ContextMappingService,
-                                            contextMapping, dashboardId, card) {
-    	$translatePartialLoader.addPart('card');
-        $translate.refresh();
+    .controller('AddCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, card) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.newConfig = {};
@@ -108,11 +100,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('EditCardController', function($log, $scope, $state, $translate, $translatePartialLoader, Notification,
-                                            _ , registry, ContextMappingService,
-                                            contextMapping, dashboardId, cardId) {
-    	$translatePartialLoader.addPart('card');
-        $translate.refresh();
+    .controller('EditCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, cardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.card = _.find($scope.$parent.activeDashboard.cards,{'id':cardId});
@@ -140,11 +128,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('RemoveCardController', function($log, $scope, $state, $translate, $translatePartialLoader, Notification,
-                                            _ , ContextMappingService,
-                                            contextMapping, dashboardId, cardId) {
-    	$translatePartialLoader.addPart('card');
-        $translate.refresh();
+    .controller('RemoveCardController', function($log, $scope, $state, Notification, _, ContextMappingService, contextMapping, dashboardId, cardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.card = _.find($scope.$parent.activeDashboard.cards,{'id':cardId});
@@ -165,8 +149,6 @@
                 }
             );
         }
-        
-        
     });
 
 })(angular);

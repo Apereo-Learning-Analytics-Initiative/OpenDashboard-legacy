@@ -18,10 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $translate, $translatePartialLoader, $log, SessionService, ContextMappingService) {
-  $translatePartialLoader.addPart('index');
-  $translate.refresh();
-  
+function IndexCtrl($scope, $state, $log, SessionService, ContextMappingService) {
   $scope.contextMapping = null;
   $scope.activeDashboard = null;
   var currentState = $state.current;

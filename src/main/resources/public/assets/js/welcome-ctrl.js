@@ -17,10 +17,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('WelcomeController', function($log, $scope, $state, $translate, $translatePartialLoader, 
-    											SessionService, ContextMappingService) {    
-    	$translatePartialLoader.addPart('welcome');
-        $translate.refresh();
+    .controller('WelcomeController', function($log, $scope, $state, SessionService, ContextMappingService) {
         
         $scope.saveContextMapping = function() {
             var inbound_lti_launch_request = SessionService.getInbound_LTI_Launch();

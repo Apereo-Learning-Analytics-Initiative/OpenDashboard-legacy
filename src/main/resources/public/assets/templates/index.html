@@ -34,15 +34,15 @@ permissions and limitations under the License.
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li ng-show="!isStudent && contextMapping">
-            <a class="glyphicon glyphicon-plus" ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="DASHBOARD">
+            <a class="glyphicon glyphicon-plus" ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="LABEL_DASHBOARD">
             </a>
           </li>
           <li ng-show="!isStudent && contextMapping && activeDashboard">
-            <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="CARD">
+            <a class="glyphicon glyphicon-plus" ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_CARD">
             </a>
           </li>
            <li ng-show="!isLtiSession && isAuthenticated">
-            <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LOGOUT">
+            <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT">
             </a>
           </li>
         </ul>

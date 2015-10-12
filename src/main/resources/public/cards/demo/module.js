@@ -23,7 +23,7 @@ angular
         description: 'This card demonstrates how to retrieve data from various sources.',
         cardType: 'demo',
         styleClasses: 'od-card col-xs-12',
-	    config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'EXAMPLE_FIELD'}],
+	    config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
 	    requires: [],
 	    uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
     });

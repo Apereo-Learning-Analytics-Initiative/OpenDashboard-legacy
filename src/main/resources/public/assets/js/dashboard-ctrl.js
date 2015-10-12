@@ -17,10 +17,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('AddDashboardController', function($log, $scope, $state, $translate, $translatePartialLoader, Notification,
-                                            ContextMappingService, contextMapping, dataService) {
-    	$translatePartialLoader.addPart('dashboard');
-        $translate.refresh();
+    .controller('AddDashboardController', function($log, $scope, $state, Notification, ContextMappingService, contextMapping, dataService) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.dashboard = {};
         
@@ -51,10 +48,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('DashboardController', function($log, $scope, $state, $translate, $translatePartialLoader,
-                                            _ , registry, contextMapping, dashboardId) {
-    	$translatePartialLoader.addPart('dashboard');
-        $translate.refresh();
+    .controller('DashboardController', function($log, $scope, $state, _, registry, contextMapping, dashboardId) {
     	$scope.showNavbar = false;
     	$scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
@@ -83,9 +77,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('ErrorController', function($log, $scope, $location, $translate, $translatePartialLoader, errorCode) {
-        $translatePartialLoader.addPart('error');
-        $translate.refresh();
+    .controller('ErrorController', function($log, $scope, $location, errorCode) {
         $scope.errorCode = errorCode;
     });
 

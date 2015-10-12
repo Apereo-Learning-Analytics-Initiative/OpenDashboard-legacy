@@ -54,7 +54,7 @@ angular
 
 
 angular
-.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
+.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
                               'od.cards.lti', 'od.cards.eventviewer','od.cards.roster', 'od.cards.demo', 'od.cards.snapp','od.cards.modelviewer']);
 
 angular
@@ -76,6 +76,8 @@ angular
       });
 
     $translateProvider.preferredLanguage('en_us');
+    $translateProvider.useSanitizeValueStrategy('sanitize');
+    $translatePartialLoaderProvider.addPart('framework');
 })
 .config(function ($httpProvider, requestNotificationProvider) {
     $httpProvider.interceptors.push(function ($q) {
