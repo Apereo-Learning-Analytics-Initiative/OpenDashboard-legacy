@@ -1,16 +1,15 @@
-//Get rid of the unnecessary comment lines after you go through this. 
-//There only for your help really the describe text and the it text will be enough to know what we are testing
 describe('the framework-services test', function () {
+    beforeEach(module('OpenDashboard', function ($provide, $translateProvider) {
+        $provide.factory('customLoader', function ($q) {
+            return function () {
+                var deferred = $q.defer();
+                deferred.resolve({});
+                return deferred.promise;
+            };
+        });
 
-    //Global variables (These should not have $ in front of them)
-    var somevarible,
-            chained,
-            to,
-            another;
-
-    beforeEach(module('OpenDashboard'));
-
-    //Each Service with in the file should be wrapped with in a describe
+        $translateProvider.useLoader('customLoader');
+    }));
 
     describe('the UUIDService tests', function () {
         var service;
