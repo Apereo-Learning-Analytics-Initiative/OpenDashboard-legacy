@@ -105,7 +105,8 @@
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.card = _.find($scope.$parent.activeDashboard.cards,{'id':cardId});
         $scope.cardConfig = angular.copy(registry.registry[$scope.card.cardType].config);
-        
+        $scope.newConfig = $scope.card.config;
+
         $scope.cancel = function() {
         	$state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
         };
