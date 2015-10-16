@@ -201,7 +201,7 @@
                          <include>src/main/resources/public/assets/js/app.js</include> 
                          <include>src/main/resources/public/assets/js/admin-ctrl.js</include>
                          <include>src/main/resources/public/assets/js/api.js</include>            
-                         <include>src/main/resources/public/assets/js/card-crtl.js</include> 
+                         <include>src/main/resources/public/assets/js/card-ctrl.js</include> 
                          <include>src/main/resources/public/assets/js/dashboard-ctrl.js</include> 
                          <include>src/main/resources/public/assets/js/data-services.js</include>
                          <include>src/main/resources/public/assets/js/directives.js</include> 
