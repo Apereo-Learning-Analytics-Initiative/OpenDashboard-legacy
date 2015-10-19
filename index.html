@@ -26,12 +26,6 @@
         <p class="view">
         <a href="#services">Services</a>
         </p>
-        <p class="view">
-        <a href="#js-api">JavaScript API</a>
-        </p>
-        <p class="view">
-        <a href="#js-model">JavaScript Data Model</a>
-        </p>
         <p class="view"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View the Project on GitHub <small>Apereo-Learning-Analytics-Initiative/OpenDashboard</small></a></p>
 
         <ul>
@@ -133,7 +127,7 @@ angular
       <section>
        <h1>
             <a id="advanced" class="anchor" href="#advanced" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Concepts
-        </h1
+        </h1>
         <h3>Deeper dive into card registration and the card object</h3>
         
         <p>Let's take a further exploration into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our demo card object below.</p>
@@ -156,11 +150,32 @@ angular
            <dt>config.fieldName:</dt><dd>deprecated see translatableLabelKey</dd>
            <dt>config.fieldType:</dt><dd>input type</dd>
            <dt>config.required:</dt><dd>boolean, sets ng-required</dd>
-           <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair.  The JSON files are located in the public/assests/translations directory.  The angular-translate library is used for translation.  Please review this library for further instructions <a href="https://angular-translate.github.io/">https://angular-translate.github.io/</a></dd>If no configuration is required for your card (ie for a testing dataset) set config equal to an empty array.</p>
+           <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair. See the <a href="#tranlate">translation</a> section</dd>I
 
         <p>requires and uses initialize the card with the various data providers. These map to the backend data provider implementation.  Currently Opendashboard supports six ASSIGNMENT, COURSE, EVENT, FORUM, OUTCOME, and ROSTER. If your card uses/requires any of the data sources, add it to the appropriate array. Alternatively, if none is necessary set the object to an empty array.</p>
         
         <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br><strong>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</strong></p>
+
+        <p>If no configuration is required for your card (ie for a testing dataset) set config equal to an empty array.</p>
+
+        <h3><a id="tranlate" class="anchor" href="#tranlate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Translation</h3>
+        
+        <p>It is assumed that the reader has some knowledge of the angular tranlate library and its usage.  Please review before reading the next section. <a href="https://angular-translate.github.io/">https://angular-translate.github.io/</a><p>
+
+        <p>To allow your card to be tranlatable add the following lines of code to the controller.
+        <pre>
+            <code>
+                 .controller('RadarCardContorller', function($scope, $http, <strong>$translate, $translatePartialLoader</strong>) {
+                    <strong>
+                    $translatePartialLoader.addPart('radar-card');
+                    $translate.refresh();
+                    </strong>
+
+            </code>
+        </pre>
+
+        The translationPartialLoader is instantiated within the app.js file.  Any JSON file that is added to the public/assests/translations directory, can be loaded with the call to addPart(file-name).  Pay particular attention to the the call to $translate.refresh(), without this call your contoller will load the desired translations but they will not but presented.  Values located with in the JSON file will hold the appropriate key value pairs.  Angular translate can then load the appropriate file from the desired language and perform a mapping to "translate" the app.</p>
+
       </section>
       <section>
         <h1>
@@ -341,237 +356,6 @@ RosterService
             </code>
         </pre>
       </section>
-      <section>
-        <h1>
-            <a id="js-api" class="anchor" href="#js-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript API
-        </h1>
-        <p>Javascript API module providing common functions and access to entities.</p>
-
-        <h3>Functions</h3>
-        <h4>setLTIToolLaunch</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>lti_launch : Object</li>
-        </ul>  
-        <h5>Example</h5>
-        <pre>
-            <code>
-			OpenDashboardApi.setInbound_LTI_Launch(inbound_lti_launch_request);
-            </code>
-        </pre>
-        <h4>getLTIToolLaunch</h4>
-        <h5>Example</h5>
-        <pre>
-            <code>
-            var lti_launch_data = OpenDashboardApi.getLTIToolLaunch();
-            </code>
-        </pre>
-        <h4>getCourse</h4>
-        <p>Returns a Course object representing the current context</p>
-        <h4>createMemberInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <h5>Example</h5>
-        <pre>
-            <code>
-            var member = OpenDashboardApi.createMemberInstance();
-            </code>
-        </pre>
-        <h4>getCurrentUser</h4>
-		<p>Returns a Member object representing the current user within the context</p>
-        <h4>createEventInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <pre>
-            <code>
-            var event 
-                = OpenDashboardApi.createEventInstance();
-            </code>
-        </pre>
-        <h4>createContextMappingInstance</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <pre>
-            <code>
-            var options = {'id':12345};
-            var cm 
-                = OpenDashboardApi.createContextMappingInstance(options);
-            </code>
-        </pre>
-      </section>
-      <section>
-        <h1>
-            <a id="js-model" class="anchor" href="#js-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>JavaScript Data Model
-        </h1>
-        <p>Javascript modules representing framework and common relevant entities. Use the OpenDashboardApi module to access these entities.</p>
-        <h2>Context Mapping</h2>
-        <p>Represents the relationship between an external context (e.g. a course or course section) and a set of OpenDashboard dashboards.</p>
-        <h3>Members</h3>
-        <h4>id</h4>
-        <p>Get the primary key</p>
-        <h4>key</h4>
-        <p>Get the consumer key</p>
-        <h4>dashboards</h4>
-        <p>Get the array of dashboard objects associated with this context</p>
-        <h4>context</h4>
-        <p>Get the external context id (e.g. course id) associated with this mapping</p>
-        <h4>modified</h4>
-        <p>Get last modifed timestamp</p>
-        <h3>Functions</h3>
-        <h4>addDashboard</h4>
-        <p>Add a new dashboard to this context mapping. This is a framework function - you probably don't need to call it yourself.</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>dashboard : Object</li>
-        </ul>  
-
-        <h2>Course</h2>
-        <p>Represents an external context (e.g. an LMS course)</p>
-        <h3>Members</h3>
-        <h4>id</h4>
-        <p>The external context id (e.g. course id)</p>
-        <h4>title</h4>
-        <p>The context title</p>
-        <h4>instructors</h4>
-        <p>An array of Member objects containing the instructors for the context</p>
-        <h4>learners</h4>
-        <p>An array of Member objects containing the learner for the context</p>
-        <h4>events</h4>
-        <p>An array of Event objects for this context</p>
-        <h4>events_median</h4>
-        <p>An integer representing the median number of events for learners in the context. This is used to determine a relative activity level for each learner.</p>
-        <h3>Functions</h3>   
-        <h4>buildRoster</h4>
-        <p>Construct the course roster from an array of Members</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>members : Array[Member]</li>
-        </ul>  
-        <h4>addEvent</h4>
-        <p>Add a new event to the array of events for this context</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>event : Event</li>
-        </ul>  
-
-        <h2>Member</h2>
-        <p>Represents a user within a context</p>
-        <h3>Members</h3>
-        <h4>user_id</h4>
-        <p>The external user id</p>
-        <h4>user_image</h4>
-        <p>The URL for user image (avatar)</p>
-        <h4>role</h4>
-        <p>The member's role within this context</p>
-        <h4>roles</h4>
-        <p>The common separated list of roles within this context</p>
-        <h4>person</h4>
-        <p>The Person object for this member</p>
-        <h4>events</h4>
-        <p>An array of events for this member within this context</p>
-        <h4>relative_activity_level</h4>
-        <p>The activity level for this member relative to the rest of the members</p>
-        <h4>risk</h4>
-        <p>The risk level as determined by an external analytics processor</p>
-        <h4>last_activity</h4>
-        <p>The timestamp from the last activity within the context for this member</p>
-        <h3>Functions</h3>
-        <h4>fromLTI</h4>
-        <p>Construct a member object from the inbound LTI launch object</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>ltiLaunch : Object</li>
-        </ul>  
-        <h4>fromService</h4>
-        <p>Convert an external member record to the internal format</p>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-        </ul>  
-        <h4>isInstructor</h4>
-        <p>Returns true if the member is an Instructor within this context</p>
-        <h4>isStudent</h4>
-        <p>Returns true if the member is a Learner within this context</p>
-        
-        <h2>Person</h2>
-        <p>User personally identifiable information</p>
-        <h3>Members</h3> 
-        <h4>contact_email_primary</h4>
-        <p>The person's email address</p>
-        <h4>name_given</h4>
-        <p>The person's first name</p>
-        <h4>name_family</h4>
-        <p>The person's last name</p>
-        <h4>name_full</h4>
-        <p>The person's full name</p>
-        <h4>demographics</h4>
-        <p>Demographics object for this person</p>
-
-        <h2>Demographics</h2>
-        <p>A collection of demographics for the person</p>
-        <h3>Members</h3>   
-        <h4>user_id</h4>
-        <p>The external user id</p>
-        <h4>percentile</h4>
-        <p></p>
-        <h4>sat_verbal</h4>
-        <p>The SAT Verbal score for this person</p>
-        <h4>sat_math</h4>
-        <p>The SAT Math score for this person</p>
-        <h4>act_composite</h4>
-        <p>The ACT score for this person</p>
-        <h4>age</h4>
-        <p>The person's age</p>
-        <h4>race</h4>
-        <p>The race code for this person</p>
-        <h4>gender</h4>
-        <p>The gender code for this person</p>
-        <h4>enrollment_status</h4>
-        <p>This person's enrollment status code</p>
-        <h4>earned_credit_hours</h4>
-        <p>The number of credits this person has earned</p>
-        <h4>gpa_cumulative</h4>
-        <p>The person's overall GPA</p>
-        <h4>gpa_semester</h4>
-        <p>The person's GPA for this semester</p>
-        <h4>standing</h4>
-        <p>This person's academic standing</p>
-        <h4>pell_status</h4>
-        <p>This person's Pell eligibility code</p>
-        <h4>class_code</h4>
-        <p>This person's class code</p>
-        
-        <h2>Event</h2>
-        <p>An interaction with a system by a user optionally within a context</p>
-        <h3>Members</h3>   
-        <h4>user_id</h4>
-        <p>The user id for the event actor</p>
-        <h4>context_id</h4>
-        <p>The context id (e.g. course id) where this event occurred</p>
-        <h4>organization_id</h4>
-        <p>The id for the organization (e.g. school, institution, etc)</p>
-         <h4>name_full</h4>
-        <p>The full name of the event actor (e.g. John Wall)</p>
-        <h4>type</h4>
-        <p>The pre-transform event type (xAPI, Caliper, etc)</p>
-        <h4>action</h4>
-        <p>The action that was performed</p>
-        <h4>object</h4>
-        <p>The object that this event was performed on</p>
-        <h4>raw</h4>
-        <p>The raw (xAPI, Caliper, etc format) event</p>
-        <h4>timestamp</h4>
-        <p>The timestamp for when this event occurred</p>
-        <h3>Functions</h3>
-        <h4>fromService</h4>
-        <p>Use this method to transform an external event into the normalized event format</p>
-	</section>
 	</div>
    <script src="javascripts/scale.fix.js"></script>
     
