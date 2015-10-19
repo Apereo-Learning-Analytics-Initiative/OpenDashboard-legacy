@@ -27,7 +27,9 @@ angular
           {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true,translatableLabelKey:'LABEL_LAUNCH_URL'},
           {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true,translatableLabelKey:'LABEL_CONSUMER_KEY'},
           {field:'secret',fieldName:'Consumer Secret',fieldType:'password',required:true,translatableLabelKey:'LABEL_CONSUMER_SECRET'}
-        ]
+        ],
+        requires: [],
+        uses: []
     });
 })
 .controller('LtiCardController', function($scope, $timeout, SessionService, LtiProxyService) {
