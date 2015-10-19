@@ -21,6 +21,9 @@
         <a href="#new-card">Developing your own OpenDashboard Card</a>
         </p>
         <p class="view">
+        <a href="#advanced">Advanced concepts</a>
+        </p>
+        <p class="view">
         <a href="#services">Services</a>
         </p>
         <p class="view">
@@ -46,7 +49,7 @@
 		<h3>Pick a type for your card</h3>
 
 		<p>OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. 
-		In our example we'll be building a card that displays all available data for the given context for demonstration purposes so I'm going to call my card type demo.</p>
+		In our example we'll be building the learning activity radar chart, see the activityradar module.</p>
 
 		<h3>Create the AngularJS Module for your card</h3>
 		<p>This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. 
@@ -58,74 +61,91 @@
 		
 		<pre>
 			<code>
-(function(angular) {
-'use strict';
-    
-angular
-.module('od.cards.demo', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
- .config(function(registryProvider){
-    registryProvider.register('demo',{
-        title: 'Demo Card',
-        description: 'This card demonstrates how to retrieve data from various sources.',
-        cardType: 'demo',
-        styleClasses: 'od-card col-xs-12',
-        config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
-        requires: [],
-        uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
-    });
- })
- .controller('DemoCardController', 
- 	function($scope, $http, $log, _, ContextService, RosterService) {
-	
-	$scope.course = ContextService.getCourse();
-	$scope.lti = ContextService.getInbound_LTI_Launch();
-
-	if ($scope.lti.ext.ext_ims_lis_memberships_url 
-		&& $scope.lti.ext.ext_ims_lis_memberships_id) {
-		
-		var basicLISData = {};
-		basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
-		basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
-		
-		var options = {};
-		options.contextMappingId = $scope.contextMapping.id;
-		options.dashboardId = $scope.activeDashboard.id;
-		options.cardId = $scope.card.id;
-		options.basicLISData = basicLISData;
-
-		RosterService
-		.getRoster(options,null) // pass null so the default implementation is used
-		.then(
-			function (rosterData) {
-				if (rosterData) {
-					$scope.course.buildRoster(rosterData);					
-				}
-			}
-		);
-		
-	}
-	else {
-		$log.error('Card not configured for Roster');
-	}
-});
-
-})(angular);
+                (function(angular) {
+                angular
+                .module('od.cards.activityradar', ['OpenDashboardRegistry', 'chart.js'])
+                 .config(function(registryProvider){
+                    registryProvider.register('activityradar',{
+                        title: 'Learing Activity Radar',
+                        description: 'Student Activity is displayed in radar chart format.',
+                        cardType: 'activityradar',
+                        styleClasses: 'od-card col-xs-12',
+                        config: [],
+                        requires: [],
+                        uses: []
+                    });
+                 })...
 			</code>
 		</pre>
 	
 		<p>Note, cardType should match the name of your card directory.</p>
+       
+        
+        <h3>Create the HTML for your card</h3>
+        <p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/activityradar). 
+        Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
+        OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
+		<pre>
+			<code>
+
+&lt;div class="col-xs-12" ng-controller="RadarCardController"&gt;
+	&lt;h1>Radar Card&lt;/h1&gt;
+&lt;/div&gt;			
+
+			</code>
+		</pre>
+
+		<h3>Update the AngularJS application to include your module</h3>
+
+		<p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
+		<pre>
+			<code>
+angular
+ .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework','angularCharts',
+ 'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <strong>'od.cards.activityradar'</strong>])
+			</code>
+		</pre>
+
+		<h3>Add your module js file to the main page and pom.xml</h3>
+		<p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
+		
+		<pre>
+			<code>
+&lt;script src="../static/cards/activityradar/module.js" th:src="@{/cards/activityradar/module.js}"&gt;&lt;/script&gt;		
+			</code>
+		</pre>
+
+        <p>Open pom.xml.  Locate the jasmin-maven-plugin.  Add the card to the plugin.<p>
+        <pre>
+            <code>
+                &lt;plugin&gt;
+                &lt;groupId&gt;com.github.searls&lt;/groupId&gt;
+                &lt;artifactId>jasmine-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&lt;
+                    &lt;preloadSources&gt;
+                        &lt;source&gt;src/main/resources/public/cards/activityradar/module.js&lt;/source&gt;
+                    &lt;/preloadSources&gt;
+                  &lt;/configuration&gt;
+            </code>
+        </pre>
+        <p><strong>Third party libaries will also need to be added to the main page and pom.xml files.</strong></p>
+      </section>
+      <section>
+       <h1>
+            <a id="advanced" class="anchor" href="#advanced" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Concepts
+        </h1
         <h3>Deeper dive into card registration and the card object</h3>
         
-        <p>Let's dive a little deeper, into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our demo card object below.</p>
+        <p>Let's take a further exploration into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our demo card object below.</p>
         <pre>
             <code>{
-            title: 'Demo Card',
-            description: 'This card demonstrates how to retrieve data from various sources.',
-            cardType: 'demo',
-            styleClasses: 'od-card col-xs-12',
-            config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
-            requires: [],
-            uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
+                title: 'Learing Activity Radar',
+                description: 'Student Activity is displayed in radar chart format.',
+                cardType: 'activityradar',
+                styleClasses: 'od-card col-xs-12',
+                config: [],
+                requires: [],
+                uses: []
         }</code>
         </pre>
         <p>Each key value pair must be defined and must not be null.  title and description are used throughout the app on various pages. Likewise, cardType is also used throughout the app to determine which card is displayed.</p>
@@ -139,57 +159,8 @@ angular
            <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair.  The JSON files are located in the public/assests/translations directory.  The angular-translate library is used for translation.  Please review this library for further instructions <a href="https://angular-translate.github.io/">https://angular-translate.github.io/</a></dd>If no configuration is required for your card (ie for a testing dataset) set config equal to an empty array.</p>
 
         <p>requires and uses initialize the card with the various data providers. These map to the backend data provider implementation.  Currently Opendashboard supports six ASSIGNMENT, COURSE, EVENT, FORUM, OUTCOME, and ROSTER. If your card uses/requires any of the data sources, add it to the appropriate array. Alternatively, if none is necessary set the object to an empty array.</p>
-		
-        <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br><strong>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</strong></p>
         
-        <h3>Create the HTML for your card</h3>
-        <p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/demo). 
-        Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
-        OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
-		<pre>
-			<code>
-
-&lt;div class="col-xs-12" ng-controller="DemoCardController"&gt;
-	&lt;h1>Demo Card&lt;/h1&gt;
-&lt;/div&gt;			
-
-			</code>
-		</pre>
-
-		<h3>Update the AngularJS application to include your module</h3>
-
-		<p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
-		<pre>
-			<code>
-angular
- .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework','angularCharts',
- 'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <strong>'od.cards.demo'</strong>])
-			</code>
-		</pre>
-
-		<h3>Add your module js file to the main page and pom.xml</h3>
-		<p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
-		
-		<pre>
-			<code>
-&lt;script src="../static/cards/demo/module.js" th:src="@{/cards/demo/module.js}"&gt;&lt;/script&gt;		
-			</code>
-		</pre>
-
-        <p>Open pom.xml.  Locate the jasmin-maven-plugin.  Add the card to the plugin.<p>
-        <pre>
-            <code>
-                &lt;plugin&gt;
-                &lt;groupId&gt;com.github.searls&lt;/groupId&gt;
-                &lt;artifactId>jasmine-maven-plugin&lt;/artifactId&gt;
-                &lt;configuration&lt;
-                    &lt;preloadSources&gt;
-                        &lt;source&gt;src/main/resources/public/cards/demo/module.js&lt;/source&gt;
-                    &lt;/preloadSources&gt;
-                  &lt;/configuration&gt;
-            </code>
-        </pre>
-        <p><strong>Third party libaries will also need to be added to the main page and pom.xml files.</strong></p>
+        <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br><strong>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</strong></p>
       </section>
       <section>
         <h1>
