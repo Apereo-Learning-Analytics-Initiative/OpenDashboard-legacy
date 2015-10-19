@@ -5,8 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>OpenDashboard by Apereo-Learning-Analytics-Initiative</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <!-- <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"> -->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -181,181 +182,155 @@ angular
         <h1>
             <a id="services" class="anchor" href="#services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Services
         </h1>
-        <h2>ContextService</h2>
-        <p>Use this service to access the data about the current context such as the current user and course objects.</p>
+        <h2>SessionService</h2>
+        <p>Use this service to access the data about the current session.</p>
         <h3>Functions</h3>
+        <h4>isLoggedOut</h4>
+        <p>Returns true if the previous logged in user has logged out of the application.</p>
+
+        <h4>isLoggedOut</h4>
+        <p></p>
+
+        <h4>isAuthenticated</h4>
+        <p>Returns tre if the app has authenticated the current session.</p>
+
+        <h4>isLTISession</h4>
+        <p>Returns true if the app has launched from an LTI.</p>
+
+        <h4>hasAdminRole</h4>
+        <p>Returns true if the user has admin priviledges.</p>
+
+        <h4>hasInstructorRole</h4>
+        <p>Returns true if the user has instructor priviledges.</p>
+
+        <h4>hasStudentRole</h4>
+        <p>Returns true if the user has student priviledges.</p>
+
+        <h4>authenticate</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>credentials : Object</li>
+        </ul>  
+        <p>Sets the appropriate headers given the credentials and authenticates the user.</p>
+
+        <h4>isLTISession</h4>
+        <p>Returns true if the app has launched from an LTI.</p>
+
         <h4>getCourse</h4>
        	<p>Returns the current Course object</p>
+
         <h4>getCurrentUser</h4>
        	<p>Returns the current User object</p>
+
         <h4>getInbound_LTI_Launch</h4>
        	<p>Returns an object containing the inbound LTI launch parameters</p>
-        <h2>LearningAnalyticsProcessorService</h2>
-        <p>Use this service to access the output of a learning analytics processor for the given context. 
-        	The default strategy is to use the OAAI Learning Analytics Processor. The strategy can be configured using the setStrategy function</p>
-        <h3>Functions</h3>
-        <h4>setStrategy</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>lapStrategyToUse : Service</li>
-        </ul>  
-        <p>Sets the concrete strategy implementation to be delegated to</p>
-        <h4>getResults</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>contextMappingId : String</li>
-            <li>dashboardId : String</li>
-            <li>cardId : String</li>
-        </ul>  
-        <p>Returns the output of a learning analytics processor for the given context</p>
-        <h4>getResultsForUser</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>contextMappingId : String</li>
-            <li>dashboardId : String</li>
-            <li>cardId : String</li>
-            <li>userId : String</li>
-        </ul>  
-        <p>Returns the output of a learning analytics processor for the given user in the context</p>
-        <h4>mapToRoster</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>roster : Array[Member]</li>
-            <li>lapResults : Array</li>
-        </ul>  
-        <p>Associate the lap results for each user in a roster</p>
-        <h2>EventService</h2>
-        <p>Use this service to access event data typically from an LRS. The default strategy uses OpenLRS but this can be configured using the setStrategy function</p>
-        <h3>Functions</h3>
-        <h4>setStrategy</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>strategyToUse : Service</li>
-        </ul>  
-        <p>Sets the concrete strategy implementation to be delegated to</p>
-        <h4>getEventFromService</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>eventData : Object</li>
-        </ul>  
-        <p>Returns an Event object based on the external event</p>
-        <h4>getEvents</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>contextMappingId : String</li>
-            <li>dashboardId : String</li>
-            <li>cardId : String</li>
-        </ul>  
-        <p>Returns the events as normalized Event objects for the given context</p>
-        <h4>getEventsForUser</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>contextMappingId : String</li>
-            <li>dashboardId : String</li>
-            <li>cardId : String</li>
-            <li>userId : String</li>
-        </ul>  
-        <p>Returns the events as normalized Event objects for the given user in the context</p>
-        <h2>DemographicsService</h2>
-        <p>Use this service to get demographic data about users</p>
-        <h3>Functions</h3>
-        <h4>getDemographics</h4>
-       	<p>Returns an array of Demographics objects for all users in the source system</p>
-        <h4>getDemographicsForUser</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>user_id : String</li>
-        </ul>  
-        <p>Returns a Demographics object for the given user</p>
-        <h5>Example</h5>
-        <pre>
-            <code>
-DemographicsService
-.getDemographics()
-.then(
-	function (demographicsData) {
-		$scope.demographics = demographicsData;
-	}
-	
-);
-            </code>
-        </pre>
-        <h2>OutcomesService</h2>
-        <p>Use this service to retrieve outcomes (line items and results) for the current context</p>
-        <h3>Functions</h3>
-        <h4>getOutcomes</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-            <li>impl : Function</li>
-        </ul>  
-        <p>Returns an array of line item objects which optionally can contain results</p>
-        <pre>
-        	<code>
- {
- "id":"li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
- "type":"Assignment",
- "title":"li-2",
- "context":"de5db688-b7ec-449a-94d3-deb9af208f2b",
- "maximumScore":52,
- "results":[
-   {"id":"admin-li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
-   "user_id":"admin",
-   "score":15.228},
-   {"id":"e2d91b09-b62d-4db1-947f-3142df07cb16-li-de5db688-b7ec-449a-94d3-deb9af208f2b-2",
-   "user_id":"e2d91b09-b62d-4db1-947f-3142df07cb16",
-   "score":43.897}
-   ]
-}        	
-			</code>
-        </pre>
-        <h5>Example</h5>
-        <pre>
-            <code>
-OutcomesService
-.getOutcomes(options,null)
-.then(
-	function(outcomesData) {
-		$scope.outcomes = outcomesData;
-	}
-);
-            </code>
-        </pre>
-        <h2>RosterService</h2>
-        <p>Use this service to access the roster for the current context</p>
-        <h3>Functions</h3>
-        <h4>getRoster</h4>
-        <h5>Parameters</h5>
-        <ul style="list-style-type:none">
-            <li>options : Object</li>
-            <li>impl : Function</li>
-        </ul>  
-        <p>Returns an array of Member objects</p>
-        <h5>Example</h5>
-        <pre>
-            <code>
-var basicLISData = {};
-basicLISData.ext_ims_lis_memberships_url = $scope.lti.ext.ext_ims_lis_memberships_url;
-basicLISData.ext_ims_lis_memberships_id = $scope.lti.ext.ext_ims_lis_memberships_id;
 
-var options = {};
-options.contextMappingId = $scope.contextMapping.id;
-options.dashboardId = $scope.activeDashboard.id;
-options.cardId = $scope.card.id;
-options.basicLISData = basicLISData;
+        <h4>logout</h4>
+        <p>Logs the current user out of the application. Will invalidate session and delete all cookies.</p>
 
-RosterService
-.getRoster(options,null) // pass null so the default implementation is used
-.then(
-	function (rosterData) {
-		if (rosterData) {
-			$scope.course.buildRoster(rosterData);					
-		}
-	}
-);
-            </code>
-        </pre>
-      </section>
+        <h2>FeatureFlagService</h2>
+        <h4>isFeatureActive</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>featureKey : String</li>
+        </ul>  
+        <p>Returns true if application if featureKey is active</p>
+
+        <h2>DashboardService</h2>
+        <h4>getContextMappingById</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>contextMappingId : UUID</li>
+        </ul>  
+        <p>Returns contextMapping with the given Id</p>
+
+        <h4>createPreconfigured</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>dashboard : object</li>
+        </ul>  
+        <p>Creates a preconfigured dashboard with the dashboard object.</p>
+
+        <h4>updatePreconfigured</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>dashboard : object</li>
+        </ul>  
+        <p>Updates a preconfigured dashboard with the dashboard object id.</p>
+
+        <h4>removePreconfigured</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>id : UUID</li>
+        </ul>  
+        <p>Deletes a preconfigured dashboard with the dashboard id.</p>
+
+        <h4>getPreconfigured</h4>
+        <p>Returns all preconfigured dashobards.</p>
+
+        <h4>getPreconfiguredById</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>id : UUID</li>
+        </ul>  
+        <p>Returns a preconfigured dashboard with the dashboard id.</p>
+
+        <h4>checkTitle</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>title : String</li>
+        </ul>  
+        <p>Returns true if dashboard with a title exists in repository.</p>
+
+        <h2>ContextMappingService</h2>
+        <h4>createContextMappingInstance</h4>
+        <h5>Parameters</h5>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns contextMapping with the given options.</p>
+
+        <h5>create</h5>
+        <ul style="list-style-type:none">
+        <li>contextMapping : object</li>
+        </ul>  
+        <p>Creates a contextMapping.</p>
+
+        <h5>addDashboard</h5>
+        <ul style="list-style-type:none">
+        <li>contextMapping : object</li>
+        <li>dashboard : object</li>
+        </ul>  
+        <p>Adds a dashboard to the contextMapping.</p>
+
+        <h5>addCard</h5>
+        <ul style="list-style-type:none">
+        <li>contextMapping : object</li>
+        <li>dashboard : object</li>
+        <li>card : object</li>
+        </ul>  
+        <p>Adds a card to a dashboard on the contextMapping object.</p>
+
+        <h5>removeCard</h5>
+        <ul style="list-style-type:none">
+        <li>contextMapping : object</li>
+        <li>dashboard : object</li>
+        <li>card : object</li>
+        </ul>  
+        <p>Removes a card from a dashboard on the contextMapping object.</p>
+
+        <h5>get</h5>
+        <ul style="list-style-type:none">
+        <li>key : UUID</li>
+        </ul>  
+        <p>Returns a contextMapping if a context with the key exists.</p>
+
+        <h5>getById</h5>
+        <ul style="list-style-type:none">
+        <li>id : UUID</li>
+        </ul>  
+        <p>Returns a contextMapping if a context with the id exists.</p>
+     </section>
 	</div>
    <script src="javascripts/scale.fix.js"></script>
     
