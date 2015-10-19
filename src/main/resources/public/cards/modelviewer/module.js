@@ -89,13 +89,13 @@ angular
     	
       var tooltip = datum.object.name + ' : ';
 
-      if (datum.object.score == 1) {
+      if (datum.object.score == 2) {
     	tooltip = tooltip + 'No Risk';
       }
-      else if (datum.object.score == 2) {
+      else if (datum.object.score == 2.5) {
     	  tooltip = tooltip + 'Low Risk';
       }
-      else if (datum.object.score == 2) {
+      else if (datum.object.score == 3) {
     	  tooltip = tooltip + 'Medium Risk';
       }
       else {
@@ -103,6 +103,10 @@ angular
       }
 
       return tooltip;
+    };
+    
+    $scope.getDiameter = function () {
+      return 100;
     };
 
 
@@ -134,19 +138,19 @@ angular
 			  var mediumRisk = [];
 			  var highRisk = [];
 			  
-			  angular.forEach($scope.modeloutput, function (output) {
+			  angular.forEach($scope.modeloutput, function (item) {
 				  var obj = {};
-				  obj['name'] = $scope.findNameFromId(output.student_id);
+				  obj['name'] = $scope.findNameFromId(item.output['ALTERNATIVE_ID']);
 				  
-		          if (output.risk_score == 'NO RISK') {
-		        	obj['score'] = 1;
+		          if (item.output['MODEL_RISK_CONFIDENCE'] == 'NO RISK') {
+		        	obj['score'] = 2;
 		            noRisk.push(obj);
 		          }
-		          else if (output.risk_score == 'LOW RISK') {
-		        	obj['score'] = 2;
+		          else if (item.output['MODEL_RISK_CONFIDENCE'] == 'LOW RISK') {
+		        	obj['score'] = 2.5;
 		            lowRisk.push(obj);
 		          }
-		          else if (output.risk_score == 'MEDIUM RISK') {
+		          else if (item.output['MODEL_RISK_CONFIDENCE'] == 'MEDIUM RISK') {
 		        	obj['score'] = 3;
 		            mediumRisk.push(obj);
 		          }

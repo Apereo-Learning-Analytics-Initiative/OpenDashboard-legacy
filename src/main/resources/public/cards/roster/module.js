@@ -138,7 +138,7 @@ angular
 		_.forEach($scope.course.learners, function (learner) {
 			var risk = _.find(modelOutput, { 'student_id': learner.user_id });
 			if (risk) {
-				learner.risk = risk.risk_score;
+				learner.risk = risk.output['MODEL_RISK_CONFIDENCE'];
 			}
 		});
 	};

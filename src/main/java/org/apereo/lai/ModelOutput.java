@@ -15,12 +15,11 @@
 package org.apereo.lai;
 
 import java.util.Date;
+import java.util.Map;
 
 public interface ModelOutput {
 
-  String getStudentId();
-  String getCourseId();
-  String getRisk_score();
-  Date getCreated_date();
+  Map<String, Object> getOutput();
+  Date getCreatedDate();
 
 }

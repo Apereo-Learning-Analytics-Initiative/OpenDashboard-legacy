@@ -27,7 +27,7 @@ permissions and limitations under the License.
         <div class="col-md-8 col-xs-12">
           <h4 ng-show="!modeloutput || modeloutput.length == 0" translate="TEXT_NO_OUTPUT" translate-values="{ courseTitle: course.title }"></h4>
           <bubble-cloud
-          	diameter="480"
+          	diameter="600"
           	watch="true"
           	data="chart_data"
           	value-attr="score"
@@ -35,7 +35,7 @@ permissions and limitations under the License.
           	fill-color-fn="fill_color"
           	label-color-fn="label_color"
           	tooltip-format-fn="tooltip_format"
-          ></bubble>        
+          ></bubble-cloud>        
         </div>
         <div class="col-md-4 col-xs-12">
           <table class="table table-hover table-condensed">
@@ -48,10 +48,10 @@ permissions and limitations under the License.
             <tbody>
               <tr
                 ng-repeat="row in modeloutput">
-                <td class="col-md-10 col-xs-6">{{findNameFromId(row.student_id)}}</td>
+                <td class="col-md-10 col-xs-6">{{findNameFromId(row.output.ALTERNATIVE_ID)}}</td>
                 <td class="col-md-2 col-xs-6">
                   <span class="glyphicon glyphicon-align-justify" 
-                ng-class="{'text-info':row.risk_score == 'LOW RISK','text-success':row.risk_score == 'NO RISK','text-danger':row.risk_score == 'HIGH RISK', 'text-warning':row.risk_score == 'MEDIUM RISK'}" style="font-size: 2em;"></span>
+                ng-class="{'text-info':row.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','text-success':row.output.MODEL_RISK_CONFIDENCE == 'NO RISK','text-danger':row.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'text-warning':row.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" style="font-size: 2em;"></span>
                 </td>
               </tr>
             </tbody>
