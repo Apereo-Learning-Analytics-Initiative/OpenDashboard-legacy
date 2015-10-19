@@ -65,13 +65,13 @@ angular
 .module('od.cards.demo', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
     registryProvider.register('demo',{
-        title: 'Roster View',
+        title: 'Demo Card',
         description: 'This card demonstrates how to retrieve data from various sources.',
-        imgUrl: '',
         cardType: 'demo',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-	    ]
+        config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
+        requires: [],
+        uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
     });
  })
  .controller('DemoCardController', 
@@ -114,12 +114,38 @@ angular
 		</pre>
 	
 		<p>Note, cardType should match the name of your card directory.</p>
+        <h3>Deeper dive into card registration and the card object</h3>
+        
+        <p>Let's dive a little deeper, into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our demo card object below.</p>
+        <pre>
+            <code>{
+            title: 'Demo Card',
+            description: 'This card demonstrates how to retrieve data from various sources.',
+            cardType: 'demo',
+            styleClasses: 'od-card col-xs-12',
+            config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
+            requires: [],
+            uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
+        }</code>
+        </pre>
+        <p>Each key value pair must be defined and must not be null.  title and description are used throughout the app on various pages. Likewise, cardType is also used throughout the app to determine which card is displayed.</p>
 
-		<h3>Create the HTML for your card</h3>
-		<p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/demo). 
-		Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
-		OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
+        <p>The config object holds an array of objects.  Each object represents an input field for a form.  See the templates/card/add for an example. The config object holds the following values:
+           <dl>
+           <dt>config.field:</dt><dd>unique identifier for the field</dd>
+           <dt>config.fieldName:</dt><dd>deprecated see translatableLabelKey</dd>
+           <dt>config.fieldType:</dt><dd>input type</dd>
+           <dt>config.required:</dt><dd>boolean, sets ng-required</dd>
+           <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair.  The JSON files are located in the public/assests/translations directory.  The angular-translate library is used for translation.  Please review this library for further instructions <a href="https://angular-translate.github.io/">https://angular-translate.github.io/</a></dd>If no configuration is required for your card (ie for a testing dataset) set config equal to an empty array.</p>
+
+        <p>requires and uses initialize the card with the various data providers. These map to the backend data provider implementation.  Currently Opendashboard supports six ASSIGNMENT, COURSE, EVENT, FORUM, OUTCOME, and ROSTER. If your card uses/requires any of the data sources, add it to the appropriate array. Alternatively, if none is necessary set the object to an empty array.</p>
 		
+        <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br><strong>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</strong></p>
+        
+        <h3>Create the HTML for your card</h3>
+        <p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/demo). 
+        Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
+        OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
 		<pre>
 			<code>
 
@@ -141,7 +167,7 @@ angular
 			</code>
 		</pre>
 
-		<h3>Add your module js file to the main application page</h3>
+		<h3>Add your module js file to the main page and pom.xml</h3>
 		<p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
 		
 		<pre>
@@ -149,7 +175,21 @@ angular
 &lt;script src="../static/cards/demo/module.js" th:src="@{/cards/demo/module.js}"&gt;&lt;/script&gt;		
 			</code>
 		</pre>
-		
+
+        <p>Open pom.xml.  Locate the jasmin-maven-plugin.  Add the card to the plugin.<p>
+        <pre>
+            <code>
+                &lt;plugin&gt;
+                &lt;groupId&gt;com.github.searls&lt;/groupId&gt;
+                &lt;artifactId>jasmine-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&lt;
+                    &lt;preloadSources&gt;
+                        &lt;source&gt;src/main/resources/public/cards/demo/module.js&lt;/source&gt;
+                    &lt;/preloadSources&gt;
+                  &lt;/configuration&gt;
+            </code>
+        </pre>
+        <p><strong>Third party libaries will also need to be added to the main page and pom.xml files.</strong></p>
       </section>
       <section>
         <h1>
