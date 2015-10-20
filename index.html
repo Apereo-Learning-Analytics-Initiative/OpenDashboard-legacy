@@ -7,7 +7,6 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -41,21 +40,21 @@
         </h1>
         <p>Step-by-step instructions with examples for developing your own OpenDashboard Card.</p>
 
-		<h3>Pick a type for your card</h3>
+        <h3>Pick a type for your card</h3>
 
-		<p>OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. 
-		In our example we'll be building the learning activity radar chart, see the activityradar module.</p>
+        <p>OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. 
+        In our example we'll be building the learning activity radar chart, see the activityradar module.</p>
 
-		<h3>Create the AngularJS Module for your card</h3>
-		<p>This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. 
-		Use this file to define the AngularJS module and any supporting controllers and services.</p>
+        <h3>Create the AngularJS Module for your card</h3>
+        <p>This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. 
+        Use this file to define the AngularJS module and any supporting controllers and services.</p>
 
-		<p>Also use this file to register your card with OpenDashboard and define its configuration data.</p>
+        <p>Also use this file to register your card with OpenDashboard and define its configuration data.</p>
 
-		<p>For example:</p>
-		
-		<pre>
-			<code>
+        <p>For example:</p>
+        
+        <pre>
+            <code>
                 (function(angular) {
                 angular
                 .module('od.cards.activityradar', ['OpenDashboardRegistry', 'chart.js'])
@@ -70,45 +69,45 @@
                         uses: []
                     });
                  })...
-			</code>
-		</pre>
-	
-		<p>Note, cardType should match the name of your card directory.</p>
+            </code>
+        </pre>
+    
+        <p>Note, cardType should match the name of your card directory.</p>
        
         
         <h3>Create the HTML for your card</h3>
         <p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/activityradar). 
         Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
         OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
-		<pre>
-			<code>
+        <pre>
+            <code>
 
 &lt;div class="col-xs-12" ng-controller="RadarCardController"&gt;
-	&lt;h1>Radar Card&lt;/h1&gt;
-&lt;/div&gt;			
+    &lt;h1>Radar Card&lt;/h1&gt;
+&lt;/div&gt;            
 
-			</code>
-		</pre>
+            </code>
+        </pre>
 
-		<h3>Update the AngularJS application to include your module</h3>
+        <h3>Update the AngularJS application to include your module</h3>
 
-		<p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
-		<pre>
-			<code>
+        <p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
+        <pre>
+            <code>
 angular
  .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework','angularCharts',
  'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <strong>'od.cards.activityradar'</strong>])
-			</code>
-		</pre>
+            </code>
+        </pre>
 
-		<h3>Add your module js file to the main page and pom.xml</h3>
-		<p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
-		
-		<pre>
-			<code>
-&lt;script src="../static/cards/activityradar/module.js" th:src="@{/cards/activityradar/module.js}"&gt;&lt;/script&gt;		
-			</code>
-		</pre>
+        <h3>Add your module js file to the main page and pom.xml</h3>
+        <p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
+        
+        <pre>
+            <code>
+&lt;script src="../static/cards/activityradar/module.js" th:src="@{/cards/activityradar/module.js}"&gt;&lt;/script&gt;      
+            </code>
+        </pre>
 
         <p>Open pom.xml.  Locate the jasmin-maven-plugin.  Add the card to the plugin.<p>
         <pre>
@@ -217,13 +216,13 @@ angular
         <p>Returns true if the app has launched from an LTI.</p>
 
         <h4>getCourse</h4>
-       	<p>Returns the current Course object</p>
+        <p>Returns the current Course object</p>
 
         <h4>getCurrentUser</h4>
-       	<p>Returns the current User object</p>
+        <p>Returns the current User object</p>
 
         <h4>getInbound_LTI_Launch</h4>
-       	<p>Returns an object containing the inbound LTI launch parameters</p>
+        <p>Returns an object containing the inbound LTI launch parameters</p>
 
         <h4>logout</h4>
         <p>Logs the current user out of the application. Will invalidate session and delete all cookies.</p>
@@ -290,20 +289,20 @@ angular
         </ul>  
         <p>Returns contextMapping with the given options.</p>
 
-        <h5>create</h5>
+        <h4>create</h4>
         <ul style="list-style-type:none">
         <li>contextMapping : object</li>
         </ul>  
         <p>Creates a contextMapping.</p>
 
-        <h5>addDashboard</h5>
+        <h4>addDashboard</h4>
         <ul style="list-style-type:none">
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
         </ul>  
         <p>Adds a dashboard to the contextMapping.</p>
 
-        <h5>addCard</h5>
+        <h4>addCard</h4>
         <ul style="list-style-type:none">
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
@@ -311,7 +310,7 @@ angular
         </ul>  
         <p>Adds a card to a dashboard on the contextMapping object.</p>
 
-        <h5>removeCard</h5>
+        <h4>removeCard</h4>
         <ul style="list-style-type:none">
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
@@ -319,19 +318,172 @@ angular
         </ul>  
         <p>Removes a card from a dashboard on the contextMapping object.</p>
 
-        <h5>get</h5>
+        <h4>get</h4>
         <ul style="list-style-type:none">
         <li>key : UUID</li>
         </ul>  
         <p>Returns a contextMapping if a context with the key exists.</p>
 
-        <h5>getById</h5>
+        <h4>getById</h4>
         <ul style="list-style-type:none">
         <li>id : UUID</li>
         </ul>  
         <p>Returns a contextMapping if a context with the id exists.</p>
+
+        <h2>ProviderService</h2>
+        <h4>getProviderTypes</h4>
+        <p>Returns array of providers object.  Providers object { type: string, key: string, desc: string} Key will be JSON translation key and desc is JSON translation value.</p>
+
+        <h4>getProviders</h4>
+        <ul style="list-style-type:none">
+        <li>type : string</li>
+        </ul>  
+        <p>Returns a providers of the type parameter.</p>
+
+        <h4>getProvider</h4>
+        <ul style="list-style-type:none">
+        <li>type : string</li>
+        <li>key : string</li>
+        </ul>  
+        <p>Returns a provider of the type parameter with the key</p>
+
+        <h4>getProviderDataByKey</h4>
+        <ul style="list-style-type:none">
+        <li>type : string</li>
+        <li>key : string</li>
+        </ul>  
+        <p>Returns the provider data of the type parameter with the key</p>
+
+        <h4>getProviderDataByType</h4>
+        <ul style="list-style-type:none">
+        <li>type : string</li>
+        </ul>  
+        <p>Returns the provider data for all providers with the type parameter</p>
+
+        <h4>create</h4>
+        <ul style="list-style-type:none">
+        <li>providerData : object</li>
+        </ul>  
+        <p>Creates a provider.</p>
+
+        <h4>update</h4>
+        <ul style="list-style-type:none">
+        <li>providerData : object</li>
+        </ul>  
+        <p>Updates a provider, based on that providers type and key.</p>
+
+        <h4>remove</h4>
+        <ul style="list-style-type:none">
+        <li>providerData : object</li>
+        </ul>  
+        <p>Removes a provider, based on that providers type and key.</p>
+
+        <h2>AssignmentService</h2>
+        <h4>getAssignments</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns assignments that match the options.</p>
+
+        <h2>CourseDataService</h2>
+        <h4>getContexts</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns courses that match the options.</p>
+
+        <h4>getContext</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>contextId : object</li>
+        </ul>  
+        <p>Returns course that match the options and context id</p>
+
+        <h2>EventService</h2>
+        <h4>getEventsForCourse</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>courseId : object</li>
+        <li>page : integer</li>
+        <li>size : integer</li>
+        </ul>  
+        <p>Returns page of events for a the course.</p>
+
+        <h4>getEventsForUser</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>userId : object</li>
+        <li>page : integer</li>
+        <li>size : integer</li>
+        </ul>  
+        <p>Returns page of events for a user.</p>
+
+        <h4>getEventsForCourseAndUser</h4>
+        <li>options : object</li>
+        <li>courseId : object</li>
+        <li>userId : object</li>
+        <li>page : integer</li>
+        <li>size : integer</li>
+        </ul>  
+        <p>Returns page of events for a user in a course.</p>
+
+        <h2>ForumDataService</h2>
+        <h4>getForums</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns forums with options parameter.</p>
+
+        <h4>getMessages</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>topicId : id</li>
+        </ul>  
+        <p>Returns messages on the forum with the topic id.</p>
+
+        <h2>ModelOutputDataService</h2>
+        <h4>getModelOutputForCourse</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>courseId : object</li>
+        <li>page : integer</li>
+        <li>size : integer</li>
+        </ul>  
+        <p>Returns page of modelOutput for a the course id.</p>
+
+        <h4>getModelOutputForUser</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        <li>userId : object</li>
+        <li>page : integer</li>
+        <li>size : integer</li>
+        </ul>  
+        <p>Returns page of modelOutput for a user.</p>
+
+        <h2>OutcomesService</h2>
+        <h4>getOutcomesForCourse</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns outcomes for the options.</p>
+
+        <h2>RosterService</h2>
+        <h4>getRoster</h4>
+        <ul style="list-style-type:none">
+        <li>options : object</li>
+        </ul>  
+        <p>Returns rosters for the options.</p>
+
+        <h2>dataService</h2>
+        <h4>checkUniqueValue</h4>
+        <ul style="list-style-type:none">
+        <li>dashboards : object</li>
+        <li>field : string</li>
+        <li>value : string</li>
+        </ul>  
+        <p>Returns true if the values are unique for the field on a dashboard.</p>
      </section>
-	</div>
+    </div>
    <script src="javascripts/scale.fix.js"></script>
     
   </body>
