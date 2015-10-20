@@ -4,144 +4,137 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>OpenDashboard by Apereo-Learning-Analytics-Initiative</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>OpenDashboard</h1>
-        <p></p>
-        <p class="view">
-        <a href="#new-card">Developing your own OpenDashboard Card</a>
-        </p>
-        <p class="view">
-        <a href="#advanced">Advanced concepts</a>
-        </p>
-        <p class="view">
-        <a href="#services">Services</a>
-        </p>
-        <p class="view"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View the Project on GitHub <small>Apereo-Learning-Analytics-Initiative/OpenDashboard</small></a></p>
-
-        <ul>
-          <li><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard">View On <strong>GitHub</strong></a></li>
+    <div id="header">
+      <div class="wrapper">
+        <a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard" class="btn">View On GitHub <small>Apereo-Learning-Analytics-Initiative/OpenDashboard</small></a>
+        <ul class="nav">
+          <li class="download-title">Downloads</li>
+          <li class="downloads"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard/zipball/master" class="btn">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard/tarball/master" class="btn">TAR</a></li>
         </ul>
-      </header>
-      <section>
-        <h1>
+      </div>
+    </div><!-- end header -->
+    <div class="wrapper">
+        <section>
+            <div id="title">
+                <h1>Apereo OpenDashboard</h1>
+                <h5>A web framework for displaying data visualizations.</h5>
+                <hr>
+                <span class="credits right">Project maintained by <a href="https://github.com/Apereo-Learning-Analytics-Initiative">Apereo-Learning-Analytics-Initiative</a></span>
+                <span class="credits left"><a href="#new-card">Developing your own OpenDashboard Card</a></span>
+                <br>
+                <span class="credits left"><a href="#advanced">Advanced concepts</a></span>
+                <br>
+                <span class="credits left"><a href="#services">Services</a></span>
+            </div>
+        <h2>
             <a id="new-card" class="anchor" href="#new-card" aria-hidden="true"><span class="octicon octicon-link"></span></a>Developing your own OpenDashboard Card
-        </h1>
+        </h2>
         <p>Step-by-step instructions with examples for developing your own OpenDashboard Card.</p>
 
-        <h3>Pick a type for your card</h3>
+        <h4>Pick a type for your card</h4>
 
         <p>OpenDashboard relies heavily on convention over code so your card type is important - choose wisely. 
-        In our example we'll be building the learning activity radar chart, see the activityradar module.</p>
+        In our example we'll be building the learning activity radar chart, see the activityradar module.  All cards are located within the directory public/assets/cards/cardtype.</p>
 
-        <h3>Create the AngularJS Module for your card</h3>
+        <h4>Create the AngularJS Module for your card</h4>
         <p>This file contains the supporting Javascript for your card. Create a file called module.js in your card directory. 
         Use this file to define the AngularJS module and any supporting controllers and services.</p>
 
         <p>Also use this file to register your card with OpenDashboard and define its configuration data.</p>
 
         <p>For example:</p>
-        
-        <pre>
-            <code>
-                (function(angular) {
-                angular
-                .module('od.cards.activityradar', ['OpenDashboardRegistry', 'chart.js'])
-                 .config(function(registryProvider){
-                    registryProvider.register('activityradar',{
-                        title: 'Learing Activity Radar',
-                        description: 'Student Activity is displayed in radar chart format.',
-                        cardType: 'activityradar',
-                        styleClasses: 'od-card col-xs-12',
-                        config: [],
-                        requires: [],
-                        uses: []
-                    });
-                 })...
-            </code>
-        </pre>
-    
+        <div class="highlight">
+            <pre>
+(function(angular) {
+angular
+    .module(<span class="nb">'od.cards.activityradar'</span>, ['OpenDashboardRegistry', 'chart.js'])
+        .config(function(registryProvider){
+        registryProvider.register(<span class="nb">'activityradar'</span>, {
+            <span class="k">title</span>: <span class="no">'Learing Activity Radar'</span>,
+            <span class="k">description</span>: <span class="no">'Student Activity is displayed in radar chart format.'</span>,
+            <span class="k">cardType</span>: <span class="no">'activityradar'</span>,
+            <span class="k">styleClasses</span>: <span class="no">'od-card col-xs-12'</span>,
+            <span class="k">config</span>: <span class="no">[]</span>,
+            <span class="k">requires</span>: <span class="no">[]</span>,
+            <span class="k">uses</span>: <span class="no">[]</span>
+        });
+    })
+            </pre>
+        </div>
         <p>Note, cardType should match the name of your card directory.</p>
        
         
-        <h3>Create the HTML for your card</h3>
+        <h4>Create the HTML for your card</h4>
         <p>Start by creating a new directory in src/main/resources/public/cards that matches your card type (e.g. src/main/resources/public/cards/activityradar). 
         Then create an html file in the new directory called view.html. view.html should contain the UI markup for your card and reference the controller you created in your module.js file. 
         OpenDashboard supports Bootstrap 3 by default but if you wanted to use different styling you would do that here as well.</p>
-        <pre>
-            <code>
 
-&lt;div class="col-xs-12" ng-controller="RadarCardController"&gt;
-    &lt;h1>Radar Card&lt;/h1&gt;
-&lt;/div&gt;            
+<div class="highlight">
+    <pre>
+<span class="nt">&lt;div </span><span class="na">class=</span><span class="s">"col-xs-12" </span><span class="na">ng-controller=</span><span class="s">"RadarCardController"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Radar Card<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+    </pre>
+</div>
 
-            </code>
-        </pre>
-
-        <h3>Update the AngularJS application to include your module</h3>
+        <h4>Update the AngularJS application to include your module</h4>
 
         <p>Open src/main/resources/public/framework/od-app.js and add your card module to the application dependencies. For example:</p>
-        <pre>
-            <code>
+        <div class="highlight">
+            <pre>
 angular
  .module('OpenDashboard', ['ngRoute', 'OpenDashboardFramework','angularCharts',
- 'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <strong>'od.cards.activityradar'</strong>])
-            </code>
-        </pre>
-
-        <h3>Add your module js file to the main page and pom.xml</h3>
+ 'od.cards.lti', 'od.cards.openlrs', 'od.cards.roster', <span class="nb">'od.cards.activityradar'</span>])
+            </pre>
+        </div>
+        <h4>Add your module js file to the main page and pom.xml</h4>
         <p>Open src/main/resources/templates/od.html and add a script tag at the bottom of the page pointing to your module js file. For example:</p>
-        
-        <pre>
-            <code>
-&lt;script src="../static/cards/activityradar/module.js" th:src="@{/cards/activityradar/module.js}"&gt;&lt;/script&gt;      
-            </code>
-        </pre>
+        <div class="highlight">
+            <pre>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"../static/cards/activityradar/module.js" </span><span class="na">th:src=</span><span class="s">"@{/cards/activityradar/module.js}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+            </pre>
+        </div>
 
         <p>Open pom.xml.  Locate the jasmin-maven-plugin.  Add the card to the plugin.<p>
-        <pre>
-            <code>
-                &lt;plugin&gt;
-                &lt;groupId&gt;com.github.searls&lt;/groupId&gt;
-                &lt;artifactId>jasmine-maven-plugin&lt;/artifactId&gt;
-                &lt;configuration&lt;
-                    &lt;preloadSources&gt;
-                        &lt;source&gt;src/main/resources/public/cards/activityradar/module.js&lt;/source&gt;
-                    &lt;/preloadSources&gt;
-                  &lt;/configuration&gt;
-            </code>
-        </pre>
-        <p><strong>Third party libaries will also need to be added to the main page and pom.xml files.</strong></p>
-      </section>
-      <section>
-       <h1>
+        <div class="highlight">
+            <pre>
+<span class="nt">&lt;plugin&gt;</span>
+<span class="nt">&lt;groupId&gt;</span>com.github.searls<span class="nt">&lt;/groupId&gt;</span>
+<span class="nt">&lt;artifactId&gt;</span>jasmine-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;preloadSources&gt;</span>
+        <span class="nt">&lt;source&gt;</span>src/main/resources/public/cards/activityradar/module.js<span class="nt">&lt;/source&gt;</span>
+    <span class="nt">&lt;/preloadSources&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+            </pre>
+        </div>
+        <p>Third party libaries will also need to be added to the main page and pom.xml files.</p>
+       <h2>
             <a id="advanced" class="anchor" href="#advanced" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Concepts
-        </h1>
-        <h3>Deeper dive into card registration and the card object</h3>
+        </h2>
+        <h4>Deeper dive into card registration and the card object</h4>
         
-        <p>Let's take a further exploration into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our demo card object below.</p>
-        <pre>
-            <code>{
-                title: 'Learing Activity Radar',
-                description: 'Student Activity is displayed in radar chart format.',
-                cardType: 'activityradar',
-                styleClasses: 'od-card col-xs-12',
-                config: [],
-                requires: [],
-                uses: []
-        }</code>
-        </pre>
+        <p>Let's take a further exploration into the registry and card object.  Each card is registered to a dashboard via the OpenDashboardRegisty (app.js).  The registry will have a key, value for each card.  The key being the card key and value is the card object.  The card needs to insantiate several objects inorder to meet the Opendashboard convention. See our radar card object below.</p>
+        <div class="highlight">
+            <pre>
+{
+    <span class="k">title</span>: <span class="no">'Learing Activity Radar'</span>,
+    <span class="k">description</span>: <span class="no">'Student Activity is displayed in radar chart format.'</span>,
+    <span class="k">cardType</span>: <span class="no">'activityradar'</span>,
+    <span class="k">styleClasses</span>: <span class="no">'od-card col-xs-12'</span>,
+    <span class="k">config</span>: <span class="no">[]</span>,
+    <span class="k">requires</span>: <span class="no">[]</span>,
+    <span class="k">uses</span>: <span class="no">[]</span>
+}
+            </pre>
+        </div>
         <p>Each key value pair must be defined and must not be null.  title and description are used throughout the app on various pages. Likewise, cardType is also used throughout the app to determine which card is displayed.</p>
 
         <p>The config object holds an array of objects.  Each object represents an input field for a form.  See the templates/card/add for an example. The config object holds the following values:
@@ -150,11 +143,11 @@ angular
            <dt>config.fieldName:</dt><dd>deprecated see translatableLabelKey</dd>
            <dt>config.fieldType:</dt><dd>input type</dd>
            <dt>config.required:</dt><dd>boolean, sets ng-required</dd>
-           <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair. See the <a href="#tranlate">translation</a> section</dd>I
+           <dt>tranlatableLabelKey:</dt><dd>Set custom labels keys here that have a JSON value pair. See the <a href="#tranlate">translation</a> section.</dd>
 
         <p>requires and uses initialize the card with the various data providers. These map to the backend data provider implementation.  Currently Opendashboard supports six ASSIGNMENT, COURSE, EVENT, FORUM, OUTCOME, and ROSTER. If your card uses/requires any of the data sources, add it to the appropriate array. Alternatively, if none is necessary set the object to an empty array.</p>
         
-        <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br><strong>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</strong></p>
+        <p>Unit tests have been implemented to ensure all dependant pieces of the application will scale with your cards configuration.  These automated tests will run during the build process.<br>Note that by the vary nature of front end development these tests will not run until the project is rebuilt and your app may appear to "work" up until build time.</p>
 
         <p>If no configuration is required for your card (ie for a testing dataset) set config equal to an empty array.</p>
 
@@ -163,254 +156,294 @@ angular
         <p>It is assumed that the reader has some knowledge of the angular tranlate library and its usage.  Please review before reading the next section. <a href="https://angular-translate.github.io/">https://angular-translate.github.io/</a><p>
 
         <p>To allow your card to be tranlatable add the following lines of code to the controller.
-        <pre>
-            <code>
-                 .controller('RadarCardContorller', function($scope, $http, <strong>$translate, $translatePartialLoader</strong>) {
-                    <strong>
-                    $translatePartialLoader.addPart('radar-card');
-                    $translate.refresh();
-                    </strong>
-
-            </code>
-        </pre>
+        <div class="highlight">
+            <pre>
+.controller('RadarCardContorller', 
+    function($scope, $http, <span class="nb">$translate</span>, <span class="nb">$translatePartialLoader</span>) {
+        <span class="nb">$translatePartialLoader</span>.addPart(<span class="no">'radar-card'</span>);
+        <span class="nb">$translate</span>.refresh();
+            </pre>
+        </div>
 
         The translationPartialLoader is instantiated within the app.js file.  Any JSON file that is added to the public/assests/translations directory, can be loaded with the call to addPart(file-name).  Pay particular attention to the the call to $translate.refresh(), without this call your contoller will load the desired translations but they will not but presented.  Values located with in the JSON file will hold the appropriate key value pairs.  Angular translate can then load the appropriate file from the desired language and perform a mapping to "translate" the app.</p>
 
-      </section>
-      <section>
-        <h1>
+        <hr>
+        <h2>
             <a id="services" class="anchor" href="#services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Services
-        </h1>
-        <h2>SessionService</h2>
+        </h2>
+        <h3>SessionService</h3>
         <p>Use this service to access the data about the current session.</p>
-        <h3>Functions</h3>
-        <h4>isLoggedOut</h4>
+        <h4>Functions</h4>
+        <h5>isLoggedOut</h5>
         <p>Returns true if the previous logged in user has logged out of the application.</p>
 
-        <h4>isLoggedOut</h4>
-        <p></p>
-
-        <h4>isAuthenticated</h4>
+        <h5>isAuthenticated</h5>
         <p>Returns tre if the app has authenticated the current session.</p>
 
-        <h4>isLTISession</h4>
+        <h5>isLTISession</h5>
         <p>Returns true if the app has launched from an LTI.</p>
 
-        <h4>hasAdminRole</h4>
+        <h5>hasAdminRole</h5>
         <p>Returns true if the user has admin priviledges.</p>
 
-        <h4>hasInstructorRole</h4>
+        <h5>hasInstructorRole</h5>
         <p>Returns true if the user has instructor priviledges.</p>
 
-        <h4>hasStudentRole</h4>
+        <h5>hasStudentRole</h5>
         <p>Returns true if the user has student priviledges.</p>
 
-        <h4>authenticate</h4>
-        <h5>Parameters</h5>
+        <h5>authenticate</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>credentials : Object</li>
         </ul>  
         <p>Sets the appropriate headers given the credentials and authenticates the user.</p>
 
-        <h4>isLTISession</h4>
+        <h5>isLTISession</h5>
         <p>Returns true if the app has launched from an LTI.</p>
 
-        <h4>getCourse</h4>
-        <p>Returns the current Course object</p>
+        <h5>getCourse</h5>
+        <p>Returns the current Course object.</p>
 
-        <h4>getCurrentUser</h4>
-        <p>Returns the current User object</p>
+        <h5>getCurrentUser</h5>
+        <p>Returns the current User object.</p>
 
-        <h4>getInbound_LTI_Launch</h4>
-        <p>Returns an object containing the inbound LTI launch parameters</p>
+        <h5>getInbound_LTI_Launch</h5>
+        <p>Returns an object containing the inbound LTI launch parameters.</p>
 
-        <h4>logout</h4>
+        <h5>logout</h5>
         <p>Logs the current user out of the application. Will invalidate session and delete all cookies.</p>
 
-        <h2>FeatureFlagService</h2>
-        <h4>isFeatureActive</h4>
-        <h5>Parameters</h5>
+        <h3>FeatureFlagService</h3>
+        <p>Use this service to determine which features have been activated during initialization.</p>
+        
+        <h4>Functions</h4>
+        
+        <h5>isFeatureActive</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>featureKey : String</li>
         </ul>  
-        <p>Returns true if application if featureKey is active</p>
+        <p>Returns true if application if featureKey is active.</p>
 
-        <h2>DashboardService</h2>
-        <h4>getContextMappingById</h4>
-        <h5>Parameters</h5>
+        <h3>DashboardService</h3>
+
+        <p>Use this service to determine the data on a dashboard.</p>
+        
+        <h4>Functions</h4>
+
+        <h5>getContextMappingById</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>contextMappingId : UUID</li>
         </ul>  
         <p>Returns contextMapping with the given Id</p>
-
-        <h4>createPreconfigured</h4>
-        <h5>Parameters</h5>
+        <h5>createPreconfigured</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>dashboard : object</li>
         </ul>  
         <p>Creates a preconfigured dashboard with the dashboard object.</p>
 
-        <h4>updatePreconfigured</h4>
-        <h5>Parameters</h5>
+        <h5>updatePreconfigured</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>dashboard : object</li>
         </ul>  
         <p>Updates a preconfigured dashboard with the dashboard object id.</p>
 
-        <h4>removePreconfigured</h4>
-        <h5>Parameters</h5>
+        <h5>removePreconfigured</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>id : UUID</li>
         </ul>  
         <p>Deletes a preconfigured dashboard with the dashboard id.</p>
 
-        <h4>getPreconfigured</h4>
+        <h5>getPreconfigured</h5>
         <p>Returns all preconfigured dashobards.</p>
 
-        <h4>getPreconfiguredById</h4>
-        <h5>Parameters</h5>
+        <h5>getPreconfiguredById</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>id : UUID</li>
         </ul>  
         <p>Returns a preconfigured dashboard with the dashboard id.</p>
 
-        <h4>checkTitle</h4>
-        <h5>Parameters</h5>
+        <h5>checkTitle</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>title : String</li>
         </ul>  
         <p>Returns true if dashboard with a title exists in repository.</p>
 
-        <h2>ContextMappingService</h2>
-        <h4>createContextMappingInstance</h4>
-        <h5>Parameters</h5>
+        <h3>ContextMappingService</h3>
+        <p>Use this servive to create and maintain data on the contextMapping.</p>
+
+        <h4>Functions</h4>
+
+        <h5>createContextMappingInstance</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns contextMapping with the given options.</p>
 
-        <h4>create</h4>
+        <h5>create</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>contextMapping : object</li>
         </ul>  
         <p>Creates a contextMapping.</p>
 
-        <h4>addDashboard</h4>
+        <h5>addDashboard</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
         </ul>  
         <p>Adds a dashboard to the contextMapping.</p>
 
-        <h4>addCard</h4>
+        <h5>addCard</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
         <li>card : object</li>
         </ul>  
         <p>Adds a card to a dashboard on the contextMapping object.</p>
 
-        <h4>removeCard</h4>
+        <h5>removeCard</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>contextMapping : object</li>
         <li>dashboard : object</li>
         <li>card : object</li>
         </ul>  
         <p>Removes a card from a dashboard on the contextMapping object.</p>
 
-        <h4>get</h4>
+        <h5>get</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>key : UUID</li>
         </ul>  
         <p>Returns a contextMapping if a context with the key exists.</p>
 
-        <h4>getById</h4>
+        <h5>getById</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>id : UUID</li>
         </ul>  
         <p>Returns a contextMapping if a context with the id exists.</p>
 
-        <h2>ProviderService</h2>
-        <h4>getProviderTypes</h4>
+        <h3>ProviderService</h3>
+        <p>Use this service to access the data providers.</p>
+
+        <h4>Functions</h4>
+        
+        <h5>getProviderTypes</h5>
         <p>Returns array of providers object.  Providers object { type: string, key: string, desc: string} Key will be JSON translation key and desc is JSON translation value.</p>
 
-        <h4>getProviders</h4>
+        <h5>getProviders</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>type : string</li>
         </ul>  
         <p>Returns a providers of the type parameter.</p>
 
-        <h4>getProvider</h4>
+        <h5>getProvider</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>type : string</li>
         <li>key : string</li>
         </ul>  
-        <p>Returns a provider of the type parameter with the key</p>
+        <p>Returns a provider of the type parameter with the key.</p>
 
-        <h4>getProviderDataByKey</h4>
+        <h5>getProviderDataByKey</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>type : string</li>
         <li>key : string</li>
         </ul>  
-        <p>Returns the provider data of the type parameter with the key</p>
+        <p>Returns the provider data of the type parameter with the key.</p>
 
-        <h4>getProviderDataByType</h4>
+        <h5>getProviderDataByType</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>type : string</li>
         </ul>  
-        <p>Returns the provider data for all providers with the type parameter</p>
+        <p>Returns the provider data for all providers with the type parameter.</p>
 
-        <h4>create</h4>
+        <h5>create</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>providerData : object</li>
         </ul>  
         <p>Creates a provider.</p>
 
-        <h4>update</h4>
+        <h5>update</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>providerData : object</li>
         </ul>  
         <p>Updates a provider, based on that providers type and key.</p>
 
-        <h4>remove</h4>
+        <h5>remove</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>providerData : object</li>
         </ul>  
         <p>Removes a provider, based on that providers type and key.</p>
 
-        <h2>AssignmentService</h2>
-        <h4>getAssignments</h4>
+        <h3>AssignmentService</h3>
+        <p>Use this service to access the assignment data.</p>
+
+        <h4>Functions</h4>
+        
+        <h5>getAssignments</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns assignments that match the options.</p>
 
-        <h2>CourseDataService</h2>
-        <h4>getContexts</h4>
+        <h3>CourseDataService</h3>
+        <p>Use this service to get course data.</p>
+
+        <h4>Functions</h4>
+        
+        <h5>getContexts</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns courses that match the options.</p>
 
-        <h4>getContext</h4>
+        <h5>getContext</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>contextId : object</li>
         </ul>  
-        <p>Returns course that match the options and context id</p>
+        <p>Returns course that match the options and context id.</p>
 
-        <h2>EventService</h2>
-        <h4>getEventsForCourse</h4>
+        <h3>EventService</h3>
+        <p>Use this service to get event data for students and courses.</p>
+
+        <h4>Functions</h4>
+        
+        <h5>getEventsForCourse</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>courseId : object</li>
         <li>page : integer</li>
         <li>size : integer</li>
         </ul>  
-        <p>Returns page of events for a the course.</p>
+        <p>Returns page of events for a course.</p>
 
-        <h4>getEventsForUser</h4>
+        <h5>getEventsForUser</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>userId : object</li>
         <li>page : integer</li>
@@ -418,7 +451,9 @@ angular
         </ul>  
         <p>Returns page of events for a user.</p>
 
-        <h4>getEventsForCourseAndUser</h4>
+        <h5>getEventsForCourseAndUser</h5>
+        <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>courseId : object</li>
         <li>userId : object</li>
@@ -427,23 +462,34 @@ angular
         </ul>  
         <p>Returns page of events for a user in a course.</p>
 
-        <h2>ForumDataService</h2>
-        <h4>getForums</h4>
+        <h3>ForumDataService</h3>
+        <p>Use this service to access forum data for a course.</p>
+        
+        <h4>Functions</h4>
+
+        <h5>getForums</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns forums with options parameter.</p>
 
-        <h4>getMessages</h4>
+        <h5>getMessages</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>topicId : id</li>
         </ul>  
         <p>Returns messages on the forum with the topic id.</p>
 
-        <h2>ModelOutputDataService</h2>
-        <h4>getModelOutputForCourse</h4>
+        <h3>ModelOutputDataService</h3>
+        <p>Access the model output with this service.</p>
+
+        <h4>Functions</h4>
+        
+        <h5>getModelOutputForCourse</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>courseId : object</li>
         <li>page : integer</li>
@@ -451,8 +497,9 @@ angular
         </ul>  
         <p>Returns page of modelOutput for a the course id.</p>
 
-        <h4>getModelOutputForUser</h4>
+        <h5>getModelOutputForUser</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         <li>userId : object</li>
         <li>page : integer</li>
@@ -461,22 +508,33 @@ angular
         <p>Returns page of modelOutput for a user.</p>
 
         <h2>OutcomesService</h2>
-        <h4>getOutcomesForCourse</h4>
+        <h5>getOutcomesForCourse</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns outcomes for the options.</p>
 
         <h2>RosterService</h2>
-        <h4>getRoster</h4>
+        <p>Use this service to access roster data.<p>
+
+        <h4>Functions</h4>
+
+        <h5>getRoster</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>options : object</li>
         </ul>  
         <p>Returns rosters for the options.</p>
 
-        <h2>dataService</h2>
-        <h4>checkUniqueValue</h4>
+        <h3>dataService</h3>
+        <p>Use this service to check if dashboard already exists.</p>
+
+        <h4>Functions<h4>
+        
+        <h5>checkUniqueValue</h5>
         <ul style="list-style-type:none">
+        <li>Parameters</li>
         <li>dashboards : object</li>
         <li>field : string</li>
         <li>value : string</li>
@@ -484,7 +542,5 @@ angular
         <p>Returns true if the values are unique for the field on a dashboard.</p>
      </section>
     </div>
-   <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
