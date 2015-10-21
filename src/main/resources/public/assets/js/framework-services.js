@@ -170,6 +170,67 @@
 	});
 	
 	angular
+    .module('OpenDashboard')
+    .service('SettingService', function($q, $http, ContextMappingService, UUIDService, _ ){
+      return {
+        createSetting: function(setting){
+          var promise =
+            $http({
+                method  : 'POST',
+                url     : '/api/setting',
+                data    : JSON.stringify(setting),
+                headers : { 'Content-Type': 'application/json' }
+            })
+            .then(function (response) {
+                return response.data;
+            });
+            return promise;
+        },
+        updateSettings: function(settings){
+          console.log("The setting", settings);
+          var promise =
+            $http({
+                method  : 'PUT',
+                url     : '/api/setting',
+                data    : JSON.stringify(settings),
+                headers : { 'Content-Type': 'application/json' }
+            })
+            .then(function (response) {
+                return response.data;
+            });
+            return promise;
+        },
+        getSettings: function(){
+          var promise =
+            $http({
+                method  : 'GET',
+                url     : '/api/setting'
+            })
+            .then(function (response) {
+                if (response.data) {
+                    return response.data;
+                }
+                else {
+                    return null;
+                }
+            });
+            return promise;
+        },
+        removeSetting: function (id) {
+          var promise =
+          $http({
+              method  : 'DELETE',
+              url     : '/api/setting/'+id,
+              headers : { 'Content-Type': 'application/json' }
+          })
+          .then(function (response) {
+              return response.data;
+          });
+          return promise;
+      },
+      }
+    });
+	angular
 	.module('OpenDashboard')
 	.service('DashboardService', function($q, $http, ContextMappingService, UUIDService, _ ){
 		

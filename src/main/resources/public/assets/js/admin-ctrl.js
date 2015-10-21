@@ -367,5 +367,73 @@ function RemovePreconfiguredDashboardCtrl($scope, $state, _, DashboardService, N
 		
 	  );
 	};
-	
+});
+
+angular
+.module('OpenDashboard')
+.controller('SettingsCtrl',
+
+function SettingsCtrl($scope, $state, _, configuredSettings) {
+ $scope.configuredSettings = configuredSettings;
+ $scope.isConfigured = !_.isEmpty(configuredSettings)
+})
+.controller('AddSettingsCtrl',
+
+function AddSettingsCtrl($scope, $state, SettingService, Notification) {
+  
+  $scope.save = function () {
+    SettingService.createSetting($scope.setting)
+    .then(
+        function(data) {
+          Notification.success('Saved setting.');
+          $state.go('index.admin.settings');
+          console.log("Success", data);
+        },
+        function(error) {
+          Notification.error('Unable to save setting');
+          $state.go('index.admin.settings');
+          console.log("Error", error);
+        }
+    );
+  }
+})
+.controller('EditSettingsCtrl',
+
+function EditSettingsCtrl($scope, $state, _, configuredSettings, SettingService, Notification) {
+
+    $scope.configuredSettings = configuredSettings;
+    
+    $scope.save = function () {
+      SettingService.updateSettings($scope.configuredSettings)
+      .then(
+          function(data) {
+            Notification.success('Updated setting.');
+            $state.go('index.admin.settings');
+          },
+          function(error) {
+            Notification.error('Unable to update setting');
+            $state.go('index.admin.settings');
+          }
+      );
+    }
+})
+.controller('RemoveSettingsCtrl',
+
+function RemoveSettingsCtrl($scope, $state, _, configuredSettings, SettingService, Notification) {
+  
+  $scope.configuredSettings = configuredSettings;
+  
+  $scope.remove = function (setting) {
+    SettingService.removeSetting(setting.id)
+    .then(
+        function(data) {
+          Notification.success('Setting has been removed.');
+          $state.go('index.admin.settings');
+        },
+        function(error) {
+          Notification.error('Unable to remove setting');
+          $state.go('index.admin.settings');
+        }
+    );
+  }
 });

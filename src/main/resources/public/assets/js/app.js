@@ -312,6 +312,46 @@ angular
 	     	},
 	        controller: 'DeleteConfigureProviderCtrl'
 	    })
+	    .state('index.admin.settings', {
+	        url: '/direct/admin/settings',
+            templateUrl: '/assets/templates/admin/settings.html',
+            resolve:{
+              configuredSettings : function(SettingService) {
+                return SettingService.getSettings();
+              }
+            },
+            controller: 'SettingsCtrl'
+        })
+        .state('index.admin.addsettings', {
+          url: '/direct/admin/settings/add',
+          templateUrl: '/assets/templates/admin/addSetting.html',
+          resolve:{
+            configuredSettings : function(SettingService) {
+              return SettingService.getSettings();
+            }
+          },
+          controller: 'AddSettingsCtrl'
+        })
+        .state('index.admin.editsettings', {
+          url: '/direct/admin/settings/edit',
+          templateUrl: '/assets/templates/admin/editSettings.html',
+          resolve:{
+            configuredSettings : function(SettingService) {
+              return SettingService.getSettings();
+            }
+          },
+          controller: 'EditSettingsCtrl'
+        })
+        .state('index.admin.removesettings', {
+          url: '/direct/admin/settings/remove',
+          templateUrl: '/assets/templates/admin/removeSettings.html',
+          resolve:{
+            configuredSettings : function(SettingService) {
+              return SettingService.getSettings();
+            }
+          },
+          controller: 'RemoveSettingsCtrl'
+        })
 	    .state('index.welcome', {
 	        url: 'welcome',
 	        templateUrl: '/assets/templates/welcome.html',
