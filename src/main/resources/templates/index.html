@@ -17,6 +17,7 @@
 <link rel="stylesheet" th:href="@{/assets/css/lib/angular-notification-min.css}"></link>
 <link rel="stylesheet" th:href="@{/assets/css/lib/keen-dashboards.css}"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.css"></link>
 <link rel="stylesheet" th:href="@{/assets/css/od.css}"></link>
 <!-- END CSS -->
 
@@ -54,6 +55,8 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.7.2/angular-translate.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.7.2/angular-translate-loader-partial.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js"></script>
   
   <!-- TODO upgrade -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
@@ -63,7 +66,6 @@
   
   <script type="text/javascript" th:src="@{/assets/js/lib/angular-vis.js}"></script>  
   <script type="text/javascript" th:src="@{/assets/js/lib/angular-notification-min.js}"></script>
-  
   <script type="text/javascript" th:src="@{/assets/js/lib/holder.js}"></script>
   <script th:inline="javascript">
     Holder.add_theme("blue", {
@@ -72,6 +74,7 @@
       size : 10
     });
   </script>
+
   <script type="text/javascript" th:src="@{/assets/js/lib/keen.min.js}"></script>
   
   <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
@@ -92,5 +95,6 @@
   <script type="text/javascript" th:src="@{/cards/demo/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/snapp/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/modelviewer/module.js}"></script>
+  <script type="text/javascript" th:src="@{/cards/activityradar/module.js}"></script>
 </body>
 </html>

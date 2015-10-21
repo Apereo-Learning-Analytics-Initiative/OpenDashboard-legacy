@@ -1,0 +1,117 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="container-fluid" ng-controller="RadarCardController">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            <div class="col-sm-4 col-sm-offset-2">
+              Select Risk Category
+              <select id="DROPDOWN_RISK_CATEGORY_RADAR" ng-model='selectOptions.selectedCategory' ng-change='filterByLevel(selectOptions.selectedCategory)'>
+                <option value="ALL" selected="selected">All Categories</option>
+                <option ng-repeat="option in selectOptions.category">{{option}}</option>
+              </select> 
+            </div>
+            Select Student
+            <select id="DROPDOWN_STUDENTS_RADAR" ng-model='selectOptions.selectedStudent' ng-change='filterByStudent(selectOptions.selectedStudent)'>
+              <option value="ALL" selected="selected">All Students</option>
+              <option ng-repeat="option in selectOptions.students">{{option}}</option>
+            </select>
+          </div>
+            <div class="chart-stage">
+          <div class="well well-lg">
+              <canvas id="radar" class="chart chart-radar" chart-data="data" chart-labels="labels" chart-options='options' chart-series='selectOptions.students'></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-show='individualStudent !== null' class="col-sm-4">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-title">
+                Profile 
+              </div>
+              <div class="chart-stage">
+                <table class="table">
+                  <tr>
+                    <td>Student Id</td>
+                    <td>{{individualStudent.ALTERNATIVE_ID}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gender</td>
+                    <td>{{((individualStudent.RC_GENDER == 1) ? 'Female' : 'Male')}}</td>
+                  </tr>
+                  <tr>
+                    <td>Age</td>
+                    <td>{{individualStudent.AGE}}</td>
+                  </tr>
+                  <tr>
+                    <td>Course Id</td>
+                     <td>{{individualStudent.COURSE_ID}}</td>
+                  </tr>
+                  <tr>
+                    <td>Subject</td>
+                    <td>{{individualStudent.SUBJECT}}</td>
+                  </tr>
+                  <tr>
+                    <td>Risk Level</td>
+                     <td>{{individualStudent.MODEL_RISK_CONFIDENCE}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-title">
+                Indicator
+              </div>
+              <div class="chart-stage">
+              <table class="table">
+                  <tr>
+                    <td>Content Read</td>
+                    <td>{{individualStudent.R_CONTENT_READ}}</td>
+                  </tr>
+                  <tr>
+                    <td>Cumulative GPA</td>
+                    <td>{{individualStudent.GPA_CUMULATIVE}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gradebook Score</td>
+                    <td>{{individualStudent.RMN_SCORE}}</td>
+                  </tr>
+                  <tr>
+                    <td>Forums Activity</td>
+                     <td>{{individualStudent.R_FORUM_POST}}</td>
+                  </tr>
+                  <tr>
+                    <td>Assignment Activity</td>
+                    <td>{{individualStudent.R_ASN_SUB}}</td>
+                  </tr>
+                  <tr>
+                    <td>Sessions Activity</td>
+                     <td>{{individualStudent.R_SESSIONS}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
