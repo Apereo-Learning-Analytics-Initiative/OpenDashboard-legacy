@@ -192,11 +192,13 @@
                          <source>https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.js</source>
                          <source>http://cdnjs.cloudflare.com/ajax/libs/lodash-compat/3.10.1/lodash.js</source>
                          <source>http://cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.js</source>
-                         
+                         <source>https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js</source>
+                         <source>https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js</source>
+
                          <source>src/main/resources/public/assets/js/lib/angular-notification-min.js</source>
                          <source>src/main/resources/public/assets/js/lib/angular-vis.js</source>
                          <source>src/main/resources/public/assets/js/lib/holder.js</source>
-                         <source>src/main/resources/public/assets/js/lib/keen.min.js</source>                         
+                         <source>src/main/resources/public/assets/js/lib/keen.min.js</source>
 
                          <include>src/main/resources/public/assets/js/app.js</include> 
                          <include>src/main/resources/public/assets/js/admin-ctrl.js</include>
@@ -216,6 +218,7 @@
                          <source>src/main/resources/public/cards/lti/module.js</source>
                          <source>src/main/resources/public/cards/eventviewer/module.js</source>
                          <source>src/main/resources/public/cards/demo/module.js</source>
+                         <source>src/main/resources/public/cards/activityradar/module.js</source>
                     </preloadSources> 
                      <!-- </sourceIncludes>  -->
                      <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName> 
