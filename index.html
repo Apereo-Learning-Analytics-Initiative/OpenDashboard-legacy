@@ -226,6 +226,37 @@ angular
         </ul>  
         <p>Returns true if application if featureKey is active.</p>
 
+        <h3>SettingService</h3>
+
+        <p>Should not be used. Although fully functional, this is only shell of the future Admin Settings.
+            Admin Settings will set key value pairs, and persist the pairs in a the data store.</p>
+        
+        <h4>Functions</h4>
+
+        <h5>createSetting</h5>
+        <ul style="list-style-type:none">
+        <li>Parameters</li>
+        <li>setting : object</li>
+        </ul>  
+        <p>Returns response with setting created. Setting will have an id, key, and value.</p>
+
+        <h5>updateSettings</h5>
+        <ul style="list-style-type:none">
+        <li>Parameters</li>
+        <li>settings : Array of setting objects</li>
+        </ul>  
+        <p>Returns response with all settings updated in data store.</p>
+
+        <h5>getSettings</h5>
+        <p>Returns response with all settings persisted in data store.</p>
+
+        <h5>removeSetting</h5>
+        <ul style="list-style-type:none">
+        <li>Parameters</li>
+        <li>id : UUID</li>
+        </ul>  
+        <p>Returns empty response.</p>
+
         <h3>DashboardService</h3>
 
         <p>Use this service to determine the data on a dashboard.</p>
