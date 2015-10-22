@@ -171,7 +171,7 @@
 	
 	angular
     .module('OpenDashboard')
-    .service('SettingService', function($q, $http, ContextMappingService, UUIDService, _ ){
+    .service('SettingService', function($http){
       return {
         createSetting: function(setting){
           var promise =
@@ -187,7 +187,6 @@
             return promise;
         },
         updateSettings: function(settings){
-          console.log("The setting", settings);
           var promise =
             $http({
                 method  : 'PUT',

@@ -25,7 +25,6 @@ public class SettingsController {
     @RequestMapping(value = "/api/setting", method = RequestMethod.POST, 
         produces = "application/json;charset=utf-8", consumes = "application/json")
     public Setting create(@RequestBody Setting setting) {
-      log.warn("save should save this setting: {}", setting);
       return settingRepositoryInterface.save(setting);
     }
     

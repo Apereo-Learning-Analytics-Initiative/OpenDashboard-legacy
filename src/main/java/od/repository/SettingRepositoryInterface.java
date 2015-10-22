@@ -3,7 +3,6 @@ package od.repository;
 import java.util.List;
 
 import od.framework.model.Setting;
-import od.providers.ProviderData;
 
 public interface SettingRepositoryInterface {
     List<Setting> findAll();

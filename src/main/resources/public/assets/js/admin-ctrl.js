@@ -387,19 +387,17 @@ function AddSettingsCtrl($scope, $state, SettingService, Notification) {
         function(data) {
           Notification.success('Saved setting.');
           $state.go('index.admin.settings');
-          console.log("Success", data);
         },
         function(error) {
           Notification.error('Unable to save setting');
           $state.go('index.admin.settings');
-          console.log("Error", error);
         }
     );
   }
 })
 .controller('EditSettingsCtrl',
 
-function EditSettingsCtrl($scope, $state, _, configuredSettings, SettingService, Notification) {
+function EditSettingsCtrl($scope, $state, configuredSettings, SettingService, Notification) {
 
     $scope.configuredSettings = configuredSettings;
     
@@ -419,7 +417,7 @@ function EditSettingsCtrl($scope, $state, _, configuredSettings, SettingService,
 })
 .controller('RemoveSettingsCtrl',
 
-function RemoveSettingsCtrl($scope, $state, _, configuredSettings, SettingService, Notification) {
+function RemoveSettingsCtrl($scope, $state, configuredSettings, SettingService, Notification) {
   
   $scope.configuredSettings = configuredSettings;
   
