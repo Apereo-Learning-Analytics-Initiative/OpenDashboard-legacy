@@ -35,6 +35,7 @@ angular
   $scope.data = {};
   
   $scope.options = {
+      pointLabelFontSize : 14,
       // Boolean - If we want to override with a hard coded scale
       scaleOverride: true,
       // ** Required if scaleOverride is true **
@@ -47,7 +48,7 @@ angular
       //One student:
       //This controls the value of the mouseover event during if one student is shown
       tooltipTemplate: function (label){
-        return label.value;
+        return getOriginalDataPoint(label);
       },
       //More than one student:
       //This controls the value of the mouseover event during if multiple students are shown
@@ -249,6 +250,13 @@ angular
         }
       });
       return filteredData;
+  }
+  
+  function getOriginalDataPoint(chartLabel){
+    var studentData = filterDataByStudent(jsonData, $scope.selectOptions.selectedStudent);
+    var metric = _.find(d, {label: chartLabel.label}).metric;
+    var value = _.map(studentData, metric);
+    return value;
   }
 });
 
