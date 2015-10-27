@@ -17,22 +17,39 @@ angular
 .module('od.cards.activityradar', ['OpenDashboardRegistry', 'chart.js'])
  .config(function(registryProvider){
     registryProvider.register('activityradar',{
-        title: 'Learing Activity Radar',
+        title: 'Learning Activity Radar',
         description: 'Student Activity is displayed in radar chart format.',
         cardType: 'activityradar',
         styleClasses: 'od-card col-xs-12',
         config: [],
         requires: [],
-        uses: []
+        uses: ['MODELOUTPUT']
     });
  })
-.controller('RadarCardController', function($scope, $http) {
-  //TODO get the data from a different data source
+.controller('RadarCardController', function($scope, $http, ModelOutputDataService, SessionService, RosterService, _) {
+
+  $scope.course = SessionService.getCourse();
+  var options = {};
+  options.contextMappingId = $scope.contextMapping.id;
+  options.dashboardId = $scope.activeDashboard.id;
+  options.cardId = $scope.card.id;
+  options.courseId = $scope.course.id;
   var updatedJsonData = {},
       jsonData = {};
-  
   $scope.individualStudent = null;
   $scope.data = {};
+  $scope.colors = [];
+  $scope.selectOptions = {
+      category: [
+                 'NO RISK',
+                 'LOW RISK',
+                 'MEDIUM RISK',
+                 'HIGH RISK'
+                 ],
+                 selectedCategory : 'ALL',
+                 students: null,
+                 selectedStudent : 'ALL'
+  };
   
   $scope.options = {
       pointLabelFontSize : 14,
@@ -45,30 +62,9 @@ angular
       scaleStepWidth: 40,
       // Number - The scale starting value
       scaleStartValue: 0,
-      //One student:
-      //This controls the value of the mouseover event during if one student is shown
-      tooltipTemplate: function (label){
-        return getOriginalDataPoint(label);
-      },
-      //More than one student:
-      //This controls the value of the mouseover event during if multiple students are shown
-      multiTooltipTemplate: function (label){
-        var students = $scope.selectOptions.students;
-        return label.datasetLabel;
-      }
+      showTooltips: false
   };
   
-  $scope.selectOptions = {
-      category: [
-       'NO RISK',
-       'LOW RISK',
-       'MEDIUM RISK',
-       'HIGH RISK'
-      ],
-      selectedCategory : 'ALL',
-      students: null,
-      selectedStudent : 'ALL'
-  };
 
   var d=[
          {
@@ -150,7 +146,6 @@ angular
     }
   }
 
-  //Intentionally leaving data in controller to decouple service and controller.
   // set only once
   function setUpdatedJsonData(data){
     updatedJsonData = data;
@@ -178,12 +173,10 @@ angular
   
   // init dataset 
   function init(){
-    var url = '/api/roster';
-    var promise = $http.get("/cards/activityradar/riskscores.json")
+    var promise = ModelOutputDataService.getModelOutputForCourse(options,$scope.course.id)
     .then(function (response) {
-       if (response && response.data){
-         return response.data;
-       }
+       var data = getResponseData(response);
+       return data;
     });
     return promise;
   }
@@ -200,8 +193,12 @@ angular
   function getStudents(d){
     var students = {};
     students = _.map(d, function(data){
-      return data.ALTERNATIVE_ID;
+      var student = {id: null, color: null};
+      student.id = data.ALTERNATIVE_ID;
+      student.color = randomColorGenerator();
+      return student;
     });
+    createColorArray(students);
     return students;
   }
   
@@ -216,6 +213,14 @@ angular
       allStudentDataPoints.push(individualStudentDataPoints);
     });
     return allStudentDataPoints;
+  }
+  
+  function getResponseData(data){
+    var returnData = [];
+    angular.forEach(data, function(d){
+      returnData.push(d.output);
+    });
+    return returnData;
   }
   
   //TODO need to make dynamic (remove hard coded values)
@@ -256,7 +261,23 @@ angular
     var studentData = filterDataByStudent(jsonData, $scope.selectOptions.selectedStudent);
     var metric = _.find(d, {label: chartLabel.label}).metric;
     var value = _.map(studentData, metric);
-    return value;
+    return (value[0] === null) ? '0' : value;
+  }
+ 
+  /**
+  * In order to maintain access to the colors, must create the colors here.
+  */
+  //random Hex color.  
+  function randomColorGenerator() { 
+    return '#' + (Math.random().toString(16) + '0000000').slice(2, 8); 
+  }
+  
+  function createColorArray(students){
+    var colors = [];
+    angular.forEach(students, function(student){
+      colors.push(student.color);
+    });
+    $scope.colors = colors;
   }
 });
 

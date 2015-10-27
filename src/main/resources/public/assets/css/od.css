@@ -140,4 +140,24 @@
   height: 50px;
   overflow: hidden;
 }
+/* ACTIVITY-RADAR */
+.radar-chart-title {
+    min-height: 30px;
+}
 
+.radar-chart-title small label{
+    margin-right: 10px;
+}
+
+.radar-chart-stage {
+    padding: 15px;
+}
+
+.glyphicon-transparent:before {
+    content: "\2122";
+    color: transparent !important;
+}
+
+.glyphicon-transparent {
+    border-radius: 10px;
+}

@@ -167,9 +167,6 @@ angular
 		        medium : mediumRisk,
 		        high : highRisk
 	          };
-	          
-	        //console.log($scope.chart_data);
-			  
 			}
 		};
 	

@@ -16,23 +16,45 @@ permissions and limitations under the License.
     <div class="row">
       <div class="col-sm-8">
         <div class="chart-wrapper">
-          <div class="chart-title">
-            <div class="col-sm-4 col-sm-offset-2">
-              Select Risk Category
-              <select id="DROPDOWN_RISK_CATEGORY_RADAR" ng-model='selectOptions.selectedCategory' ng-change='filterByLevel(selectOptions.selectedCategory)'>
-                <option value="ALL" selected="selected">All Categories</option>
-                <option ng-repeat="option in selectOptions.category">{{option}}</option>
-              </select> 
-            </div>
-            Select Student
-            <select id="DROPDOWN_STUDENTS_RADAR" ng-model='selectOptions.selectedStudent' ng-change='filterByStudent(selectOptions.selectedStudent)'>
-              <option value="ALL" selected="selected">All Students</option>
-              <option ng-repeat="option in selectOptions.students">{{option}}</option>
-            </select>
+          <div class="chart-title radar-chart-title">
+            <small class="pull-right">
+                  <label class="pull-left">
+                    Select Risk Category
+                    <select id="DROPDOWN_RISK_CATEGORY_RADAR" ng-model='selectOptions.selectedCategory' ng-change='filterByLevel(selectOptions.selectedCategory)'>
+                      <option value="ALL" selected="selected">All Categories</option>
+                      <option ng-repeat="option in selectOptions.category">{{option}}</option>
+                    </select>
+                  </label>
+                  <label>
+                    Select Student
+                    <select id="DROPDOWN_STUDENTS_RADAR" ng-model='selectOptions.selectedStudent' ng-change='filterByStudent(selectOptions.selectedStudent)'>
+                      <option value="ALL" selected="selected">All Students</option>
+                      <option ng-repeat="option in selectOptions.students">{{option.id}}</option>
+                    </select>
+                  </label>
+            </small>
           </div>
             <div class="chart-stage">
-          <div class="well well-lg">
-              <canvas id="radar" class="chart chart-radar" chart-data="data" chart-labels="labels" chart-options='options' chart-series='selectOptions.students'></canvas>
+                <div class="radar-chart-stage">
+                    <canvas id="radar" class="chart chart-radar" chart-colours="colors" chart-legend="false" chart-data="data" chart-labels="labels" chart-options='options' chart-series='selectOptions.students'></canvas>
+                </div>
+          </div>
+        </div>
+      </div>
+      <div ng-show='individualStudent === null' class="col-sm-4">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="chart-wrapper">
+              <div class="chart-title">
+                Select a student below {{scope}}
+              </div>
+              <div class="chart-stage">
+                 <div class="list-group">
+                  <div ng-repeat="student in selectOptions.students">
+                    <a class="list-group-item"  ng-click="filterByStudent(student.id)"><span class="glyphicon-transparent" style="background-color: {{student.color}};"></span> {{student.id}}</a>
+                  </div>
+                 </div>
+              </div>
             </div>
           </div>
         </div>
