@@ -75,11 +75,10 @@ OpenDashboard source code is stored in a git repository so you will need to have
 **************************************************************************************
 
 ## Accessing OpenDashboard via LTI
-Currently OpenDashboard can only be accessed via an LTI tool launch. The LTI tool launch endpoint is http(s)://your server/ . The default OAuth consumer key and secret values are defined in src/main/resources/application.properties - these values can and should be overriden in local properties.
+Currently OpenDashboard can only be accessed via an LTI tool launch. The LTI tool launch endpoint is http(s)://your server/lti . The default OAuth consumer key and secret values are defined in src/main/resources/application.properties - these values can and should be overriden in local properties.
 *************************************************************************************
 
 ## Preconfigured Dashboards
 
 OpenDashboard provides the ability to preconfigure a collection of dashboards. This gives administrators the ability to define card layout and configuration for their entire OpenDashboard instance and removes the need for end users to configure their own dashboards.
 
-Preconfigured dashboards are defined in JSON format (see src/main/resources/dashboards.json) for an example. By default the preconfigured dashboards option is disabled; to enable preconfigured dashboards set the dashboards.preconfigured.allow property to true. By default src/main/resources/dashboards.json is used as the dashboards definition file but the location can be specified using the dashboards.jsonfile property. 

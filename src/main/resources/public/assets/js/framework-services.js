@@ -167,8 +167,33 @@
 				return promise;
 	      }
 		}
+	})
+	.service('ConfigService', function($log, $http) {
+	    return {
+	      getIdps : function() {
+	        var headers = {'Content-Type' : 'application/json'};
+	        
+			var promise = $http({
+				  method : 'GET',
+				  url : '/config/idps',
+				  headers : headers
+				})
+				.then(function(response) {
+				  if (response && response.data) {
+					$log.log(response.data)
+					return response.data;
+				  }
+				  $log.debug(response);
+				  return false;
+				}, 
+				function(error) {
+				  $log.error(error);
+				  return false;
+				});
+				return promise;
+	      }
+		}
 	});
-	
 	angular
     .module('OpenDashboard')
     .service('SettingService', function($http){

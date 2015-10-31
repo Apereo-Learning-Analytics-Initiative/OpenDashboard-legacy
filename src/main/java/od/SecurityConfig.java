@@ -40,6 +40,7 @@ import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -51,7 +52,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -109,6 +109,7 @@ public class SecurityConfig {
   }
   
   @Configuration
+  @Profile("basic")
   public static class HttpBasicConfigurationAdapter extends WebSecurityConfigurerAdapter {
     
     @Override
@@ -208,7 +209,7 @@ public class SecurityConfig {
     }
 
   }
-  
+    
   @Autowired
   private ExceptionFilter exceptionFilter;
 

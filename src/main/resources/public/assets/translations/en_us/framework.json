@@ -124,5 +124,10 @@
 
 "COOKIE_ERROR":"OpenDashboard needs to be able to set cookies to work properly. Please check your browser's cookie settings.",
 "AUTHORIZATION_ERROR":"OpenDashboard does not think you are authorized to view the content that you requested.",
-"GENERAL_ERROR":"OpenDashboard is not sure what is just happened."
+"GENERAL_ERROR":"OpenDashboard is not sure what is just happened.",
+
+"LABEL_IDP_SELECTION":"Select your identity provider",
+"TEXT_IDP_SELECTION":"Select your identity provider from the list below.",
+"LABEL_SELECT_IDP":"Select your identity provider"
+
 }

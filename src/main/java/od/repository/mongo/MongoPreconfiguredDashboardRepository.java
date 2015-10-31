@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author ggilbert
  *
  */
-@Profile("mongo")
+@Profile({"mongo","mongo-multitenant"})
 public interface MongoPreconfiguredDashboardRepository extends PreconfiguredDashboardRepositoryInterface, MongoRepository<Dashboard, String> {
 
 }

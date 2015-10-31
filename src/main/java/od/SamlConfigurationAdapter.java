@@ -12,23 +12,19 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-/**
- *
- */
-package od.repository.mongo;
+package od;
 
-import od.framework.model.ContextMapping;
-import od.repository.ContextMappingRepositoryInterface;
-
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * @author ggilbert
  *
  */
-@Profile({"mongo","mongo-multitenant"})
-public interface ContextMappingRepository extends MongoRepository<ContextMapping, String>, ContextMappingRepositoryInterface {
-    @Override
-    ContextMapping findByKeyAndContext(final String key, final String context);
+@Configuration
+@Profile("saml")
+@ImportResource("classpath:saml/saml.xml")
+public class SamlConfigurationAdapter extends WebSecurityConfigurerAdapter {
 }

@@ -26,7 +26,7 @@ import od.OpenDashboard;
 import od.repository.mongo.MongoMultiTenantConfiguration;
 import od.test.groups.MongoUnitTests;
 
-@ActiveProfiles("mongo-multitenant")
+@ActiveProfiles({"mongo-multitenant","basic"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {OpenDashboard.class, MongoMultiTenantConfiguration.class})
 @Category(MongoUnitTests.class)

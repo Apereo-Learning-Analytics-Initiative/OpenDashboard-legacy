@@ -12,23 +12,31 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-/**
- *
- */
-package od.repository.mongo;
+package od;
 
-import od.framework.model.ContextMapping;
-import od.repository.ContextMappingRepositoryInterface;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.security.saml.metadata.MetadataManager;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author ggilbert
  *
  */
-@Profile({"mongo","mongo-multitenant"})
-public interface ContextMappingRepository extends MongoRepository<ContextMapping, String>, ContextMappingRepositoryInterface {
-    @Override
-    ContextMapping findByKeyAndContext(final String key, final String context);
+@Controller
+@Profile("saml")
+public class SamlController {
+  @Autowired private MetadataManager metadata;
+  
+  @RequestMapping(value = "/config/idps", method = RequestMethod.GET)
+  public @ResponseBody Set<String> idps(Model model) {
+    return metadata.getIDPEntityNames();
+  }
+  
 }

@@ -27,7 +27,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author ggilbert
  *
  */
-@Profile("mongo")
+@Profile({"mongo","mongo-multitenant"})
 public interface SessionRepository extends MongoRepository<Session, String>, SessionRepositoryInterface {
 
 }

@@ -184,6 +184,9 @@ angular
           resolve:{
             isMultiTenant : function (FeatureFlagService) {
               return FeatureFlagService.isFeatureActive('multitenant');
+            },
+            isSaml : function (FeatureFlagService) {
+              return FeatureFlagService.isFeatureActive('saml');
             }
           },
           controller: 'LoginCtrl'

@@ -19,7 +19,7 @@ permissions and limitations under the License.
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
-            <form name="loginForm" class="form col-md-12 center-block" ng-submit="login()" novalidate>
+            <form ng-show="!isSaml" name="loginForm" class="form col-md-12 center-block" ng-submit="login()" novalidate>
               <p ng-show="validationError" class="alert alert-danger" translate="ALERT_DANGER_USERNAME_PASSWORD_MISMATCH"></p>
               <p ng-show="hasLoggedOut && !validationError" class="alert alert-success" translate="ALERT_SUCCESS_LOGOUT_{{hasLoggedOut}}"></p>
               <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
@@ -44,6 +44,21 @@ permissions and limitations under the License.
                 <button type="submit" class="btn btn-primary btn-lg" translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN" ng-disabled="loginForm.$invalid"></button>
               </div>
             </form>
+            <div ng-show="isSaml">
+              <h3 translate="LABEL_IDP_SELECTION"></h3>
+              <p translate="TEXT_IDP_SELECTION"></p>
+              <form class="form col-md-12 center-block" action="/saml/login?disco=true" method="get" name="idpForm">
+                <div class="form-group">
+                   <div class="form-group">
+                      <select class="form-control input-lg" name="idp" id="DROPDOWN_IDP_SELECT_INSTITUTION">
+                        <option value="" disabled="disabled" selected="selected" style="display:none;" translate="LABEL_SELECT_IDP"></option>
+                        <option ng-repeat="idp in idps" name="idp" value="{{idp}}">{{idp}}</option>
+                      </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-lg" translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN" ng-disabled="idpForm.$invalid"></button>
+                </div>
+              </form>
+            </div>
           </div>
           <div class="modal-footer" style="border-top: 0px;"></div>
         </div>

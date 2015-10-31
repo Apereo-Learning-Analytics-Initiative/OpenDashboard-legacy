@@ -29,7 +29,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author ggilbert
  *
  */
-@Profile("mongo")
+@Profile({"mongo","mongo-multitenant"})
 public interface MongoProviderDataRepository extends ProviderDataRepositoryInterface, MongoRepository<ProviderData, String> {
   @Override ProviderData findByProviderKey(final String key);
   @Override List<ProviderData> findByProviderType(final String type);

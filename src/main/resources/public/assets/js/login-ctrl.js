@@ -18,10 +18,19 @@ angular
 .module('OpenDashboard')
 .controller('LoginCtrl',
 
-function LoginCtrl($log, $scope, $state, SessionService, isMultiTenant) {
+function LoginCtrl($log, $scope, $state, SessionService, isMultiTenant, isSaml, ConfigService) {
     
   $scope.isMultiTenant = isMultiTenant;
+  $scope.isSaml = isSaml;
   $scope.hasLoggedOut = $state.params.loggedOutMessage;
+  
+  if ($scope.isSaml) {
+	ConfigService.getIdps()
+	.then(function(data) {
+	  $scope.idps = data;
+	});
+  }
+  
   $scope.credentials = {};
   $scope.login = function() {
 	  SessionService.authenticate($scope.credentials)
