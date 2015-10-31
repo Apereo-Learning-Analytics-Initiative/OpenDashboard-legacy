@@ -41,5 +41,5 @@ EXPOSE 8080
 
 # CMD will be called when starting this container.
 WORKDIR /opt/opendash/
-CMD java -server -jar -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=mongo-multitenant opendash-0.1-SNAPSHOT.jar
+CMD java -server -jar -Djava.security.egd=file:/dev/./urandom -Dspring.config.location=/opt/opendash/dev.properties opendash-0.1-SNAPSHOT.jar
 
