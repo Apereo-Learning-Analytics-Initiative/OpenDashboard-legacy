@@ -28,12 +28,26 @@ angular
  })
 .controller('RadarCardController', function($scope, $http, ModelOutputDataService, SessionService, RosterService, _) {
 
+  $scope.members = null;
   $scope.course = SessionService.getCourse();
   var options = {};
   options.contextMappingId = $scope.contextMapping.id;
   options.dashboardId = $scope.activeDashboard.id;
   options.cardId = $scope.card.id;
   options.courseId = $scope.course.id;
+      	
+  	$scope.findNameFromId = function(userId) {
+		var name = userId;
+		if ($scope.members) {
+			var person = _.result(_.find($scope.members, { 'user_id': userId }), 'person');
+			if (person && person.name_full) {
+			  name = person.name_full;
+			}
+		}
+		return name;
+	};
+
+
   var updatedJsonData = {},
       jsonData = {};
   $scope.individualStudent = null;
@@ -101,18 +115,22 @@ angular
   //angular charts needs the labels for each dataset.  These are defined by d.label
   $scope.labels = getLabels(d);
   
-  //Get the data from the json file
-  init()
-    .then(function(data){
-      setJsonData(data);
-      //normalize the data (hard coded)
-      var updatedData = updateData(data);
-      setUpdatedJsonData(updatedData);
-      var dataPoints = getDataPoint(updatedData, d);
-      var students = getStudents(updatedData);
-      setData(dataPoints);
-      setStudents(students);
-    });
+  RosterService.getRoster(options)
+	.then(function(members) {
+		$scope.members = members;
+		  init()
+		    .then(function(data){
+		      setJsonData(data);
+		      //normalize the data (hard coded)
+		      var updatedData = updateData(data);
+		      setUpdatedJsonData(updatedData);
+		      var dataPoints = getDataPoint(updatedData, d);
+		      var students = getStudents(updatedData);
+		      setData(dataPoints);
+		      setStudents(students);
+		    });
+	});
+
   
   $scope.filterByLevel =  function(level){
     if(level === 'ALL'){

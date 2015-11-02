@@ -51,7 +51,7 @@ permissions and limitations under the License.
               <div class="chart-stage">
                  <div class="list-group">
                   <div ng-repeat="student in selectOptions.students">
-                    <a class="list-group-item"  ng-click="filterByStudent(student.id)"><span class="glyphicon-transparent" style="background-color: {{student.color}};"></span> {{student.id}}</a>
+                    <a class="list-group-item"  ng-click="filterByStudent(student.id)"><span class="glyphicon-transparent" style="background-color: {{student.color}};"></span> {{findNameFromId(student.id)}}</a>
                   </div>
                  </div>
               </div>
