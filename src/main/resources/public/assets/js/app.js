@@ -59,6 +59,14 @@ angular
 
 angular
 .module('OpenDashboard')
+  .constant('LOCALES', {
+    'locales': {
+      'cy_GB': 'Welsh',
+      'en_US': 'English (US)',
+      'en_GB': 'English (UK)'
+    },
+    'preferredLocale': 'en_US'
+  })
 .config(function(NotificationProvider) {
 	NotificationProvider.setOptions({
 	    delay: 10000,
@@ -70,12 +78,13 @@ angular
 	    positionY: 'bottom'
 	});
  })
-.config(function($translateProvider, $translatePartialLoaderProvider) {
+.config(function($translateProvider, $translatePartialLoaderProvider, LOCALES) {
     $translateProvider.useLoader('$translatePartialLoader', {
         urlTemplate: '/assets/translations/{lang}/{part}.json'
       });
 
-    $translateProvider.preferredLanguage('en_us');
+    $translateProvider.preferredLanguage(LOCALES.preferredLocale);
+    $translateProvider.useLocalStorage();
     $translateProvider.useSanitizeValueStrategy('sanitize');
     $translatePartialLoaderProvider.addPart('framework');
 })

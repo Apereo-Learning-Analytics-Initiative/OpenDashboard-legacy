@@ -18,10 +18,38 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $log, SessionService, ContextMappingService) {
+function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMappingService, LocaleService) {
   $scope.contextMapping = null;
   $scope.activeDashboard = null;
   var currentState = $state.current;
+  
+  $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
+
+  $scope.changeLanguage = function (locale) {
+    LocaleService.setLocaleByDisplayName(locale);
+  };
+  
+  $scope.getLocaleImgPath = function (locale) {	
+	var path = '/assets/img/locales/'  
+  
+	if (locale) {
+	  var code = LocaleService.getLocaleForDisplayName(locale);
+	  path = path + code +'.png';
+	}
+	else {
+	  var code = LocaleService.getLocaleForDisplayName(LocaleService.getLocaleDisplayName());
+	  
+	  if (!code) {
+		code = $translate.use();  
+		if (!code) {
+		  code = 'en_US';
+		}
+	  }
+
+	  path = path + code +'.png';
+	}
+	return path;
+  };
 
   var doRouting = function () {
       if (SessionService.isLTISession()) {
