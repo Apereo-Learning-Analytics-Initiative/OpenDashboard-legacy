@@ -1,18 +1,10 @@
 <div class="row">      
-  <div class="col-xs-12">
-    <div class="chart-wrapper">
-      <div class="row">
-      
-      </div>
-    </div>
-  </div>
-</div>     
-    <div class="col-xs-12">
+ <div class="col-xs-12">
       <div class="chart-wrapper">
         <div class="chart-title">
          <div class="row">
            <div class="col-xs-6">&nbsp;</div>
-           <div class="col-xs-4"><a ng-show='isConfigured' href="#" ui-sref="index.admin.removesettings" class="pull-right" id="LINK_REMOVE_SETTINGS"><span class="glyphicon glyphicon-remove-circle"></span> <span>Remove Settings</span></a></div>
+           <div class="col-xs-4" ng-show='isConfigured'><a href="#" ui-sref="index.admin.removesettings" class="pull-right" id="LINK_REMOVE_SETTINGS"><span class="glyphicon glyphicon-remove-circle"></span> <span>Remove Settings</span></a></div>
            <div class="col-xs-1"><a ng-show='isConfigured' href="#" ui-sref="index.admin.editsettings" class="pull-right" id="LINK_EDIT_SETTINGS"><span class="glyphicon glyphicon-wrench"></span> <span>Edit Settings</span></a></div>
            <div class="col-xs-1"><a href="#" ui-sref="index.admin.addsettings" class="pull-right" id="LINK_ADD_SETTINGS"><span class="glyphicon glyphicon-plus"></span> <span>Add Settings</span></a></div>
          </div>
@@ -32,8 +24,6 @@
            </tbody>
          </table>
         </div>
-        <div ng-show='!isConfigured'class="chart-stage">
-            No configurations!
-        </div>
     </div>
  </div>
+</div>     

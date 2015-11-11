@@ -27,7 +27,7 @@ permissions and limitations under the License.
               <div class="chart-title">{{card.title}}<span ng-show="isConfigured" class="pull-right glyphicon glyphicon-ok" style="color:green"></span></div>
               <div class="chart-stage od-card-box-desc">{{card.description}}</div>
               <div class="chart-notes">
-                <button ng-show="!isConfigured" class="btn btn-link" id="BUTTON_SELECT_CARD_ADD" ng-click="addCard(card.cardType)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span translate="BUTTON_ADD"></span></button>
+                <button ng-show="!isConfigured" class="btn btn-link" id="BUTTON_SELECT_CARD_ADD" ng-click="addCard(card.cardType)"><span translate="BUTTON_ADD_CARD"></span></button>
                 <button ng-show="isConfigured" class="btn btn-primary" translate="BUTTON_EDIT" id="BUTTON_SELECT_CARD_EDIT_{{card.cardType}}" ng-click="editCard(card.cardType)"></button>
               </div> 
             </div>

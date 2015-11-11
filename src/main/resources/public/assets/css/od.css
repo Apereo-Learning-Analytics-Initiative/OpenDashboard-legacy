@@ -12,6 +12,88 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
+ 
+ /*
+ * Login
+ */
+ /* Custom, iPhone Retina */ 
+    @media only screen and (min-width : 320px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (min-width : 480px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (min-width : 768px) {
+      .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (min-width : 992px) {
+      .login-page { 
+        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+   }
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+      .login-page { 
+        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+    } 
+ 
 .od {
     width: 100%;
     height: auto;

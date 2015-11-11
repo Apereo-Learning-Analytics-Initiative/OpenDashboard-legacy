@@ -9,8 +9,7 @@
 "BUTTON_DELETE":"Delete",
 "BUTTON_ADD_CARD":"Add Card",
 "BUTTON_REMOVE":"Remove Card",
-"BUTTON_ADD":"ADD",
-"BUTTON_EDIT":"EDIT",
+"BUTTON_ADD":"Add",
 
 "LABEL_SELECT_INSTITUTION": "Select your institution",
 "LABEL_LAUNCH_URL":"Launch URL",

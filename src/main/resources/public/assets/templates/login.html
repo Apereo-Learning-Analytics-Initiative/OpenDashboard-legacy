@@ -12,58 +12,105 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
-<div class="container">
+  <!-- Static navbar -->
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">OpenDashboard</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="https://www.apereo.org/projects/opendashboard" target="_blank">Learn More</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+  </nav>
+<div class="container-fluid login-page">
   <div class="row">
-    <div id="loginModal" class="modal show" tabindex="-1" role="dialog"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-            <form ng-show="!isSaml" name="loginForm" class="form col-md-12 center-block" ng-submit="login()" novalidate>
-              <p ng-show="validationError" class="alert alert-danger" translate="ALERT_DANGER_USERNAME_PASSWORD_MISMATCH"></p>
-              <p ng-show="hasLoggedOut && !validationError" class="alert alert-success" translate="ALERT_SUCCESS_LOGOUT_{{hasLoggedOut}}"></p>
-              <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
-                <input type="text" class="form-control input-lg"
-                  placeholder="Username" name="username" ng-model="credentials.username" id="INPUT_LOGIN_USERNAME" required></input>
-                <p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block" translate="ERROR_USERNAME_REQUIRED"></p>
-              </div>
-              <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
-                <input type="password" class="form-control input-lg"
-                  placeholder="Password" name="password" ng-model="credentials.password" id="INPUT_LOGIN_PASSWORD" required></input>
-                <p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block" translate="ERROR_PASSWORD_REQUIRED"></p>
-              </div>
-              <div class="form-group" ng-show="isMultiTenant">
-                  <select class="form-control input-lg" name="tenant" ng-model="credentials.tenant" ng-required="isMultiTenant" id="DROPDOWN_LOGIN_SELECT_INSTITUTION">
-                    <option value="" disabled="disabled" selected="selected" style="display:none;" translate="LABEL_SELECT_INSTITUTION"></option>
-                    <option value="tenant1">Institution 1</option>
-                    <option value="tenant2">Institution 2</option>
-                    <option value="func_test_institution">Functional Test Institution (Do Not Use)</option>
-                  </select>
-              </div>
+    <div class="col-xs-12 col-md-4 col-md-offset-7">
+      <div class="panel panel-default login-panel-default login-margins" >
+        <div class="panel-body">
+          <form ng-show="!isSaml" name="loginForm"
+            class="form col-md-12 center-block" ng-submit="login()"
+            novalidate>
+            <p ng-show="validationError" class="alert alert-danger"
+              translate="ALERT_DANGER_USERNAME_PASSWORD_MISMATCH"></p>
+            <p ng-show="hasLoggedOut && !validationError"
+              class="alert alert-success"
+              translate="ALERT_SUCCESS_LOGOUT_{{hasLoggedOut}}"></p>
+            <div class="form-group"
+              ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine }">
+              <input type="text" class="form-control input-lg"
+                placeholder="Username" name="username"
+                ng-model="credentials.username"
+                id="INPUT_LOGIN_USERNAME" required></input>
+              <p
+                ng-show="loginForm.username.$invalid && !loginForm.username.$pristine"
+                class="help-block" translate="ERROR_USERNAME_REQUIRED"></p>
+            </div>
+            <div class="form-group"
+              ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
+              <input type="password" class="form-control input-lg"
+                placeholder="Password" name="password"
+                ng-model="credentials.password"
+                id="INPUT_LOGIN_PASSWORD" required></input>
+              <p
+                ng-show="loginForm.password.$invalid && !loginForm.password.$pristine"
+                class="help-block" translate="ERROR_PASSWORD_REQUIRED"></p>
+            </div>
+            <div class="form-group" ng-show="isMultiTenant">
+              <select class="form-control input-lg" name="tenant"
+                ng-model="credentials.tenant"
+                ng-required="isMultiTenant"
+                id="DROPDOWN_LOGIN_SELECT_INSTITUTION">
+                <option value="" disabled="disabled" selected="selected"
+                  style="display: none;"
+                  translate="LABEL_SELECT_INSTITUTION"></option>
+                <option value="tenant1">Institution 1</option>
+                <option value="tenant2">Institution 2</option>
+                <option value="func_test_institution">Functional
+                  Test Institution (Do Not Use)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg"
+                translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN"
+                ng-disabled="loginForm.$invalid"></button>
+            </div>
+          </form>
+          <div ng-show="isSaml">
+            <h3 translate="LABEL_IDP_SELECTION"></h3>
+            <p translate="TEXT_IDP_SELECTION"></p>
+            <form class="form col-md-12 center-block"
+              action="/saml/login?disco=true" method="get"
+              name="idpForm">
               <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-lg" translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN" ng-disabled="loginForm.$invalid"></button>
+                <div class="form-group">
+                  <select class="form-control input-lg" name="idp"
+                    id="DROPDOWN_IDP_SELECT_INSTITUTION">
+                    <option value="" disabled="disabled"
+                      selected="selected" style="display: none;"
+                      translate="LABEL_SELECT_IDP"></option>
+                    <option ng-repeat="idp in idps" name="idp"
+                      value="{{idp}}">{{idp}}</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg"
+                  translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN"
+                  ng-disabled="idpForm.$invalid"></button>
               </div>
             </form>
-            <div ng-show="isSaml">
-              <h3 translate="LABEL_IDP_SELECTION"></h3>
-              <p translate="TEXT_IDP_SELECTION"></p>
-              <form class="form col-md-12 center-block" action="/saml/login?disco=true" method="get" name="idpForm">
-                <div class="form-group">
-                   <div class="form-group">
-                      <select class="form-control input-lg" name="idp" id="DROPDOWN_IDP_SELECT_INSTITUTION">
-                        <option value="" disabled="disabled" selected="selected" style="display:none;" translate="LABEL_SELECT_IDP"></option>
-                        <option ng-repeat="idp in idps" name="idp" value="{{idp}}">{{idp}}</option>
-                      </select>
-                  </div>
-                  <button type="submit" class="btn btn-primary btn-lg" translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN" ng-disabled="idpForm.$invalid"></button>
-                </div>
-              </form>
-            </div>
           </div>
-          <div class="modal-footer" style="border-top: 0px;"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 

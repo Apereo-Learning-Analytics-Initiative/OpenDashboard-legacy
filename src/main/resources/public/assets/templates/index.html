@@ -32,6 +32,13 @@ permissions and limitations under the License.
             </ul>
           </li>
         </ul>
+        <ul ng-show="!isLtiSession && isAdmin" class="nav navbar-nav navbar-left">
+            <li ui-sref-active-eq="active"><a ui-sref="index.admin"
+              translate="LABEL_DATA_PROVIDERS" id="LINK_ADMIN_DATA_PROVIDERS"></a></li>
+            <li ui-sref-active-eq="active"><a ui-sref="index.admin.dashboards"
+              translate="LABEL_PRECONFIGURED_DASHBOARDS" id="LINK_ADMIN_PRECONFIGURED_DASHBOARDS"></a></li>
+<!--             <li><a ui-sref="index.admin.settings" translate="LABEL_SETTINGS" id="LINK_ADMIN_LABEL_SETTINGS"></a></li> -->
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_INDEX_LANGUAGE_DROPDOWN"><img style="max-height: 25px;" ng-src="{{getLocaleImgPath()}}"></img> <span class="caret"></span></a>

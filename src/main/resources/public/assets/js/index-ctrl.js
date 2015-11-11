@@ -85,6 +85,7 @@ function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMapp
     $scope.isAuthenticated = SessionService.isAuthenticated();
     $scope.isStudent = SessionService.hasStudentRole();
     $scope.isLtiSession = SessionService.isLTISession();
+    $scope.isAdmin = SessionService.hasAdminRole();
     doRouting();
   }
   else {
