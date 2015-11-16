@@ -29,9 +29,11 @@
                 <span class="credits right">Project maintained by <a href="https://github.com/Apereo-Learning-Analytics-Initiative">Apereo-Learning-Analytics-Initiative</a></span>
                 <span class="credits left"><a href="#new-card">Developing your own OpenDashboard Card</a></span>
                 <br>
-                <span class="credits left"><a href="#advanced">Advanced concepts</a></span>
+                <span class="credits left"><a href="#advanced">Advanced concepts UI</a></span>
+                <span class="credits right"><a href="#security">Security Profiles</a></span>
                 <br>
-                <span class="credits left"><a href="#services">Services</a></span>
+                <span class="credits left"><a href="#services">Services UI</a></span>
+                <span class="credits right"><a href="#data">Data Persistence Profiles</a></span>
             </div>
         <h2>
             <a id="new-card" class="anchor" href="#new-card" aria-hidden="true"><span class="octicon octicon-link"></span></a>Developing your own OpenDashboard Card
@@ -571,7 +573,27 @@ angular
         <li>value : string</li>
         </ul>  
         <p>Returns true if the values are unique for the field on a dashboard.</p>
+
+        <h2>
+            <a id="security" class="anchor" href="#security" aria-hidden="true"><span class="octicon octicon-link"></span></a>Security Profiles
+        </h2>
+        <p>An in depth look at the security profiles.  At least one security profile must be declared.</p>
+
+        <h4>saml</h4>
+
+        <p align="justify">OpenDashboard previously relied on Spring Security for all of the security with in the app.  As of November 2015, we have introduced a new profile to the Security Assertion Markup Language.
+        SAML is xml based an can be configured by editing the file src/main/resources/saml/saml.xml . Inorder to for the app to know that we are using this profile a flag must also be set.
+        The flag features.saml can be set at the command line or in the properties file.  Currently the saml implementation has only one user admin with the ADMIN role which has full access to OpenDashboard.
+        Please look at documentation at <a href=https://www.oasis-open.org/standards>OASIS</a> for further configuration details.</p>
+        
+        <h4>basic</h4>
+
+        <p align="justify">The "basic" profile uses Spring Security.  Opendashboard uses Java based configuration for Spring Security. OpenDashboard currently support three users with three unique roles.
+        Each user can log in with access to features granted by their role.  Note that the only users with the ADMIN role may login into the Opendashboard admin portal. Please review the configuration file src/main/java/od/SecurityConfig.java
+        for the current implementation.   Documentation can be found on the  <a href=http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/>Spring Security site</a> for further configuration details.</p>
      </section>
     </div>
+
+
   </body>
 </html>
