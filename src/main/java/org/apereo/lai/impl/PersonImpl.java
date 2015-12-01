@@ -33,6 +33,7 @@ public class PersonImpl extends OpenDashboardModel implements Person {
 	private String name_given = null;
 	private String name_family = null;
 	private String name_full = null;
+	private String photo_url = null;
 	
 	public String getContact_email_primary() {
 		return contact_email_primary;
@@ -59,10 +60,15 @@ public class PersonImpl extends OpenDashboardModel implements Person {
 		this.name_full = name_full;
 	}
 	
-	@Override
-	public String toString() {
-		return "Person [contact_email_primary=" + contact_email_primary
-				+ ", name_given=" + name_given + ", name_family=" + name_family
-				+ ", name_full=" + name_full + "]";
-	}
+	public String getPhoto_url() {
+    return photo_url;
+  }
+  public void setPhoto_url(String photo_url) {
+    this.photo_url = photo_url;
+  }
+  @Override
+  public String toString() {
+    return "PersonImpl [contact_email_primary=" + contact_email_primary + ", name_given=" + name_given + ", name_family=" + name_family
+        + ", name_full=" + name_full + ", photo_url=" + photo_url + "]";
+  }
 }

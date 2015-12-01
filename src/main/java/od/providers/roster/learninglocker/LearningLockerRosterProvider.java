@@ -12,66 +12,59 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-/**
- * 
- */
 package od.providers.roster.learninglocker;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import org.apereo.lai.Member;
-import org.apereo.lai.Person;
-import org.apereo.lai.impl.PersonImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.annotation.ObjectIdGenerators.UUIDGenerator;
-
+import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
-import od.providers.config.DefaultProviderConfiguration;
-import od.providers.config.ProviderConfiguration;
-import od.providers.config.ProviderConfigurationOption;
-import od.providers.config.TranslatableKeyValueConfigurationOptions;
+import od.providers.learninglocker.LearningLockerProvider;
+import od.providers.learninglocker.Student;
 import od.providers.roster.RosterProvider;
 import od.repository.ProviderDataRepositoryInterface;
+
+import org.apereo.lai.Member;
+import org.apereo.lai.impl.PersonImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.stereotype.Component;
 
 /**
  * @author ggilbert
  *
  */
 @Component("roster_learninglocker")
-public class LearningLockerRosterProvider implements RosterProvider {
+public class LearningLockerRosterProvider extends LearningLockerProvider implements RosterProvider {
+  
+  private static final Logger log = LoggerFactory.getLogger(LearningLockerRosterProvider.class);
 
   private static final String KEY = "roster_learninglocker";
   private static final String BASE = "LEARNING_LOCKER_ROSTER";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-  private ProviderConfiguration providerConfiguration;
   
-  private RestTemplate restTemplate = new RestTemplate();
+  private boolean DEMO = true;
+  
   @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
   
   @PostConstruct
   public void init() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
-    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
-    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
-    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Learning Locker Base URL", "LABEL_LEARNINGLOCKER_BASE_URL", false);
-    options.add(key);
-    options.add(secret);
-    options.add(baseUrl);
-
-    providerConfiguration = new DefaultProviderConfiguration(options);
+    providerConfiguration = getDefaultLearningLockerConfiguration();
   }
-
 
   @Override
   public String getKey() {
@@ -88,13 +81,8 @@ public class LearningLockerRosterProvider implements RosterProvider {
     return DESC;
   }
 
-  @Override
-  public ProviderConfiguration getProviderConfiguration() {
-    return providerConfiguration;
-  }
-
-  @Override
-  public Set<Member> getRoster(ProviderOptions options) throws ProviderException {
+  
+  private Set<Member> demo() {
     Set<Member> members = new HashSet<Member>();
     
     Member member1 = new Member();
@@ -170,6 +158,56 @@ public class LearningLockerRosterProvider implements RosterProvider {
     members.add(member6);
     
     return members;
+
+  }
+
+  @Override
+  public Set<Member> getRoster(ProviderOptions options) throws ProviderException {
+    if (DEMO) {
+      return demo();
+    }
+    
+    String path = "/api/v1/students?query={\"MODULE_INSTANCES\":\"%s\"}";
+    path = String.format(path, options.getCourseId());
+    
+    log.debug("{}",path);
+    
+    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+
+    String url = providerData.findValueForKey("base_url");
+    if (!url.endsWith("/") && !path.startsWith("/")) {
+      url = url + "/";
+    }
+    
+    url = url + path;
+    
+    ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+    resourceDetails.setClientId(providerData.findValueForKey("key"));
+    resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
+    resourceDetails.setAccessTokenUri(getUrl(providerData.findValueForKey("base_url"), LL_OAUTH_TOKEN_URI, null));
+    DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+
+    OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
+    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+    
+    Student [] students = restTemplate.exchange(url, HttpMethod.GET, null, Student[].class).getBody();
+    Set<Member> output = null;
+    if (students != null && students.length > 0) {
+      output = new HashSet<Member>();
+      
+      for (Student student : students) {
+        output.add(student.toMember("Learner"));
+      }
+    }
+    else {
+      output = new HashSet<Member>();
+    }
+    
+    return output;
+
   }
 
 }

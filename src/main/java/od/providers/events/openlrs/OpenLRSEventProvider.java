@@ -12,9 +12,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-/**
- * 
- */
 package od.providers.events.openlrs;
 
 import java.util.HashMap;
@@ -143,9 +140,9 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   @Override
   public String getDesc() {
     return DESC;
-}
+  }
 
-@Override
+  @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }

@@ -104,6 +104,17 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.3.2</version>
         </dependency>
+		<dependency>
+		    <groupId>gov.adlnet</groupId>
+		    <artifactId>jxapi</artifactId>
+		    <version>1.0.0</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<artifactId>javax.servlet</artifactId>
+		    		<groupId>org.eclipse.jetty.orbit</groupId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

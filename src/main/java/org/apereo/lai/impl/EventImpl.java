@@ -98,5 +98,6 @@ public class EventImpl extends OpenDashboardModel implements Event  {
   public void setRaw(String raw) {
     this.raw = raw;
   }
+  
 
 }
