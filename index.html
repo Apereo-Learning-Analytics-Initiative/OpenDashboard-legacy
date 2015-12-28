@@ -12,10 +12,10 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <!-- Global CSS -->
-    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
-    <!-- Plugins CSS -->
-    <link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="assets/plugins/prism/prism.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<!-- Plugins CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.css">
     <!-- Theme CSS -->
     <link id="theme-style" rel="stylesheet" href="assets/css/styles.css">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -108,7 +108,92 @@
   </section>
   <!--//features-->
     
-    <!-- ******DOCS****** -->
+  <!-- ******DOCS****** -->
+  <section id="docs" class="docs section">
+    <div class="container">
+      <div class="docs-inner">
+        <h2 class="title text-center">Get Started</h2>
+        <div class="block">
+          <h3 class="sub-title text-center">Technical Overview</h3>
+          <p>
+            OpenDashboard is a Java web application built with Spring Boot. 
+          </p>
+          <h4 class="sub-title text-center">Requirements</h4>
+          <p>
+            To build and run OpenDashboard you will need, at a minimum, the following:
+          </p>
+          <ul class="">
+            <li>Java 7 or higher (either JDK)</li>
+            <li>Maven 3 or higher</li>
+            <li>MongoDB</li>
+          </ul>
+          <h4 class="sub-title text-center">Building and Running OpenDashboard</h4>
+          <p>
+          To get started quickly for testing or demo purposes you can run OpenDashboard with the default profile. 
+          </p>
+          
+          <div class="code-block">
+             <pre>
+              <code class="language-markup">
+              // Just build the jar file
+              mvn clean package
+              // this produces the opendash.jar file in the target folder
+              </code>
+            </pre>
+          </div>
+          <div class="code-block">
+             <pre>
+              <code class="language-markup">
+              // Run in place
+              mvn clean package spring-boot:run
+              // this starts the application on port 8081
+              </code>
+            </pre>
+          </div>
+          <div class="code-block">
+             <pre>
+              <code class="language-markup">
+              // Run in place using the jar file
+              // as an alternative to using spring-boot:run
+              // you can build the jar file using mvn clean package
+              // and then run
+              java -jar target/opendash.jar
+              // this starts the application on port 8081
+              </code>
+            </pre>
+          </div>
+          <p>
+          Now that you have OpenDashboard up and running watch the video below to learn how to configure it.
+          </p>
+              <div class="embed-responsive embed-responsive-4by3">
+                <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+              </div>
+        <h2 class="title text-center">Branches</h2>
+        <div class="block">
+          <h3 class="sub-title text-center">Master Branch</h3>
+          <p>
+          The OpenDashboard master branch will always contain the most stable version of the code base. 
+          If you are just starting out with OpenDashboard we recommend that you start with the master branch and, of course, if you plan to deploy 
+          OpenDashboard in a pilot or production environment use the master branch.
+          </p>
+          <h3 class="sub-title text-center">Development Branch</h3>
+          <p>
+          The OpenDashboard development branch contains that latest code changes and any experimental features that have not yet been deemed production ready.
+          </p>
+          <h3 class="sub-title text-center">GH Pages Branch</h3>
+          <p>
+          The OpenDashboard gh-pages branch contains the HTML and supporting assets for this web page.
+          </p>
+        </div>
+        <h2 class="title text-center">Properties</h2>
+        <p></p>
+        <div class="block">
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ******LICENSE****** -->
   <section id="license" class="license section">
     <div class="container">
