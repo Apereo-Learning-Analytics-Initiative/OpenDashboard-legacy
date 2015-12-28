@@ -25,10 +25,11 @@ import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.learninglocker.LearningLockerProvider;
-import od.providers.learninglocker.Student;
+import od.providers.learninglocker.LearningLockerStudent;
 import od.providers.roster.RosterProvider;
 import od.repository.ProviderDataRepositoryInterface;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
 import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
@@ -193,13 +194,13 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
         MediaType.valueOf("text/javascript")));
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
-    Student [] students = restTemplate.exchange(url, HttpMethod.GET, null, Student[].class).getBody();
+    LearningLockerStudent [] students = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerStudent[].class).getBody();
     Set<Member> output = null;
     if (students != null && students.length > 0) {
       output = new HashSet<Member>();
       
-      for (Student student : students) {
-        output.add(student.toMember("Learner"));
+      for (LearningLockerStudent student : students) {
+        output.add(toMember("Learner",student));
       }
     }
     else {
@@ -208,6 +209,36 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     
     return output;
 
+  }
+  
+  private Member toMember(String role, LearningLockerStudent student) {
+    Member member = new Member();
+    member.setId(student.getId());
+    member.setUser_id(student.getStudentId());
+    member.setRole(role);
+    
+    PersonImpl person = new PersonImpl();
+    StringBuilder fullName = new StringBuilder();
+    
+    if (StringUtils.isNotBlank(student.getFirstName())) {
+      fullName.append(student.getFirstName()).append(" ");
+      person.setName_given(student.getFirstName());
+    }
+    
+    if (StringUtils.isNotBlank(student.getLastName())) {
+      fullName.append(student.getLastName());
+      person.setName_family(student.getLastName());
+    }
+    
+    if (fullName.length() > 0) {
+      person.setName_full(fullName.toString());
+    }
+    
+    person.setPhoto_url(student.getPhotoUrl());
+    
+    member.setPerson(person);
+    
+    return member;
   }
 
 }

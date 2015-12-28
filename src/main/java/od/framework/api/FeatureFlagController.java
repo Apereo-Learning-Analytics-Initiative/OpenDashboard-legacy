@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author ggilbert
  *
  */
-@ConfigurationProperties("")
+@ConfigurationProperties()
 @RestController
 public class FeatureFlagController {
   

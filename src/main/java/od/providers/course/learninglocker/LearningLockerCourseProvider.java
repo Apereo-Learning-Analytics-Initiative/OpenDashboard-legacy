@@ -72,7 +72,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return DESC;
   }
 
-  private PageImpl<ModuleInstance> fetch(Pageable pageable, String path) {
+  private PageImpl<LearningLockerModuleInstance> fetch(Pageable pageable, String path) {
     
     log.debug("{}",path);
     
@@ -96,19 +96,19 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
         MediaType.valueOf("text/javascript")));
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-    ParameterizedTypeReference<PageWrapper<ModuleInstance>> responseType = new ParameterizedTypeReference<PageWrapper<ModuleInstance>>() {};
+    ParameterizedTypeReference<PageWrapper<LearningLockerModuleInstance>> responseType = new ParameterizedTypeReference<PageWrapper<LearningLockerModuleInstance>>() {};
     
-    PageWrapper<ModuleInstance> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType).getBody();
+    PageWrapper<LearningLockerModuleInstance> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType).getBody();
     log.debug(pageWrapper.toString());
-    List<ModuleInstance> output = null;
+    List<LearningLockerModuleInstance> output = null;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      output = new LinkedList<ModuleInstance>(pageWrapper.getContent());
+      output = new LinkedList<LearningLockerModuleInstance>(pageWrapper.getContent());
     }
     else {
-      output = new ArrayList<ModuleInstance>();
+      output = new ArrayList<LearningLockerModuleInstance>();
     }
     
-    return new PageImpl<ModuleInstance>(output, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<LearningLockerModuleInstance>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
 
@@ -116,19 +116,19 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   public Course getContext(ProviderOptions options) throws ProviderException {
     CourseImpl course = null;
     
-    String path = "/api/v1/moduleinstances?query={\"_id\":\"%s\"}&populate=MODULE";
+    String path = "/api/v1/LearningLockerModuleInstances?query={\"_id\":\"%s\"}&populate=MODULE";
     path = String.format(path, options.getCourseId());
     
     Pageable pageable = new PageRequest(0, 1);    
-    PageImpl<ModuleInstance> page = fetch(pageable, path);
+    PageImpl<LearningLockerModuleInstance> page = fetch(pageable, path);
     
     if (page != null && page.hasContent()) {
-      List<ModuleInstance> moduleInstances = page.getContent();
-      if (moduleInstances != null && !moduleInstances.isEmpty()) {
-        ModuleInstance moduleInstance = moduleInstances.get(0);
+      List<LearningLockerModuleInstance> LearningLockerModuleInstances = page.getContent();
+      if (LearningLockerModuleInstances != null && !LearningLockerModuleInstances.isEmpty()) {
+        LearningLockerModuleInstance learningLockerModuleInstance = LearningLockerModuleInstances.get(0);
         course = new CourseImpl();
         course.setId(options.getCourseId());
-        course.setTitle(moduleInstance.getModule().getName());
+        course.setTitle(learningLockerModuleInstance.getModule().getModName());
       }
     }
     

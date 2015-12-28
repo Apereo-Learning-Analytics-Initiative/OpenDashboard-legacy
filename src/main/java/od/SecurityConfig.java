@@ -35,8 +35,10 @@ import od.lti.LTIAuthenticationProvider;
 import od.lti.LTIUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -109,7 +111,8 @@ public class SecurityConfig {
   }
   
   @Configuration
-  @Profile("basic")
+  //@Profile("basic")
+  @ConditionalOnProperty(name="opendashboard.features.saml",havingValue="false")
   public static class HttpBasicConfigurationAdapter extends WebSecurityConfigurerAdapter {
     
     @Override

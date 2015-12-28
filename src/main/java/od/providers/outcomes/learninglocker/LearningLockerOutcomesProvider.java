@@ -107,15 +107,15 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
         MediaType.valueOf("text/javascript")));
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
-    Grade [] grades = restTemplate.exchange(url, HttpMethod.GET, null, Grade[].class).getBody();
+    LearningLockerGrade [] grades = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerGrade[].class).getBody();
     List<LineItemImpl> output = null;
     if (grades != null && grades.length > 0) {
       output = new ArrayList<LineItemImpl>();
       Map<String, LineItemImpl> lineItemsMap = new HashMap<String, LineItemImpl>();
-      for (Grade grade : grades) {
+      for (LearningLockerGrade grade : grades) {
         
-        LineItemImpl lineItem = grade.toLineItem();
-        ResultImpl result = grade.toResult();
+        LineItemImpl lineItem = toLineItem(grade);
+        ResultImpl result = toResult(grade);
         
         LineItemImpl existingLineItem = lineItemsMap.get(grade.getGradableObject());
         if (existingLineItem != null) {
@@ -136,6 +136,22 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
     }
     
     return output;
+  }
+  
+  public LineItemImpl toLineItem(LearningLockerGrade grade) {
+    LineItemImpl lineItem = new LineItemImpl();
+    lineItem.setContext(grade.getModuleInstanceId());
+    lineItem.setMaximumScore(new Double(grade.getMaxPoints()));
+    lineItem.setTitle(grade.getGradableObject());
+    return lineItem;
+  }
+  
+  public ResultImpl toResult(LearningLockerGrade grade) {
+    ResultImpl result = new ResultImpl();
+    result.setUserId(grade.getStudentId());
+    result.setGrade(String.valueOf(grade.getEarnedPoints()));
+    result.setId(grade.getId());
+    return result;
   }
 
 }

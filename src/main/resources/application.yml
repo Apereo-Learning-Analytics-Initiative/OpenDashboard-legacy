@@ -13,25 +13,5 @@
 # permissions and limitations under the License.
 ###############################################################################
 
-# Security settings
-auth.oauth.key=opendash
-auth.oauth.secret=opendash
-
-# Logging settings
-logging.level=INFO
-logging.level.org.apache.velocity=OFF
-#logging.level.od=DEBUG
-#logging.level.lti=DEBUG
-#logging.level.org.springframework.security.saml=TRACE
-#logging.level.org.springframework.security=DEBUG
-
-# Spring settings
-spring.thymeleaf.cache=false
-
-# Feature Flags
-features.multitenant=false
-features.saml=false
-
-# Mongo settings
-spring.data.mongodb.uri=mongodb://localhost/od
-
+server:
+  port: 8081

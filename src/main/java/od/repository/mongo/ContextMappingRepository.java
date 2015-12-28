@@ -27,7 +27,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author ggilbert
  *
  */
-@Profile({"mongo","mongo-multitenant"})
 public interface ContextMappingRepository extends MongoRepository<ContextMapping, String>, ContextMappingRepositoryInterface {
     @Override
     ContextMapping findByKeyAndContext(final String key, final String context);

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package od;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
@@ -24,7 +25,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  *
  */
 @Configuration
-@Profile("saml")
+//@Profile("saml")
+@ConditionalOnProperty(name="opendashboard.features.saml",havingValue="true")
 @ImportResource("classpath:saml/saml.xml")
 public class SamlConfigurationAdapter extends WebSecurityConfigurerAdapter {
 }
