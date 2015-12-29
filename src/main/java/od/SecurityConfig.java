@@ -111,8 +111,7 @@ public class SecurityConfig {
   }
   
   @Configuration
-  //@Profile("basic")
-  @ConditionalOnProperty(name="opendashboard.features.saml",havingValue="false")
+  @ConditionalOnProperty(name="features.saml",havingValue="false")
   public static class HttpBasicConfigurationAdapter extends WebSecurityConfigurerAdapter {
     
     @Override

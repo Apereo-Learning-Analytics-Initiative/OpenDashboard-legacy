@@ -15,3 +15,7 @@
 
 server:
   port: 8081
+  
+features:
+  saml: false
+  multitenant: false

@@ -26,7 +26,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Configuration
 //@Profile("saml")
-@ConditionalOnProperty(name="opendashboard.features.saml",havingValue="true")
+@ConditionalOnProperty(name="features.saml",havingValue="true")
 @ImportResource("classpath:saml/saml.xml")
 public class SamlConfigurationAdapter extends WebSecurityConfigurerAdapter {
 }
