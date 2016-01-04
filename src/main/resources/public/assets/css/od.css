@@ -1,3 +1,99 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
+ 
+ /*
+ * Login
+ */
+ /* Custom, iPhone Retina */ 
+    @media only screen and (min-width : 320px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (min-width : 480px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (min-width : 768px) {
+      .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (min-width : 992px) {
+      .login-page { 
+        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+   }
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+      .login-page { 
+        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+    } 
+ 
 .od {
     width: 100%;
     height: auto;
@@ -66,6 +162,12 @@
 .od-card-box > img {
     max-height: 50px;
 }
+
+.od-card-box-desc {
+  height: 50px;
+  text-overflow: ellipsis;
+}
+
 /* MARGINS */
 
 .m-t {
@@ -106,4 +208,38 @@
 	background: black url('/assets/img/spinner.gif') center center no-repeat; 
 	opacity: .5; 
 	z-index: 500;
+}
+
+/* PROVIDERS */
+
+.od-providertype-box {
+}
+
+.od-provider-box {
+}
+
+.od-providertype-box-desc {
+  height: 50px;
+  overflow: hidden;
+}
+/* ACTIVITY-RADAR */
+.radar-chart-title {
+    min-height: 30px;
+}
+
+.radar-chart-title small label{
+    margin-right: 10px;
+}
+
+.radar-chart-stage {
+    padding: 15px;
+}
+
+.glyphicon-transparent:before {
+    content: "\2122";
+    color: transparent !important;
+}
+
+.glyphicon-transparent {
+    border-radius: 10px;
 }

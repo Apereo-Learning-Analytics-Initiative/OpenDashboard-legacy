@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 (function(angular) {
 'use strict';
     
@@ -9,16 +23,18 @@ angular
         description: 'This card demonstrates how to retrieve data from various sources.',
         cardType: 'demo',
         styleClasses: 'od-card col-xs-12',
-	    config: [
-	    ]
+	    config: [{field:'sample',fieldName:'Example field',fieldType:'text',required:true,translatableLabelKey:'LABEL_EXAMPLE_FIELD'}],
+	    requires: [],
+	    uses: ['ROSTER','OUTCOME','ASSIGNMENT','FORUM','COURSE']
     });
  })
  .controller('DemoCardController', function($scope, $log, $translate, $translatePartialLoader,
-	 ContextService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
+	 SessionService, RosterService, OutcomesService, AssignmentService, ForumDataService, CourseDataService) {
     $translatePartialLoader.addPart('demo-card');
     $translate.refresh();
-	$scope.course = ContextService.getCourse();
-	$scope.lti = ContextService.getInbound_LTI_Launch();
+    
+	$scope.course = SessionService.getCourse();
+	$scope.lti = SessionService.getInbound_LTI_Launch();
 
 	if ($scope.lti.ext.ext_ims_lis_memberships_url && $scope.lti.ext.ext_ims_lis_memberships_id) {
 		

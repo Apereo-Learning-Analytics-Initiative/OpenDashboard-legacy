@@ -1,0 +1,16 @@
+{
+"SNAPP_CARD_TITLE":"Discussion Forum Visualization",
+"SNAPP_CARD_FORUMLIST_TITLE":"Available Forums",
+"SNAPP_CARD_FORUMLIST_INSTRUCTIONS":"Select a forum",
+"SNAPP_CARD_TOPICSLIST_TITLE":"Available Topics",
+"SNAPP_CARD_TOPICSLIST_INSTRUCTIONS":"Select a topic",
+"SNAPP_CARD_MESSAGES_SENT":"posts",
+"SNAPP_CARD_REPLIES_SENT":"replies",
+"SNAPP_CARD_STEP1":"Step 1",
+"SNAPP_CARD_STEP2":"Step 2",
+"SNAPP_CARD_FORUMLIST_TITLE":"Available Forums",
+"SNAPP_CARD_TOPICSLIST_TITLE":"Available Topics",
+"SNAPP_CARD_CONFIGURATION":"Configuration",
+"SNAPP_CARD_SELECTED_NODE":"Selected Node",
+"ERROR_NO_PROVIDER_FORUM":"Unable to access forum data because no forum data providers are configured. Contact your system administrator."
+}

@@ -1,0 +1,37 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="row">
+  <div class="col-xs-12 ui-view">
+    <div class="m-t">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4 od-providertype-box"
+          ng-repeat="(key, providerType) in providerTypes">
+          <div class="chart-wrapper">
+            <div class="chart-title">
+              <div class="row">
+                <div class="col-xs-9" translate="{{providerType.key}}"></div>
+                <div class="col-xs-3">
+                  <a class="pull-right" href="#" id="LINK_ADMIN_CONFIGURE_{{providerType.type}}" ng-click="selectProviderType(providerType.type);"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+                </div>
+              </div>
+            </div>
+            <div class="chart-notes od-providertype-box-desc"
+              translate="{{providerType.desc}}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="chart-wrapper">
+      <div class="chart-title">
+        <div class="row">
+          <div class="col-xs-6">&nbsp;</div>
+          <div class="col-xs-6"><a href="#" ui-sref="index.admin.addpreconfigureddashboard" class="pull-right" id="LINK_PRECONFIGURED_DASHBOARD_ADD"><span class="glyphicon glyphicon-plus"></span> <span translate="TEXT_PRECONFIGURED_DASHBOARD"></span></a></div>
+        </div>
+      </div>
+      <div class="chart-stage">
+        <div class="row">
+          <div class="col-xs-12" ng-show="!preconfiguredDashboards || preconfiguredDashboards.length == 0">
+            <h3 class="text-center" translate="TEXT_NO_PRECONFIGURED_DASHBOARDS"></h3>
+          </div>
+            <div class="col-sm-6 col-md-4" ng-repeat="pcd in preconfiguredDashboards">
+                <div class="chart-wrapper">
+                    <div class="chart-title">{{pcd.title}}</div>
+                    <div class="chart-stage" ng-show="pcd.cards">
+                      <ul class="list-group">
+                        <li class="list-group-item" ng-repeat="card in pcd.cards">{{card.title}}</li>
+                      </ul>                    
+                    </div>
+                    <div class="chart-notes">
+                      <a ui-sref="index.admin.editpreconfigureddashboard({id:pcd.id})"><button class="btn btn-primary" translate="BUTTON_EDIT" id="BUTTON_PRECONFIGURED_DASHBOARD_EDIT"></button></a>
+                      <a ui-sref="index.admin.removepreconfigureddashboard({id:pcd.id})"><button class="btn btn-link" translate="LABEL_REMOVE" id="BUTTON_PRECONFIGURED_DASHBOARD_DELETE"></button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

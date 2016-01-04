@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 (function(angular, JSON, $) {
 'use strict';
     
@@ -10,17 +24,19 @@ angular
         cardType: 'lti',
         styleClasses: 'od-card col-xs-12',
         config: [
-          {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true},
-          {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true},
-          {field:'secret',fieldName:'Consumer Secret',fieldType:'text',required:true}
-        ]
+          {field:'launchUrl',fieldName:'Launch URL',fieldType:'url',required:true,translatableLabelKey:'LABEL_LAUNCH_URL'},
+          {field:'key',fieldName:'Consumer Key',fieldType:'text',required:true,translatableLabelKey:'LABEL_CONSUMER_KEY'},
+          {field:'secret',fieldName:'Consumer Secret',fieldType:'password',required:true,translatableLabelKey:'LABEL_CONSUMER_SECRET'}
+        ],
+        requires: [],
+        uses: []
     });
 })
-.controller('LtiCardController', function($scope, $timeout, ContextService, LtiProxyService) {
+.controller('LtiCardController', function($scope, $timeout, SessionService, LtiProxyService) {
     $scope.readyToLaunch = false;
     $scope.outboundLaunch = null;
 
-    LtiProxyService.post($scope.contextMapping.id,$scope.card.id,ContextService.getInbound_LTI_Launch())
+    LtiProxyService.post($scope.contextMapping.id,$scope.card.id,SessionService.getInbound_LTI_Launch())
         .then(function(proxiedLaunch){
             $scope.outboundLaunch = proxiedLaunch;
             $timeout(function() {

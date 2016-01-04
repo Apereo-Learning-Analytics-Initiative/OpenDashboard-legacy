@@ -1,9 +1,25 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 package od.utils;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
+
+import od.providers.config.ProviderDataConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -21,6 +37,16 @@ public class AppControllerAdvice {
     private static final String X_REQUESTED_WITH_HEADER_NAME = "X-Requested-With";
     private static final String X_REQUESTED_WITH_AJAX_VALUE = "XMLHttpRequest";
     private static final Logger logger = LoggerFactory.getLogger(AppControllerAdvice.class);
+    
+    @ExceptionHandler(ProviderDataConfigurationException.class)
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    public @ResponseBody Response handleProviderDataConfigException(HttpServletRequest request, ProviderDataConfigurationException ex) {
+      Response response = new Response();
+      response.setErrors(Arrays.asList(ex.getMessage()));
+      response.setData("ERROR_NO_PROVIDER_"+StringUtils.substringAfterLast(ex.getMessage(), ": "));
+      response.setUrl(request.getRequestURL().toString());
+      return response;
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

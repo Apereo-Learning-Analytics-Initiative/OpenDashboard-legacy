@@ -1,8 +1,23 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 /**
  * 
  */
 package od.providers.api;
 
+import od.TenantService;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.modeloutput.ModelOutputProvider;
@@ -29,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ModelOutputController {
   private static final Logger log = LoggerFactory.getLogger(ModelOutputController.class);
   @Autowired private ProviderService providerService;
+  @Autowired private TenantService tenantService;
   
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/modeloutput/course/{courseId}", method = RequestMethod.POST)
@@ -40,9 +56,9 @@ public class ModelOutputController {
       log.debug("options " + options);
     }
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(ModelOutputProvider.DEFAULT);
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
-    return modelOutputProvider.getModelOutputForCourse(options, courseId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForCourse(options, tenantService.getTenant(), courseId, new PageRequest(page, size));
   }
   
   @Secured({"ROLE_INSTRUCTOR","ROLE_STUDENT"})
@@ -55,9 +71,9 @@ public class ModelOutputController {
       log.debug("options " + options);
     }
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(ModelOutputProvider.DEFAULT);
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
     
-    return modelOutputProvider.getModelOutputForStudent(options, userId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForStudent(options, tenantService.getTenant(), userId, new PageRequest(page, size));
   }
 
 }

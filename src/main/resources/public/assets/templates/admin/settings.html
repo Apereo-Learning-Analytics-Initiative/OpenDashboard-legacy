@@ -1,0 +1,29 @@
+<div class="row">      
+ <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+         <div class="row">
+           <div class="col-xs-6">&nbsp;</div>
+           <div class="col-xs-4" ng-show='isConfigured'><a href="#" ui-sref="index.admin.removesettings" class="pull-right" id="LINK_REMOVE_SETTINGS"><span class="glyphicon glyphicon-remove-circle"></span> <span>Remove Settings</span></a></div>
+           <div class="col-xs-1"><a ng-show='isConfigured' href="#" ui-sref="index.admin.editsettings" class="pull-right" id="LINK_EDIT_SETTINGS"><span class="glyphicon glyphicon-wrench"></span> <span>Edit Settings</span></a></div>
+           <div class="col-xs-1"><a href="#" ui-sref="index.admin.addsettings" class="pull-right" id="LINK_ADD_SETTINGS"><span class="glyphicon glyphicon-plus"></span> <span>Add Settings</span></a></div>
+         </div>
+        </div>
+        <div class="chart-title">
+          <h3 >Settings</h3>
+          <h5 >All available settings appear below</h5>
+        </div>
+        <div ng-show='isConfigured'class="chart-stage">
+          <table class="table table-striped">
+           <thead><tr><td>Key</td><td>Value</td></tr></thead>
+           <tbody>
+             <tr ng-repeat="setting in configuredSettings">
+                <td>{{setting.key}}</td>
+                <td>{{setting.value}}</td>
+             </tr>
+           </tbody>
+         </table>
+        </div>
+    </div>
+ </div>
+</div>     

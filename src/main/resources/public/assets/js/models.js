@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 var Constants = (function(window,undefined) {
 	var INSTRUCTOR_ROLES = ['Instructor','TeachingAssistant','Teacher','Faculty'];
 	var LEARNER_ROLES = ['Student','Learner','Guest'];
@@ -133,49 +147,6 @@ var Constants = (function(window,undefined) {
   
 })( OpenDashboardApi );
 
-(function(OpenDashboardApi, undefined) {
-  
-	function Demographics (options) {
-    
-		this.user_id = null;
-		this.percentile = null;
-		this.sat_verbal = null;
-		this.sat_math = null;
-		this.act_composite = null;
-		this.age = null;
-		this.race = null;
-		this.gender = null;
-		this.enrollment_status = null;
-		this.earned_credit_hours = null;
-		this.gpa_cumulative = null;
-		this.gpa_semester = null;
-		this.standing = null;
-		this.pell_status = null;
-		this.class_code = null;
-	    
-	    if(options) {
-	    	this.user_id = options.user_id;
-	    	this.percentile = options.percentile;
-	    	this.sat_verbal = options.sat_verbal;
-	    	this.sat_math = options.sat_math;
-	    	this.act_composite = options.act_composite;
-	    	this.age = options.age;
-	    	this.race = options.race;
-	    	this.gender = options.gender;
-	    	this.enrollment_status = options.enrollment_status;
-	    	this.earned_credit_hours = options.earned_credit_hours;
-	    	this.gpa_cumulative = options.gpa_cumulative;
-	    	this.gpa_semester = options.gpa_semester;
-	    	this.standing = options.standing;
-	    	this.pell_status = options.pell_status;
-	    	this.class_code = options.class_code;
-	    };
-	};
-  
-	OpenDashboardApi.Demographics = Demographics;
-  
-})( OpenDashboardApi );
-
 (function(OpenDashboardApi, _, undefined) {
   
 	function Member (options) {
@@ -263,112 +234,9 @@ var Constants = (function(window,undefined) {
 	        
 	        return isInstructor;
 	    };
-	    
-	    this.isStudent = function isStudent() {
-	        var isStudent = false;
-	        
-	        if (this.roles) {
-	            var roleArray = null;
-	            if (this.roles.indexOf(',') > -1) {
-	                roleArray = this.roles.split(',');
-	            }
-	            else {
-	                roleArray = [this.roles];
-	            }
-	            
-	            var intersection = _.intersection(Constants.LEARNER_ROLES,roleArray);
-	            if (intersection && intersection.length > 0) {
-	                isStudent = true;
-	            }
-	        }
-	        
-	        return isStudent;
-	    };
 	};
   
 	OpenDashboardApi.Member = Member;
   
 })( OpenDashboardApi, _ );
 
-(function(OpenDashboardApi, S, undefined) {
-  
-	function Event (options) {
-    
-		var XAPI = 'XAPI';
-		var CALIPER = 'CALIPER';
-		
-		this.user_id = null;
-		this.context_id = null;
-		this.organization_id = null;
-		this.name_full = null;
-		this.type = null;
-		this.action = null;
-		this.object = null;
-		this.raw = null;
-		this.timestamp = null;
-	    
-	    if (options) {
-	    	this.user_id = options.user_id;
-	    	this.context_id = options.context_id;
-	    	this.organization_id = options.organization_id;
-			this.name_full = options.name_full;
-			this.type = options.type;
-			this.action = options.action;
-			this.object = options.object;
-			this.raw = options.raw;
-			this.timestamp = options.timestamp;
-	    };
-	    
-	    this.fromService = function fromXAPI(xapi) {
-	    	
-	    	if (xapi.eventFormatType) {
-	    	  this.type = xapi.eventFormatType;
-	    	  this.raw = xapi.raw;
-	    	  this.timestamp = xapi.timestamp;
-	    	  this.user_id = xapi.actor;
-	    	  this.object = xapi.object;
-	    	  this.verb = xapi.verb;
-	    	}
-	    	else {
-		    	this.type = XAPI;
-		    	this.raw = xapi;
-		    	this.timestamp = xapi.timestamp;
-				
-				if (xapi.actor) {
-					var mbox = xapi.actor.mbox;
-					if (mbox) {
-						var uid = mbox;
-						if (S(uid).contains(':')) {
-							uid = uid.split(':')[1];
-						}
-						
-						if (S(uid).contains('@')) {
-							uid = uid.split('@')[0];
-						}
-						
-						this.user_id = uid;
-					}
-					
-					this.name_full = xapi.actor.name;
-				}
-				
-				if (xapi.verb) {
-					var xapiAction = xapi.verb.id;
-					var lastSlash = xapiAction.lastIndexOf('/');
-					this.action = xapiAction.substr(lastSlash + 1);
-				}
-				
-				if (xapi.object) {
-					var xapiObject = xapi.object.definition.type;
-					var lastSlash = xapiObject.lastIndexOf('/');
-					this.object = xapiObject.substr(lastSlash + 1);
-				}
-	    	}
-	    		    	
-		};
-
-	};
-  
-	OpenDashboardApi.Event = Event;
-  
-})( OpenDashboardApi, S );

@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
 /**
  * 
  */
@@ -7,27 +21,15 @@ package od.providers.config;
  * @author ggilbert
  *
  */
-public class KeyValueProviderConfigurationOption implements ProviderConfigurationOption {
+abstract class KeyValueProviderConfigurationOption implements ProviderConfigurationOption {
   
-  private String key;
-  private String value;
-  private String type;
-  private boolean isRequired;
-
-  public KeyValueProviderConfigurationOption(String key, String value, String type, boolean isRequired) {
-    super();
-    this.key = key;
-    this.value = value;
-    this.type = type;
-    this.isRequired = isRequired;
-  }
+  protected String key;
+  protected String defaultValue;
+  protected String type;
+  protected boolean isRequired;
 
   public String getKey() {
     return key;
-  }
-
-  public String getValue() {
-    return value;
   }
 
   @Override
@@ -40,4 +42,7 @@ public class KeyValueProviderConfigurationOption implements ProviderConfiguratio
     return isRequired;
   }
 
+  public String getDefaultValue() {
+    return defaultValue;
+  }
 }

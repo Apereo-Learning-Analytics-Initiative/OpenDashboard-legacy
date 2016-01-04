@@ -1,22 +1,40 @@
-<div class="row">            
-    <div class="col-xs-12">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          <h3>Add Cards</h3>
-          <h5>Select the visualization and data view cards that you want to appear on your dashboard.</h5>
-        </div>
-        <div class="chart-stage">
-          <div class="container-fluid m-t">
-              <div class="row">
-                  <div class="col-sm-6 col-md-4" ng-repeat="(key, card) in cards">
-                      <div class="chart-wrapper" ng-click="addCard(card.cardType)">
-                          <div class="chart-title">{{card.title}}</div>
-                           <div class="chart-notes">{{card.description}}</div>
-                      </div>
-                  </div>
-              </div>
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="row">
+  <div class="col-xs-12">
+    <div class="chart-wrapper">
+      <div class="chart-title">
+        <h3 translate="TEXT_SELECT_CARD_HEADER"></h3>
+        <h5 translate="TEXT_SELECT_CARD_MESSAGE"></h5>
+      </div>
+      <div class="chart-stage">
+        <div class="container-fluid m-t">
+          <div class="row">
+            <div class="col-sm-6 col-md-4" ng-repeat="card in cards" ng-init="isConfigured = isConfigured(card.cardType)">
+              <div class="chart-wrapper">
+              <div class="chart-title">{{card.title}}<span ng-show="isConfigured" class="pull-right glyphicon glyphicon-ok" style="color:green"></span></div>
+              <div class="chart-stage od-card-box-desc">{{card.description}}</div>
+              <div class="chart-notes">
+                <button ng-show="!isConfigured" class="btn btn-link" id="BUTTON_SELECT_CARD_ADD" ng-click="addCard(card.cardType)"><span translate="BUTTON_ADD_CARD"></span></button>
+                <button ng-show="isConfigured" class="btn btn-primary" translate="BUTTON_EDIT" id="BUTTON_SELECT_CARD_EDIT_{{card.cardType}}" ng-click="editCard(card.cardType)"></button>
+              </div> 
+            </div>
           </div>
         </div>
-      </div>        
+      </div>
     </div>
+  </div>
+ </div>
 </div>

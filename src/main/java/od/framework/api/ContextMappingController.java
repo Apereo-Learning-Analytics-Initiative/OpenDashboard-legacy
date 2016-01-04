@@ -13,6 +13,7 @@ import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.framework.model.Dashboard;
 import od.repository.ContextMappingRepositoryInterface;
+import od.repository.PreconfiguredDashboardRepositoryInterface;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,44 +36,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RestController
 public class ContextMappingController {
-    private static final Logger log = LoggerFactory.getLogger(ContextMappingController.class);
-    @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
-	
-	@Value("${dashboards.jsonfile:classpath:/dashboards.json}")
-	private Resource dashboardsJson;
-	
-	@Value("${dashboards.preconfigured.allow:false}")
-	private boolean dashboardsPreconfiguedAllow;
-	
+  private static final Logger log = LoggerFactory.getLogger(ContextMappingController.class);
+  @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
+  @Autowired private PreconfiguredDashboardRepositoryInterface preconfiguredDashboardRepository;
+		
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/consumer/{consumerKey}/context", method = RequestMethod.POST, 
 			produces = "application/json;charset=utf-8", consumes = "application/json")
 	public ContextMapping create(@RequestBody ContextMapping contextMapping) {
 		
 		try {
-			if (dashboardsPreconfiguedAllow && dashboardsJson.exists()) {
-				if (log.isDebugEnabled()) {
-					String dashboardJsonString = new String(FileCopyUtils.copyToByteArray(dashboardsJson.getInputStream()));
-					log.debug("Preconfigured dashboards: "+dashboardJsonString);
-				}
-				
-				ObjectMapper objectMapper = new ObjectMapper();
-				Dashboard [] dashboards = objectMapper.readValue(dashboardsJson.getInputStream(), Dashboard[].class);
-				
-				if (dashboards != null && dashboards.length > 0) {
-					Set<Dashboard> dashboardSet = new HashSet<Dashboard>();
-					for (Dashboard db : dashboards) {
-						db.setId(UUID.randomUUID().toString());
-						List<Card> cards = db.getCards();
-						if (cards != null && !cards.isEmpty()) {
-							for (Card c : cards) {
-								c.setId(UUID.randomUUID().toString());
-							}
-						}
-						dashboardSet.add(db);
-					}
-					contextMapping.setDashboards(dashboardSet);
-				}
+		  List<Dashboard> dashboards = preconfiguredDashboardRepository.findAll();
+			if (dashboards != null && !dashboards.isEmpty()) {
+        Set<Dashboard> dashboardSet = new HashSet<Dashboard>();
+        for (Dashboard db : dashboards) {
+          db.setId(UUID.randomUUID().toString());
+          List<Card> cards = db.getCards();
+          if (cards != null && !cards.isEmpty()) {
+            for (Card c : cards) {
+              c.setId(UUID.randomUUID().toString());
+            }
+          }
+          dashboardSet.add(db);
+        }
+        contextMapping.setDashboards(dashboardSet);
 			}
 			
 		}

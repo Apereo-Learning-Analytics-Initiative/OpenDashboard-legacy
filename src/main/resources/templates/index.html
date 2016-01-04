@@ -14,53 +14,50 @@
 
 <!-- CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"></link>
+<link rel="stylesheet" th:href="@{/assets/css/lib/angular-notification-min.css}"></link>
 <link rel="stylesheet" th:href="@{/assets/css/lib/keen-dashboards.css}"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.min.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.css"></link>
 <link rel="stylesheet" th:href="@{/assets/css/od.css}"></link>
 <!-- END CSS -->
 
 <!-- ANY JS NEEDED TO HANDLE INLINE SCRIPT BELOW -->
-<!-- TODO: upgrade lodash and string -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js"></script>
+<!-- TODO: upgrade string -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash-compat/3.10.1/lodash.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" charset="UTF-8"></script>
 <script th:src="@{/assets/js/api.js}"></script>
 <script th:src="@{/assets/js/models.js}"></script>
 
 <script th:inline="javascript">
   /*<![CDATA[*/
-  var inbound_lti_launch_request = /*[[${inbound_lti_launch_request}]]*/null;
-  if (inbound_lti_launch_request && typeof (sessionStorage) !== "undefined") {
-    sessionStorage.setItem('inbound_lti_launch', JSON
-        .stringify(inbound_lti_launch_request));
-  }
-
   var od_token = /*[[${token}]]*/null;
   if (od_token && typeof (sessionStorage) !== "undefined") {
     sessionStorage.setItem('token', od_token);
   }
-
-  OpenDashboardApi.setInbound_LTI_Launch(inbound_lti_launch_request);
   /*]]>*/
 </script>
 
 </head>
 
-<body id="ng-app" class="application">
+<body id="ng-app" class="application" ng-controller="AuthCtrl">
   <div loading-widget="" class="spinner"></div>
   <div class="ui-view"></div>
 
 
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="http://demos.amitavroy.com/learningci/assets/js/xml2json.js" charset="UTF-8"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-sanitize.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js"></script>
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-cookies.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.7.2/angular-translate.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.7.2/angular-translate-loader-partial.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.8.1/angular-translate.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-local/2.8.1/angular-translate-storage-local.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-cookie/2.8.1/angular-translate-storage-cookie.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.8.1/angular-translate-loader-partial.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js"></script>
   
   <!-- TODO upgrade -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
@@ -70,7 +67,6 @@
   
   <script type="text/javascript" th:src="@{/assets/js/lib/angular-vis.js}"></script>  
   <script type="text/javascript" th:src="@{/assets/js/lib/angular-notification-min.js}"></script>
-  
   <script type="text/javascript" th:src="@{/assets/js/lib/holder.js}"></script>
   <script th:inline="javascript">
     Holder.add_theme("blue", {
@@ -79,23 +75,20 @@
       size : 10
     });
   </script>
+
   <script type="text/javascript" th:src="@{/assets/js/lib/keen.min.js}"></script>
   
   <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/auth-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/login-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/directives.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/services.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/framework-services.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/admin-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/index-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/welcome-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/dashboard-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/card-ctrl.js}"></script>
-
-  <script type="text/javascript" th:src="@{/assets/js/roster-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/assignment-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/forum-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/course-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/outcomes-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/event-service.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/modeloutput-service.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/data-services.js}"></script>
 
   <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/eventviewer/module.js}"></script>
@@ -103,5 +96,6 @@
   <script type="text/javascript" th:src="@{/cards/demo/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/snapp/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/modelviewer/module.js}"></script>
+  <script type="text/javascript" th:src="@{/cards/activityradar/module.js}"></script>
 </body>
 </html>

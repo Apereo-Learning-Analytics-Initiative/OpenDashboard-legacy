@@ -1,0 +1,8 @@
+{
+"ERROR_NO_PROVIDER_EVENT":"Unable to access event data because no event data providers are configured. Contact your system administrator.",
+"LABEL_ACTOR":"Actor",
+"LABEL_VERB":"Verb",
+"LABEL_OBJECT":"Object",
+"TEXT_NO_EVENTS":"No activity available for {{courseName}}",
+"TEXT_EVENTS":"Learning Activity for {{courseName}}"
+}

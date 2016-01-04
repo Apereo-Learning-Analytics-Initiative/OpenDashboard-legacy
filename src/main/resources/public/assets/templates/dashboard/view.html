@@ -4,8 +4,8 @@
             <div class="chart-wrapper">
                 <div class="chart-title m-b" ng-show="!isStudent">
                   {{card.title}}
-                  <small class="pull-right"><a ui-sref="index.removeCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})">Remove</a></small>
-                  <small class="pull-right"><a ui-sref="index.editCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})" class="pull-left" style="margin-right: 10px;">Edit</a></small>
+                  <small class="pull-right"><a ui-sref="index.removeCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})" translate="LABEL_REMOVE" id="LINK_VIEW_DASHBOARD_LABEL_REMOVE"></a></small>
+                  <small class="pull-right" ng-show="showEditLink(card);"><a ui-sref="index.editCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})" class="pull-left" style="margin-right: 10px;" translate="LABEL_EDIT" id="LINK_VIEW_DASHBOARD_LABEL_EDIT"></a></small>
                 </div>
                 <div class="chart-stage">
                   <div ng-include="'/cards/'+card.cardType+'/view.html'"></div>
