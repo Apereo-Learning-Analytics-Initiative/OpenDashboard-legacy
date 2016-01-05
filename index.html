@@ -379,6 +379,27 @@ angular.module('OpenDashboard',
             <p>OpenDashboard uses the popular ng-translate library for internationalization and localization. 
             If you are not familiar with ng-translate see: <a href="https://angular-translate.github.io/" target="_blank">https://angular-translate.github.io/</a>
             </p>
+            <p>Translation files for each supported locale can be found in the src/main/resources/assets/translations directory. Within each locale directory,
+            you'll find several files. <b>framework.json</b> contains the language specific translation for the general OpenDashboard user interface (e.g., anything
+            that is not a card such as welcome messages, forms, etc). Each card also has it's own translation file named using the convention <i>cardType</i>-card.json (e.g., demo-card.json where demo matches an 
+            existing card type).</p>
+            <p>When developing a card that uses translations there are two important items to remember. One, make sure that you inject <b>$translate</b> and <b>$translatePartialLoader</b> into 
+            your card's controller. Two, make sure you load your card specific translations in your card controller. See an example of this below.</p>
+          <div class="code-block">
+              <pre>
+              <code class="language-markup">
+.controller('DemoCardController', function($scope, $log, 
+  $translate, $translatePartialLoader,
+  SessionService, RosterService, OutcomesService, AssignmentService, 
+  ForumDataService, CourseDataService) {
+  
+    $translatePartialLoader.addPart('demo-card');
+    $translate.refresh();
+
+...
+              </code>
+              </pre>
+            </div>
             <h2 id="preconfig" class="title text-center">Preconfigured Dashboards</h2>
             <p>Preconfigured dashboards allow an institution to preconfigure the default set of dashboards and cards users will interact with. Watch the video below
             to see preconfigured dashboards in action. 
