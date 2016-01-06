@@ -404,9 +404,80 @@ angular.module('OpenDashboard',
             <p>Preconfigured dashboards allow an institution to preconfigure the default set of dashboards and cards users will interact with. Watch the video below
             to see preconfigured dashboards in action. 
             </p>
-          <div class="embed-responsive embed-responsive-4by3">
-            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/8PCvoo30wco" allowfullscreen></iframe>
-          </div>
+            <div class="embed-responsive embed-responsive-4by3">
+              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/8PCvoo30wco" allowfullscreen></iframe>
+            </div>
+          
+<!-- Javascript Services -->
+<h2 id="services" class="title text-center">Javascript Services</h2>
+<p>OpenDashboard provides access to the underlying server-side framework and data services through Javascript AngularJS Services. Framework services provide access core framework data such as the user session,
+dashboards, cards and context mapping (i.e., the relationship between an external context such as a course section and a collection of dashboards and cards). Framework services can be found in  
+<b>/src/main/resources/public/assets/js/framework-services.js</b>. Unless you are making updates to the underlying OpenDashboard framework it is unlikely that you will need to interact with framework services.
+However if you are developing your own custom OpenDashboard cards it is very likely that you will need to interact with data services. Think of data services as the client-side Javascript clients to the 
+data providers that you have configured. There is a corresponding Javascript AngularJS Service for each of the support data provider types. Currently this includes:</p>
+<ul>
+<li>
+ProviderService
+<ul>
+<li>getProviderTypes()</li>
+<li>getProviders(type)</li>
+<li>getProvider(type,key)</li>
+<li>getProviderDataByKey(type,key)</li>
+<li>getProviderDataByType(type)</li>
+<li>create(provider)</li>
+<li>update(provider)</li>
+<li>remove(provider)</li>
+</ul>
+</li>
+<li>
+AssignmentService
+<ul>
+<li>getAssignments(options)</li>
+</ul>
+</li>
+<li>
+CourseDataService
+<ul>
+<li>getContexts(options)</li>
+<li>getContext(options,key)</li>
+</ul>
+</li>
+<li>
+EventService
+<ul>
+<li>getEventsForCourse(options, courseId, page, size)</li>
+<li>getEventsForUser(options, userId, page, size)</li>
+<li>getEventsForCourseAndUser(options, courseId, userId, page, size)</li>
+</ul>
+</li>
+<li>
+ForumDataService
+<ul>
+<li>getForums(options)</li>
+<li>getMessages(options,topicId)</li>
+</ul>
+</li>
+<li>
+ModelOutputDataService
+<ul>
+<li>getModelOutputForCourse(options,courseId,page,size)</li>
+<li>getModelOutputForUser(options,userId,page,size)</li>
+</ul>
+</li>
+<li>
+OutcomesService
+<ul>
+<li>getOutcomesForCourse(options)</li>
+</ul>
+</li>
+<li>
+RosterService
+<ul>
+<li>getRoster(options)</li>
+</ul>
+</li>
+</ul>
+          
         </div>
       </div>
     </div>
