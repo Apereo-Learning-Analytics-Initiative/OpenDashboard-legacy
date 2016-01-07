@@ -218,7 +218,7 @@
 	})
 	.service('FeatureFlagService', function($log, $http) {
 	    return {
-	      isFeatureActive : function(featureKey) {
+	        isFeatureActive : function(featureKey) {
 	        var headers = {'Content-Type' : 'application/json'};
 	        
 			var promise = $http({
@@ -227,12 +227,22 @@
 				  headers : headers
 				})
 				.then(function(response) {
+				  $log.debug(response);
 				  if (response && response.data) {
 					var val = response.data[featureKey];				
 					$log.log(val)
-					return (val && val.toLowerCase() === 'true');
+					// some weird handling of booleans vs strings
+					if (val && val.constructor == Boolean) {
+					  return val;
+					}
+					else if (val && val.constructor == String) {
+					  return (val && val.toLowerCase() === 'true');
+					}
+					else {
+					  return false;
+					}
 				  }
-				  $log.debug(response);
+				  
 				  return false;
 				}, 
 				function(error) {
