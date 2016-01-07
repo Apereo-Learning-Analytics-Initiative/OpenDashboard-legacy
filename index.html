@@ -477,7 +477,17 @@ RosterService
 </ul>
 </li>
 </ul>
-          
+<!-- End Javascript Services -->          
+<!-- Security modes -->
+<h2 id="security" class="title text-center">Security Modes</h2>
+<p>
+OpenDashboard supports two security modes: basic and saml. The active mode is controlled via the feature flag <b>features.saml</b>. If <b>features.saml</b> is true
+then OpenDashboard expects an appropriately configured saml.xml file and keystore. You can find these files in src/main/resources/saml. If <b>features.saml</b> is false
+then OpenDashboard will use Basic HTTP for authentication. As will all feature flags these are set via properties (see application.yml) and can be overriden via all of
+the means supported by Spring Boot.
+</p>
+<!-- End Security modes -->
+
         </div>
       </div>
     </div>
