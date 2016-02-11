@@ -18,6 +18,8 @@
 "LABEL_EXAMPLE_FIELD":"Example Field",
 "LABEL_DASHBOARD":"Dashboard",
 "LABEL_CARD":"Card",
+"LABEL_ADD_DASHBOARD":"Add Dashboard",
+"LABEL_ADD_CARD":"Add Card",
 "LABEL_LOGOUT":"Logout",
 "LABEL_EDIT":"Edit",
 "LABEL_REMOVE":"Remove",
