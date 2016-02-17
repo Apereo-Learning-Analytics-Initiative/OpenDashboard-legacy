@@ -94,7 +94,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person1.setName_full("James Pedroia");
     person1.setContact_email_primary("jp@test.com");
     person1.setName_given("James");
-    person1.setName_given("Pedroia");
+    person1.setName_family("Pedroia");
     member1.setPerson(person1);
     members.add(member1);
 
@@ -106,7 +106,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person2.setName_full("Josie Wales");
     person2.setContact_email_primary("jwales@test.com");
     person2.setName_given("Josie");
-    person2.setName_given("Wales");
+    person2.setName_family("Wales");
     member2.setPerson(person2);
     members.add(member2);
 
@@ -118,7 +118,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person3.setName_full("Luke Walker");
     person3.setContact_email_primary("lw@test.com");
     person3.setName_given("Luke");
-    person3.setName_given("Walker");
+    person3.setName_family("Walker");
     member3.setPerson(person3);
     members.add(member3);
 
@@ -130,7 +130,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person4.setName_full("Sean McBride");
     person4.setContact_email_primary("sean@teachers.com");
     person4.setName_given("Sean");
-    person4.setName_given("McBride");
+    person4.setName_family("McBride");
     member4.setPerson(person4);
     members.add(member4);
 
@@ -142,7 +142,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person5.setName_full("Skylar Hunting");
     person5.setContact_email_primary("shunting@test.com");
     person5.setName_given("Skylar");
-    person5.setName_given("Hunting");
+    person5.setName_family("Hunting");
     member5.setPerson(person5);
     members.add(member5);
 
@@ -154,7 +154,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     person6.setName_full("Will Hunting");
     person6.setContact_email_primary("whunting@test.com");
     person6.setName_given("Will Hunting");
-    person6.setName_given("Hunting");
+    person6.setName_family("Hunting");
     member6.setPerson(person6);
     members.add(member6);
     

@@ -99,6 +99,22 @@
     height: auto;
 }
 
+.od-background-color {
+  background-color: #F1F0EB;
+}
+
+.od-subheader-background-color {
+  background-color: #ACA8A1;
+}
+
+.od-background-color-white {
+  background-color: #FFFFFF;
+}
+
+.od-text-black {
+  color: #000000;
+}
+
 .od-img-thumb {
     max-height: 50px;
 }
@@ -242,4 +258,49 @@
 
 .glyphicon-transparent {
     border-radius: 10px;
+}
+
+.od-border-right {
+  border-right-color: black;
+  border-right-style: solid;
+}
+
+.od-border-bottom {
+  border-bottom-color: black;
+  border-bottom-style: solid;
+}
+
+.od-danger-color {
+  background-color: #d9534f;
+}
+
+.od-warning-color {
+  background-color: #f0ad4e;
+}
+
+.od-info-color {
+  background-color: #5bc0de;
+}
+
+.od-success-color {
+  background-color: #5cb85c;
+}
+
+.box-shadow--2dp {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12)
+}
+.box-shadow--3dp {
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12)
+}
+.box-shadow--4dp {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2)
+}
+.box-shadow--6dp {
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12), 0 3px 5px -1px rgba(0, 0, 0, .2)
+}
+.box-shadow--8dp {
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12), 0 5px 5px -3px rgba(0, 0, 0, .2)
+}
+.box-shadow--16dp {
+    box-shadow: 0 16px 24px 2px rgba(0, 0, 0, .14), 0 6px 30px 5px rgba(0, 0, 0, .12), 0 8px 10px -5px rgba(0, 0, 0, .2)
 }
