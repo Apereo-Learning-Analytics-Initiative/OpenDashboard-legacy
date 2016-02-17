@@ -1,0 +1,88 @@
+<div class="col-xs-12 od-background-color" ng-controller="RiskAssessmentController">
+  <div class="row">
+  
+    <!-- LEFT COLUMN -->
+    <div class="col-md-4">
+                
+      <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
+        <ul ng-show="activeCourse" class="nav navbar-nav navbar-left">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_ACTIVITY_COURSE_LIST"><strong class="od-text-black">{{activeCourse.title}}</strong> <span class="od-text-black" class="caret" ng-show="courses"></span></a>
+            <ul class="dropdown-menu" ng-show="courses">
+              <li ng-repeat="course in courses"><a href ng-click="switchCourse(course.id)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{course.title}}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    
+      <div class="list-group box-shadow--6dp">
+        <a class="list-group-item" ng-class="{'active': grouping == ALL_STUDENTS.label}" href ng-click="changeGrouping(ALL_STUDENTS.label);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
+        <a class="list-group-item" ng-class="{'active': grouping == HIGH_RISK.label}" href ng-click="changeGrouping(HIGH_RISK.label);">
+          <span class="label label-danger">&nbsp;</span>
+          &nbsp;
+          <strong translate="RA_LABEL_HIGH_RISK">HIGH RISK</strong>
+          <strong class="pull-right" ng-show="highRiskPercentage">{{highRiskPercentage}}%</strong>
+        </a>
+        <a class="list-group-item" ng-class="{'active': grouping == MEDIUM_RISK.label}" href ng-click="changeGrouping(MEDIUM_RISK.label);">
+          <span class="label label-warning">&nbsp;</span>
+          &nbsp;
+          <strong translate="RA_LABEL_MEDIUM_RISK">MEDIUM RISK</strong>
+          <strong class="pull-right" ng-show="mediumRiskPercentage">{{mediumRiskPercentage}}%</strong>
+        </a>
+        <a class="list-group-item" ng-class="{'active': grouping == LOW_RISK.label}" href ng-click="changeGrouping(LOW_RISK.label);">
+          <span class="label label-info">&nbsp;</span>
+          &nbsp;
+          <strong translate="RA_LABEL_LOW_RISK">LOW RISK</strong>
+          <strong class="pull-right" ng-show="lowRiskPercentage">{{lowRiskPercentage}}%</strong>
+        </a>
+        <a class="list-group-item" ng-class="{'active': grouping == NO_RISK.label}" href ng-click="changeGrouping(NO_RISK.label);">
+          <span class="label label-success">&nbsp;</span>
+          &nbsp;
+          <strong translate="RA_LABEL_NO_RISK">NO RISK</strong>
+          <strong class="pull-right" ng-show="noRiskPercentage">{{noRiskPercentage}}%</strong>
+        </a>
+      </div> 
+      <canvas id="doughnut" class="chart chart-doughnut box-shadow--6dp"
+        chart-data="data" chart-labels="labels" chart-colours="colors" chart-click="donutClick">
+      </canvas> 
+      
+    </div>
+    
+    <!-- RIGHT Column -->
+    <div class="col-md-8">
+    
+       <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
+        <div class="nav navbar-nav">
+        <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping}}</strong></p>
+        <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping]}}</strong></p>
+        </div>
+        <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 0">
+              <li><a href><strong class="od-text-black" translate="RA_LABEL_COMPARE_STUDENTS">COMPARE STUDENTS</strong></a></li>
+        </ul>
+      </div>
+      
+    
+      <table class="table table-bordered box-shadow--6dp">
+        <thead class="od-subheader-background-color">
+          <tr>
+            <th class="col-md-7 col-lg-5"><strong translate="RA_LABEL_STUDENT">STUDENT</strong></th>
+            <th class="col-md-3 col-lg-5"><strong translate="RA_LABEL_RISK_CATEGORY">RISK CATEGORY</strong></th>
+            <th class="col-md-2">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <tr ng-repeat="learner in roster | filter:filterExpression | orderBy : 'person.name_family'" class="od-background-color-white">
+            <td><h5>{{learner.person.name_full}}</h5></td>
+            <td ng-class="{'od-info-color':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
+            'od-danger-color':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
+            <td class="center-block">
+              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(learner.id) > -1" ng-click="toggleCompare(learner.id)">
+            </td>
+          </tr>
+        
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
