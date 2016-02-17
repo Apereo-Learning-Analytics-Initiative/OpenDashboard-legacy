@@ -19,3 +19,23 @@ server:
 features:
   saml: false
   multitenant: false
+  
+# Security settings
+auth:
+  oauth:
+    key: opendash
+    secret: opendash
+
+# Logging settings
+logging:
+  level: INFO
+
+# Spring settings
+spring:
+  thymeleaf:
+    cache: false
+  # Mongo settings
+  data:
+    mongodb:
+      uri: mongodb://localhost/od
+  
