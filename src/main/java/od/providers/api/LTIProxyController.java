@@ -116,7 +116,7 @@ public class LTIProxyController {
 		return new ProxiedLaunch(sortedParams, (String)config.get("launchUrl"));
 	}
 	
-	class ProxiedLaunch implements Serializable {
+	static class ProxiedLaunch implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private Map<String,String> params;
 		private String launchUrl;
