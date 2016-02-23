@@ -19,6 +19,7 @@ package lti.oauth;
 
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.util.Map;
 import java.util.SortedMap;
 
 import javax.crypto.Mac;
@@ -63,11 +64,11 @@ public class OAuthMessageSigner {
         signatureBase.append(OAuthUtil.AMPERSAND);
 
         int count = 0;
-        for (String key : parameters.keySet()) {
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
             count++;
-               signatureBase.append(OAuthUtil.percentEncode(OAuthUtil.percentEncode(key)));
+               signatureBase.append(OAuthUtil.percentEncode(OAuthUtil.percentEncode(entry.getKey())));
             signatureBase.append(URLEncoder.encode(OAuthUtil.EQUAL, OAuthUtil.ENCODING));
-            signatureBase.append(OAuthUtil.percentEncode(OAuthUtil.percentEncode(parameters.get(key))));
+            signatureBase.append(OAuthUtil.percentEncode(OAuthUtil.percentEncode(entry.getValue())));
 
             if (count < parameters.size()) {
                 signatureBase.append(URLEncoder.encode(OAuthUtil.AMPERSAND, OAuthUtil.ENCODING));
