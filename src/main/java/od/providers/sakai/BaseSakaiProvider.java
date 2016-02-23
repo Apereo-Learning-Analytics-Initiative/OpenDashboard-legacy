@@ -70,7 +70,7 @@ public abstract class BaseSakaiProvider extends BaseProvider {
   
   protected String fullUrl(ProviderData providerData, String uri) {
     String sakai_host = providerData.findValueForKey("base_url");
-    String url = null;
+    String url;
     if (sakai_host.endsWith("/")) {
       url = StringUtils.stripEnd(sakai_host, "/").concat(uri);
     }

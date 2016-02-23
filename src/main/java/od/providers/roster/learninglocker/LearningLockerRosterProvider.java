@@ -195,7 +195,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
     LearningLockerStudent [] students = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerStudent[].class).getBody();
-    Set<Member> output = null;
+    Set<Member> output;
     if (students != null && students.length > 0) {
       output = new HashSet<Member>();
       

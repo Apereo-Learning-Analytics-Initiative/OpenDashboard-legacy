@@ -62,7 +62,7 @@ public class OAuthFilter extends OncePerRequestFilter {
       SortedMap<String, String> alphaSortedMap = launchRequest.toSortedMap();
       String signature = alphaSortedMap.remove(OAuthUtil.SIGNATURE_PARAM);
 
-      String calculatedSignature = null;
+      String calculatedSignature;
       try {
         calculatedSignature = new OAuthMessageSigner().sign(secret, OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)), "POST",
             req.getRequestURL().toString(), alphaSortedMap);

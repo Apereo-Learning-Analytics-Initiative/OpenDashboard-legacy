@@ -117,7 +117,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     
     PageWrapper<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType, urlVariables).getBody();
     log.debug(pageWrapper.toString());
-    List<ModelOutput> output = null;
+    List<ModelOutput> output;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
       output = new LinkedList<ModelOutput>(pageWrapper.getContent());
     }
