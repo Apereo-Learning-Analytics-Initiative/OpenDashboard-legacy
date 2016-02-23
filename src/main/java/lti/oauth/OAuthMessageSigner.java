@@ -52,7 +52,7 @@ public class OAuthMessageSigner {
      */
     public String sign(String secret, String algorithm, String method,
                 String url, SortedMap<String, String> parameters) throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec((secret.concat(OAuthUtil.AMPERSAND)).getBytes(),algorithm);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secret.concat(OAuthUtil.AMPERSAND).getBytes(),algorithm);
         Mac mac = Mac.getInstance(secretKeySpec.getAlgorithm());
         mac.init(secretKeySpec);
 

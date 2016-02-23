@@ -142,7 +142,7 @@ public class BasicLISRosterProvider implements RosterProvider {
     map.add(OAuthUtil.CONSUMER_KEY_PARAM, providerData.findValueForKey("oauth_consumer_key"));
     map.add(OAuthUtil.SIGNATURE_METHOD_PARAM, "HMAC-SHA1");
     map.add(OAuthUtil.VERSION_PARAM, "1.0");
-    map.add(OAuthUtil.TIMESTAMP_PARAM, new Long((new Date().getTime()) / 1000).toString());
+    map.add(OAuthUtil.TIMESTAMP_PARAM, new Long(new Date().getTime() / 1000).toString());
     map.add(OAuthUtil.NONCE_PARAM, UUID.randomUUID().toString());
     try {
       map.add(OAuthUtil.SIGNATURE_PARAM,
