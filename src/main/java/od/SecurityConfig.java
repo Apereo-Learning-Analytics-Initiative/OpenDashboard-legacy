@@ -80,7 +80,7 @@ public class SecurityConfig {
     public FilterRegistrationBean oAuthFilterBean() {
       FilterRegistrationBean registrationBean = new FilterRegistrationBean();
       registrationBean.setFilter(oAuthFilter);
-      List<String> urls = new ArrayList<String>(1);
+      List<String> urls = new ArrayList<>(1);
       urls.add("/lti");
       registrationBean.setUrlPatterns(urls);
       registrationBean.setOrder(2);
@@ -227,7 +227,7 @@ public class SecurityConfig {
   public FilterRegistrationBean exceptionFilterBean() {
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
     registrationBean.setFilter(exceptionFilter);
-    List<String> urls = new ArrayList<String>(1);
+    List<String> urls = new ArrayList<>(1);
     urls.add("/");
     urls.add("/api/*");
     urls.add("/cm/*");

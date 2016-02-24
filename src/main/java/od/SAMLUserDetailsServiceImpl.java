@@ -47,7 +47,7 @@ public class SAMLUserDetailsServiceImpl implements SAMLUserDetailsService {
 		String password="password123";
 		String tenantId="tenant1";
 				
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		List<GrantedAuthority> authorities = new ArrayList<>();
 		GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_INSTRUCTOR");
 		authorities.add(authority);
 

@@ -63,7 +63,7 @@ public class SakaiGradebook extends OpenDashboardModel {
     List<LineItemImpl> lineItems = null;
     
     if (this.items != null && !this.items.isEmpty()) {
-      lineItems = new ArrayList<LineItemImpl>();
+      lineItems = new ArrayList<>();
       for (SakaiGradebookItem item : this.items) {
         LineItemImpl lineItem = item.toLineItem();
         lineItem.setContext(this.courseId);

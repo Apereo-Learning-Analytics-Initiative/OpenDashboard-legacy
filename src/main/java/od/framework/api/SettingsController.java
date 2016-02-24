@@ -32,7 +32,7 @@ public class SettingsController {
     @RequestMapping(value = "/api/setting", method = RequestMethod.PUT, 
         produces = "application/json;charset=utf-8", consumes = "application/json")
     public List<Setting> update(@RequestBody List<Setting> settings) {
-        List<Setting> list = new ArrayList<Setting>();
+        List<Setting> list = new ArrayList<>();
         Setting s;
         for (Setting setting : settings){
            s = settingRepositoryInterface.save(setting);

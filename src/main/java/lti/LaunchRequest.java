@@ -88,7 +88,7 @@ public class LaunchRequest extends LtiMessage {
   }
 
   public LaunchRequest(Map<String, String[]> paramMap) {
-    Map<String, String> flattenedParams = new TreeMap<String, String>();
+    Map<String, String> flattenedParams = new TreeMap<>();
 
     for (String key : paramMap.keySet()) {
       String[] values = paramMap.get(key);
@@ -177,7 +177,7 @@ public class LaunchRequest extends LtiMessage {
   }
 
   public SortedMap<String, String> toSortedMap() {
-    SortedMap<String, String> sm = new TreeMap<String, String>();
+    SortedMap<String, String> sm = new TreeMap<>();
 
     if (custom != null && !custom.isEmpty()) {
       Set<String> keys = custom.keySet();
@@ -536,13 +536,13 @@ public class LaunchRequest extends LtiMessage {
         for (String key : keys) {
           if (key != null && key.startsWith("custom_")) {
             if (this.custom == null) {
-              this.custom = new HashMap<String, String>();
+              this.custom = new HashMap<>();
             }
 
             this.custom.put(key, paramMap.get(key));
           } else if (key != null && key.startsWith("ext_")) {
             if (this.ext == null) {
-              this.ext = new HashMap<String, String>();
+              this.ext = new HashMap<>();
             }
 
             this.ext.put(key, paramMap.get(key));
@@ -553,7 +553,7 @@ public class LaunchRequest extends LtiMessage {
             // to add it for the oauth comparison
             if (currentSM != null && !currentSM.containsValue(key)) {
               if (this.extra == null) {
-                this.extra = new HashMap<String, String>();
+                this.extra = new HashMap<>();
               }
               this.extra.put(key, paramMap.get(key));
             }

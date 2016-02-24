@@ -84,7 +84,7 @@ public class SakaiGradebookItem extends OpenDashboardModel {
     
     List<ResultImpl> results = null;
     if (this.scores != null && !this.scores.isEmpty()) {
-      results = new ArrayList<ResultImpl>();
+      results = new ArrayList<>();
       for (SakaiGradebookItemScore score : this.scores) {
         results.add(score.toResult());
       }

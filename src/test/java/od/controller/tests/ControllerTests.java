@@ -93,7 +93,7 @@ public abstract class ControllerTests extends AbstractTest {
         Response expectedResponse = new Response();
         expectedResponse.setUrl(url);
         expectedResponse.setData(data);
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         errors.add(error);
         expectedResponse.setErrors(errors);
         return expectedResponse;
