@@ -27,7 +27,7 @@ import lti.LaunchRequest;
  *
  */
 public class Session extends OpenDashboardModel {
-    private Map<String, LaunchRequest> data = new LinkedHashMap<String, LaunchRequest>();;
+    private Map<String, LaunchRequest> data = new LinkedHashMap<>();;
     private long timestamp;
 
     public Map<String, LaunchRequest> getData() {

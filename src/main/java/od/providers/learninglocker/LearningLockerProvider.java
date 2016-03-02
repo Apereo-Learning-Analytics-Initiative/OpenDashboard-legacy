@@ -33,7 +33,7 @@ public abstract class LearningLockerProvider extends BaseProvider {
   protected ProviderConfiguration providerConfiguration;
   
   public ProviderConfiguration getDefaultLearningLockerConfiguration() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Learning Locker Base URL", "LABEL_LEARNINGLOCKER_BASE_URL", false);

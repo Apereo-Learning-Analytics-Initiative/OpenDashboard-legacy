@@ -43,7 +43,7 @@ public abstract class BaseSakaiProvider extends BaseProvider {
   protected RestTemplate restTemplate = new RestTemplate();
 
   protected ProviderConfiguration getDefaultSakaiProviderConfiguration() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "User Key", "LABEL_USER_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Sakai Base URL", "LABEL_SAKAI_BASE_URL", false);
@@ -56,12 +56,12 @@ public abstract class BaseSakaiProvider extends BaseProvider {
 
   protected String getSakaiSession(ProviderData providerData) {
     
-    MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+    MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
     parameters.add("_username", providerData.findValueForKey("key"));
     parameters.add("_password", providerData.findValueForKey("secret"));
 
-    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(
-        parameters, null);
+    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(
+            parameters, null);
     
     String url = fullUrl(providerData, "/direct/session");
 

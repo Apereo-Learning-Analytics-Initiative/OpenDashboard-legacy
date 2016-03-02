@@ -96,7 +96,7 @@ public class BasicLISRosterProvider implements RosterProvider {
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("oauth_consumer_key", null, ProviderConfigurationOption.TEXT_TYPE, true, "OAuth Consumer Key", "LABEL_OAUTH_CONSUMER_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     options.add(key);
     options.add(secret);
     
@@ -135,7 +135,7 @@ public class BasicLISRosterProvider implements RosterProvider {
 
     Set<Member> memberSet = null;
 
-    MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+    MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("lti_version", "LTI-1p0");
     map.add("lti_message_type", "basic-lis-readmembershipsforcontext");
     map.add("id", rosterIdentifier);
@@ -146,7 +146,7 @@ public class BasicLISRosterProvider implements RosterProvider {
     map.add(OAuthUtil.NONCE_PARAM, UUID.randomUUID().toString());
     try {
       map.add(OAuthUtil.SIGNATURE_PARAM,
-          new OAuthMessageSigner().sign(providerData.findValueForKey("secret"), OAuthUtil.mapToJava("HMAC-SHA1"), "POST", url, new TreeMap<String, String>(map.toSingleValueMap())));
+          new OAuthMessageSigner().sign(providerData.findValueForKey("secret"), OAuthUtil.mapToJava("HMAC-SHA1"), "POST", url, new TreeMap<>(map.toSingleValueMap())));
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new ProviderException(e);
@@ -164,9 +164,9 @@ public class BasicLISRosterProvider implements RosterProvider {
         NodeList members = document.getElementsByTagName("member");
 
         if (members != null) {
-          memberSet = new HashSet<Member>();
+          memberSet = new HashSet<>();
           for (int i = 0; i < members.getLength(); i++) {
-            Map<String, String> nestedMap = new HashMap<String, String>();
+            Map<String, String> nestedMap = new HashMap<>();
             Node nNode = members.item(i);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
               Element eElement = (Element) nNode;

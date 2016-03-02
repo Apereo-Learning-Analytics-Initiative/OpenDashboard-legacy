@@ -48,7 +48,7 @@ public class MultiTenantMongoDbFactory extends SimpleMongoDbFactory {
   private final String defaultName;
   private static final Logger logger = LoggerFactory.getLogger(MultiTenantMongoDbFactory.class);
 
-  private static final HashMap<String, Object> databaseIndexMap = new HashMap<String, Object>();
+  private static final HashMap<String, Object> databaseIndexMap = new HashMap<>();
   private MongoTemplate mongoTemplate = null;
 
   public MultiTenantMongoDbFactory(final Mongo mongo, final String defaultDatabaseName) {

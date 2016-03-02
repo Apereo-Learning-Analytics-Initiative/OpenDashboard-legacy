@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FeatureFlagController {
   
-  private final Map<String, Object> features = new HashMap<String, Object>();
+  private final Map<String, Object> features = new HashMap<>();
   
   public Map<String, Object> getFeatures() {
     return features;

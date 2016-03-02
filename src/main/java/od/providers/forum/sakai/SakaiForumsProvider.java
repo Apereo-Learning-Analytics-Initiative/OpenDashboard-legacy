@@ -73,7 +73,7 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
     List<SakaiForum> forums = messageResponse.getBody().getTopic_collection();
     
     if (forums != null && !forums.isEmpty()) {
-      f = new ArrayList<ForumImpl>();
+      f = new ArrayList<>();
       for (SakaiForum sakaiForum : forums) {
         f.add(sakaiForum.toForum());
       }
@@ -94,7 +94,7 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
     List<SakaiTopicMessage> messages = messageResponse.getBody().getForum_message_collection();
     
     if (messages != null && !messages.isEmpty()) {
-      m = new ArrayList<MessageImpl>();
+      m = new ArrayList<>();
       for (SakaiTopicMessage sakaiTopicMessage : messages) {
         m.add(sakaiTopicMessage.toMessage());
       }

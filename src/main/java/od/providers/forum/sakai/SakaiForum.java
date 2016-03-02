@@ -61,7 +61,7 @@ public class SakaiForum extends OpenDashboardModel {
     forum.setTitle(this.forumTitle);
     
     if (this.topics != null && !this.topics.isEmpty()) {
-      List<TopicImpl> t = new ArrayList<TopicImpl>();
+      List<TopicImpl> t = new ArrayList<>();
       for (SakaiTopic sakaiTopic : this.topics) {
         TopicImpl topic = sakaiTopic.toTopic();
         t.add(topic);

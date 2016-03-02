@@ -67,7 +67,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   
   @PostConstruct
   public void init() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "OpenLRS Base URL", "LABEL_OPENLRS_BASE_URL", false);
@@ -96,13 +96,13 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
       events = new LinkedList<Event>(pageWrapper.getContent());
     }
     
-    return new PageImpl<Event>(events, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<>(events, pageable, pageWrapper.getPage().getTotalElements());
 
   }
   
   @Override
   public Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<String, String>();
+    Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("contextId", options.getCourseId());
 
     return fetch(urlVariables, pageable, "/api/context/{contextId}");
@@ -111,7 +111,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   @Override
   public Page<Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
     
-    Map<String, String> urlVariables = new HashMap<String, String>();
+    Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("userId", options.getUserId());
     
     return fetch(urlVariables, pageable, "/api/user/{userId}");
@@ -120,7 +120,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   @Override
   public Page<Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
     
-    Map<String, String> urlVariables = new HashMap<String, String>();
+    Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("userId", options.getUserId());
     urlVariables.put("contextId", options.getCourseId());
     

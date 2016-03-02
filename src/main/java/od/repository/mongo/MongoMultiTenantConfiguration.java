@@ -90,7 +90,7 @@ public class MongoMultiTenantConfiguration extends AbstractMongoConfiguration {
   public FilterRegistrationBean mongoFilterBean() {
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
     registrationBean.setFilter(mongoFilter);
-    List<String> urls = new ArrayList<String>(1);
+    List<String> urls = new ArrayList<>(1);
     urls.add("/lti");
     urls.add("/api/*");
     urls.add("/cm/*");
