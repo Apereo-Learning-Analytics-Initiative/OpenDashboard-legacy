@@ -33,13 +33,71 @@ angular
 	 
 //	$translatePartialLoader.addPart('roster-card');
 //    $translate.refresh();
+
+$scope.labels = [];
+$scope.data = [[]];
+$scope.events = [];
+for (var i = 0; i < 1000; i++) {
+	
+    var ts = "2016-02-" + Math.floor(Math.random()*(18-12+1)+12) + "T11:05:01.000Z";
+
+    var obj = {
+        "sourceId":i,
+        "actor":"actor" + Math.floor(Math.random() * 6) + 1 ,
+        "verb":"verb" + Math.floor(Math.random() * 6) + 1 ,
+        "object":"object" + Math.floor(Math.random() * 6) + 1 ,
+        "objectType":"objectType1",
+        "context":"13",
+        "organization":"org1",
+        "timestamp":ts
+    };
+    
+    $scope.events.push(obj);
+}
+
+var countByActor = function(event) { return event.actor; };
+var countByVerb = function(event) { return event.verb; };
+
+$scope.eventsByActor = _.chain($scope.events)
+                        .countBy(countByActor)
+                        .pairs().sortBy(1).reverse()
+                        .value();
+$scope.eventsByVerb = _.chain($scope.events)
+						.countBy(countByVerb)
+						.pairs().sortBy(1).reverse()
+						.value();
    
-   $scope.events = [{"id":"1"},{"id":"2"},{"id":"3"}]
-   
-   $scope.refreshActivityStream = function() {
-	   
+   var occurrenceDay = function(occurrence){
+    return moment(occurrence.timestamp).startOf('day').format();
    };
-   
-});
+
+	var groupToDay = function(group, day){
+	    return {
+	        dt: {day:moment(day).format('MMM D'),d:moment(day)},
+	        count: group.length
+	    }
+	};
+	
+	
+
+	var result = _.chain($scope.events)
+	    .groupBy(occurrenceDay)
+	    .map(groupToDay)
+	    .sortBy('dt.d')
+	    .value();
+	
+	//console.log(result);
+	$scope.series = ['Events over time'];
+	_.forEach(result,function(o){
+		//console.log(o)
+	  $scope.labels.push(o.dt.day);
+	  $scope.data[0].push(o.count);
+	});
+	   
+	   $scope.refreshActivityStream = function() {
+		   
+	   };
+	   
+	});
 
 })(angular, Math, moment);

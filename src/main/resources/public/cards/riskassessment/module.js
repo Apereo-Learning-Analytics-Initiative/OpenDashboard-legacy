@@ -35,7 +35,11 @@ angular
    $translate
    .refresh()
      .then(function() {
-    	 
+    
+       $scope.listView = 0;
+       $scope.radarView = 1;
+       $scope.views = [$scope.listView, $scope.radarView];
+       $scope.view = $scope.listView;
        $scope.courses = null;
        $scope.filtered = null;
        
@@ -50,6 +54,55 @@ angular
 	   $scope.categories = [$scope.ALL_STUDENTS, $scope.HIGH_RISK, $scope.MEDIUM_RISK, $scope.LOW_RISK, $scope.NO_RISK];
 	   $scope.groupings = [$scope.ALL_STUDENTS.label, $scope.HIGH_RISK.label, $scope.MEDIUM_RISK.label, $scope.LOW_RISK.label, $scope.NO_RISK.label];
 	   $scope.grouping = $scope.groupings[0];
+	   
+	   $scope.findInRoster = function(id) {
+		   //console.log($scope.roster);
+		   //console.log(id);
+	     return _.find($scope.roster,{'id':id});
+	   }
+	   
+	   $scope.getIndicators = function(learner) {
+	     var indicators = [];
+	     
+	     var contentRead = {};
+	     contentRead['translationKey'] = 'RA_LABEL_CONTENT_READ';
+	     contentRead['name'] = 'CONTENT READ';
+	     contentRead['value'] = learner.output.R_CONTENT_READ;
+	     indicators.push(contentRead);
+	     
+	     var cummulativeGPA = {};
+	     cummulativeGPA['translationKey'] = 'RA_LABEL_CUMMULATIVE_GPA';
+	     cummulativeGPA['name'] = 'CUMMULATIVE GPA';
+	     cummulativeGPA['value'] = learner.output.GPA_CUMULATIVE;
+	     indicators.push(cummulativeGPA);
+
+	     var score = {};
+	     score['translationKey'] = 'RA_LABEL_GRADEBOOK_SCORE';
+	     score['name'] = 'GRADEBOOK SCORE';
+	     score['value'] = learner.output.RMN_SCORE;
+	     indicators.push(score);
+
+	     var forumPost = {};
+	     forumPost['translationKey'] = 'RA_LABEL_FORUM_ACTIVITY';
+	     forumPost['name'] = 'FORUM ACTIVITY';
+	     forumPost['value'] = learner.output.R_FORUM_POST;
+	     indicators.push(forumPost);
+
+	     var assignments = {};
+	     assignments['translationKey'] = 'RA_LABEL_ASSIGNMENT_ACTIVITY';
+	     assignments['name'] = 'ASSIGNMENT ACTIVITY';
+	     assignments['value'] = learner.output.R_ASN_SUB;
+	     indicators.push(assignments);
+	     
+	     var sessions = {};
+	     sessions['translationKey'] = 'RA_LABEL_SESSION_ACTIVITY';
+	     sessions['name'] = 'SESSION ACTIVITY';
+	     sessions['value'] = learner.output.R_SESSIONS;
+	     indicators.push(sessions);
+
+	     return indicators;
+	   }
+	   
    
    
 
@@ -147,6 +200,11 @@ angular
      
      $log.debug($scope.compareGroup);
    }
+   
+   $scope.changeToView = function(view) {
+     $scope.view = view;
+   }
+   
    
    // DOUGHNUT
    $scope.labels = [$scope.HIGH_RISK.translationValue, $scope.MEDIUM_RISK.translationValue, $scope.LOW_RISK.translationValue, $scope.NO_RISK.translationValue];
