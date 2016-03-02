@@ -108,10 +108,10 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
     LearningLockerGrade [] grades = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerGrade[].class).getBody();
-    List<LineItemImpl> output = null;
+    List<LineItemImpl> output;
     if (grades != null && grades.length > 0) {
-      output = new ArrayList<LineItemImpl>();
-      Map<String, LineItemImpl> lineItemsMap = new HashMap<String, LineItemImpl>();
+      output = new ArrayList<>();
+      Map<String, LineItemImpl> lineItemsMap = new HashMap<>();
       for (LearningLockerGrade grade : grades) {
         
         LineItemImpl lineItem = toLineItem(grade);
@@ -122,7 +122,7 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
           existingLineItem.getResults().add(result);
         }
         else {
-          List<ResultImpl> results = new ArrayList<ResultImpl>();
+          List<ResultImpl> results = new ArrayList<>();
           results.add(result);
           lineItem.setResults(results);
           lineItemsMap.put(grade.getGradableObject(),lineItem);
@@ -132,7 +132,7 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
       output.addAll(lineItemsMap.values());
     }
     else {
-      output = new ArrayList<LineItemImpl>();
+      output = new ArrayList<>();
     }
     
     return output;

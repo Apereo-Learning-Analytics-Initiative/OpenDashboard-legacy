@@ -48,7 +48,7 @@ public class ContextMappingController {
 		try {
 		  List<Dashboard> dashboards = preconfiguredDashboardRepository.findAll();
 			if (dashboards != null && !dashboards.isEmpty()) {
-        Set<Dashboard> dashboardSet = new HashSet<Dashboard>();
+        Set<Dashboard> dashboardSet = new HashSet<>();
         for (Dashboard db : dashboards) {
           db.setId(UUID.randomUUID().toString());
           List<Card> cards = db.getCards();

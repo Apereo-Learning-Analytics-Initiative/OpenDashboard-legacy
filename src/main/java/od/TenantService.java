@@ -40,7 +40,7 @@ public class TenantService {
   @PostConstruct
   public void init() {
     // TODO - eventually moved to a singleton
-    tenantKeyMap = new HashMap<String, String>();
+    tenantKeyMap = new HashMap<>();
     tenantKeyMap.put("opendash", "tenant1");
   }
 

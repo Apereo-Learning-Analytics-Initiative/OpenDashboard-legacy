@@ -60,7 +60,7 @@ public class LTIController {
     model.addAttribute("token", uuid);
 
     // Create a token using spring provided class : LTIAuthenticationToken
-    String role = null;
+    String role;
     if (LTIController.hasInstructorRole(null, launchRequest.getRoles())) {
       role = "ROLE_INSTRUCTOR";
     } else {
@@ -94,7 +94,7 @@ public class LTIController {
   public static boolean hasInstructorRole(List<String> instructorRoles, String roles) {
 
     if (instructorRoles == null) {
-      instructorRoles = new ArrayList<String>();
+      instructorRoles = new ArrayList<>();
       instructorRoles.add("Instructor");
       instructorRoles.add("ContentDeveloper");
       instructorRoles.add("Administrator");

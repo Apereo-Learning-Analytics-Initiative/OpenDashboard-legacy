@@ -80,7 +80,7 @@ public class SecurityConfig {
     public FilterRegistrationBean oAuthFilterBean() {
       FilterRegistrationBean registrationBean = new FilterRegistrationBean();
       registrationBean.setFilter(oAuthFilter);
-      List<String> urls = new ArrayList<String>(1);
+      List<String> urls = new ArrayList<>(1);
       urls.add("/lti");
       registrationBean.setUrlPatterns(urls);
       registrationBean.setOrder(2);
@@ -196,7 +196,7 @@ public class SecurityConfig {
       return repository;
     }
     
-    class NoWWWAuthenticate401ResponseEntryPoint extends BasicAuthenticationEntryPoint {
+    static class NoWWWAuthenticate401ResponseEntryPoint extends BasicAuthenticationEntryPoint {
       
       public NoWWWAuthenticate401ResponseEntryPoint(String realm) {
         setRealmName(realm);
@@ -227,7 +227,7 @@ public class SecurityConfig {
   public FilterRegistrationBean exceptionFilterBean() {
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
     registrationBean.setFilter(exceptionFilter);
-    List<String> urls = new ArrayList<String>(1);
+    List<String> urls = new ArrayList<>(1);
     urls.add("/");
     urls.add("/api/*");
     urls.add("/cm/*");
@@ -241,7 +241,7 @@ public class SecurityConfig {
 		return new SessionTrackingConfigListener();
 	}
 
-	public class SessionTrackingConfigListener implements ServletContextInitializer {
+	public static class SessionTrackingConfigListener implements ServletContextInitializer {
 
 		@Override
 		public void onStartup(ServletContext servletContext) throws ServletException {

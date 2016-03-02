@@ -26,16 +26,16 @@ public class Response {
     Object data;
 
     public Response() {
-        this.errors = new ArrayList<String>();
+        this.errors = new ArrayList<>();
     }
 
     public Response(String url) {
-        this.errors = new ArrayList<String>();
+        this.errors = new ArrayList<>();
         this.url = url;
     }
 
     public Response(String url, Object data) {
-        this.errors = new ArrayList<String>();
+        this.errors = new ArrayList<>();
         this.url = url;
         this.data = data;
     }

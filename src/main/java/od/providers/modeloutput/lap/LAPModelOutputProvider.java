@@ -85,7 +85,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "LAP Base URL", "LABEL_LAP_BASE_URL", false);
 
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     options.add(key);
     options.add(secret);
     options.add(baseUrl);
@@ -117,15 +117,15 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     
     PageWrapper<ModelOutputImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType, urlVariables).getBody();
     log.debug(pageWrapper.toString());
-    List<ModelOutput> output = null;
+    List<ModelOutput> output;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
       output = new LinkedList<ModelOutput>(pageWrapper.getContent());
     }
     else {
-      output = new ArrayList<ModelOutput>();
+      output = new ArrayList<>();
     }
     
-    return new PageImpl<ModelOutput>(output, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
   @Override
@@ -150,18 +150,18 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
 
   @Override
   public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<String, String>();
+    Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("id", course);
-    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
     
     return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
   }
 
   @Override
   public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<String, String>();
+    Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("id", student);
-    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
     
     return fetch(urlVariables, pageable, "/api/outpu/{tenant}t/student/{id}");
   }

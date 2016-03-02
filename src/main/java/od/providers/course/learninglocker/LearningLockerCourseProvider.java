@@ -100,15 +100,15 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     
     PageWrapper<LearningLockerModuleInstance> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType).getBody();
     log.debug(pageWrapper.toString());
-    List<LearningLockerModuleInstance> output = null;
+    List<LearningLockerModuleInstance> output;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      output = new LinkedList<LearningLockerModuleInstance>(pageWrapper.getContent());
+      output = new LinkedList<>(pageWrapper.getContent());
     }
     else {
-      output = new ArrayList<LearningLockerModuleInstance>();
+      output = new ArrayList<>();
     }
     
-    return new PageImpl<LearningLockerModuleInstance>(output, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
 

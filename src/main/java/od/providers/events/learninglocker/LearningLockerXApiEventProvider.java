@@ -72,7 +72,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   
   @PostConstruct
   public void init() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<ProviderConfigurationOption>();
+    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
     ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Learning Locker xAPI Base URL", "LABEL_LL_BASE_URL", false);
@@ -111,7 +111,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     
     if (results != null && results.getStatements() != null && !results.getStatements().isEmpty()) {
       List<Statement> statements = results.getStatements();
-      List<Event> events = new ArrayList<Event>();
+      List<Event> events = new ArrayList<>();
       for (Statement statement : statements) {
         Event event = toEvent(statement);
         if (event != null) {
@@ -119,7 +119,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
         }
       }
       
-      page = new PageImpl<Event>(events);
+      page = new PageImpl<>(events);
     }
 
     return page;
@@ -256,7 +256,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     IStatementObject xApiObject = xapi.getObject();
     if (xApiObject != null) {
       
-      objectIdandType = new HashMap<String, String>();
+      objectIdandType = new HashMap<>();
       objectIdandType.put("TYPE", xApiObject.getObjectType());
     }
     

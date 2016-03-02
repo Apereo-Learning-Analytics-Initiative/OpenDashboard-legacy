@@ -52,12 +52,12 @@ public class OAuthUtil {
     private static final Map<String, String> algorithms;
     
     static {
-        algorithms = new HashMap<String, String>();
+        algorithms = new HashMap<>();
         algorithms.put("HMAC-SHA1", "HmacSHA1");
     }
 
     public static Map<String, String> decodeAuthorization(String authorization) {
-        Map<String, String> oauthParameters = new HashMap<String, String>();
+        Map<String, String> oauthParameters = new HashMap<>();
         if (authorization != null) {
             Matcher m = AUTHORIZATION.matcher(authorization);
             if (m.matches()) {
@@ -84,13 +84,13 @@ public class OAuthUtil {
         }
         
         if (parameters != null && !parameters.isEmpty()) {
-            for (String key : parameters.keySet()) {
-                if (key.startsWith("oauth_")) {
-                    String value = parameters.get(key);
+            for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                if (entry.getKey().startsWith("oauth_")) {
+                    String value = entry.getValue();
                     if (value == null) value = "";
                     if (header.length() > 0) header.append(",");
                     header.append(" ");
-                    header.append(OAuthUtil.percentEncode(key)).append("=\"");
+                    header.append(OAuthUtil.percentEncode(entry.getKey())).append("=\"");
                     header.append(OAuthUtil.percentEncode(value)).append('"');
                 }
             }

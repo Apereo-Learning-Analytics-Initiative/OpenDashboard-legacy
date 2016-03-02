@@ -122,7 +122,7 @@ public class OpenDashboard {
         return errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
     }
     
-    class ErrorJson {
+    static class ErrorJson {
 
       public Integer status;
       public String error;
