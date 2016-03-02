@@ -196,7 +196,7 @@ public class SecurityConfig {
       return repository;
     }
     
-    class NoWWWAuthenticate401ResponseEntryPoint extends BasicAuthenticationEntryPoint {
+    static class NoWWWAuthenticate401ResponseEntryPoint extends BasicAuthenticationEntryPoint {
       
       public NoWWWAuthenticate401ResponseEntryPoint(String realm) {
         setRealmName(realm);
@@ -241,7 +241,7 @@ public class SecurityConfig {
 		return new SessionTrackingConfigListener();
 	}
 
-	public class SessionTrackingConfigListener implements ServletContextInitializer {
+	public static class SessionTrackingConfigListener implements ServletContextInitializer {
 
 		@Override
 		public void onStartup(ServletContext servletContext) throws ServletException {
