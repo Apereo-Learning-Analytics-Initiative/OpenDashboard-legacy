@@ -90,8 +90,8 @@ public class LaunchRequest extends LtiMessage {
   public LaunchRequest(Map<String, String[]> paramMap) {
     Map<String, String> flattenedParams = new TreeMap<>();
 
-    for (String key : paramMap.keySet()) {
-      String[] values = paramMap.get(key);
+    for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+      String[] values = entry.getValue();
       String value = null;
       if (values != null && values.length > 0) {
         for (String v : values) {
@@ -103,7 +103,7 @@ public class LaunchRequest extends LtiMessage {
           }
         }
       }
-      flattenedParams.put(key, value);
+      flattenedParams.put(entry.getKey(), value);
     }
 
     init(flattenedParams);
@@ -181,22 +181,22 @@ public class LaunchRequest extends LtiMessage {
 
     if (custom != null && !custom.isEmpty()) {
       Set<String> keys = custom.keySet();
-      for (String key : keys) {
-        sm.put(key, custom.get(key));
+      for (Map.Entry<String, String> entry : custom.entrySet()) {
+        sm.put(entry.getKey(), entry.getValue());
       }
     }
 
     if (ext != null && !ext.isEmpty()) {
       Set<String> keys = ext.keySet();
-      for (String key : keys) {
-        sm.put(key, ext.get(key));
+      for (Map.Entry<String, String> entry : ext.entrySet()) {
+        sm.put(entry.getKey(), entry.getValue());
       }
     }
 
     if (extra != null && !extra.isEmpty()) {
       Set<String> keys = extra.keySet();
-      for (String key : keys) {
-        sm.put(key, extra.get(key));
+      for (Map.Entry<String, String> entry : extra.entrySet()) {
+        sm.put(entry.getKey(), entry.getValue());
       }
     }
 
@@ -533,29 +533,29 @@ public class LaunchRequest extends LtiMessage {
     if (paramMap != null && !paramMap.isEmpty()) {
       Set<String> keys = paramMap.keySet();
       if (keys != null && !keys.isEmpty()) {
-        for (String key : keys) {
-          if (key != null && key.startsWith("custom_")) {
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+          if (entry.getKey() != null && entry.getKey().startsWith("custom_")) {
             if (this.custom == null) {
               this.custom = new HashMap<>();
             }
 
-            this.custom.put(key, paramMap.get(key));
-          } else if (key != null && key.startsWith("ext_")) {
+            this.custom.put(entry.getKey(), entry.getValue());
+          } else if (entry.getKey() != null && entry.getKey().startsWith("ext_")) {
             if (this.ext == null) {
               this.ext = new HashMap<>();
             }
 
-            this.ext.put(key, paramMap.get(key));
+            this.ext.put(entry.getKey(), entry.getValue());
           } else {
 
             // If we don't have the key at this point, it's likely a
             // unknown type that we didn't account for. We still need
             // to add it for the oauth comparison
-            if (currentSM != null && !currentSM.containsValue(key)) {
+            if (currentSM != null && !currentSM.containsValue(entry.getKey())) {
               if (this.extra == null) {
                 this.extra = new HashMap<>();
               }
-              this.extra.put(key, paramMap.get(key));
+              this.extra.put(entry.getKey(), entry.getValue());
             }
           }
         }
