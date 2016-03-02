@@ -152,7 +152,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("id", course);
-    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
     
     return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
   }
@@ -161,7 +161,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("id", student);
-    urlVariables.put("tenant", (StringUtils.isNotBlank(tenant)) ? tenant : "lap");
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
     
     return fetch(urlVariables, pageable, "/api/outpu/{tenant}t/student/{id}");
   }
