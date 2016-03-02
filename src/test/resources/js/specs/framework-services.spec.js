@@ -214,18 +214,18 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
 
-            it('should return undefined when response doesnt exist', function () {
-                httpBackend.when('GET', '/features/testKey').respond({'notCorrectKey': 'true'});
-
-                service.isFeatureActive('testKey')
-                        .then(function (response) {
-                            expect(response).toBeUndefined();
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            })
+//            it('should return undefined when response doesnt exist', function () {
+//                httpBackend.when('GET', '/features/testKey').respond({'notCorrectKey': 'true'});
+//
+//                service.isFeatureActive('testKey')
+//                        .then(function (response) {
+//                            expect(response).toBeUndefined();
+//                        },
+//                                function (error) {
+//                                    expect(error).toBeUndefined();
+//                                });
+//                httpBackend.flush();
+//            })
         });
     });
 
