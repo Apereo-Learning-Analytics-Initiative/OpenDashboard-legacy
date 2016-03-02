@@ -173,7 +173,7 @@ public class BasicLISRosterProvider implements RosterProvider {
               for (String tagName : rosterDetailInfo) {
                 // skip any element in list that doesn't have a corresponding
                 // entry in the xml.
-                String text = "";
+                String text;
                 if (eElement.getElementsByTagName(tagName).item(0) != null) {
                   text = eElement.getElementsByTagName(tagName).item(0).getTextContent();
                   nestedMap.put(tagName, text);

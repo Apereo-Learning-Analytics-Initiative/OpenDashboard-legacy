@@ -108,7 +108,7 @@ public class LearningLockerOutcomesProvider extends LearningLockerProvider imple
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
     LearningLockerGrade [] grades = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerGrade[].class).getBody();
-    List<LineItemImpl> output = null;
+    List<LineItemImpl> output;
     if (grades != null && grades.length > 0) {
       output = new ArrayList<LineItemImpl>();
       Map<String, LineItemImpl> lineItemsMap = new HashMap<String, LineItemImpl>();
