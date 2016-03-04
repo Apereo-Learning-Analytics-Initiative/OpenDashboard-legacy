@@ -20,15 +20,15 @@
         </ul>
       </div>
       <div class="box-shadow--6dp" style="background-color: white;">
-        <div class="media" ng-repeat="event in events | limitTo:10">
+        <div class="media" ng-repeat="event in events | orderBy: 'timestamp':true | limitTo:10">
           <div class="media-left">
             <a href="#">
-              <img class="media-object" src="https://placehold.it/64x64" >
+              <img class="media-object" ng-src="{{getEventImage(event)}}" >
             </a>
           </div>
           <div class="media-body">
-            <h6 class="media-heading">February 15th 2016, 1:19:21 pm</h6>
-            <p><strong>Joe Smith</strong> experienced <strong>something</strong>.
+            <h6 class="media-heading">{{event.timestamp | date : 'medium'}}</h6>
+            <p><strong>{{event.actor}}</strong> {{event.verb}} <strong>{{event.object}}</strong>.
           </div>
         </div>    
       </div>

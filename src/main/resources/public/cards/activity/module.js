@@ -49,7 +49,7 @@ for (var i = 0; i < 1000; i++) {
         "objectType":"objectType1",
         "context":"13",
         "organization":"org1",
-        "timestamp":ts
+        "timestamp": moment(ts, moment.ISO_8601).toDate()
     };
     
     $scope.events.push(obj);
@@ -86,10 +86,8 @@ $scope.eventsByVerb = _.chain($scope.events)
 	    .sortBy('dt.d')
 	    .value();
 	
-	//console.log(result);
 	$scope.series = ['Events over time'];
 	_.forEach(result,function(o){
-		//console.log(o)
 	  $scope.labels.push(o.dt.day);
 	  $scope.data[0].push(o.count);
 	});
@@ -97,6 +95,13 @@ $scope.eventsByVerb = _.chain($scope.events)
 	   $scope.refreshActivityStream = function() {
 		   
 	   };
+	   
+	   $scope.getEventImage = function(event) {
+		 var hex = (Math.random().toString(16) + '0000000').slice(2, 8);
+		 var image = 'https://placehold.it/64x64/'+hex+'/'+hex;
+		 return image;
+	   };
+	   
 	   
 	});
 

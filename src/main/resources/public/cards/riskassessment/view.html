@@ -87,33 +87,45 @@
   </div>
   <div class="row" ng-show="view == radarView">
     <!-- LEFT COLUMN -->  
-      <div class="col-md-4">
-        <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
-          <div class="nav navbar-nav">
-            <p class="navbar-text"><a href ng-click="changeToView(listView)"><strong class="od-text-black" translate="RA_LABEL_RETURN_TO_LIST_VIEW">RETURN TO LIST VIEW</strong></a></p>
-          </div>
+    <div class="col-md-4">
+      <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
+        <div class="nav navbar-nav">
+          <p class="navbar-text"><a href ng-click="changeToView(listView)"><strong class="od-text-black" translate="RA_LABEL_RETURN_TO_LIST_VIEW">RETURN TO LIST VIEW</strong></a></p>
         </div>
-      <div class="box-shadow--6dp" style="background-color: white;">
-        <div class="media" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;">
-          <div class="media-left">
-            <a href>
-              <img style="max-height: 64px;max-width: 64px;" class="media-object" ng-src="{{learner.user_image && learner.user_image || 'https://placehold.it/64x64'}}" >
-            </a>
-          </div>
-          <div class="media-body">
-            <h3 class="media-heading">{{learner.person.name_full}}</h3>
-            <p><span class="od-text-black label" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{learner.output.MODEL_RISK_CONFIDENCE}}</span></p>
-            <div class="row" ng-show="expand" ng-init="indicators = getIndicators(learner)">
-              <div class="col-xs-12" ng-repeat="indicator in indicators">
-                <strong translate="{{indicator.translationKey}}">{{indicator.name}}</strong>
-                <span>{{indicator.value}}</span>
+      </div>
+      <div class="box-shadow--6dp od-background-color-white">
+        <div class="list-group" >
+        
+          <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;">
+            <span class="glyphicon-transparent" style="background-color: {{learner.color}};"></span>
+            &nbsp;
+            <strong>{{learner.person.name_full}}</strong>
+            <span class="od-text-black label pull-right" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
+            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{learner.output.MODEL_RISK_CONFIDENCE}}</span>
+            <div class="row m-t" ng-show="expand" ng-init="indicators = getIndicators(learner)">
+              <div class="col-xs-12">
+                <div class="list-group">
+                  <div class="list-group-item" ng-repeat="indicator in indicators">
+                    <strong translate="{{indicator.translationKey}}">{{indicator.name}}</strong>
+                    <span class="badge" ng-show="mediumRiskPercentage">{{indicator.value}}</span>
+                  </div>              
+                </div>
               </div>
             </div>
           </div>
+        
         </div>    
       </div>
+    </div>
+    <!-- RIGHT COLUMN -->
+    <div class="col-md-8">
+      <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
+        <div class="nav navbar-nav">
+          <p class="navbar-text"><strong class="od-text-black" translate="PLACEHOLDER">PLACEHOLDER</strong></p>
+        </div>
       </div>
+      <canvas class="chart chart-radar box-shadow--6dp od-background-color-white p-t p-b" chart-data="radarData" chart-labels="radarLabels" chart-options="radarOptions" chart-colours="radarColors"></canvas>
+    </div>
 
   </div>
 </div>
