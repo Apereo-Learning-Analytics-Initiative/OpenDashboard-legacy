@@ -16,19 +16,13 @@ permissions and limitations under the License.
   <div class="col-xs-12 ui-view">
     <div class="m-t">
       <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 od-providertype-box"
-          ng-repeat="(key, providerType) in providerTypes">
-          <div class="chart-wrapper">
-            <div class="chart-title">
-              <div class="row">
-                <div class="col-xs-9" translate="{{providerType.key}}"></div>
-                <div class="col-xs-3">
-                  <a class="pull-right" href="#" id="LINK_ADMIN_CONFIGURE_{{providerType.type}}" ng-click="selectProviderType(providerType.type);"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
-                </div>
-              </div>
-            </div>
-            <div class="chart-notes od-providertype-box-desc"
-              translate="{{providerType.desc}}"></div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="list-group">
+            <a href class="list-group-item" ng-repeat="(key, providerType) in providerTypes" ng-click="selectProviderType(providerType.type);">
+              <h3 translate="{{providerType.key}}"></h3>
+              <span translate="{{providerType.desc}}"></span>
+              <span class="pull-right glyphicon glyphicon-chevron-right"></span>
+            </a>
           </div>
         </div>
       </div>

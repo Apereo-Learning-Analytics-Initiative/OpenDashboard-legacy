@@ -56,6 +56,10 @@ permissions and limitations under the License.
                 </a>
               </li>
               <li ng-show="!isStudent && contextMapping && activeDashboard">
+                <a ui-sref="index.removeDashboard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_REMOVE" translate="LABEL_REMOVE_DASHBOARD">
+                </a>
+              </li>
+              <li ng-show="!isStudent && contextMapping && activeDashboard">
                 <a ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_ADD_CARD">
                 </a>
               </li>

@@ -389,6 +389,19 @@ angular
 	     	},
 	        controller: 'AddDashboardController'
 	    })
+	    .state('index.removeDashboard', {
+	        url: 'cm/:cmid/removeDashboard/:dbid',
+	        templateUrl: '/assets/templates/dashboard/remove.html',
+		    resolve:{
+		      contextMapping: function(DashboardService, $stateParams) {
+	            return DashboardService.getContextMappingById($stateParams.cmid);
+	          },
+              dashboardId: function($stateParams) {
+	            return $stateParams.dbid;
+	          }
+	     	},
+	        controller: 'RemoveDashboardController'
+	    })
 	    .state('index.dashboard', {
 	        url: 'cm/:cmid/dashboard/:dbid',
 	        templateUrl: '/assets/templates/dashboard/view.html',

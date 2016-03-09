@@ -44,6 +44,30 @@
         	dashboardForm.$valid = unique;
         	
         };
+    })
+    .controller('RemoveDashboardController', function($log, $scope, $state, Notification, ContextMappingService, contextMapping, dashboardId) {
+        $scope.$parent.contextMapping = contextMapping;
+        $scope.dashboardId = dashboardId;
+        
+        $scope.save = function () {
+            $log.log($scope.contextMapping);
+            ContextMappingService
+            .removeDashboard($scope.$parent.contextMapping, $scope.dashboardId)
+            .then(
+                function (updatedContextMapping) {
+                	if (updatedContextMapping.dashboards != null && updatedContextMapping.dashboards.length > 0) {
+                	  $scope.$parent.activeDashboard = $scope.contextMapping.dashboards[0];
+                	  $state.go('index.dashboard', {cmid:$scope.$parent.contextMapping.id, dbid:$scope.contextMapping.dashboards[0].id});
+                	}
+                	else {
+                	  $state.go('index.addDashboard', {cmid:$scope.$parent.contextMapping.id});
+                	}
+                },
+                function (error) {
+                    $log.error(error);
+                    Notification.error('Unable to remove dashboard.');
+                });
+        };
     });
     
     angular
