@@ -96,11 +96,6 @@ $scope.eventsByVerb = _.chain($scope.events)
 		   
 	   };
 	   
-	   $scope.getEventImage = function(event) {
-		 var hex = (Math.random().toString(16) + '0000000').slice(2, 8);
-		 var image = 'https://placehold.it/64x64/'+hex+'/'+hex;
-		 return image;
-	   };
 	   
 	   
 	});

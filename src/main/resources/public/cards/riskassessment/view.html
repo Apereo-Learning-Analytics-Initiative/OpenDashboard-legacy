@@ -56,7 +56,7 @@
         <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping}}</strong></p>
         <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping]}}</strong></p>
         </div>
-        <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 0">
+        <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 1">
               <li><a href ng-click="changeToView(radarView)"><strong class="od-text-black" translate="RA_LABEL_COMPARE_STUDENTS">COMPARE STUDENTS</strong></a></li>
         </ul>
       </div>
@@ -77,7 +77,7 @@
             <td ng-class="{'od-info-color':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
             'od-danger-color':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
             <td class="center-block">
-              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(learner.id) > -1" ng-click="toggleCompare(learner.id)">
+              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(learner.user_id) > -1" ng-click="toggleCompare(learner.user_id)">
             </td>
           </tr>
         
@@ -92,11 +92,48 @@
         <div class="nav navbar-nav">
           <p class="navbar-text"><a href ng-click="changeToView(listView)"><strong class="od-text-black" translate="RA_LABEL_RETURN_TO_LIST_VIEW">RETURN TO LIST VIEW</strong></a></p>
         </div>
+        <ul class="nav navbar-nav navbar-right">
+              <li><a href data-toggle="modal" data-target="#legendModal"><strong class="od-text-black" translate="RA_LABEL_LEGEND">LEGEND</strong></a></li>
+        </ul>
+      </div>
+      <div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="legendModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header od-subheader-background-color">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="legendModalLabel" translate="RA_LABEL_LEGEND">LEGEND</h4>
+            </div>
+            <div class="modal-body">
+              <div class="list-group">
+                <div class="list-group-item">
+                  <span class="label label-danger">&nbsp;</span>
+                  &nbsp;
+                  <strong translate="RA_LABEL_HIGH_RISK">HIGH RISK</strong>
+                </div>
+                <div class="list-group-item">
+                  <span class="label label-warning">&nbsp;</span>
+                  &nbsp;
+                  <strong translate="RA_LABEL_MEDIUM_RISK">MEDIUM RISK</strong>
+                </div>
+                <div class="list-group-item">
+                  <span class="label label-info">&nbsp;</span>
+                  &nbsp;
+                  <strong translate="RA_LABEL_LOW_RISK">LOW RISK</strong>
+                </div>
+                <div class="list-group-item">
+                  <span class="label label-success">&nbsp;</span>
+                  &nbsp;
+                  <strong translate="RA_LABEL_NO_RISK">NO RISK</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="box-shadow--6dp od-background-color-white">
         <div class="list-group" >
         
-          <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;">
+          <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;" ng-show="learner">
             <span class="glyphicon-transparent" style="background-color: {{learner.color}};"></span>
             &nbsp;
             <strong>{{learner.person.name_full}}</strong>
@@ -107,13 +144,12 @@
                 <div class="list-group">
                   <div class="list-group-item" ng-repeat="indicator in indicators">
                     <strong translate="{{indicator.translationKey}}">{{indicator.name}}</strong>
-                    <span class="badge" ng-show="mediumRiskPercentage">{{indicator.value}}</span>
+                    <span class="pull-right glyphicon-transparent" ng-class="indicator.label"></span>
                   </div>              
                 </div>
               </div>
             </div>
           </div>
-        
         </div>    
       </div>
     </div>
@@ -121,10 +157,10 @@
     <div class="col-md-8">
       <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
         <div class="nav navbar-nav">
-          <p class="navbar-text"><strong class="od-text-black" translate="PLACEHOLDER">PLACEHOLDER</strong></p>
+          <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong>{{compareGroup.length - 1}}</strong></p>
         </div>
       </div>
-      <canvas class="chart chart-radar box-shadow--6dp od-background-color-white p-t p-b" chart-data="radarData" chart-labels="radarLabels" chart-options="radarOptions" chart-colours="radarColors"></canvas>
+      <canvas class="chart chart-radar box-shadow--6dp od-background-color-white p-t p-b" chart-colours="radarColors" chart-data="radarData" chart-labels="radarLabels" chart-options="radarOptions" ></canvas>
     </div>
 
   </div>

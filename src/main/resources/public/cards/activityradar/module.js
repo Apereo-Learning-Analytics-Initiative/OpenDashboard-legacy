@@ -72,15 +72,15 @@
 							pointLabelFontSize : 14,
 							// Boolean - If we want to override with a hard
 							// coded scale
-							scaleOverride : true,
+							//scaleOverride : true,
 							// ** Required if scaleOverride is true **
 							// Number - The number of steps in a hard coded
 							// scale
-							scaleSteps : 5,
+							//scaleSteps : 5,
 							// Number - The value jump in the hard coded scale
-							scaleStepWidth : 40,
+							//scaleStepWidth : 40,
 							// Number - The scale starting value
-							scaleStartValue : 0,
+							//scaleStartValue : 0,
 							showTooltips : false
 						};
 
