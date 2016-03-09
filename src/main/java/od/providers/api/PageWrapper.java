@@ -19,8 +19,6 @@ package od.providers.api;
 
 import java.util.List;
 
-import org.springframework.data.domain.Sort;
-
 /**
  * @author ggilbert
  *
