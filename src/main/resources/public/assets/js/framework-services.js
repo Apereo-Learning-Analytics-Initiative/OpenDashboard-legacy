@@ -487,6 +487,12 @@
 					return this.update(contextMapping);
 				}
 			},
+			removeDashboard: function (contextMapping, dashboardId) {
+				if (contextMapping) {
+					contextMapping.dashboards = _.reject(contextMapping.dashboards,{'id':dashboardId});
+					return this.update(contextMapping);
+				}
+			},
 			addCard: function(contextMapping, dashboard, card) {
 				if (contextMapping && contextMapping.dashboards) {
 					card.id = UUIDService.generate();

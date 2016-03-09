@@ -16,15 +16,15 @@ permissions and limitations under the License.
     <div class="row">
         <div class="col-xs-12 col-md-8">
           <div class="panel panel-danger">
-            <div class="panel-heading" translate="{{provider.name}}"></div>
+            <div class="panel-heading" translate="{{activeDashboard.title}}"></div>
           </div>
           <div class="panel-body">
-            <h1 translate="TEXT_CONFIRM_DELETEPROVIDER"></h1>
-            <p class="lead" translate="TEXT_CONFIRM_DELETEPROVIDER_BODY"></p>
+            <h1 translate="TEXT_CONFIRM_DELETEDASHBOARD"></h1>
+            <p class="lead" translate="TEXT_CONFIRM_DELETEDASHBOARD_BODY"></p>
             
-            <button class="btn btn-danger" translate="BUTTON_DELETE" ng-click="remove();" id="BUTTON_CONFIGUREPROVIDER_ADMIN_DELETE"></button>
+            <button class="btn btn-danger" translate="BUTTON_DELETE" ng-click="save();" id="BUTTON_DELETEDASHBOARD_DELETE"></button>
             <button class="btn btn-link" type="button"
-              onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_CONFIGUREPROVIDER_ADMIN_CANCEL"></button>                              
+              onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_DELETEDASHBOARD_CANCEL"></button>                              
           </div>
         </div>
     </div>
