@@ -266,7 +266,7 @@
                      <haltOnFailure>true</haltOnFailure> 
                  </configuration> 
              </plugin> 
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>1.3.1</version>
@@ -285,7 +285,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
 <!--             <plugin> -->
 <!--             Test Coverage Report found in /target/site/jacoco/index.html -->
 <!--                <groupId>org.jacoco</groupId> -->
