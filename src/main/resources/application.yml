@@ -28,7 +28,8 @@ auth:
 
 # Logging settings
 logging:
-  level: INFO
+  level:
+    org.apache.velocity: 'NONE'
 
 # Spring settings
 spring:

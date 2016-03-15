@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 //@Profile("saml")
-@ConditionalOnProperty(name="opendashboard.features.saml",havingValue="true")
+@ConditionalOnProperty(name="features.saml",havingValue="true")
 public class SamlController {
   @Autowired private MetadataManager metadata;
   

@@ -1,29 +1,37 @@
-<div class="row">      
- <div class="col-xs-12">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-         <div class="row">
-           <div class="col-xs-6">&nbsp;</div>
-           <div class="col-xs-4" ng-show='isConfigured'><a href="#" ui-sref="index.admin.removesettings" class="pull-right" id="LINK_REMOVE_SETTINGS"><span class="glyphicon glyphicon-remove-circle"></span> <span>Remove Settings</span></a></div>
-           <div class="col-xs-1"><a ng-show='isConfigured' href="#" ui-sref="index.admin.editsettings" class="pull-right" id="LINK_EDIT_SETTINGS"><span class="glyphicon glyphicon-wrench"></span> <span>Edit Settings</span></a></div>
-           <div class="col-xs-1"><a href="#" ui-sref="index.admin.addsettings" class="pull-right" id="LINK_ADD_SETTINGS"><span class="glyphicon glyphicon-plus"></span> <span>Add Settings</span></a></div>
-         </div>
-        </div>
-        <div class="chart-title">
-          <h3 >Settings</h3>
-          <h5 >All available settings appear below</h5>
-        </div>
-        <div ng-show='isConfigured'class="chart-stage">
-          <table class="table table-striped">
-           <thead><tr><td>Key</td><td>Value</td></tr></thead>
-           <tbody>
-             <tr ng-repeat="setting in configuredSettings">
-                <td>{{setting.key}}</td>
-                <td>{{setting.value}}</td>
-             </tr>
-           </tbody>
-         </table>
-        </div>
-    </div>
- </div>
-</div>     
+<div class="row">
+  <div class="col-xs-12 col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading" translate="LABEL_SETTINGS"></div>
+      <div class="panel-body">
+        <form name="settingsDataForm" class="" novalidate="novalidate">
+          <div class="form-group">
+            <label for="oauth_consumer_key" translate="LABEL_OAUTH_CONSUMER_KEY"></label>
+            <div ng-class="{ 'has-error' : (settingsDataForm.oauth_consumer_key.$dirty && settingsDataForm.oauth_consumer_key.$error.required)
+            || (settingsDataForm.oauth_consumer_key.$dirty && settingsDataForm.oauth_consumer_key.$error.maxlength) }">
+                <input type="text" ng-maxlength="99" class="form-control" id="oauth_consumer_key" name="oauth_consumer_key" ng-required="true" ng-model="config['od.oauth_consumer_key']">
+                <!-- Required Text -->
+                <p ng-show="settingsDataForm.oauth_consumer_key.$dirty && settingsDataForm.oauth_consumer_key.$error.required" class="help-block" translate="ERROR_REQUIRED"></p>
+                <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                <p ng-show="settingsDataForm.oauth_consumer_key.$dirty && settingsDataForm.oauth_consumer_key.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+            </div>
+          </div> 
+          <div class="form-group">
+            <label for="oauth_consumer_secret" translate="LABEL_OAUTH_CONSUMER_SECRET"></label>
+            <div ng-class="{ 'has-error' : (settingsDataForm.oauth_consumer_secret.$dirty && settingsDataForm.oauth_consumer_secret.$error.required)
+            || (settingsDataForm.oauth_consumer_secret.$dirty && settingsDataForm.oauth_consumer_secret.$error.maxlength) }">
+                <input type="text" ng-maxlength="99" class="form-control" id="oauth_consumer_secret" name="oauth_consumer_secret" ng-required="true" ng-model="config['od.oauth_consumer_secret']">
+                <!-- Required Text -->
+                <p ng-show="settingsDataForm.oauth_consumer_secret.$dirty && settingsDataForm.oauth_consumer_secret.$error.required" class="help-block" translate="ERROR_REQUIRED"></p>
+                <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                <p ng-show="settingsDataForm.oauth_consumer_secret.$dirty && settingsDataForm.oauth_consumer_secret.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+            </div>
+          </div>  
+          <button class="btn btn-primary" type="button"
+            ng-disabled="!settingsDataForm.$valid || submitted" ng-click="save();" translate="BUTTON_SAVE" id="SETTINGS_ADMIN_SAVE"></button>
+          <button class="btn btn-link" type="button"
+            onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="SETTINGS_ADMIN_CANCEL"></button>
+        </form>
+      </div>
+    </div>                
+  </div>
+</div>

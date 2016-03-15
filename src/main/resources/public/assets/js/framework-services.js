@@ -284,12 +284,12 @@
     .service('SettingService', function($http){
       return {
         createSetting: function(setting){
+    	  var headers = {'Content-Type' : 'application/json'};
           var promise =
             $http({
                 method  : 'POST',
                 url     : '/api/setting',
-                data    : JSON.stringify(setting),
-                headers : { 'Content-Type': 'application/json' }
+                data    : JSON.stringify(setting)
             })
             .then(function (response) {
                 return response.data;
