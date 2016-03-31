@@ -54,9 +54,8 @@ angular
 
 
 angular
-.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification',
-                              'od.cards.lti', 'od.cards.eventviewer','od.cards.roster', 'od.cards.demo', 'od.cards.snapp','od.cards.modelviewer', 'od.cards.activityradar', 'od.cards.riskassessment', 
-                              'od.cards.activity']);
+.module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification', 'chart.js',
+                              'od.cards.lti', 'od.cards.riskassessment', 'od.cards.activity']);
 
 angular
 .module('OpenDashboard')
@@ -218,71 +217,57 @@ angular
 	        controller: 'IndexCtrl'
 	    })
 	    .state('index.admin', {
-	        url: 'direct/admin',
-	        templateUrl: '/assets/templates/admin.html',
-		    resolve:{
-	    	  providerTypes : function(ProviderService) {
-	    	    return ProviderService.getProviderTypes();
-	    	  }
-	     	},
-	        controller: 'AdminCtrl'
+	      abstract: true,
+          url: 'direct/admin',
+          templateUrl: '/assets/templates/admin/index.html',
+    	  resolve:{
+            tenants : function(TenantService) {
+        	  return TenantService.getTenants();
+            }
+          }
 	    })
-	    .state('index.admin.dashboards', {
-	        url: '/dashboards',
-	        templateUrl: '/assets/templates/admin/preconfiguredDashboards.html',
+	    .state('index.admin.tenants', {
+          url: '/tenants',
+          templateUrl: '/assets/templates/admin/tenant/index.html',
+          controller: 'TenantCtrl'
+	    })
+	    
+	    .state('index.admin.addTenant', {
+	        url: '/addTenant',
+	        templateUrl: '/assets/templates/admin/tenant/add.html',
 		    resolve:{
-	    	  preconfiguredDashboards : function(DashboardService) {
-	    	    return DashboardService.getPreconfigured();
+	     	},
+	        controller: 'TenantCtrl'
+	    })
+	    .state('index.admin.tenants.tenant', {
+	      url: '/:id',
+	      templateUrl: '/assets/templates/admin/tenant/tenant.html',
+		    resolve:{
+	    	  tenant: function($stateParams, TenantService) {
+	    	    return TenantService.getTenant($stateParams.id);
+	          },
+	    	  providerTypes : function(ProviderService) {
+	            return ProviderService.getProviderTypes();
 	          }
 	     	},
-	        controller: 'PreconfigureDashboardsCtrl'
+	     	controller: 'SelectTenantCtrl'
 	    })
-	    .state('index.admin.addpreconfigureddashboard', {
-	        url: '/dashboards/add',
-	        templateUrl: '/assets/templates/admin/addPreconfiguredDashboard.html',
-		    resolve:{
-	     	},
-	        controller: 'AddPreconfiguredDashboardCtrl'
-	    })
-	    .state('index.admin.editpreconfigureddashboard', {
-	        url: '/dashboards/edit/:id',
-	        templateUrl: '/assets/templates/admin/editPreconfiguredDashboard.html',
-		    resolve:{
-	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
-    	        return DashboardService.getPreconfiguredById($stateParams.id);
-              }
-	     	},
-	        controller: 'EditPreconfiguredDashboardCtrl'
-	    })
-	    .state('index.admin.removepreconfigureddashboard', {
-	        url: '/dashboards/remove/:id',
-	        templateUrl: '/assets/templates/admin/removePreconfiguredDashboard.html',
-		    resolve:{
-	    	  preconfiguredDashboard : function($stateParams, DashboardService) {
-    	        return DashboardService.getPreconfiguredById($stateParams.id);
-              }
-	     	},
-	        controller: 'RemovePreconfiguredDashboardCtrl'
-	    })
-	    .state('index.admin.providers', {
+	    .state('index.admin.tenants.tenant.provider', {
 	        url: '/:providerType',
-	        templateUrl: '/assets/templates/admin/providerlist.html',
+	        templateUrl: '/assets/templates/admin/tenant/provider/index.html',
 		    resolve:{
 	    	  providerType : function($stateParams) {
 	    	    return $stateParams.providerType;
 	          },
 	    	  providers : function(ProviderService, $stateParams) {
 	    	    return ProviderService.getProviders($stateParams.providerType);
-	    	  },
-	    	  providerData : function(ProviderService,$stateParams) {
-	    		return ProviderService.getProviderDataByType($stateParams.providerType);  
 	    	  }
 	     	},
 	        controller: 'ProviderListCtrl'
 	    })
-	    .state('index.admin.configureprovider', {
-	        url: '/:providerType/:providerKey',
-	        templateUrl: '/assets/templates/admin/configureprovider.html',
+	    .state('index.admin.tenants.tenant.provider.configure', {
+	        url: '/:providerKey/configure',
+	        templateUrl: '/assets/templates/admin/tenant/provider/configure.html',
 		    resolve:{
 	    	  providerType : function($stateParams) {
 	    	    return $stateParams.providerType;
@@ -293,9 +278,9 @@ angular
 	     	},
 	        controller: 'ConfigureProviderCtrl'
 	    })
-	    .state('index.admin.editconfigureprovider', {
-	        url: '/:providerType/:providerKey/edit',
-	        templateUrl: '/assets/templates/admin/editconfigureprovider.html',
+	    .state('index.admin.tenants.tenant.provider.edit', {
+	        url: '/:providerKey/edit',
+	        templateUrl: '/assets/templates/admin/tenant/provider/edit.html',
 		    resolve:{
 	    	  providerType : function($stateParams) {
 	    	    return $stateParams.providerType;
@@ -303,15 +288,15 @@ angular
 	    	  provider : function(ProviderService, $stateParams) {
 	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
 	    	  },
-	    	  providerData : function(ProviderService,$stateParams) {
-	    	    return ProviderService.getProviderDataByKey($stateParams.providerType,$stateParams.providerKey);  
+	    	  providerData : function(TenantService,$stateParams) {
+	    	    return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
 	    	  }
 	     	},
 	        controller: 'EditConfigureProviderCtrl'
 	    })
-	    .state('index.admin.deleteconfigureprovider', {
+	    .state('index.admin.tenants.tenant.provider.delete', {
 	        url: '/:providerType/:providerKey/delete',
-	        templateUrl: '/assets/templates/admin/deleteconfigureprovider.html',
+	        templateUrl: '/assets/templates/admin/tenant/provider/delete.html',
 		    resolve:{
 	    	  providerType : function($stateParams) {
 	    	    return $stateParams.providerType;
@@ -319,22 +304,39 @@ angular
 	    	  provider : function(ProviderService, $stateParams) {
 	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
 	    	  },
-	    	  providerData : function(ProviderService,$stateParams) {
-	    	    return ProviderService.getProviderDataByKey($stateParams.providerType,$stateParams.providerKey);  
+	    	  providerData : function(TenantService,$stateParams) {
+	    	    return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
 	    	  }
 	     	},
 	        controller: 'DeleteConfigureProviderCtrl'
 	    })
-	    .state('index.admin.settings', {
-	        url: '/direct/admin/settings',
-            templateUrl: '/assets/templates/admin/settings.html',
-            resolve:{
-              configuredSettings : function(SettingService) {
-                return SettingService.getSettings();
+	    .state('index.admin.tenants.tenant.addDashboard', {
+	        url: '/dashboards/add',
+	        templateUrl: '/assets/templates/admin/tenant/dashboards/add.html',
+		    resolve:{
+	     	},
+	        controller: 'AddPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.tenants.tenant.editDashboard', {
+	        url: '/dashboards/edit/:dashboardId',
+	        templateUrl: '/assets/templates/admin/tenant/dashboards/edit.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, TenantService) {
+    	        return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
               }
-            },
-            controller: 'SettingsCtrl'
-        })
+	     	},
+	        controller: 'EditPreconfiguredDashboardCtrl'
+	    })
+	    .state('index.admin.tenants.tenant.removeDashboard', {
+	        url: '/dashboards/remove/:dashboardId',
+	        templateUrl: '/assets/templates/admin/tenant/dashboards/remove.html',
+		    resolve:{
+	    	  preconfiguredDashboard : function($stateParams, TenantService) {
+    	        return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
+              }
+	     	},
+	        controller: 'RemovePreconfiguredDashboardCtrl'
+	    })
 	    .state('index.welcome', {
 	        url: 'welcome',
 	        templateUrl: '/assets/templates/welcome.html',

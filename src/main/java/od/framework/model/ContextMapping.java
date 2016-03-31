@@ -31,6 +31,7 @@ public class ContextMapping extends OpenDashboardModel {
 
     private String key;
     private String context;
+    private String tenantId;
     private Set<Dashboard> dashboards;
     private Date modified;
 
@@ -45,6 +46,12 @@ public class ContextMapping extends OpenDashboardModel {
     }
     public void setContext(String context) {
         this.context = context;
+    }
+    public String getTenantId() {
+      return tenantId;
+    }
+    public void setTenantId(String tenantId) {
+      this.tenantId = tenantId;
     }
     public Date getModified() {
         return modified;

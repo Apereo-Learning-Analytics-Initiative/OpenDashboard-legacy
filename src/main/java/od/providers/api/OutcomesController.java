@@ -22,6 +22,7 @@ import java.util.List;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.outcomes.OutcomesProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.LineItemImpl;
 import org.slf4j.Logger;
@@ -42,7 +43,8 @@ public class OutcomesController {
 	private static final Logger log = LoggerFactory.getLogger(OutcomesController.class);
 	
   @Autowired private ProviderService providerService;
-	
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/outcomes", method = RequestMethod.POST)
 	public List<LineItemImpl> outcomes(@RequestBody ProviderOptions providerOptions)
@@ -51,7 +53,7 @@ public class OutcomesController {
 		if (log.isDebugEnabled()) {
 			log.debug(providerOptions.toString());
 		}
-    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider();
+    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider(mongoTenantRepository.findOne(providerOptions.getTenantId()));
 
 		return outcomesProvider.getOutcomesForCourse(providerOptions);
 	}

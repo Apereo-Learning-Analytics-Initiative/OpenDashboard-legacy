@@ -19,7 +19,7 @@ angular
 .module('od.cards.riskassessment', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
     registryProvider.register('riskassessment',{
-        title: 'Risk Asessment',
+        title: 'Risk Assessment',
         description: '',
         imgUrl: '',
         cardType: 'riskassessment',
@@ -43,6 +43,7 @@ angular
        options.dashboardId = $scope.activeDashboard.id;
        options.cardId = $scope.card.id;
        options.courseId = $scope.activeCourse.id;
+       options.tenantId = $scope.contextMapping.tenantId;
 
        ModelOutputDataService
        .getModelOutputForCourse(options,$scope.activeCourse.id,0,1000)

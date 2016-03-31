@@ -22,6 +22,7 @@ import java.util.List;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.forum.ForumsProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.ForumImpl;
 import org.apereo.lai.impl.MessageImpl;
@@ -45,7 +46,8 @@ public class ForumsController {
   private static final Logger log = LoggerFactory.getLogger(ForumsController.class);
 
   @Autowired private ProviderService providerService;
-
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/forums", method = RequestMethod.POST)
   public List<ForumImpl> forums(@RequestBody ProviderOptions providerOptions) throws Exception {
@@ -53,7 +55,7 @@ public class ForumsController {
     if (log.isDebugEnabled()) {
       log.debug(providerOptions.toString());
     }
-    ForumsProvider forumsProvider = providerService.getForumsProvider();
+    ForumsProvider forumsProvider = providerService.getForumsProvider(mongoTenantRepository.findOne(providerOptions.getTenantId()));
     return forumsProvider.getForums(providerOptions);
   }
   
@@ -65,7 +67,7 @@ public class ForumsController {
       log.debug(providerOptions.toString());
       log.debug("topic id: "+id);
     }
-    ForumsProvider forumsProvider = providerService.getForumsProvider();
+    ForumsProvider forumsProvider = providerService.getForumsProvider(mongoTenantRepository.findOne(providerOptions.getTenantId()));
     return forumsProvider.getMessages(providerOptions, id);
   }
 

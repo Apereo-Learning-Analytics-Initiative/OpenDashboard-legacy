@@ -22,6 +22,7 @@ import java.util.List;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.assignment.AssignmentsProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.AssignmentImpl;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class AssignmentsController {
 	private static final Logger log = LoggerFactory.getLogger(AssignmentsController.class);
 	
   @Autowired private ProviderService providerService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 	
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/assignments", method = RequestMethod.POST)
@@ -53,7 +55,7 @@ public class AssignmentsController {
 			log.debug("options " + options);
 		}
 		
-    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider();
+    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider(mongoTenantRepository.findOne(options.getTenantId()));
 		
 		return assignmentsProvider.getAssignments(options);
 	}

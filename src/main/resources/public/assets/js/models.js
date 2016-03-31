@@ -28,6 +28,7 @@ var Constants = (function(window,undefined) {
     
 	    this.id = null;
 	    this.key = null;
+	    this.tenantId = null;
 	    this.dashboards = null;
 	    this.context = null;
 	    this.modified = null;
@@ -35,6 +36,7 @@ var Constants = (function(window,undefined) {
 	    if (options) {
 	    	this.id = options.id;
 	    	this.key = options.key;
+	    	this.tenantId = options.tenantId;
 	    	this.dashboards = options.dashboards;
 	    	this.context = options.context;
 	    	this.modified = options.modified;

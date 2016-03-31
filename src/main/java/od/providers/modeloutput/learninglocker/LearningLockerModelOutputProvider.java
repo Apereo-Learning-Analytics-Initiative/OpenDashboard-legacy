@@ -13,7 +13,7 @@ import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.modeloutput.ModelOutputProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.ModelOutput;
 import org.apereo.lai.impl.ModelOutputImpl;
@@ -46,7 +46,7 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
   
   private boolean DEMO = true;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {

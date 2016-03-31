@@ -11,6 +11,8 @@
 "BUTTON_REMOVE":"Remove Card",
 "BUTTON_ADD":"Add",
 
+"LABEL_TENANTS":"Tenants",
+
 "LABEL_SELECT_INSTITUTION": "Select your institution",
 "LABEL_LAUNCH_URL":"Launch URL",
 "LABEL_CONSUMER_KEY":"Consumer key",
@@ -141,6 +143,11 @@
 
 "LABEL_IDP_SELECTION":"Select your identity provider",
 "TEXT_IDP_SELECTION":"Select your identity provider from the list below.",
-"LABEL_SELECT_IDP":"Select your identity provider"
+"LABEL_SELECT_IDP":"Select your identity provider",
+
+"LABEL_ADD_TENANT":"Add a new tenant",
+"LABEL_TENANT_NAME":"Tenant Name",
+"LABEL_TENANT_DESCRIPTION":"Tenant Description",
+"LABEL_IDP_ENDPOINT":"IDP Endpoint"
 
 }

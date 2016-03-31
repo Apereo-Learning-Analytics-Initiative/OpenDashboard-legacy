@@ -21,13 +21,14 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.learninglocker.LearningLockerStudent;
 import od.providers.roster.RosterProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
@@ -60,7 +61,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   
   private boolean DEMO = true;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {
@@ -173,7 +174,8 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     
     log.debug("{}",path);
     
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = providerData.findValueForKey("base_url");
     if (!url.endsWith("/") && !path.startsWith("/")) {

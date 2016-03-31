@@ -18,13 +18,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.config.ProviderConfiguration;
 import od.providers.course.CourseProvider;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Course;
@@ -48,7 +49,7 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @PostConstruct
   public void init() {
@@ -57,7 +58,8 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
 
   @Override
   public Course getContext(ProviderOptions options) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = fullUrl(providerData, StringUtils.replace(ENTITY_URI, "{ID}", options.getCourseId()));
     ResponseEntity<CourseImpl> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), CourseImpl.class);
@@ -66,7 +68,8 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
 
   @Override
   public List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = fullUrl(providerData, COLLECTION_URI);
     ResponseEntity<SakaiSiteCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiSiteCollection.class);

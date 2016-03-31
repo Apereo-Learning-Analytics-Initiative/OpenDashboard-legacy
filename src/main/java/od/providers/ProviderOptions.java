@@ -35,6 +35,8 @@ public class ProviderOptions implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
+  private String tenantId;
+  
   private String contextMappingId;
   private String dashboardId;
   private String cardId;
@@ -47,6 +49,12 @@ public class ProviderOptions implements Serializable {
   private String strategyKey;
   private String strategyHost;
   
+  public String getTenantId() {
+    return tenantId;
+  }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
   public String getContextMappingId() {
     return contextMappingId;
   }

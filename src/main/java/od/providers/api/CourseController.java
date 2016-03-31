@@ -22,6 +22,7 @@ import java.util.List;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.course.CourseProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
@@ -43,6 +44,7 @@ public class CourseController {
   private static final Logger log = LoggerFactory.getLogger(CourseController.class);
   
   @Autowired private ProviderService providerService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/context", method = RequestMethod.POST)
@@ -52,7 +54,7 @@ public class CourseController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider();
+    CourseProvider courseProvider = providerService.getCourseProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
     return courseProvider.getContexts(options);
   }
@@ -65,7 +67,7 @@ public class CourseController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider();
+    CourseProvider courseProvider = providerService.getCourseProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
     return courseProvider.getContext(options);
   }

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -31,7 +32,7 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
@@ -62,7 +63,8 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  
   private RestTemplate restTemplate;
   
   @PostConstruct
@@ -78,8 +80,9 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
   
-  private PageImpl<Event> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+  private PageImpl<Event> fetch(String tenantId, Map<String, String> urlVariables, Pageable pageable, String uri) {
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
     
@@ -96,7 +99,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
       events = new LinkedList<Event>(pageWrapper.getContent());
     }
     
-    return new PageImpl<>(events, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<Event>(events, pageable, pageWrapper.getPage().getTotalElements());
 
   }
   
@@ -105,7 +108,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("contextId", options.getCourseId());
 
-    return fetch(urlVariables, pageable, "/api/context/{contextId}");
+    return fetch(options.getTenantId(), urlVariables, pageable, "/api/context/{contextId}");
   }
 
   @Override
@@ -114,7 +117,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     Map<String, String> urlVariables = new HashMap<>();
     urlVariables.put("userId", options.getUserId());
     
-    return fetch(urlVariables, pageable, "/api/user/{userId}");
+    return fetch(options.getTenantId(), urlVariables, pageable, "/api/user/{userId}");
   }
 
   @Override
@@ -124,7 +127,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     urlVariables.put("userId", options.getUserId());
     urlVariables.put("contextId", options.getCourseId());
     
-    return fetch(urlVariables, pageable, "/api/user/{userId}/context/{contextId}");
+    return fetch(options.getTenantId(), urlVariables, pageable, "/api/user/{userId}/context/{contextId}");
   }
   
   @Override

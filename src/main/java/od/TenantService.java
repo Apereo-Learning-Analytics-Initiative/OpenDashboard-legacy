@@ -17,12 +17,8 @@
  */
 package od;
 
-import java.util.HashMap;
-import java.util.Map;
+import od.framework.model.Tenant;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -34,25 +30,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TenantService {
-  private String tenant;
-  Map<String, String> tenantKeyMap;
+  private Tenant tenant;
   
-  @PostConstruct
-  public void init() {
-    // TODO - eventually moved to a singleton
-    tenantKeyMap = new HashMap<>();
-    tenantKeyMap.put("opendash", "tenant1");
-  }
-
-  public String getTenant() {
-    String mappedValue = tenantKeyMap.get(tenant);
-    if (StringUtils.isNotBlank(mappedValue)) {
-      return mappedValue;
-    }
+  public Tenant getTenant() {
     return tenant;
   }
 
-  public void setTenant(String tenant) {
+  public void setTenant(Tenant tenant) {
     this.tenant = tenant;
   }
 }

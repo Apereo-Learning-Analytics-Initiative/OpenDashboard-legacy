@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderOptions;
 import od.providers.config.DefaultProviderConfiguration;
@@ -41,7 +42,7 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.roster.RosterProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
@@ -88,7 +89,7 @@ public class BasicLISRosterProvider implements RosterProvider {
   private ProviderConfiguration providerConfiguration;
   
   private RestTemplate restTemplate = new RestTemplate();
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @PostConstruct
   public void init() {
@@ -124,7 +125,8 @@ public class BasicLISRosterProvider implements RosterProvider {
 
   @Override
   public Set<Member> getRoster(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = options.getStrategyHost();
     String rosterIdentifier = options.getStrategyKey();

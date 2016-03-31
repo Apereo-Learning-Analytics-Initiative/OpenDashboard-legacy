@@ -18,6 +18,8 @@ package od;
 import java.util.ArrayList;
 import java.util.List;
 
+import od.repository.mongo.MongoTenantRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 public class SAMLUserDetailsServiceImpl implements SAMLUserDetailsService {
   
   @Autowired private TenantService tenantService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 	
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(SAMLUserDetailsServiceImpl.class);
@@ -51,7 +54,7 @@ public class SAMLUserDetailsServiceImpl implements SAMLUserDetailsService {
 		GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_INSTRUCTOR");
 		authorities.add(authority);
 
-		tenantService.setTenant(tenantId);
+		tenantService.setTenant(mongoTenantRepository.findOne(tenantId));
 		return new OpenDashboardUser(username, password, authorities, tenantId, null);
 	}
 	

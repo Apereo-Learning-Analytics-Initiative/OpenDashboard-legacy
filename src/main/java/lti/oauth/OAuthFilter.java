@@ -18,7 +18,12 @@
 package lti.oauth;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,10 +31,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
+import od.exception.MissingTenantException;
+import od.framework.api.TenantController;
+import od.framework.model.Consumer;
+import od.framework.model.Tenant;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -44,10 +55,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class OAuthFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(OAuthFilter.class);
 
-  @Value("${auth.oauth.key}")
-  private String key;
-  @Value("${auth.oauth.secret}")
-  private String secret;
+//  @Value("${auth.oauth.key}")
+//  private String key;
+//  @Value("${auth.oauth.secret}")
+//  private String secret;
+  
+  @Autowired private MongoTenantRepository tenantRepository;
 
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
@@ -61,10 +74,27 @@ public class OAuthFilter extends OncePerRequestFilter {
       LaunchRequest launchRequest = new LaunchRequest(req.getParameterMap());
       SortedMap<String, String> alphaSortedMap = launchRequest.toSortedMap();
       String signature = alphaSortedMap.remove(OAuthUtil.SIGNATURE_PARAM);
+      
+      String consumerKey = alphaSortedMap.get(OAuthUtil.CONSUMER_KEY_PARAM);
+      Tenant tenant = tenantRepository.findByConsumersOauthConsumerKey(consumerKey);
+      
+      if (tenant == null) {
+        res.sendRedirect("/errorpage");
+        return;
+        //throw new MissingTenantException("NO TENANT");
+      }
+      
+      Set<Consumer> consumers = tenant.getConsumers();
+      
+      if (consumers == null || consumers.isEmpty()) {
+        throw new MissingTenantException("OAUTH_MISSING_KEY");
+      }
+      
+      List<Consumer> consumer = consumers.stream().filter(c -> c.getOauthConsumerKey().equals(consumerKey)).collect(Collectors.toList());
 
       String calculatedSignature;
       try {
-        calculatedSignature = new OAuthMessageSigner().sign(secret, OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)), "POST",
+        calculatedSignature = new OAuthMessageSigner().sign(consumer.get(0).getOauthConsumerSecret(), OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)), "POST",
             req.getRequestURL().toString(), alphaSortedMap);
       } catch (Exception e) {
         logger.error(e.getMessage(), e);
@@ -78,7 +108,7 @@ public class OAuthFilter extends OncePerRequestFilter {
         if (StringUtils.startsWithIgnoreCase(req.getRequestURL().toString(), "https:")) {
           String url = StringUtils.replaceOnce(req.getRequestURL().toString(), "https:", "http:");
           try {
-            recalculatedSignature = new OAuthMessageSigner().sign(secret, OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)),
+            recalculatedSignature = new OAuthMessageSigner().sign(consumer.get(0).getOauthConsumerSecret(), OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)),
                 "POST", url, alphaSortedMap);
           } catch (Exception e) {
             logger.error(e.getMessage(), e);

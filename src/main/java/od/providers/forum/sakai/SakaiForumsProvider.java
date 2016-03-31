@@ -22,13 +22,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.config.ProviderConfiguration;
 import od.providers.forum.ForumsProvider;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.ForumImpl;
@@ -55,7 +56,7 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @PostConstruct
   public void init() {
@@ -64,7 +65,8 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
 
   @Override
   public List<ForumImpl> getForums(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     List<ForumImpl> f = null;
 
@@ -85,7 +87,8 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
 
   @Override
   public List<MessageImpl> getMessages(ProviderOptions options, final String topicId) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     List<MessageImpl> m = null;
 

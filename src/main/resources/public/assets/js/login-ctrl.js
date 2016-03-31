@@ -41,7 +41,7 @@ function LoginCtrl($log, $scope, $state, SessionService, isMultiTenant, isSaml, 
           $scope.validationError = !data;
           if(data) {
   		    if (SessionService.hasAdminRole()) {
-  		      $state.go('index.admin');
+  		      $state.go('index.admin.tenants');
   		    }
   		    else {
   		      $state.go('index.courselist');

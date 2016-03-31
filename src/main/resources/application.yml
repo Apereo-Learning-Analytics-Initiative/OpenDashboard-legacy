@@ -18,7 +18,6 @@ server:
   
 features:
   saml: false
-  multitenant: false
   
 # Security settings
 auth:
@@ -29,7 +28,7 @@ auth:
 # Logging settings
 logging:
   level:
-    org.apache.velocity: 'NONE'
+    org.apache.velocity: OFF
 
 # Spring settings
 spring:

@@ -10,13 +10,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.api.PageWrapper;
 import od.providers.course.CourseProvider;
 import od.providers.learninglocker.LearningLockerProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
@@ -50,7 +51,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {
@@ -72,11 +73,11 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return DESC;
   }
 
-  private PageImpl<LearningLockerModuleInstance> fetch(Pageable pageable, String path) {
+  private PageImpl<LearningLockerModuleInstance> fetch(Pageable pageable, Tenant tenant, String path) {
     
     log.debug("{}",path);
     
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    ProviderData providerData = tenant.findByKey(KEY);
 
     String url = providerData.findValueForKey("base_url");
     if (!url.endsWith("/") && !path.startsWith("/")) {
@@ -108,7 +109,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
       output = new ArrayList<>();
     }
     
-    return new PageImpl<>(output, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<LearningLockerModuleInstance>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
 
@@ -119,8 +120,9 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     String path = "/api/v1/LearningLockerModuleInstances?query={\"_id\":\"%s\"}&populate=MODULE";
     path = String.format(path, options.getCourseId());
     
-    Pageable pageable = new PageRequest(0, 1);    
-    PageImpl<LearningLockerModuleInstance> page = fetch(pageable, path);
+    Pageable pageable = new PageRequest(0, 1);  
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    PageImpl<LearningLockerModuleInstance> page = fetch(pageable, tenant, path);
     
     if (page != null && page.hasContent()) {
       List<LearningLockerModuleInstance> LearningLockerModuleInstances = page.getContent();

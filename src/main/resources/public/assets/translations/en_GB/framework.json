@@ -11,6 +11,8 @@
 "BUTTON_REMOVE":"Remove Card",
 "BUTTON_ADD":"Add",
 
+"LABEL_TENANTS":"Tenants",
+
 "LABEL_SELECT_INSTITUTION": "Select your institution",
 "LABEL_LAUNCH_URL":"Launch URL",
 "LABEL_CONSUMER_KEY":"Consumer key",

@@ -19,9 +19,11 @@ package od.providers.api;
 
 import java.util.Set;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.roster.RosterProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Member;
 import org.slf4j.Logger;
@@ -43,17 +45,17 @@ public class RosterController {
 	private static final Logger log = LoggerFactory.getLogger(RosterController.class);
 	
   @Autowired private ProviderService providerService;
-	
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/roster", method = RequestMethod.POST)
 	public Set<Member> roster(@RequestBody ProviderOptions options)
 			throws Exception {
-
 		if (log.isDebugEnabled()) {
 			log.debug(options.toString());
 		}
-    RosterProvider rosterProvider = providerService.getRosterProvider();
-
+		Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    RosterProvider rosterProvider = providerService.getRosterProvider(tenant);
 		return rosterProvider.getRoster(options);
 	}
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import od.framework.model.Tenant;
 import od.providers.assignment.AssignmentsProvider;
 import od.providers.config.ProviderDataConfigurationException;
 import od.providers.course.CourseProvider;
@@ -29,7 +30,6 @@ import od.providers.forum.ForumsProvider;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.outcomes.OutcomesProvider;
 import od.providers.roster.RosterProvider;
-import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +57,7 @@ public class ProviderService {
   @Autowired private Map<String, ModelOutputProvider> modelOutputProviders;
   @Autowired private Map<String, OutcomesProvider> outcomesProviders;
   @Autowired private Map<String, RosterProvider> rosterProviders;
-  
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
-  
+    
   public List<Provider> getProvidersByType(final String type) {
     if (StringUtils.isBlank(type)) {
       throw new IllegalArgumentException("Provider type cannot be null");
@@ -126,8 +124,8 @@ public class ProviderService {
     return provider;
   }
   
-  public ProviderData getConfiguredProviderDataByType(String type) throws ProviderDataConfigurationException {
-    List<ProviderData> providerDataList = providerDataRepositoryInterface.findByProviderType(type);
+  public ProviderData getConfiguredProviderDataByType(Tenant tenant, String type) throws ProviderDataConfigurationException {
+    List<ProviderData> providerDataList = tenant.findByType(type);
     if (providerDataList != null && !providerDataList.isEmpty()) {
       if (providerDataList.size() == 1) {
         return providerDataList.get(0);
@@ -141,8 +139,8 @@ public class ProviderService {
     }
   }
   
-  public AssignmentsProvider getAssignmentsProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(ASSIGNMENT);
+  public AssignmentsProvider getAssignmentsProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, ASSIGNMENT);
     return assignmentProviders.get(pd.getProviderKey());
   }
   
@@ -154,8 +152,8 @@ public class ProviderService {
     return courseProviders.get(key);
   }
   
-  public CourseProvider getCourseProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(COURSE);
+  public CourseProvider getCourseProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, COURSE);
     return courseProviders.get(pd.getProviderKey());
   }
   
@@ -163,8 +161,8 @@ public class ProviderService {
     return eventProviders.get(key);
   }
   
-  public EventProvider getEventProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(EVENT);
+  public EventProvider getEventProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, EVENT);
     return eventProviders.get(pd.getProviderKey());
   }
 
@@ -172,8 +170,8 @@ public class ProviderService {
     return forumsProviders.get(key);
   }
   
-  public ForumsProvider getForumsProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(FORUM);
+  public ForumsProvider getForumsProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, FORUM);
     return forumsProviders.get(pd.getProviderKey());
   }
 
@@ -181,8 +179,8 @@ public class ProviderService {
     return modelOutputProviders.get(key);
   }
   
-  public ModelOutputProvider getModelOutputProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(MODELOUTPUT);
+  public ModelOutputProvider getModelOutputProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, MODELOUTPUT);
     return modelOutputProviders.get(pd.getProviderKey());
   }
   
@@ -190,8 +188,8 @@ public class ProviderService {
     return outcomesProviders.get(key);
   }
   
-  public OutcomesProvider getOutcomesProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(OUTCOMES);
+  public OutcomesProvider getOutcomesProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, OUTCOMES);
     return outcomesProviders.get(pd.getProviderKey());
   }
   
@@ -199,8 +197,8 @@ public class ProviderService {
     return rosterProviders.get(key);
   }
   
-  public RosterProvider getRosterProvider() throws ProviderDataConfigurationException {
-    ProviderData pd = getConfiguredProviderDataByType(ROSTER);
+  public RosterProvider getRosterProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, ROSTER);
     return rosterProviders.get(pd.getProviderKey());
   }
 

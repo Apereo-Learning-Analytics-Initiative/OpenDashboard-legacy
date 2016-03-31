@@ -21,12 +21,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderOptions;
 import od.providers.assignment.AssignmentsProvider;
 import od.providers.config.ProviderConfiguration;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.AssignmentImpl;
@@ -52,7 +53,7 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {
@@ -61,11 +62,17 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
 
   @Override
   public List<AssignmentImpl> getAssignments(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
     
-    String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", options.getCourseId()));
-    ResponseEntity<SakaiAssignmentCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiAssignmentCollection.class);
-    return messageResponse.getBody().getAssignment_collection();
+    if (tenant != null) {
+      ProviderData providerData = tenant.findByKey(KEY);
+      
+      String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", options.getCourseId()));
+      ResponseEntity<SakaiAssignmentCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiAssignmentCollection.class);
+      return messageResponse.getBody().getAssignment_collection();
+    }   
+    
+    return null;
   }
 
   @Override

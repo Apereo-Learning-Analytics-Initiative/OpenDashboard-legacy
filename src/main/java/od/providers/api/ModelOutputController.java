@@ -18,9 +18,11 @@
 package od.providers.api;
 
 import od.TenantService;
+import od.framework.model.Tenant;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.modeloutput.ModelOutputProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.ModelOutput;
 import org.slf4j.Logger;
@@ -45,6 +47,7 @@ public class ModelOutputController {
   private static final Logger log = LoggerFactory.getLogger(ModelOutputController.class);
   @Autowired private ProviderService providerService;
   @Autowired private TenantService tenantService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/modeloutput/course/{courseId}", method = RequestMethod.POST)
@@ -55,13 +58,14 @@ public class ModelOutputController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
     
-    return modelOutputProvider.getModelOutputForCourse(options, tenantService.getTenant(), courseId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForCourse(options, options.getTenantId(), courseId, new PageRequest(page, size));
   }
   
-  @Secured({"ROLE_INSTRUCTOR","ROLE_STUDENT"})
+  @Secured({"ROLE_INSTRUCTOR"})
   @RequestMapping(value = "/api/modeloutput/user/{userId}", method = RequestMethod.POST)
   public Page<ModelOutput> modelOutputForUser(@RequestBody ProviderOptions options, @PathVariable("userId") final String userId, @RequestParam(value="page", required=false) int page,
       @RequestParam(value="size", required=false) int size)
@@ -70,10 +74,11 @@ public class ModelOutputController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
     
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider();
+    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
     
-    return modelOutputProvider.getModelOutputForStudent(options, tenantService.getTenant(), userId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForStudent(options, options.getTenantId(), userId, new PageRequest(page, size));
   }
 
 }

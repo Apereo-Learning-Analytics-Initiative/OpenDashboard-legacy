@@ -27,8 +27,10 @@ import lti.LaunchRequest;
 import lti.ProxiedLaunch;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
+import od.framework.model.Tenant;
 import od.providers.api.LTIProxyController;
 import od.repository.ContextMappingRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 import od.utils.Response;
 
 import org.junit.Before;
@@ -53,7 +55,11 @@ public class LTIProxyControllerTest extends ControllerTests {
     private Card card;
     @Mock
     private ContextMappingRepositoryInterface contextMappingRepository;
-
+    @Mock
+    private Tenant tenant;
+    @Mock
+    private MongoTenantRepository mongoTenantRepository;
+    
     @InjectMocks
     private LTIProxyController ltiProxyController;
 
@@ -78,6 +84,8 @@ public class LTIProxyControllerTest extends ControllerTests {
         Map<String, Object> config = createConfig();
 
         given(contextMappingRepository.findOne("contextMappingId")).willReturn(contextMapping);
+        given(mongoTenantRepository.findByConsumersOauthConsumerKey("tenant1")).willReturn(tenant);
+        given(mongoTenantRepository.findOne("tenant1")).willReturn(tenant);
         given(contextMapping.findCard("cardId")).willReturn(card);
         given(card.getConfig()).willReturn(config);
 
@@ -98,6 +106,8 @@ public class LTIProxyControllerTest extends ControllerTests {
         serviceFailureExpectedResponse.setUrl("http://localhost/api/contextMappingId/lti/launch/cardId");
 
         given(contextMappingRepository.findOne("contextMappingId")).willThrow(new RuntimeException(EXCEPTION_MESSAGE));
+        given(mongoTenantRepository.findByConsumersOauthConsumerKey("tenant1")).willReturn(tenant);
+        given(mongoTenantRepository.findOne("tenant1")).willReturn(tenant);
         given(contextMapping.findCard("cardId")).willReturn(card);
         given(card.getConfig()).willReturn(config);
 

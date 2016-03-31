@@ -12,8 +12,9 @@ import java.util.UUID;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.framework.model.Dashboard;
+import od.framework.model.Tenant;
 import od.repository.ContextMappingRepositoryInterface;
-import od.repository.PreconfiguredDashboardRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +34,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContextMappingController {
   private static final Logger log = LoggerFactory.getLogger(ContextMappingController.class);
   @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
-  @Autowired private PreconfiguredDashboardRepositoryInterface preconfiguredDashboardRepository;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 		
 	@Secured("ROLE_INSTRUCTOR")
 	@RequestMapping(value = "/api/consumer/{consumerKey}/context", method = RequestMethod.POST, 
 			produces = "application/json;charset=utf-8", consumes = "application/json")
-	public ContextMapping create(@RequestBody ContextMapping contextMapping) {
+	public ContextMapping create(@RequestBody ContextMapping contextMapping, @PathVariable("consumerKey") final String consumerKey) {
 		
 		try {
-		  List<Dashboard> dashboards = preconfiguredDashboardRepository.findAll();
+		  
+		  Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
+		  contextMapping.setTenantId(tenant.getId());
+		  
+		  Set<Dashboard> dashboards = tenant.getDashboards();
 			if (dashboards != null && !dashboards.isEmpty()) {
         Set<Dashboard> dashboardSet = new HashSet<>();
         for (Dashboard db : dashboards) {

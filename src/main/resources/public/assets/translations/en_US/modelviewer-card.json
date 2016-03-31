@@ -1,7 +1,0 @@
-{
-"LABEL_LEARNER":"Learner",
-"LABEL_RISK":"Risk",
-"TEXT_NO_OUTPUT":"No model output available for {{courseTitle}}",
-"TEXT_OUTPUT":"Model output for {{courseTitle}}",
-"ERROR_NO_PROVIDER_MODELOUTPUT":"Unable to access model output data because no model output data providers are configured. Contact your system administrator."
-}

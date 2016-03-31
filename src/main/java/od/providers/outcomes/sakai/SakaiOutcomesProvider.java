@@ -21,13 +21,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 import od.providers.config.ProviderConfiguration;
 import od.providers.outcomes.OutcomesProvider;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.LineItemImpl;
@@ -49,7 +50,7 @@ public class SakaiOutcomesProvider extends BaseSakaiProvider implements Outcomes
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @PostConstruct
   public void init() {
@@ -58,7 +59,8 @@ public class SakaiOutcomesProvider extends BaseSakaiProvider implements Outcomes
 
   @Override
   public List<LineItemImpl> getOutcomesForCourse(ProviderOptions options) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
 
     List<LineItemImpl> lineItems = null;
     

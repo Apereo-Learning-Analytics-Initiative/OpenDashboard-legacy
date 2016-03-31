@@ -13,22 +13,21 @@ or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
 <div class="row">            
-    <div class="col-xs-12 col-md-offset-2 col-md-8 col-md-offset-2">
-      <div class="chart-wrapper">
-        <div class="chart-title">
+    <div class="col-xs-12 col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
           <h3 translate="LABEL_WELCOME"></h3>
           <h5 translate="TEXT_WELCOME_LEAD"></h5>
         </div>
-        <div class="chart-stage">
+        <div class="panel-body">
           <div class="row m-t">
               <div class="col-xs-12">
                 <p translate="TEXT_WELCOME_INFO"></p>
                 <p class="lead" ng-if="isStudent" translate="TEXT_OD_NOT_CONFIGURED"></p>
+                          <button ng-if="!isStudent" class="btn btn-primary btn-large" ng-click="saveContextMapping()" translate="BUTTON_GET_STARTED" id="BUTTON_WELCOME_GET_STARTED">Get Started</button>
+                
               </div>
           </div>
-        </div>
-        <div class="chart-notes">
-          <button ng-if="!isStudent" class="btn btn-primary btn-large" ng-click="saveContextMapping()" translate="BUTTON_GET_STARTED" id="BUTTON_WELCOME_GET_STARTED">Get Started</button>
         </div>
       </div>        
     </div>

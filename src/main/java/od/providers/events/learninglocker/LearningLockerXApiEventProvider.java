@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
@@ -41,7 +42,7 @@ import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
 import od.providers.learninglocker.LearningLockerProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Event;
@@ -68,7 +69,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {
@@ -98,10 +99,11 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     return DESC;
   }
 
-  private Page<Event> fetch(String more) throws IOException {
+  private Page<Event> fetch(String tenantId, String more) throws IOException {
     Page<Event> page = null;
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
     
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+    ProviderData providerData = tenant.findByKey(KEY);
     String uri = providerData.findValueForKey("base_url");
     String user = providerData.findValueForKey("key");
     String password = providerData.findValueForKey("secret");
@@ -132,7 +134,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     String more = null;
     
     try {
-      events = fetch(more);
+      events = fetch(options.getTenantId(), more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
@@ -147,7 +149,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     String more = null;
     
     try {
-      events = fetch(more);
+      events = fetch(options.getTenantId(), more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
@@ -162,7 +164,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     String more = null;
     
     try {
-      events = fetch(more);
+      events = fetch(options.getTenantId(), more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
