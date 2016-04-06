@@ -26,6 +26,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,6 +47,22 @@ public class AppControllerAdvice {
       response.setData("ERROR_NO_PROVIDER_"+StringUtils.substringAfterLast(ex.getMessage(), ": "));
       response.setUrl(request.getRequestURL().toString());
       return response;
+    }
+    
+    @ExceptionHandler(UnauthorizedUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public @ResponseBody Object unauthorized(HttpServletRequest request, UnauthorizedUserException ex) {
+      if (isAjaxCall(request)) {
+        logger.error(ex.getMessage(), ex);
+        Response response = new Response();
+        response.setErrors(Arrays.asList(ex.getMessage()));
+        response.setData(ExceptionUtils.getStackTrace(ex));
+        response.setUrl(request.getRequestURL().toString());
+        return response;
+    } else {
+      ModelAndView modelAndView = new ModelAndView("unauthorized");
+      return modelAndView;
+    }
     }
 
     @ExceptionHandler(Exception.class)

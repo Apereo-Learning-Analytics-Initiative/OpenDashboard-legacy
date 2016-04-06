@@ -11,10 +11,14 @@ import java.util.Date;
  *
  */
 public abstract class LearningLockerEntity {
+  protected String id;
   protected String institutionId;
   protected Date createdAt;
   protected Date updatedAt;
   
+  public String getId() {
+    return id;
+  }
   public String getInstitutionId() {
     return institutionId;
   }

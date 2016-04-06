@@ -44,6 +44,7 @@ angular
        options.cardId = $scope.card.id;
        options.courseId = $scope.activeCourse.id;
        options.tenantId = $scope.contextMapping.tenantId;
+       options.isLti = SessionService.isLTISession();
 
        ModelOutputDataService
        .getModelOutputForCourse(options,$scope.activeCourse.id,0,1000)
@@ -67,7 +68,7 @@ angular
          .then(function(rosterData){
         	 $scope.roster = rosterData;
         	 
-        	            _.remove($scope.roster,function(member){return member.role == 'Instructor'});
+        	_.remove($scope.roster,function(member){return member.role == 'Instructor'});
            
             _.forEach($scope.roster, function(obj){
             		var match = _.find($scope.model_output, function(o) {

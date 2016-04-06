@@ -49,6 +49,8 @@ public class ProviderOptions implements Serializable {
   private String strategyKey;
   private String strategyHost;
   
+  private boolean isLti;
+  
   public String getTenantId() {
     return tenantId;
   }
@@ -109,6 +111,12 @@ public class ProviderOptions implements Serializable {
   }
   public void setStrategyKey(String strategyKey) {
     this.strategyKey = strategyKey;
+  }
+  public boolean isLti() {
+    return isLti;
+  }
+  public void setLti(boolean isLti) {
+    this.isLti = isLti;
   }
   @Override
   public String toString() {

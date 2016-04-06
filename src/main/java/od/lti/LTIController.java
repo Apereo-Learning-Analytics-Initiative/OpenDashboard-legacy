@@ -33,6 +33,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,8 @@ public class LTIController {
     if (LTIController.hasInstructorRole(null, launchRequest.getRoles())) {
       role = "ROLE_INSTRUCTOR";
     } else {
-      role = "ROLE_STUDENT";
+      throw new UnauthorizedUserException("Does not have the instructor role");
+      //role = "ROLE_STUDENT";
     }
 
     LTIAuthenticationToken token = new LTIAuthenticationToken(launchRequest, launchRequest.getOauth_consumer_key(), launchRequest.toJSON(), uuid,

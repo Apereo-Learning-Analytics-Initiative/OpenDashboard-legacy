@@ -27,6 +27,7 @@ function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMapp
 
   $scope.changeLanguage = function (locale) {
     LocaleService.setLocaleByDisplayName(locale);
+    $state.reload();
   };
   
   $scope.getLocaleImgPath = function (locale) {	
