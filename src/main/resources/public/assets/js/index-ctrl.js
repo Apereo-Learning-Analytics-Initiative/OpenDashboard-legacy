@@ -61,7 +61,28 @@ function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMapp
     	.then(function (contextMapping) {
     		$scope.contextMapping = contextMapping;
     	    if (!$scope.contextMapping) {
-		      $state.go('index.welcome'); 
+		      //$state.go('index.welcome'); 
+                var cm_options = {};
+                cm_options.key = inbound_lti_launch_request.oauth_consumer_key;
+                cm_options.context = inbound_lti_launch_request.context_id;
+                
+                var options = ContextMappingService.createContextMappingInstance(cm_options);
+    
+                ContextMappingService.create(options)
+                .then(function(savedContextMapping) {
+                    var cm = ContextMappingService.createContextMappingInstance(savedContextMapping);
+                    
+                    var dashboards = cm.dashboards;
+                    if (dashboards && dashboards.length > 0) {
+                        var dashboard = dashboards[0];
+                        $log.log('default dashboard: '+dashboard);
+        				$state.go('index.dashboard', {cmid:cm.id,dbid:dashboard.id});
+                    }
+                    else {
+                      // no dashboards
+                      $state.go('index.addDashboard', {cmid:cm.id});
+                    }
+                });
 			}
 			else {
 			  if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {

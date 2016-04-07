@@ -44,6 +44,8 @@
                   $state.go('index.addDashboard', {cmid:cm.id});
                 }
             });
-        };        
+        };  
+        
+        $scope.saveContextMapping();
     });
 })(angular);

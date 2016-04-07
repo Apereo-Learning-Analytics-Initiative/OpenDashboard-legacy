@@ -17,6 +17,7 @@ import od.providers.ProviderOptions;
 import od.providers.api.PageWrapper;
 import od.providers.course.CourseProvider;
 import od.providers.learninglocker.LearningLockerProvider;
+import od.providers.learninglocker.LearningLockerStaffModuleInstance;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Course;
@@ -36,6 +37,7 @@ import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author ggilbert
@@ -50,6 +52,8 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   private static final String BASE = "LEARNING_LOCKER_COURSE";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
+  
+  private boolean OAUTH = false;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
@@ -138,9 +142,80 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   }
 
   @Override
-  public List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException {
+  public List<Course> getContexts(ProviderOptions options) throws ProviderException {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public List<Course> getContextsForUser(ProviderOptions options) throws ProviderException {
+    List<Course> output = null;
+
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = tenant.findByKey(KEY);
+    String baseUrl = providerData.findValueForKey("base_url");
+    if (!baseUrl.endsWith("/")) {
+      baseUrl = baseUrl + "/";
+    }
+
+    RestTemplate restTemplate;
+    
+    if (OAUTH) {
+      ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+      resourceDetails.setClientId(providerData.findValueForKey("key"));
+      resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
+      resourceDetails.setAccessTokenUri(getUrl(baseUrl, LL_OAUTH_TOKEN_URI, null));
+      DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+
+      restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
+    }
+    else {
+      restTemplate = new RestTemplate();
+    }
+    
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
+    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+    
+    String staffModuleInstancePath = ""; // TODO
+    LearningLockerStaffModuleInstance [] staffModuleInstances = restTemplate.exchange(baseUrl + staffModuleInstancePath, 
+        HttpMethod.GET, null, LearningLockerStaffModuleInstance[].class, options.getUserId()).getBody();
+      
+    if (staffModuleInstances != null && staffModuleInstances.length > 0) {
+      StringBuilder result = new StringBuilder();
+      for(LearningLockerStaffModuleInstance smi : staffModuleInstances) {
+        result.append("'");
+        result.append("TBD"); // TODO
+        result.append("'");
+        result.append(",");
+      }
+      String staffModuleIdList = result.length() > 0 ? result.substring(0, result.length() - 1): "";
+      
+      String moduleInstancePath = ""; // TODO
+      String queryValue = String.format("", staffModuleIdList); // TODO
+      LearningLockerModuleInstance [] moduleInstances = restTemplate.exchange(baseUrl + moduleInstancePath, HttpMethod.GET, null, LearningLockerModuleInstance[].class, queryValue).getBody();
+      
+      if (moduleInstances != null && moduleInstances.length > 0) {
+        output = new ArrayList<>();
+        
+        for (LearningLockerModuleInstance mi : moduleInstances) {
+          output.add(toCourse(mi));
+        }
+      }
+      else {
+        output = new ArrayList<>();
+      }
+    }
+    
+    return output;
+  }
+  
+  private Course toCourse(LearningLockerModuleInstance llModuleInstance) {
+    CourseImpl course = new CourseImpl();
+    course.setId(llModuleInstance.getModInstanceId());
+    course.setTitle(llModuleInstance.getModule().getModName());
+    return course;
   }
 
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import od.framework.model.OpenDashboardModel;
 
+import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
 
 /**
@@ -33,13 +34,13 @@ public class SakaiSiteCollection extends OpenDashboardModel {
 
   public SakaiSiteCollection () {}
   
-  private List<CourseImpl> site_collection;
+  private List<Course> site_collection;
 
-  public List<CourseImpl> getSite_collection() {
+  public List<Course> getSite_collection() {
     return site_collection;
   }
 
-  public void setSite_collection(List<CourseImpl> site_collection) {
+  public void setSite_collection(List<Course> site_collection) {
     this.site_collection = site_collection;
   }
 }

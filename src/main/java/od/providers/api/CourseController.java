@@ -25,7 +25,6 @@ import od.providers.course.CourseProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Course;
-import org.apereo.lai.impl.CourseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class CourseController {
   
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/context", method = RequestMethod.POST)
-  public List<CourseImpl> contexts(@RequestBody ProviderOptions options)
+  public List<Course> contexts(@RequestBody ProviderOptions options)
       throws Exception {
 
     if (log.isDebugEnabled()) {
@@ -56,7 +55,7 @@ public class CourseController {
     }
     CourseProvider courseProvider = providerService.getCourseProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
-    return courseProvider.getContexts(options);
+    return courseProvider.getContextsForUser(options);
   }
 
   @Secured("ROLE_INSTRUCTOR")

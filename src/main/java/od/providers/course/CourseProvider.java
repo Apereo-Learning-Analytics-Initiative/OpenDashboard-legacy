@@ -24,7 +24,6 @@ import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 
 import org.apereo.lai.Course;
-import org.apereo.lai.impl.CourseImpl;
 
 /**
  * @author ggilbert
@@ -32,5 +31,6 @@ import org.apereo.lai.impl.CourseImpl;
  */
 public interface CourseProvider extends Provider {
   Course getContext(ProviderOptions options) throws ProviderException;
-  List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException;
+  List<Course> getContexts(ProviderOptions options) throws ProviderException;
+  List<Course> getContextsForUser(ProviderOptions options) throws ProviderException;
 }

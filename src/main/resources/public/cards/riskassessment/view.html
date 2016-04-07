@@ -138,7 +138,7 @@
             &nbsp;
             <strong>{{learner.person.name_full}}</strong>
             <span class="od-text-black label pull-right" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{learner.output.MODEL_RISK_CONFIDENCE}}</span>
+            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{translateRiskLevel(learner.output.MODEL_RISK_CONFIDENCE)}}</span>
             <div class="row m-t" ng-show="expand" ng-init="indicators = getIndicators(learner)">
               <div class="col-xs-12">
                 <div class="list-group">

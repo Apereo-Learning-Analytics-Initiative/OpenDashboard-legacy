@@ -67,13 +67,19 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
   }
 
   @Override
-  public List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException {
+  public List<Course> getContexts(ProviderOptions options) throws ProviderException {
     Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
     ProviderData providerData = tenant.findByKey(KEY);
 
     String url = fullUrl(providerData, COLLECTION_URI);
     ResponseEntity<SakaiSiteCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiSiteCollection.class);
     return messageResponse.getBody().getSite_collection();
+  }
+
+  @Override
+  public List<Course> getContextsForUser(ProviderOptions options) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
