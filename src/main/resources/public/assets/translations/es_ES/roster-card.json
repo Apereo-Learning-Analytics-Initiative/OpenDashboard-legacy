@@ -1,0 +1,8 @@
+{
+"LABEL_LAST_ACTIVITY":"Última Actividad",
+"LABEL_STUDENT_NAME":"Nombre Estudiante",
+"LABEL_ACTIVITY_LEVEL":"Nivel de Actividad",
+"LABEL_RISK_ASSESSMENT":"Evaluacion de Riesgos",
+"ERROR_NO_PROVIDER_ROSTER":"No se puede acceder a los datos del evento porque no hay ningún suceso a proveedores de datos que este configurado. Póngase en contacto con el administrador del sistema ."
+
+}
