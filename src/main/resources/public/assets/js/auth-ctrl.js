@@ -19,6 +19,10 @@ angular
 .controller('AuthCtrl',
 
 function AuthCtrl($scope, $state, SessionService) {
+  $scope.isLogin = function () {
+    return $state.is('login');
+  }
+		  
   if (!SessionService.isAuthenticated()) {
 	  SessionService
 	  .authenticate()

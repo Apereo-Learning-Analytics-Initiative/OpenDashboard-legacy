@@ -27,7 +27,6 @@ var Constants = (function(window,undefined) {
 	function ContextMapping (options) {
     
 	    this.id = null;
-	    this.key = null;
 	    this.tenantId = null;
 	    this.dashboards = null;
 	    this.context = null;
@@ -35,7 +34,6 @@ var Constants = (function(window,undefined) {
 	    
 	    if (options) {
 	    	this.id = options.id;
-	    	this.key = options.key;
 	    	this.tenantId = options.tenantId;
 	    	this.dashboards = options.dashboards;
 	    	this.context = options.context;
@@ -78,9 +76,7 @@ var Constants = (function(window,undefined) {
 			if (lti_launch) {
 				this.instructors = [];
 				this.learners = [];
-				this.id = lti_launch.context_id;
-				var context_title = lti_launch.context_title;
-	            if (context_title) {
+	            if (lti_launch.context_title) {
 	            	this.title = lti_launch.context_title;
 	            }
 	            else {
@@ -152,7 +148,7 @@ var Constants = (function(window,undefined) {
 (function(OpenDashboardApi, _, undefined) {
   
 	function Member (options) {
-    
+        this.tenant_id = null;
 		this.user_id = null;
 		this.user_image = null;
 		this.role = null;
@@ -164,6 +160,7 @@ var Constants = (function(window,undefined) {
 		this.last_activity = null;
 	    
 	    if (options) {
+	    	this.tenant_id = options.tenant_id;
 	    	this.user_id = options.user_id;
 	    	this.user_image = options.user_image;
 	    	this.role = options.role;

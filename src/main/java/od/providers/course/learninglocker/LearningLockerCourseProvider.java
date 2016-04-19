@@ -54,6 +54,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   private static final String DESC = String.format("%s_DESC", BASE);
   
   private boolean OAUTH = false;
+  private boolean DEMO = true;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
@@ -149,6 +150,25 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
 
   @Override
   public List<Course> getContextsForUser(ProviderOptions options) throws ProviderException {
+    
+    
+    if (DEMO) {
+      CourseImpl course1 = new CourseImpl();
+      course1.setId("1");
+      course1.setTitle("Course 1");
+      
+      CourseImpl course2 = new CourseImpl();
+      course2.setId("2");
+      course2.setTitle("Course 2");
+
+      List<Course> courses = new ArrayList<Course>();
+      courses.add(course1);
+      courses.add(course2);
+      
+      return courses;
+    }
+    
+    
     List<Course> output = null;
 
     Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
@@ -211,11 +231,23 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return output;
   }
   
+  @Override
+  public String getLTIContextIdByCourseId(String courseId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return "13";
+  }
+
   private Course toCourse(LearningLockerModuleInstance llModuleInstance) {
     CourseImpl course = new CourseImpl();
     course.setId(llModuleInstance.getModInstanceId());
     course.setTitle(llModuleInstance.getModule().getModName());
     return course;
+  }
+
+  @Override
+  public String getCourseIdByLTIContextId(String ltiContextId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return "1";
   }
 
 }

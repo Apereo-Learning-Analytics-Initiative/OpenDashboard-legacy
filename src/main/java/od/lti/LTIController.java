@@ -18,12 +18,25 @@
 package od.lti;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import lti.LaunchRequest;
+import od.framework.model.Card;
+import od.framework.model.ContextMapping;
+import od.framework.model.Dashboard;
+import od.framework.model.Tenant;
+import od.providers.ProviderException;
+import od.providers.ProviderService;
+import od.providers.config.ProviderDataConfigurationException;
+import od.providers.course.CourseProvider;
+import od.repository.mongo.ContextMappingRepository;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +61,53 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class LTIController {
   private static final Logger logger = LoggerFactory.getLogger(LTIController.class);
-
+  
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  @Autowired private ContextMappingRepository contextMappingRepository;
+  @Autowired private ProviderService providerService;
+  
   @Autowired
   @Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
   
   @RequestMapping(value = { "/lti" }, method = RequestMethod.POST)
-  public String lti(HttpServletRequest request, Model model) {
+  public String lti(HttpServletRequest request, Model model) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
+    
+    String consumerKey = launchRequest.getOauth_consumer_key();
+    String contextId = launchRequest.getContext_id();
+    
+    Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);   
+    String courseId = courseProvider.getCourseIdByLTIContextId(contextId);
+    
+    ContextMapping contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
+    
+    if (contextMapping == null) {
+      contextMapping = new ContextMapping();
+      contextMapping.setContext(courseId);
+      contextMapping.setTenantId(tenant.getId());
+      contextMapping.setModified(new Date());
+      
+      Set<Dashboard> dashboards = tenant.getDashboards();
+      if (dashboards != null && !dashboards.isEmpty()) {
+        Set<Dashboard> dashboardSet = new HashSet<>();
+        for (Dashboard db : dashboards) {
+          db.setId(UUID.randomUUID().toString());
+          List<Card> cards = db.getCards();
+          if (cards != null && !cards.isEmpty()) {
+            for (Card c : cards) {
+              c.setId(UUID.randomUUID().toString());
+            }
+          }
+          dashboardSet.add(db);
+        }
+        contextMapping.setDashboards(dashboardSet);
+      }
+
+      contextMappingRepository.save(contextMapping);
+    }
+    
 
     String uuid = UUID.randomUUID().toString();
     model.addAttribute("token", uuid);

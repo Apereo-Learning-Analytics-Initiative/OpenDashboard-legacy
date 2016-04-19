@@ -55,7 +55,7 @@ angular
 
 angular
 .module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification', 'chart.js',
-                              'od.cards.lti', 'od.cards.riskassessment', 'od.cards.activity']);
+                              'od.cards.riskassessment', 'od.cards.activity']);
 
 angular
 .module('OpenDashboard')
@@ -191,28 +191,20 @@ angular
           templateUrl: '/assets/templates/login.html',
           params: { loggedOutMessage : null },
           resolve:{
-            isMultiTenant : function (FeatureFlagService) {
-              return FeatureFlagService.isFeatureActive('multitenant');
-            },
-            isSaml : function (FeatureFlagService) {
-              return FeatureFlagService.isFeatureActive('saml');
+            tenants : function (TenantService) {
+              return TenantService.getTenants();
             }
           },
           controller: 'LoginCtrl'
         })
 	    .state('index', {
 	        url: '/',
+	        params: {
+	    	  tenantId : null,
+	    	  courseId : null
+	        },
 	        templateUrl: '/assets/templates/index.html',
 		    resolve:{
-		      contextMapping: function(ContextMappingService, OpenDashboard_API) {
-		        var inbound_lti_launch_request = OpenDashboard_API.getInbound_LTI_Launch();
-		        if (inbound_lti_launch_request) {
-		          return ContextMappingService.get(inbound_lti_launch_request.oauth_consumer_key, inbound_lti_launch_request.context_id);
-		        }
-		        else {
-		          return null;
-		        }
-		      }
 	     	},
 	        controller: 'IndexCtrl'
 	    })
@@ -337,19 +329,12 @@ angular
 	     	},
 	        controller: 'RemovePreconfiguredDashboardCtrl'
 	    })
-	    .state('index.welcome', {
-	        url: 'welcome',
-	        templateUrl: '/assets/templates/welcome.html',
-		    resolve:{
-	     	},
-	        controller: 'WelcomeController'
-	    })
 	    .state('index.courselist', {
 	        url: 'direct/courselist',
 	        templateUrl: '/assets/templates/courselist.html',
 		    resolve:{
 	     	},
-	        controller: function () {}
+	        controller: 'CourseListController'
 	    })
 	    .state('index.addDashboard', {
 	        url: 'cm/:cmid/addDashboard',

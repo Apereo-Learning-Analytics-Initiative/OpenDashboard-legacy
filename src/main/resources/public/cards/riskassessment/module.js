@@ -35,19 +35,21 @@ angular
    $translate
    .refresh()
      .then(function() {
+    	 
        $scope.courses = null;
        $scope.activeCourse = SessionService.getCourse();
+       $scope.activeCourse['id'] = $scope.contextMapping.context;
 		
        var options = {};
        options.contextMappingId = $scope.contextMapping.id;
        options.dashboardId = $scope.activeDashboard.id;
        options.cardId = $scope.card.id;
-       options.courseId = $scope.activeCourse.id;
+       options.courseId = $scope.contextMapping.context;
        options.tenantId = $scope.contextMapping.tenantId;
        options.isLti = SessionService.isLTISession();
 
        ModelOutputDataService
-       .getModelOutputForCourse(options,$scope.activeCourse.id,0,1000)
+       .getModelOutputForCourse(options,$scope.contextMapping.context,0,1000)
        .then(function (data) {
          $scope.model_output = data;
          

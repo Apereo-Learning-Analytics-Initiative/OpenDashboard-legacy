@@ -14,17 +14,16 @@ permissions and limitations under the License.
 -->
 <div class="row">
   <div class="col-xs-12">
-    <div class="chart-wrapper">
-      <div class="chart-title">
-      </div>
-      <div class="chart-stage">
-        <div class="col-md-2">
+    <div class="row p-t-lg">
+      <div class="col-xs-12 col-md-offset-4 col-md-4">
+        <h3 translate="COURSE_LIST_HEADER">header</h3>
+        <p translate="COURSE_LIST_INSTRUCTIONS">instructions</p>
+        <div class="list-group">
+          <a href class="list-group-item" ng-repeat="course in courses" ng-click="goToDashboard(tenant,course)">
+            <h4 class="list-group-item-heading p-t p-b">{{course.title}} <span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
+          </a>
         </div>
-        <div class="col-md-10">
-        </div>
       </div>
-      <div class="chart-notes">
-      </div>
-    </div>        
+    </div>
   </div>
 </div>

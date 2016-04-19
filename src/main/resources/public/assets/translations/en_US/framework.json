@@ -1,4 +1,12 @@
 {
+"COURSE_LIST_HEADER":"My Courses",
+"COURSE_LIST_INSTRUCTIONS":"Select the course you want to view from the list below.",
+
+"APP_TITLE":"Jisc Staff Dashboard",
+"PLACEHOLDER_USERNAME":"Username",
+"PLACEHOLDER_PASSWORD":"Password",
+"IM_AN_ADMIN":"I'm an administrator",
+
 "BUTTON_SIGN_IN": "Sign In",
 "BUTTON_GET_STARTED": "Get Started",
 "BUTTON_CONFIGURE":"Configure",
@@ -23,7 +31,7 @@
 "LABEL_ADD_DASHBOARD":"Add Dashboard",
 "LABEL_REMOVE_DASHBOARD":"Remove Dashboard",
 "LABEL_ADD_CARD":"Add Card",
-"LABEL_LOGOUT":"Logout",
+"LABEL_LOGOUT":"Sign out",
 "LABEL_EDIT":"Edit",
 "LABEL_REMOVE":"Remove",
 "LABEL_TITLE":"Title",
@@ -100,6 +108,7 @@
 "ERROR_URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com",
 "ERROR_USERNAME_REQUIRED": "Username is required.",
 "ERROR_PASSWORD_REQUIRED": "Password is required.",
+"ERROR_LOGIN":"Sign in failed",
 "ERROR_REQUIRED_LABEL_EXAMPLE_FIELD":"Example Field is required",
 "ERROR_REQUIRED_LABEL_LAUNCH_URL":"Launch URL is required",
 "ERROR_REQUIRED_LABEL_CONSUMER_KEY":"Consumer key is required",
@@ -142,8 +151,8 @@
 "GENERAL_ERROR":"OpenDashboard is not sure what is just happened.",
 
 "LABEL_IDP_SELECTION":"Select your identity provider",
-"TEXT_IDP_SELECTION":"Select your identity provider from the list below.",
-"LABEL_SELECT_IDP":"Select your identity provider",
+"TEXT_IDP_SELECTION":"Select your institution from the list below and then press the Sign in button.",
+"LABEL_SELECT_IDP":"Select your institution",
 
 "LABEL_ADD_TENANT":"Add a new tenant",
 "LABEL_TENANT_NAME":"Tenant Name",

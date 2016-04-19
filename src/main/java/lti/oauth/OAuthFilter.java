@@ -18,12 +18,10 @@
 package lti.oauth;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
 import od.exception.MissingTenantException;
-import od.framework.api.TenantController;
 import od.framework.model.Consumer;
 import od.framework.model.Tenant;
 import od.repository.mongo.MongoTenantRepository;
@@ -41,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Component;

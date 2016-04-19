@@ -28,21 +28,5 @@ describe('od.cards registry initialization', function () {
       expect(card.requires).toBeDefined();
     });
   });
-  
-  it('lti card should be defined with appropriate values', function() {
-    var cardType = 'lti';
-    var card = reg[cardType];
-    expect(card).not.toBe(null);
-    expect(card.title).not.toBe(null);
-    expect(card.styleClasses).not.toBe(null);
-    expect(card.config).not.toBe(null);
-    expect(card.requires).not.toBe(null);
     
-    expect(card).toBeDefined();
-    expect(card.title).toBeDefined();
-    expect(card.styleClasses).toBeDefined();
-    expect(card.config).toBeDefined();
-    expect(card.requires).toBeDefined();
-  });
-  
 });

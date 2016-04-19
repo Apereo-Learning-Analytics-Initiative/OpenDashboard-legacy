@@ -30,11 +30,6 @@
 			getProviderTypes : function() {
 			  // TODO - make this dynamic
 			  var providers = [];
-			  var assignmentProviders = {
-			    type : 'ASSIGNMENT',
-			    key : 'LABEL_ASSIGNMENT_PROVIDERS_KEY',
-			    desc : 'LABEL_ASSIGNMENT_PROVIDERS_DESC'
-			  };
 			  var courseProviders = {
 			    type : 'COURSE',
 			    key : 'LABEL_COURSE_PROVIDERS_KEY',
@@ -45,20 +40,10 @@
 			    key : 'LABEL_EVENT_PROVIDERS_KEY',
 			    desc : 'LABEL_EVENT_PROVIDERS_DESC'
 			  };
-			  var forumsProviders = {
-			    type : 'FORUM',
-			    key : 'LABEL_FORUM_PROVIDERS_KEY',
-				desc : 'LABEL_FORUM_PROVIDERS_DESC'                         
-			  };
 			  var modelOutputProviders = {
 			    type : 'MODELOUTPUT',
 			    key : 'LABEL_MODELOUTPUT_PROVIDERS_KEY',
 			    desc : 'LABEL_MODELOUTPUT_PROVIDERS_DESC'
-			  };
-			  var outcomesProviders = {
-			    type : 'OUTCOME',
-			    key : 'LABEL_OUTCOMES_PROVIDERS_KEY',
-			    desc : 'LABEL_OUTCOMES_PROVIDERS_DESC'
 			  };
 			  var rosterProviders = {
 			    type : 'ROSTER',
@@ -66,12 +51,9 @@
 			    desc : 'LABEL_ROSTER_PROVIDERS_DESC'
 			  };
 			  
-			  providers.push(assignmentProviders);
 			  providers.push(courseProviders);
 			  providers.push(eventProviders);
-			  providers.push(forumsProviders);
 			  providers.push(modelOutputProviders);
-			  providers.push(outcomesProviders);
 			  providers.push(rosterProviders);
 			  
 			  return providers;
@@ -113,36 +95,6 @@
 		}
 	});
 
-  	angular
-	.module('OpenDashboard')
-	.service('AssignmentService', function($log, $http, OpenDashboard_API) {
-
-		return {
-			getAssignments: function(options) {
-				
-					var url = '/api/assignments';
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		if (response && response.data) {
-			    			var assignments = [];
-			    			angular.forEach(response.data, function(value,key) {
-			                    assignments.push(value);
-			                });
-			    			
-				    		return assignments;		    			
-			    		}
-			    		$log.debug('No assignments found for course');
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
-			}
-		}
-	});
 	  angular
 	  .module('OpenDashboard')
 	  	.service('CourseDataService', function($log, $http, OpenDashboard_API) {
@@ -309,53 +261,6 @@
 		});
 		  angular
 		  .module('OpenDashboard')
-		  	.service('ForumDataService', function($log, $http, OpenDashboard_API) {
-				return {
-					getForums: function(options) {
-						
-						$log.debug(options);
-					
-						var url = '/api/forums';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-				    		data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-					    		return response.data;		    			
-				    		}
-				    		$log.debug('No forums found for course');
-				    		return null;
-				    	}, genericHandleError);
-						return promise;
-					},
-					getMessages: function(options, topicId) {
-						
-						$log.debug(options);
-						$log.debug(topicId);
-						
-						var url = '/api/forums/'+topicId+'/messages';
-						var promise = $http({
-							method  : 'POST',
-							url		: url,
-							data    : JSON.stringify(options),
-							headers : { 'Content-Type': 'application/json'}
-						})
-						.then(function (response) {
-							if (response && response.data) {
-								return response.data;		    			
-							}
-							$log.debug('No messages found for course');
-							return null;
-						}, genericHandleError);
-						return promise;
-					}
-				}
-			});
-		  angular
-		  .module('OpenDashboard')
 		  	.service('ModelOutputDataService', function($log, $http, OpenDashboard_API) {
 
 				return {
@@ -409,32 +314,6 @@
 							$log.debug('No model output');
 							return null;
 						}, genericHandleError);
-						return promise;
-					}
-				}
-			});
-			angular
-			.module('OpenDashboard')
-			.service('OutcomesService', function($log, $http, OpenDashboard_API) {
-				return {
-					getOutcomesForCourse: function(options) {
-					
-						$log.debug(options);
-						var url = '/api/outcomes';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-					    	data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-					    		return response.data;		    			
-				    		}
-				    		
-				    		$log.debug('No outcomes found for getOutcomesForCourse');
-				    		return null;
-				    	}, genericHandleError);
 						return promise;
 					}
 				}

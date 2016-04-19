@@ -43,23 +43,23 @@ permissions and limitations under the License.
               <li ng-repeat="ldn in localesDisplayNames | orderBy"><a ng-click="changeLanguage(ldn)" id="LINK_INDEX_LANGUAGE_SELECT" class=""><img ng-src="{{getLocaleImgPath(ldn)}}"></img> {{ldn}}</a></li>
             </ul>
           </li>
-          <li class="dropdown">
+          <li class="dropdown" ng-show="!isLtiSession && isAuthenticated">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_INDEX_MENU_DROPDOWN">
               <i class="glyphicon glyphicon-option-vertical"></i>
             </a>
             <ul class="dropdown-menu">
-              <li ng-show="!isStudent && contextMapping">
-                <a ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="LABEL_ADD_DASHBOARD">
-                </a>
-              </li>
-              <li ng-show="!isStudent && contextMapping && activeDashboard">
-                <a ui-sref="index.removeDashboard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_REMOVE" translate="LABEL_REMOVE_DASHBOARD">
-                </a>
-              </li>
-              <li ng-show="!isStudent && contextMapping && activeDashboard">
-                <a ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_ADD_CARD">
-                </a>
-              </li>
+<!--               <li ng-show="!isStudent && contextMapping"> -->
+<!--                 <a ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="LABEL_ADD_DASHBOARD"> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--               <li ng-show="!isStudent && contextMapping && activeDashboard"> -->
+<!--                 <a ui-sref="index.removeDashboard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_REMOVE" translate="LABEL_REMOVE_DASHBOARD"> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--               <li ng-show="!isStudent && contextMapping && activeDashboard"> -->
+<!--                 <a ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_ADD_CARD"> -->
+<!--                 </a> -->
+<!--               </li> -->
                <li ng-show="!isLtiSession && isAuthenticated">
                 <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT">
                 </a>
@@ -71,7 +71,7 @@ permissions and limitations under the License.
     </div>
   </div>
 
-  <div class="container-fluid" style="background-color: #F1F0EB;">
+  <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 ui-view"></div>
     </div>

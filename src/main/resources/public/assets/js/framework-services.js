@@ -204,6 +204,14 @@
 															OpenDashboard_API
 																	.setInbound_LTI_Launch(response.data.launchRequest);
 														}
+														else {
+														  var options = {};
+														  options['roles'] = authorities;
+														  options['user_id'] = response.data.name;
+														  options['tenant_id'] = response.data.principal.tenantId;
+														  OpenDashboard_API.setCurrentUser(options);
+														}
+														
 
 														return authenticated;
 													}
@@ -287,32 +295,7 @@
 								return promise;
 							}
 						}
-					}).service('ConfigService', function($log, $http) {
-				return {
-					getIdps : function() {
-						var headers = {
-							'Content-Type' : 'application/json'
-						};
-
-						var promise = $http({
-							method : 'GET',
-							url : '/config/idps',
-							headers : headers
-						}).then(function(response) {
-							if (response && response.data) {
-								$log.log(response.data)
-								return response.data;
-							}
-							$log.debug(response);
-							return false;
-						}, function(error) {
-							$log.error(error);
-							return false;
-						});
-						return promise;
-					}
-				}
-			});
+					});
 	angular.module('OpenDashboard').service('SettingService', function($http) {
 		return {
 			createSetting : function(setting) {
@@ -401,7 +384,7 @@
 					getTenants : function() {
 						var promise = $http({
 							method : 'GET',
-							url : '/api/tenant'
+							url : '/tenant'
 						}).then(function(response) {
 							if (response.data) {
 								return response.data;
@@ -414,7 +397,20 @@
 					getTenant : function(id) {
 						var promise = $http({
 							method : 'GET',
-							url : '/api/tenant/' + id
+							url : '/tenant/' + id
+						}).then(function(response) {
+							if (response.data) {
+								return response.data;
+							} else {
+								return null;
+							}
+						});
+						return promise;
+					},
+					getTenantWithConsumerKey : function(key) {
+						var promise = $http({
+							method : 'GET',
+							url : '/tenant/key/' + key
 						}).then(function(response) {
 							if (response.data) {
 								return response.data;
@@ -576,70 +572,6 @@
 								});
 						return deferred.promise;
 					},
-//					createPreconfigured : function(dashboard) {
-//						var promise = $http({
-//							method : 'POST',
-//							url : '/api/preconfigure',
-//							data : JSON.stringify(dashboard),
-//							headers : {
-//								'Content-Type' : 'application/json'
-//							}
-//						}).then(function(response) {
-//							return response.data;
-//						});
-//						return promise;
-//					},
-//					updatePreconfigured : function(dashboard) {
-//						var promise = $http({
-//							method : 'PUT',
-//							url : '/api/preconfigure/' + dashboard.id,
-//							data : JSON.stringify(dashboard),
-//							headers : {
-//								'Content-Type' : 'application/json'
-//							}
-//						}).then(function(response) {
-//							return response.data;
-//						});
-//						return promise;
-//					},
-//					removePreconfigured : function(id) {
-//						var promise = $http({
-//							method : 'DELETE',
-//							url : '/api/preconfigure/' + id,
-//							headers : {
-//								'Content-Type' : 'application/json'
-//							}
-//						}).then(function(response) {
-//							return response.data;
-//						});
-//						return promise;
-//					},
-//					getPreconfigured : function() {
-//						var promise = $http({
-//							method : 'GET',
-//							url : '/api/preconfigure'
-//						}).then(function(response) {
-//							if (response.data) {
-//								return response.data;
-//							} else {
-//								return null;
-//							}
-//						});
-//						return promise;
-//					},
-//					getPreconfiguredById : function(id) {
-//						var promise = $http({
-//							method : 'GET',
-//							url : '/api/preconfigure/' + id
-//						}).then(function(response) {
-//							if (response.data) {
-//								return response.data;
-//							} else {
-//								return null;
-//							}
-//						});
-//						return promise;
-//					},
 					checkTitle : function(title) {
 						var promise = $http({
 							method : 'GET',
@@ -656,140 +588,131 @@
 				}
 			});
 
-	angular
-			.module('OpenDashboard')
-			.service(
-					'ContextMappingService',
-					function($http, UUIDService, OpenDashboard_API, _) {
-						return {
-							createContextMappingInstance : function(options) {
-								return OpenDashboard_API
-										.createContextMappingInstance(options);
-							},
-							create : function(contextMapping) {
-								var promise = $http(
-										{
-											method : 'POST',
-											url : '/api/consumer/'
-													+ contextMapping.key
-													+ '/context',
-											data : JSON
-													.stringify(contextMapping),
-											headers : {
-												'Content-Type' : 'application/json'
-											}
-										}).then(function(response) {
-									return response.data;
-								});
-								return promise;
-							},
-							update : function(contextMapping) {
-								var promise = $http(
-										{
-											method : 'PUT',
-											url : '/api/consumer/'
-													+ contextMapping.key
-													+ '/context/'
-													+ contextMapping.context,
-											data : JSON
-													.stringify(contextMapping),
-											headers : {
-												'Content-Type' : 'application/json'
-											}
-										}).then(function(response) {
-									return response.data;
-								});
-								return promise;
-							},
-							addDashboard : function(contextMapping, dashboard) {
-								if (contextMapping) {
-									dashboard.id = UUIDService.generate();
-									contextMapping.addDashboard(dashboard);
-									return this.update(contextMapping);
-								}
-							},
-							removeDashboard : function(contextMapping,
-									dashboardId) {
-								if (contextMapping) {
-									contextMapping.dashboards = _.reject(
-											contextMapping.dashboards, {
-												'id' : dashboardId
-											});
-									return this.update(contextMapping);
-								}
-							},
-							addCard : function(contextMapping, dashboard, card) {
-								if (contextMapping && contextMapping.dashboards) {
-									card.id = UUIDService.generate();
+	
+angular
+.module('OpenDashboard')
+.service('ContextMappingService',
+ function($http, UUIDService, OpenDashboard_API, _) {
+  return {
+	createWithTenantAndCourse : function(tenantId, courseId) {
+      var data = {};
+      data['tenantId'] = tenantId;
+      data['courseId'] = courseId;
+      var promise = $http(
+        {
+          method : 'POST',
+          url : '/api/consumer/context',
+          data : JSON.stringify(data),
+          headers : {'Content-Type' : 'application/json'}
+        }
+      ).then(function(response) {
+    	return response.data;
+      });
+      return promise;
+	},
+	update : function(contextMapping) {
+	  var promise = $http(
+	    {
+	      method : 'PUT',
+          url : '/api/consumer/context',
+          data : JSON.stringify(contextMapping),
+          headers : {'Content-Type' : 'application/json'}
+	    }
+	    ).then(function(response) {
+	      return response.data;
+		});
+		return promise;
+	},
+	addDashboard : function(contextMapping, dashboard) {
+	  if (contextMapping) {
+	    dashboard.id = UUIDService.generate();
+		contextMapping.addDashboard(dashboard);
+		return this.update(contextMapping);
+	  }
+	},
+	removeDashboard : function(contextMapping, dashboardId) {
+	  if (contextMapping) {
+	    contextMapping.dashboards = 
+	      _.reject(contextMapping.dashboards, 
+	    	  {'id' : dashboardId });
+		return this.update(contextMapping);
+	  }
+	},
+	addCard : function(contextMapping, dashboard, card) {
+	  if (contextMapping && contextMapping.dashboards) {
+	    card.id = UUIDService.generate();
 
-									var db = _.find(contextMapping.dashboards,
-											{
-												'id' : dashboard.id
-											});
+		var db = _.find(
+		  contextMapping.dashboards,
+		  {'id' : dashboard.id});
 
-									if (!db.cards) {
-										db.cards = [];
-									}
-									db.cards.push(card);
+		if (!db.cards) {
+		  db.cards = [];
+		}
+		db.cards.push(card);
 
-									return this.update(contextMapping);
-								}
-							},
-							removeCard : function(contextMapping, dashboard,
-									card) {
-								if (contextMapping && contextMapping.dashboards) {
+		return this.update(contextMapping);
+	  }
+	},
+	removeCard : function(contextMapping, dashboard, card) {
+	  if (contextMapping && contextMapping.dashboards) {
 
-									var db = _.find(contextMapping.dashboards,
-											{
-												'id' : dashboard.id
-											});
-									db.cards = _.reject(db.cards, {
-										'id' : card.id
-									});
-									return this.update(contextMapping);
-								}
-							},
-							get : function(key, context) {
-								var promise = $http(
-										{
-											method : 'GET',
-											url : '/api/consumer/' + key
-													+ '/context/' + context,
-											headers : {
-												'Content-Type' : 'application/json'
-											}
-										})
-										.then(
-												function(response) {
-													if (response.data) {
-														return OpenDashboard_API
-																.createContextMappingInstance(response.data);
-													} else {
-														return null;
-													}
-												});
-								return promise;
-							},
-							getById : function(id) {
-								var promise = $http({
-									method : 'GET',
-									url : '/api/cm/' + id,
-									headers : {
-										'Content-Type' : 'application/json'
-									}
-								})
-										.then(
-												function(response) {
-													if (response.data) {
-														return OpenDashboard_API
-																.createContextMappingInstance(response.data);
-													} else {
-														return null;
-													}
-												});
-								return promise;
-							}
-						}
-					});
+	    var db = _.find(
+	      contextMapping.dashboards,
+	      {'id' : dashboard.id});
+		db.cards = _.reject(db.cards, 
+		  {'id' : card.id});
+		return this.update(contextMapping);
+	  }
+	},
+	getWithTenantAndCourse : function(tenantId, courseId) {
+	  var promise = $http(
+	    {
+	      method : 'GET',
+	      url : '/api/tenant/' + tenantId + '/course/' + courseId,
+	      headers : {'Content-Type' : 'application/json'}
+		})
+		.then(function(response) {
+		  if (response.data) {
+		    return response.data;
+		  } else {
+		    return null;
+		  }
+		});
+	  return promise;
+	},
+	getWithKeyAndContext : function(key, context) {
+	  var promise = $http(
+	    {
+	      method : 'GET',
+	      url : '/api/consumer/' + key + '/context/' + context,
+	      headers : {'Content-Type' : 'application/json'}
+		})
+		.then(function(response) {
+		  if (response.data) {
+		    return response.data;
+		  } else {
+		    return null;
+		  }
+		});
+	  return promise;
+	},
+	getById : function(id) {
+	  var promise = $http({
+	    method : 'GET',
+	    url : '/api/cm/' + id,
+	    headers : {'Content-Type' : 'application/json'}
+	  })
+	  .then(function(response) {
+	    if (response.data) {
+	      return response.data;
+		} else {
+		  return null;
+		}
+	  });
+	  return promise;
+    }
+  }
+});
 
 })(angular, JSON, Math);

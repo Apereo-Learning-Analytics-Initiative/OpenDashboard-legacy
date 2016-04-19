@@ -35,7 +35,6 @@ import od.lti.LTIAuthenticationProvider;
 import od.lti.LTIUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -109,13 +108,14 @@ public class SecurityConfig {
   }
   
   @Configuration
-  @ConditionalOnProperty(name="features.saml",havingValue="false")
   public static class HttpBasicConfigurationAdapter extends WebSecurityConfigurerAdapter {
-    
+    @Autowired private OpenDashboardUserDetailsService userDetailsService;
+    @Autowired private OpenDashboardAuthenticationProvider authenticationProvider;
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-          .antMatchers("/assets/**", "/favicon.ico", "/cards/**");
+          .antMatchers("/assets/**", "/favicon.ico", "/cards/**", "/tenant/**", "/jwtlogin/**");
     }
 
     @Override
@@ -148,15 +148,8 @@ public class SecurityConfig {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
       auth
-        .inMemoryAuthentication()
-          .withUser("student").password("student").roles("STUDENT")
-          .and()
-          .withUser("instructor").password("instructor").roles("INSTRUCTOR")
-          .and()
-          .withUser("admin").password("admin").roles("INSTRUCTOR","ADMIN")
-          //Test Admin set up for functional testing purposes
-          .and()
-          .withUser("test_admin").password("admin").roles("INSTRUCTOR","ADMIN");
+      .authenticationProvider(authenticationProvider)
+      .userDetailsService(userDetailsService);
     }
     
     @Primary

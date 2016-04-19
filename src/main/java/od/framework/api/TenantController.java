@@ -6,7 +6,6 @@ package od.framework.api;
 import java.util.List;
 
 import od.framework.model.Tenant;
-import od.providers.ProviderData;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.slf4j.Logger;
@@ -43,18 +42,24 @@ public class TenantController {
     return mongoTenantRepository.save(tenant);
   }
   
-  @Secured("ROLE_ADMIN")
-  @RequestMapping(value = "/api/tenant", method = RequestMethod.GET, 
+  //@Secured("ROLE_ADMIN")
+  @RequestMapping(value = "/tenant", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public List<Tenant> getAll() {
     return mongoTenantRepository.findAll();
   }
   
-  @Secured("ROLE_ADMIN")
-  @RequestMapping(value = "/api/tenant/{id}", method = RequestMethod.GET, 
+  //@Secured("ROLE_ADMIN")
+  @RequestMapping(value = "/tenant/{id}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public Tenant getOne(@PathVariable("id") final String id) {
     return mongoTenantRepository.findOne(id);
+  }
+  
+  @RequestMapping(value = "/tenant/key/{key}", method = RequestMethod.GET, 
+      produces = "application/json;charset=utf-8")
+  public Tenant getOneWithConsumerKey(@PathVariable("key") final String key) {
+    return mongoTenantRepository.findByConsumersOauthConsumerKey(key);
   }
   
   @Secured("ROLE_ADMIN")

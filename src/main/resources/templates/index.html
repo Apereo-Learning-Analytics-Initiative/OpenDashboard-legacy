@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.thymeleaf.org" ng-app="OpenDashboard">
+  xsi:schemaLocation="http://www.thymeleaf.org" ng-app="OpenDashboard" ng-controller="AuthCtrl" ng-class="{full:isLogin()}">
 <head>
 <!-- TODO: Translate -->
-<title>OpenDashboard</title>
+<title>Jisc Staff Dashboard</title>
 
 <base href="/"></base>
 <meta charset="utf-8"></meta>
@@ -39,7 +39,7 @@
 
 </head>
 
-<body id="ng-app" class="application" ng-controller="AuthCtrl" style="background-color: #F1F0EB;">
+<body id="ng-app" ng-class="{application:!isLogin(), none:isLogin()}">
   <div loading-widget="" class="spinner"></div>
   <div class="ui-view"></div>
 
@@ -88,12 +88,11 @@
   <script type="text/javascript" th:src="@{/assets/js/admin/tenant/provider/ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/admin/tenant/dashboards/ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/index-ctrl.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/welcome-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/courselist-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/dashboard-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/card-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/data-services.js}"></script>
 
-  <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/riskassessment/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/activity/module.js}"></script>
 </body>

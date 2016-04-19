@@ -29,7 +29,7 @@ import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.framework.model.Tenant;
 import od.providers.api.LTIProxyController;
-import od.repository.ContextMappingRepositoryInterface;
+import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 import od.utils.Response;
 
@@ -54,7 +54,7 @@ public class LTIProxyControllerTest extends ControllerTests {
     @Mock
     private Card card;
     @Mock
-    private ContextMappingRepositoryInterface contextMappingRepository;
+    private ContextMappingRepository contextMappingRepository;
     @Mock
     private Tenant tenant;
     @Mock

@@ -18,13 +18,118 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMappingService, LocaleService) {
+function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
   $scope.contextMapping = null;
-  $scope.activeDashboard = null;
-  var currentState = $state.current;
-  
+  $scope.activeDashboard = null;  
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
+  
+// Initial routing logic
 
+  function doRouting() {
+	if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
+  	  $log.debug('Context Mapping exists with dashboards configured');
+  			
+  	  // TODO - check for current dashboard
+  	  $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+  	  $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+    }
+    else {
+      $log.debug('Context Mapping exists but no dashboards');
+      $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
+  	}
+  };
+  
+  function getContextMapping(isLti) {
+      if (isLti) {
+        $log.debug('IndexCtrl - lti session');
+        var ltiLaunch = SessionService.getInbound_LTI_Launch();
+        $log.debug(ltiLaunch);
+        ContextMappingService
+        .getWithKeyAndContext(ltiLaunch.oauth_consumer_key, ltiLaunch.context_id)
+        .then(
+          function(contextMapping) {
+        	$log.debug('IndexCtrl - contextMapping (lti): ');
+        	$log.debug(contextMapping);
+            $scope.contextMapping = contextMapping;
+            doRouting();
+          },
+          function(error) {
+        	$log.error(error);
+        	// TODO
+          }
+        );
+      }
+      else {
+    	$log.debug('IndexCtrl - non lti session');
+    	var tenantId = $stateParams.tenantId;
+    	var courseId = $stateParams.courseId;
+    	$log.debug('IndexCtrl - tenantId: '+tenantId);
+    	$log.debug('IndexCtrl - courseId: '+courseId);
+    	
+    	ContextMappingService
+    	.getWithTenantAndCourse(tenantId, courseId)
+        .then(
+          function(contextMapping) {
+        	$log.debug('IndexCtrl - contextMapping (non-lti): ');
+        	$log.debug(contextMapping);
+            $scope.contextMapping = contextMapping;
+            doRouting();
+          },
+          function(error) {
+        	$log.error(error);
+        	// TODO
+          }
+        );
+      }
+  };
+
+  if (SessionService.isAuthenticated()) {
+	$log.debug('IndexCtrl - user is authenticated'); 
+    $scope.isAuthenticated = SessionService.isAuthenticated();
+    $scope.isStudent = SessionService.hasStudentRole();
+    $scope.isLtiSession = SessionService.isLTISession();
+    $scope.isAdmin = SessionService.hasAdminRole();
+	if (!$scope.contextMapping) {
+	  getContextMapping(SessionService.isLTISession());
+	}
+	else {
+	  doRouting();
+	}
+  }
+  else {
+	$log.debug('IndexCtrl - user is not authenticated');
+	SessionService
+	.authenticate()
+	.then(
+		function (data) {
+    	  $log.debug('IndexCtrl - authenticate success:');
+    	  $log.debug(data);
+    	  if (!data) {
+    		$log.debug('IndexCtrl - authenticate false, redirecting to login');
+    	    $state.go('login');
+    	  }
+    	  else {
+    		$log.debug('IndexCtrl - authenticate false, redirecting to login');
+    		// TODO - not sure why we're doing this here instead of SessionService'
+    		$scope.isStudent = SessionService.hasStudentRole();
+    		
+    		if (!$scope.contextMapping) {
+    		  getContextMapping(SessionService.isLTISession());
+    		}
+    		else {
+    		  doRouting();
+    		}
+    	  }
+    	  return;
+    	},
+		function (error) {
+			$state.go('login');
+			return;
+		}
+	  );
+  }
+  
+// App-wide functions
   $scope.changeLanguage = function (locale) {
     LocaleService.setLocaleByDisplayName(locale);
     $state.reload();
@@ -51,98 +156,22 @@ function IndexCtrl($scope, $state, $log, $translate, SessionService, ContextMapp
 	}
 	return path;
   };
-
-  var doRouting = function () {
-      if (SessionService.isLTISession()) {
-    	var inbound_lti_launch_request = SessionService.getInbound_LTI_Launch();
-    	
-    	ContextMappingService
-    	.get(inbound_lti_launch_request.oauth_consumer_key, inbound_lti_launch_request.context_id)
-    	.then(function (contextMapping) {
-    		$scope.contextMapping = contextMapping;
-    	    if (!$scope.contextMapping) {
-		      //$state.go('index.welcome'); 
-                var cm_options = {};
-                cm_options.key = inbound_lti_launch_request.oauth_consumer_key;
-                cm_options.context = inbound_lti_launch_request.context_id;
-                
-                var options = ContextMappingService.createContextMappingInstance(cm_options);
-    
-                ContextMappingService.create(options)
-                .then(function(savedContextMapping) {
-                    var cm = ContextMappingService.createContextMappingInstance(savedContextMapping);
-                    
-                    var dashboards = cm.dashboards;
-                    if (dashboards && dashboards.length > 0) {
-                        var dashboard = dashboards[0];
-                        $log.log('default dashboard: '+dashboard);
-        				$state.go('index.dashboard', {cmid:cm.id,dbid:dashboard.id});
-                    }
-                    else {
-                      // no dashboards
-                      $state.go('index.addDashboard', {cmid:cm.id});
-                    }
-                });
-			}
-			else {
-			  if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
-			    $log.debug('Context Mapping exists with dashboards configured');
-					
-				// TODO - check for current dashboard
-				$scope.activeDashboard = $scope.contextMapping.dashboards[0];
-				$state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
-			  }
-			  else {
-			    $log.debug('Context Mapping exists but no dashboards');
-			    $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
-			  }
-			}
-    	})
-	  }
-      return;
-  };
   
-  
-  if (SessionService.isAuthenticated()) {
-    $scope.isAuthenticated = SessionService.isAuthenticated();
-    $scope.isStudent = SessionService.hasStudentRole();
-    $scope.isLtiSession = SessionService.isLTISession();
-    $scope.isAdmin = SessionService.hasAdminRole();
-    doRouting();
-  }
-  else {
-	  SessionService
-	  .authenticate()
-	  .then(
-		function (data) {
-		  if (!data) {
-		    $state.go('login');
-		  }
-		  else {
-		    $scope.isStudent = SessionService.hasStudentRole();
-			doRouting();
-		  }
-		  return;
-		},
-		function (error) {
-			$state.go('login');
-			return;
-		}
-	  );
-  }
-  
-  $scope.logout = function (){
+    $scope.logout = function (){
     
     SessionService.logout()
       .then( function (data) {
             $state.go('login', {loggedOutMessage:'USER_INITIATED'});
+            Notification.success({message: 'You have been signed out', positionY: 'top', positionX: 'right'});
             return;
           },
           function (error) {
             $state.go('login', {loggedOutMessage:'USER_INITIATED'});
+            Notification.success({message: 'You have been signed out', positionY: 'top', positionX: 'right'});
             return;
           }
        );
   }
 
+  
 });

@@ -26,7 +26,7 @@ import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
-import od.repository.ContextMappingRepositoryInterface;
+import od.repository.mongo.ContextMappingRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LTIProxyController {
     private static final Logger log = LoggerFactory.getLogger(LTIProxyController.class);
-    @Autowired private ContextMappingRepositoryInterface contextMappingRepository;
+    @Autowired private ContextMappingRepository contextMappingRepository;
 
 	@Secured({"ROLE_INSTRUCTOR","ROLE_STUDENT"})
 	@RequestMapping(value = "/api/{contextMappingId}/lti/launch/{cardId}", method = RequestMethod.POST, 

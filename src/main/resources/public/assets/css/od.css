@@ -54,13 +54,13 @@
 
     /* Medium Devices, Desktops */
     @media only screen and (min-width : 992px) {
-      .login-page { 
-        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-      }
+/*       .login-page {  */
+/*         background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed;  */
+/*         -webkit-background-size: cover; */
+/*         -moz-background-size: cover; */
+/*         -o-background-size: cover; */
+/*         background-size: cover; */
+/*       } */
       
       .login-panel-default {
         opacity: 1;
@@ -75,13 +75,13 @@
 
     /* Large Devices, Wide Screens */
     @media only screen and (min-width : 1200px) {
-      .login-page { 
-        background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-      }
+/*       .login-page {  */
+/*         background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed;  */
+/*         -webkit-background-size: cover; */
+/*         -moz-background-size: cover; */
+/*         -o-background-size: cover; */
+/*         background-size: cover; */
+/*       } */
       
       .login-panel-default {
         opacity: 1;
@@ -205,6 +205,10 @@
 
 /* PADDING */
 
+.p-t-lg {
+  padding-top: 20px;
+}
+
 .p-t {
 	padding-top: 10px;
 }
@@ -327,6 +331,20 @@
 }
 .box-shadow--16dp {
     box-shadow: 0 16px 24px 2px rgba(0, 0, 0, .14), 0 6px 30px 5px rgba(0, 0, 0, .12), 0 8px 10px -5px rgba(0, 0, 0, .2)
+}
+
+/*
+* BACKGROUND
+*/
+.none {
+  background: none;
+}
+.full {
+  background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 /*

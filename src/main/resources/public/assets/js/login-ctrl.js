@@ -18,27 +18,51 @@ angular
 .module('OpenDashboard')
 .controller('LoginCtrl',
 
-function LoginCtrl($log, $scope, $state, SessionService, isMultiTenant, isSaml, ConfigService) {
-    
-  $scope.isMultiTenant = isMultiTenant;
-  $scope.isSaml = isSaml;
-  $scope.hasLoggedOut = $state.params.loggedOutMessage;
+function LoginCtrl($log, $scope, $state, $translate, Notification, SessionService, LocaleService, tenants) {
+  $scope.showLoginForm = false;
+  $scope.tenants = tenants;
   
-  if ($scope.isSaml) {
-	ConfigService.getIdps()
-	.then(function(data) {
-	  $scope.idps = data;
-	});
-  }
+  $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
+
+  $scope.changeLanguage = function (locale) {
+    LocaleService.setLocaleByDisplayName(locale);
+    $state.reload();
+  };
+  
+  $scope.getLocaleImgPath = function (locale) {	
+	var path = '/assets/img/locales/'  
+  
+	if (locale) {
+	  var code = LocaleService.getLocaleForDisplayName(locale);
+	  path = path + code +'.png';
+	}
+	else {
+	  var code = LocaleService.getLocaleForDisplayName(LocaleService.getLocaleDisplayName());
+	  
+	  if (!code) {
+		code = $translate.use();  
+		if (!code) {
+		  code = 'en_US';
+		}
+	  }
+
+	  path = path + code +'.png';
+	}
+	return path;
+  };
+  
+  $scope.toggleLoginForm = function () {
+	$scope.showLoginForm = !$scope.showLoginForm;  
+  };
   
   $scope.credentials = {};
   $scope.login = function() {
+	$log.debug($scope.credentials);
 	  SessionService.authenticate($scope.credentials)
       .then(
         function (data) {
           $log.debug(data);
-          // TODO fix this validate message
-          $scope.validationError = !data;
+          
           if(data) {
   		    if (SessionService.hasAdminRole()) {
   		      $state.go('index.admin.tenants');
@@ -48,11 +72,16 @@ function LoginCtrl($log, $scope, $state, SessionService, isMultiTenant, isSaml, 
   		    }
         	return;
           }
+          else {
+        	Notification.error({message: $translate.instant('ERROR_LOGIN'), positionY: 'top', positionX: 'right'});
+          }
+          
           return;
         },
         function (error) {
           $log.error(error);
           $scope.error = true;
+          Notification.error($translate.instant('ERROR_LOGIN'));
         }
       );
   };

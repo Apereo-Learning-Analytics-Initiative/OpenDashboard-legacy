@@ -33,4 +33,6 @@ public interface CourseProvider extends Provider {
   Course getContext(ProviderOptions options) throws ProviderException;
   List<Course> getContexts(ProviderOptions options) throws ProviderException;
   List<Course> getContextsForUser(ProviderOptions options) throws ProviderException;
+  String getLTIContextIdByCourseId(String courseId) throws ProviderException;
+  String getCourseIdByLTIContextId(String ltiContextId) throws ProviderException;
 }
