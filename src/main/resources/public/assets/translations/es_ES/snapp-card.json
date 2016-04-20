@@ -1,0 +1,17 @@
+{
+"SNAPP_CARD_TITLE":"Visualización del foro de discusión",
+"SNAPP_CARD_FORUMLIST_TITLE":"Foros disponibles",
+"SNAPP_CARD_FORUMLIST_INSTRUCTIONS":"Selecciona un foro",
+"SNAPP_CARD_TOPICSLIST_TITLE":"Temas disponibles",
+"SNAPP_CARD_TOPICSLIST_INSTRUCTIONS":"Selecciona un tema",
+"SNAPP_CARD_MESSAGES_SENT":"Avisos",
+"SNAPP_CARD_REPLIES_SENT":"Respuestas",
+"SNAPP_CARD_STEP1":"Paso 1",
+"SNAPP_CARD_STEP2":"Paso 2",
+"SNAPP_CARD_FORUMLIST_TITLE":"Foros disponibles",
+"SNAPP_CARD_TOPICSLIST_TITLE":"Temas disponibles",
+"SNAPP_CARD_CONFIGURATION":"Configuración",
+"SNAPP_CARD_SELECTED_NODE":"Selecciona un nodo",
+"ERROR_NO_PROVIDER_FORUM":"No se puede acceder a los datos del evento porque no hay ningún suceso a proveedores de datos que este configurado. Póngase en contacto con el administrador del sistema ."
+}
+

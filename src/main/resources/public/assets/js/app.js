@@ -64,7 +64,8 @@ angular
     'locales': {
       'cy_GB': 'Welsh',
       'en_US': 'English (US)',
-      'en_GB': 'English (UK)'
+      'en_GB': 'English (UK)',
+      'es_ES': 'Spanish (ES)',
     },
     'preferredLocale': 'en_US'
   })

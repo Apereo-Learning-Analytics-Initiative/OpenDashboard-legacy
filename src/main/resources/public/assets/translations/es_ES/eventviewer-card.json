@@ -1,0 +1,8 @@
+{
+"ERROR_NO_PROVIDER_EVENT":"No se puede acceder a los datos del evento porque no hay ningún suceso a proveedores de datos que este configurado. Póngase en contacto con el administrador del sistema .",
+"LABEL_ACTOR":"Actor",
+"LABEL_VERB":"Verbo",
+"LABEL_OBJECT":"Objecto",
+"TEXT_NO_EVENTS":"No hay ninguna actividad disponible para {{cursoNombre}}",
+"TEXT_EVENTS":"Actividad Principiante para {{cursoNombre}}"
+}
