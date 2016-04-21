@@ -381,7 +381,7 @@
 						});
 						return promise;
 					},
-					getTenants : function() {
+					getTenantsMetadata : function() {
 						var promise = $http({
 							method : 'GET',
 							url : '/tenant'
@@ -394,10 +394,23 @@
 						});
 						return promise;
 					},
+					getTenants : function() {
+						var promise = $http({
+							method : 'GET',
+							url : '/api/tenant'
+						}).then(function(response) {
+							if (response.data) {
+								return response.data;
+							} else {
+								return null;
+							}
+						});
+						return promise;
+					},
 					getTenant : function(id) {
 						var promise = $http({
 							method : 'GET',
-							url : '/tenant/' + id
+							url : '/api/tenant/' + id
 						}).then(function(response) {
 							if (response.data) {
 								return response.data;

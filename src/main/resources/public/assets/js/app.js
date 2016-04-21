@@ -192,7 +192,7 @@ angular
           params: { loggedOutMessage : null },
           resolve:{
             tenants : function (TenantService) {
-              return TenantService.getTenants();
+              return TenantService.getTenantsMetadata();
             }
           },
           controller: 'LoginCtrl'
@@ -222,14 +222,23 @@ angular
           url: '/tenants',
           templateUrl: '/assets/templates/admin/tenant/index.html',
           controller: 'TenantCtrl'
-	    })
-	    
+	    })	    
 	    .state('index.admin.addTenant', {
 	        url: '/addTenant',
 	        templateUrl: '/assets/templates/admin/tenant/add.html',
 		    resolve:{
 	     	},
 	        controller: 'TenantCtrl'
+	    })
+	    .state('index.admin.editTenant', {
+	        url: '/editTenant/:tenantId',
+	        templateUrl: '/assets/templates/admin/tenant/edit.html',
+		    resolve:{
+	    	  tenant: function($stateParams, TenantService) {
+    	        return TenantService.getTenant($stateParams.tenantId);
+              }
+	     	},
+	        controller: 'EditTenantCtrl'
 	    })
 	    .state('index.admin.tenants.tenant', {
 	      url: '/:id',

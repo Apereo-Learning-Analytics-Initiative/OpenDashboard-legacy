@@ -37,6 +37,27 @@ function TenantCtrl($log, $scope, $state, Notification, TenantService, tenants) 
   
   
 })
+.controller('EditTenantCtrl',
+
+function EditTenantCtrl($log, $scope, $state, Notification, TenantService, tenant) {
+  $scope.tenant = tenant;
+  
+  $scope.save = function () {
+    TenantService
+    .updateTenant($scope.tenant)
+    .then(
+      function (updatedContextMapping) {
+    	Notification.success('Tenant updated');
+        $state.go('index.admin.tenants',{}, {reload: true});                    
+      },
+      function (error) {
+        $log.error(error);
+        Notification.error('Unable to update tenant.');
+      });
+    };
+  
+  
+})
 .controller('SelectTenantCtrl',
 
 function SelectTenantCtrl($log, $scope, $state, Notification, TenantService, tenant, providerTypes) {

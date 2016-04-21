@@ -1,6 +1,6 @@
 {
-"COURSE_LIST_HEADER":"My Courses",
-"COURSE_LIST_INSTRUCTIONS":"Select the course you want to view from the list below.",
+"CL_HEADER":"My Courses",
+"CL_INSTRUCTIONS":"Select the course you want to view from the list below.",
 
 "APP_TITLE":"Jisc Staff Dashboard",
 "PLACEHOLDER_USERNAME":"Username",

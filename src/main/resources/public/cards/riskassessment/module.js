@@ -29,14 +29,21 @@ angular
 	    uses: []
     });
  })
- .controller('RiskAssessmentController', function($scope, $translate, $translatePartialLoader, $log, _, SessionService, EventService, RosterService, ModelOutputDataService) {
+ .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, _, 
+	 SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
 	 
    $translatePartialLoader.addPart('risk-assessment');
    $translate
    .refresh()
      .then(function() {
-    	 
+    
        $scope.courses = null;
+       
+       if (!$scope.contextMapping) {
+         $log.debug($stateParams);
+         $state.go('index.courselist');
+       }
+
        $scope.activeCourse = SessionService.getCourse();
        $scope.activeCourse['id'] = $scope.contextMapping.context;
 		
@@ -47,7 +54,15 @@ angular
        options.courseId = $scope.contextMapping.context;
        options.tenantId = $scope.contextMapping.tenantId;
        options.isLti = SessionService.isLTISession();
-
+       
+       if (!options.isLti) {
+         CourseDataService.getContexts(options)
+         .then(function(courseData){
+             $log.debug(courseData);
+             $scope.courses = courseData;
+           });
+       }
+       
        ModelOutputDataService
        .getModelOutputForCourse(options,$scope.contextMapping.context,0,1000)
        .then(function (data) {

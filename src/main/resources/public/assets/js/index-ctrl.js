@@ -19,6 +19,7 @@ angular
 .controller('IndexCtrl',
 
 function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
+  $log.debug('IndexCtrl');
   $scope.contextMapping = null;
   $scope.activeDashboard = null;  
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
@@ -26,17 +27,19 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
 // Initial routing logic
 
   function doRouting() {
-	if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
-  	  $log.debug('Context Mapping exists with dashboards configured');
+	if ($scope.contextMapping) {
+	  if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
+  	    $log.debug('Context Mapping exists with dashboards configured');
   			
-  	  // TODO - check for current dashboard
-  	  $scope.activeDashboard = $scope.contextMapping.dashboards[0];
-  	  $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
-    }
-    else {
-      $log.debug('Context Mapping exists but no dashboards');
-      $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
-  	}
+      	// TODO - check for current dashboard
+      	$scope.activeDashboard = $scope.contextMapping.dashboards[0];
+      	$state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+      }
+      else {
+        $log.debug('Context Mapping exists but no dashboards');
+        $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
+      }
+	}	
   };
   
   function getContextMapping(isLti) {
@@ -50,7 +53,10 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
           function(contextMapping) {
         	$log.debug('IndexCtrl - contextMapping (lti): ');
         	$log.debug(contextMapping);
-            $scope.contextMapping = contextMapping;
+        	if (!$scope.contextMapping && contextMapping) {
+        	  $scope.contextMapping = contextMapping;
+        	}
+            
             doRouting();
           },
           function(error) {
@@ -63,23 +69,28 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
     	$log.debug('IndexCtrl - non lti session');
     	var tenantId = $stateParams.tenantId;
     	var courseId = $stateParams.courseId;
+    	$log.debug($stateParams);
     	$log.debug('IndexCtrl - tenantId: '+tenantId);
     	$log.debug('IndexCtrl - courseId: '+courseId);
-    	
-    	ContextMappingService
-    	.getWithTenantAndCourse(tenantId, courseId)
-        .then(
-          function(contextMapping) {
-        	$log.debug('IndexCtrl - contextMapping (non-lti): ');
-        	$log.debug(contextMapping);
-            $scope.contextMapping = contextMapping;
-            doRouting();
-          },
-          function(error) {
-        	$log.error(error);
-        	// TODO
-          }
-        );
+    	if (tenantId && courseId) {
+        	ContextMappingService
+        	.getWithTenantAndCourse(tenantId, courseId)
+            .then(
+              function(contextMapping) {
+            	$log.debug('IndexCtrl - contextMapping (non-lti): ');
+            	$log.debug(contextMapping);
+            	if (!$scope.contextMapping && contextMapping) {
+              	  $scope.contextMapping = contextMapping;
+              	}
+            	
+                doRouting();
+              },
+              function(error) {
+            	$log.error(error);
+            	// TODO
+              }
+            );
+    	}    	
       }
   };
 
@@ -109,7 +120,7 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
     	    $state.go('login');
     	  }
     	  else {
-    		$log.debug('IndexCtrl - authenticate false, redirecting to login');
+    		$log.debug('IndexCtrl - authenticate true, redirecting to dashboard');
     		// TODO - not sure why we're doing this here instead of SessionService'
     		$scope.isStudent = SessionService.hasStudentRole();
     		
@@ -131,6 +142,8 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
   
 // App-wide functions
   $scope.changeLanguage = function (locale) {
+    $log.debug('change to ');
+    $log.debug(locale);
     LocaleService.setLocaleByDisplayName(locale);
     $state.reload();
   };

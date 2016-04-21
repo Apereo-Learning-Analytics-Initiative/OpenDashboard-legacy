@@ -3,6 +3,7 @@
  */
 package od.framework.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import od.framework.model.Tenant;
@@ -42,21 +43,53 @@ public class TenantController {
     return mongoTenantRepository.save(tenant);
   }
   
-  //@Secured("ROLE_ADMIN")
-  @RequestMapping(value = "/tenant", method = RequestMethod.GET, 
+  @Secured("ROLE_ADMIN")
+  @RequestMapping(value = "/api/tenant", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public List<Tenant> getAll() {
     return mongoTenantRepository.findAll();
   }
   
   //@Secured("ROLE_ADMIN")
-  @RequestMapping(value = "/tenant/{id}", method = RequestMethod.GET, 
+  @RequestMapping(value = "/api/tenant/{id}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public Tenant getOne(@PathVariable("id") final String id) {
     return mongoTenantRepository.findOne(id);
   }
   
-  @RequestMapping(value = "/tenant/key/{key}", method = RequestMethod.GET, 
+  @RequestMapping(value = "/tenant", method = RequestMethod.GET, 
+      produces = "application/json;charset=utf-8")
+  public List<Tenant> getAllTenantMetadata() {
+    List<Tenant> tenants = mongoTenantRepository.findAll();
+    List<Tenant> metadata = new ArrayList<Tenant>();
+    if (tenants != null) {
+      for (Tenant t : tenants) {
+        Tenant mt = new Tenant();
+        mt.setId(t.getId());
+        mt.setName(t.getName());
+        mt.setDescription(t.getDescription());
+        mt.setIdpEndpoint(t.getIdpEndpoint());
+        metadata.add(mt);
+      }
+    }
+    
+    return metadata;
+  }
+  
+//  @RequestMapping(value = "/tenant/{id}", method = RequestMethod.GET, 
+//      produces = "application/json;charset=utf-8")
+//  public Tenant getOneTentantMetadata(@PathVariable("id") final String id) {
+//    Tenant tenant = mongoTenantRepository.findOne(id);
+//    Tenant metadata = new Tenant();
+//    metadata.setId(tenant.getId());
+//    metadata.setName(tenant.getName());
+//    metadata.setDescription(tenant.getDescription());
+//    metadata.setIdpEndpoint(tenant.getIdpEndpoint());
+//    
+//    return metadata;
+//  }
+  
+  @RequestMapping(value = "/api/tenant/key/{key}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public Tenant getOneWithConsumerKey(@PathVariable("key") final String key) {
     return mongoTenantRepository.findByConsumersOauthConsumerKey(key);
