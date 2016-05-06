@@ -24,5 +24,33 @@ package od.providers;
 public class ProviderException extends Exception {
 
 	private static final long serialVersionUID = 1L;
+	private String errorCode;
+	
+	public static final String NO_STAFF_ENTRY_ERROR_CODE = "ERROR_PROVIDER_100";
+	public static final String TOO_MANY_STAFF_ENTRIES_ERROR_CODE = "ERROR_PROVIDER_101";
+	
+	public static final String NO_MODULE_INSTANCES_ERROR_CODE = "ERROR_PROVIDER_200";
+	
+	public static final String TOO_MANY_VLE_MODULE_MAPS_ERROR_CODE = "ERROR_PROVIDER_300";
+	public static final String NO_VLE_MODULE_MAPS_ERROR_CODE = "ERROR_PROVIDER_301";
+	
+	public static final String NO_STUDENT_MODULE_INSTANCE_ENTRIES_ERROR_CODE = "ERROR_PROVIDER_400";
+
+  public ProviderException() {
+    super();
+  }
+
+  public ProviderException(String message) {
+    super(message);
+  }
+  
+  public ProviderException(String errorCode, String message) {
+    super(message);
+    this.errorCode = errorCode;
+  }
+
+  public String getErrorCode() {
+    return errorCode;
+  }
 
 }

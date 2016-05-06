@@ -94,14 +94,11 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
   
-  private PageImpl<ModelOutput> fetch(String tenantId, Map<String, String> urlVariables, Pageable pageable, String uri) {
+  private PageImpl<ModelOutput> fetch(ProviderData providerData, String tenantId, Map<String, String> urlVariables, Pageable pageable, String uri) {
     
     log.debug("{}",urlVariables);
     log.debug("{}",uri);
     
-    Tenant tenant = mongoTenantRepository.findOne(tenantId);
-    ProviderData providerData = tenant.findByKey(KEY);
-
     String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
     
     ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
@@ -151,20 +148,11 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   }
 
   @Override
-  public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable pageable) throws ProviderException {
+  public Page<ModelOutput> getModelOutputForContext(ProviderData providerData, String tenantId, String contextId, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("id", course);
-    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
+    urlVariables.put("id", contextId);
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenantId) ? tenantId : "lap");
     
-    return fetch(options.getTenantId(), urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
-  }
-
-  @Override
-  public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("id", student);
-    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
-    
-    return fetch(options.getTenantId(), urlVariables, pageable, "/api/outpu/{tenant}t/student/{id}");
+    return fetch(providerData, tenantId, urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
   }
 }

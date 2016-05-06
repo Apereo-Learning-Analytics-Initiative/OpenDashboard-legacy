@@ -19,6 +19,7 @@ package od.providers.api;
 
 import od.TenantService;
 import od.framework.model.Tenant;
+import od.providers.ProviderData;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.modeloutput.ModelOutputProvider;
@@ -59,26 +60,10 @@ public class ModelOutputController {
       log.debug("options " + options);
     }
     Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-    
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
     ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
     
-    return modelOutputProvider.getModelOutputForCourse(options, options.getTenantId(), courseId, new PageRequest(page, size));
+    return modelOutputProvider.getModelOutputForContext(providerData, tenant.getId(), courseId, new PageRequest(page, size));
   }
   
-  @Secured({"ROLE_INSTRUCTOR"})
-  @RequestMapping(value = "/api/modeloutput/user/{userId}", method = RequestMethod.POST)
-  public Page<ModelOutput> modelOutputForUser(@RequestBody ProviderOptions options, @PathVariable("userId") final String userId, @RequestParam(value="page", required=false) int page,
-      @RequestParam(value="size", required=false) int size)
-      throws Exception {
-
-    if (log.isDebugEnabled()) {
-      log.debug("options " + options);
-    }
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-    
-    ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
-    
-    return modelOutputProvider.getModelOutputForStudent(options, options.getTenantId(), userId, new PageRequest(page, size));
-  }
-
 }

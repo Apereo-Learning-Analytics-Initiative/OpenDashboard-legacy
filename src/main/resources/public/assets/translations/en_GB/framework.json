@@ -7,6 +7,13 @@
 "PLACEHOLDER_PASSWORD":"Password",
 "IM_AN_ADMIN":"I'm an administrator",
 
+"ERROR_CODE":"Error code: {{errorCode}}",
+"ERROR_0":"You are not authorized to access this resource",
+"ERROR_PROVIDER_100":"Unable to retrieve courses for user: {{userId}}.",
+"ERROR_PROVIDER_101":"More than one staff records found for user: {{userId}}.",
+"ERROR_PROVIDER_301":"No VLE Module Map record found",
+"ERROR_PROVIDER_400":"No student records found",
+
 "BUTTON_SIGN_IN": "Sign In",
 "BUTTON_GET_STARTED": "Get Started",
 "BUTTON_CONFIGURE":"Configure",

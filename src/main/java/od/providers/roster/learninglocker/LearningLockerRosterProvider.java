@@ -14,21 +14,18 @@
  *******************************************************************************/
 package od.providers.roster.learninglocker;
 
-import java.util.Arrays;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.learninglocker.LearningLockerStudent;
 import od.providers.learninglocker.LearningLockerStudentModuleInstance;
-import od.providers.learninglocker.LearningLockerVleModuleMap;
 import od.providers.roster.RosterProvider;
 import od.repository.mongo.MongoTenantRepository;
 
@@ -38,14 +35,12 @@ import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -62,10 +57,16 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   
-  private boolean DEMO = true;
-  private boolean OAUTH = false;
+  private static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1/studentmoduleinstance";
+  private static final String STUDENT_URI = "/api/jisc/v1/student";
+  
+  private boolean DEMO = false;
+  @Value("${ll.use.oauth:false}")
+  private boolean OAUTH;
+
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
+  //@Autowired private CourseProvider courseProvider;
   
   @PostConstruct
   public void init() {
@@ -168,7 +169,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   }
 
   @Override
-  public Set<Member> getRoster(ProviderOptions options) throws ProviderException {
+  public Set<Member> getRoster(ProviderData providerData, String contextId) throws ProviderException {
     
     Set<Member> output = null;
 
@@ -176,70 +177,44 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
       return demo();
     }
        
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-    ProviderData providerData = tenant.findByKey(KEY);
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
-    if (!baseUrl.endsWith("/")) {
-      baseUrl = baseUrl + "/";
-    }
-
-    RestTemplate restTemplate;
+            
+    String studentModuleInstanceUrl = buildUrl(baseUrl, STUDENT_MODULE_INSTANCE_URI);
+    MultiValueMap<String, String> studentModuleInstanceParams = new LinkedMultiValueMap<String, String>();
+    studentModuleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":\"%s\"}", contextId));
+    URI studentModuleInstanceURI = buildUri(studentModuleInstanceUrl, studentModuleInstanceParams);
+    log.debug(studentModuleInstanceURI.toString());
     
-    if (OAUTH) {
-      ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
-      resourceDetails.setClientId(providerData.findValueForKey("key"));
-      resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
-      resourceDetails.setAccessTokenUri(getUrl(baseUrl, LL_OAUTH_TOKEN_URI, null));
-      DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
-
-      restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
-    }
-    else {
-      restTemplate = new RestTemplate();
-    }
+    LearningLockerStudentModuleInstance [] studentModuleInstances 
+      = restTemplate.exchange(studentModuleInstanceURI, 
+        HttpMethod.GET, headers, LearningLockerStudentModuleInstance[].class).getBody();
     
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
-        MediaType.valueOf("text/javascript")));
-    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-    
-    String modInstanceId;
-    if (options.isLti()) {
-      // TODO change 3 to options.getCourseId()
-      // TODO update path
-      String vleModuleMapPath = "modulevlemap?VLE_MOD_ID=3";
-      LearningLockerVleModuleMap vleModuleMap = restTemplate.exchange(baseUrl + vleModuleMapPath, HttpMethod.GET, null, LearningLockerVleModuleMap.class).getBody();
-      modInstanceId = vleModuleMap.getMOD_INSTANCE_ID();
-    }
-    else {
-      modInstanceId = options.getCourseId();
-    }
-    
-    if (StringUtils.isBlank(modInstanceId)) {
-      throw new ProviderException();
-    }
-    
-    // TODO fix mod instance id
-    //String studentModuleInstancePath = "/api/v1/students?query={\"MODULE_INSTANCES\":\"%s\"}";
-    String studentModuleInstancePath = "studentmoduleinstance?MOD_INSTANCE_ID=MODS101-1-2016S1-0";
-    studentModuleInstancePath = String.format(studentModuleInstancePath, modInstanceId);
-    
-    LearningLockerStudentModuleInstance [] roster = restTemplate.exchange(baseUrl + studentModuleInstancePath, HttpMethod.GET, null, LearningLockerStudentModuleInstance[].class).getBody();
-    
-    if (roster != null && roster.length > 0) {
+    if (studentModuleInstances != null && studentModuleInstances.length > 0) {
       StringBuilder result = new StringBuilder();
-      for(LearningLockerStudentModuleInstance smi : roster) {
-        result.append("'");
+      for(LearningLockerStudentModuleInstance smi : studentModuleInstances) {
+        result.append("\"");
         result.append(smi.getSTUDENT_ID());
-        result.append("'");
+        result.append("\"");
         result.append(",");
       }
-      String studentIdList = result.length() > 0 ? result.substring(0, result.length() - 1): "";
+      String studentIdList = result.length() > 0 ? result.substring(0, result.length() - 1): null;
       
-      String studentPath = "student?where={query}";
-      String queryValue = "\"STUDENT_ID\":[%s]";
-      queryValue = String.format(queryValue, studentIdList);
-      LearningLockerStudent [] students = restTemplate.exchange(baseUrl + studentPath, HttpMethod.GET, null, LearningLockerStudent[].class, queryValue).getBody();
+      if (StringUtils.isBlank(studentIdList)) {
+        log.error(String.format("No student module instances for %s %s",studentModuleInstanceUrl, studentModuleInstanceParams));
+        throw new ProviderException(ProviderException.NO_STUDENT_MODULE_INSTANCE_ENTRIES_ERROR_CODE);
+      }
+      
+      String studentUrl = buildUrl(baseUrl, STUDENT_URI);
+      MultiValueMap<String, String> studentParams = new LinkedMultiValueMap<String, String>();
+      studentParams.add("query", String.format("{\"STUDENT_ID\":[%s]}", studentIdList));
+      URI studentURI = buildUri(studentUrl, studentParams);      
+      log.debug(studentURI.toString());
+
+      LearningLockerStudent [] students 
+        = restTemplate.exchange(studentURI, 
+            HttpMethod.GET, headers, LearningLockerStudent[].class).getBody();
       
       if (students != null && students.length > 0) {
         output = new HashSet<>();

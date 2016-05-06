@@ -19,10 +19,12 @@ package od.providers.api;
 
 import java.util.Set;
 
+import od.framework.model.ContextMapping;
 import od.framework.model.Tenant;
-import od.providers.ProviderOptions;
+import od.providers.ProviderData;
 import od.providers.ProviderService;
 import od.providers.roster.RosterProvider;
+import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Member;
@@ -30,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,16 +48,21 @@ public class RosterController {
 	
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
+  @Autowired private ContextMappingRepository contextMappingRepository;
   
 	@Secured("ROLE_INSTRUCTOR")
-	@RequestMapping(value = "/api/roster", method = RequestMethod.POST)
-	public Set<Member> roster(@RequestBody ProviderOptions options)
+	@RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/roster", method = RequestMethod.GET)
+	public Set<Member> roster(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("contextMappingId") final String contextMappingId)
 			throws Exception {
-		if (log.isDebugEnabled()) {
-			log.debug(options.toString());
-		}
-		Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+	  log.debug("tenantId: {}", tenantId);
+	  log.debug("contextMappingId: {}", contextMappingId);
+
+	  Tenant tenant = mongoTenantRepository.findOne(tenantId);
+	  ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
     RosterProvider rosterProvider = providerService.getRosterProvider(tenant);
-		return rosterProvider.getRoster(options);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
+    
+		return rosterProvider.getRoster(providerData,contextMapping.getContext());
 	}
 }

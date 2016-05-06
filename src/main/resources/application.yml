@@ -28,6 +28,7 @@ auth:
 # Logging settings
 logging:
   level:
+    od: DEBUG
     org.apache.velocity: OFF
 
 # Spring settings

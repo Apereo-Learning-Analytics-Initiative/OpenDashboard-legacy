@@ -95,58 +95,42 @@
 		}
 	});
 
-	  angular
-	  .module('OpenDashboard')
-	  	.service('CourseDataService', function($log, $http, OpenDashboard_API) {
-
-			return {
-				getContexts: function(options) {
-					
-					$log.debug(options);
-				
-					var url = '/api/context';
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		if (response && response.data) {
-			    			var contexts = [];
-			    			angular.forEach(response.data, function(value,key) {
-			    				contexts.push(value);
-			                });
+angular
+  .module('OpenDashboard')
+    .service('CourseDataService', function($log, $http, OpenDashboard_API) {
+      return {
+    	getMemberships: function(tenantId,userId) {
+		  var url = '/api/tenants/'+tenantId+'/user/'+userId+'/memberships';
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {
+			  var contexts = [];
+			  angular.forEach(response.data, function(value,key) {
+			    contexts.push(value);
+			  });
 			    			
-				    		return contexts;		    			
-			    		}
-			    		$log.debug('No contexts found for user');
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
-				},
-				getContext: function(options, contextId) {				
-					$log.debug(options);
-					
-					var url = '/api/context/'+contextId;
-					var promise = $http({
-						method  : 'POST',
-						url		: url,
-						data    : JSON.stringify(options),
-						headers : { 'Content-Type': 'application/json'}
-					})
-					.then(function (response) {
-						if (response && response.data) {
-							
-				    		return response.data;		    			
-						}
-						$log.debug('No contexts found for user');
-						return null;
-					}, genericHandleError);
-					return promise;
-				 }		
+		      return contexts;		    			
 			}
-		});
+			$log.debug('No contexts found for user');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		}
+	}
+});
 		angular.
 		module('OpenDashboard')
 		.service('EventService',function($log, $http, _) {
@@ -318,38 +302,45 @@
 					}
 				}
 			});
-			angular
-			.module('OpenDashboard')
-			.service('RosterService', function($log, $http, OpenDashboard_API) {
-				return {
-					getRoster: function(options) {
-						
-						$log.debug(options);
-						var url = '/api/roster';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-				    		data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-				    			var members = [];
-				    			angular.forEach(response.data, function(value,key) {
-				                    var member = OpenDashboard_API.createMemberInstance();
-				                    member.fromService(value);
-				                    members.push(member);
-				                });
-				    			
-					    		return members;		    			
-				    		}
-				    		$log.debug('No members found for getRoster');
-				    		return null;
-				    	}, genericHandleError);
-						return promise;
-					}
-				}
-			});
+angular
+.module('OpenDashboard')
+.service('RosterService', function($log, $http, OpenDashboard_API) {
+  return {
+    getRoster: function(tenantId,contextMappingId) {
+    		
+      var url = '/api/tenants/'+tenantId+'/contexts/'+contextMappingId+'/roster';
+      var promise = $http({
+        		method  : 'GET',
+        		url		: url,
+        		headers : { 'Content-Type': 'application/json'}
+      })
+      .then(
+        function (response) {
+          if (response && response.data) {
+            var members = [];
+        	angular.forEach(response.data, function(value,key) {
+              var member = OpenDashboard_API.createMemberInstance();
+              member.fromService(value);
+              members.push(member);
+            });
+        			
+        	return members;		    			
+          }
+          $log.debug('No members found for getRoster');
+          return null;
+        },
+        function (error) {
+          var errorObj = {};
+          errorObj['isError'] = true;
+          errorObj['errorCode'] = error.data.errors[0];
+        	
+          return errorObj;
+        }
+      );
+      return promise;
+    }
+  }
+});
 			angular.
 			module('OpenDashboard')
 			.service('dataService', function ($log) {

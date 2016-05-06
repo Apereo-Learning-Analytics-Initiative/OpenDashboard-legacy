@@ -19,6 +19,8 @@ package od.providers.api;
 
 import java.util.List;
 
+import od.framework.model.Tenant;
+import od.providers.ProviderData;
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.course.CourseProvider;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,29 +49,35 @@ public class CourseController {
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @Secured("ROLE_INSTRUCTOR")
-  @RequestMapping(value = "/api/context", method = RequestMethod.POST)
-  public List<Course> contexts(@RequestBody ProviderOptions options)
+  @RequestMapping(value = "/api/tenants/{tenantId}/user/{userId}/memberships", method = RequestMethod.GET)
+  public List<Course> contexts(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("userId") final String userId)
       throws Exception {
 
     if (log.isDebugEnabled()) {
-      log.debug("options " + options);
+      log.debug("tenantId: {}", tenantId);
+      log.debug("userId: {}", userId);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider(mongoTenantRepository.findOne(options.getTenantId()));
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.COURSE);
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
 
-    return courseProvider.getContextsForUser(options);
+    return courseProvider.getContexts(providerData,userId);
   }
 
   @Secured("ROLE_INSTRUCTOR")
-  @RequestMapping(value = "/api/context/{id}", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/tenants/{tenantId}/courseOffering/{courseOfferingId}", method = RequestMethod.GET)
   public Course context(@RequestBody ProviderOptions options)
       throws Exception {
 
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    CourseProvider courseProvider = providerService.getCourseProvider(mongoTenantRepository.findOne(options.getTenantId()));
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.COURSE);
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
 
-    return courseProvider.getContext(options);
+    return courseProvider.getContext(providerData,options.getCourseId());
   }
 
 }

@@ -38,6 +38,7 @@ angular
      .then(function() {
     
        $scope.courses = null;
+       $scope.error = null;
        
        if (!$scope.contextMapping) {
          $log.debug($stateParams);
@@ -56,7 +57,8 @@ angular
        options.isLti = SessionService.isLTISession();
        
        if (!options.isLti) {
-         CourseDataService.getContexts(options)
+    	 var currentUser = SessionService.getCurrentUser();
+         CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
          .then(function(courseData){
              $log.debug(courseData);
              $scope.courses = courseData;
@@ -81,8 +83,16 @@ angular
          $scope.compareGroup = ['benchmark'];
          
          RosterService
-         .getRoster(options)
+         .getRoster($scope.contextMapping.tenantId, $scope.contextMapping.id)
          .then(function(rosterData){
+        	 
+        	 if (rosterData.isError) {
+           	  $scope.errorData = {};
+        	  $scope.errorData['errorCode'] = rosterData.errorCode;
+        	  $scope.error = rosterData.errorCode;
+        	  return;
+        	 }
+        	 
         	 $scope.roster = rosterData;
         	 
         	_.remove($scope.roster,function(member){return member.role == 'Instructor'});

@@ -125,13 +125,15 @@ public class SecurityConfig {
         .authenticationEntryPoint(new NoWWWAuthenticate401ResponseEntryPoint("opendashboard"))
       .and()
       .authorizeRequests()
-        .antMatchers("/features/**", "/", "/login").permitAll()
+        .antMatchers("/features/**", "/", "/login", "/err/**").permitAll()
         .anyRequest().authenticated()
       .and()
         .logout()
         .invalidateHttpSession(true)
         .deleteCookies("ODSESSIONID", "X-OD-TENANT")
-      .and().csrf().csrfTokenRepository(csrfTokenRepository())
+      .and()
+      .headers().frameOptions().disable()
+      .csrf().csrfTokenRepository(csrfTokenRepository())
       /**
        * 
        * TODO revisit after updating to Spring Security 4.1 

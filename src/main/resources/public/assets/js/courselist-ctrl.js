@@ -18,6 +18,7 @@
     angular
     .module('OpenDashboard')
     .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
+      $scope.error = null;
       $scope.courses = null;
       $scope.tenant = null;
       var currentUser = SessionService.getCurrentUser();
@@ -26,15 +27,19 @@
         .then(function (tenantData){
           $log.debug(tenantData);
           $scope.tenant = tenantData;
-          var options = {};
-          options.userId = currentUser.user_id;
-          options.tenantId = currentUser.tenant_id;
-          options.isLti = SessionService.isLTISession();
           
-          CourseDataService.getContexts(options)
+          CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
           .then(function(courseData){
-            $log.debug(courseData);
-            $scope.courses = courseData;
+        	$log.debug(courseData);
+        	if (courseData.isError) {
+        	  $scope.errorData = {};
+        	  $scope.errorData['userId'] = currentUser.user_id;
+        	  $scope.errorData['errorCode'] = courseData.errorCode;
+        	  $scope.error = courseData.errorCode;
+        	}
+        	else {
+        	  $scope.courses = courseData;
+        	}
           });
 
         })

@@ -31,6 +31,7 @@ import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.framework.model.Dashboard;
 import od.framework.model.Tenant;
+import od.providers.NoVLEModuleMapException;
 import od.providers.ProviderException;
 import od.providers.ProviderService;
 import od.providers.config.ProviderDataConfigurationException;
@@ -79,7 +80,14 @@ public class LTIController {
     
     Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);   
-    String courseId = courseProvider.getCourseIdByLTIContextId(contextId);
+    
+    String courseId = null;
+    try {
+      courseId = courseProvider.getCourseIdByLTIContextId(tenant, contextId);
+    } 
+    catch (ProviderException e) {
+      throw new NoVLEModuleMapException(launchRequest.getContext_id());
+    }
     
     ContextMapping contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
     

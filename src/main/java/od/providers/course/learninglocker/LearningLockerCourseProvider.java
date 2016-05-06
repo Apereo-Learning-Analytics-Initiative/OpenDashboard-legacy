@@ -4,8 +4,6 @@
 package od.providers.course.learninglocker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -13,30 +11,24 @@ import javax.annotation.PostConstruct;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
-import od.providers.api.PageWrapper;
 import od.providers.course.CourseProvider;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.learninglocker.LearningLockerStaffModuleInstance;
 import od.repository.mongo.MongoTenantRepository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -53,8 +45,15 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   
-  private boolean OAUTH = false;
-  private boolean DEMO = true;
+  private static final String STAFF_URI = "/api/jisc/v1/staff";
+  private static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1/staffmoduleinstance";
+  private static final String MODULE_INSTANCE_URI = "/api/jisc/v1/moduleinstance";
+  private static final String MODULE_VLE_MAP_URI = "/api/jisc/v1/modulevlemap";
+  
+  @Value("${ll.use.oauth:false}")
+  private boolean OAUTH;
+  
+  private boolean DEMO = false;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
@@ -78,78 +77,44 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return DESC;
   }
 
-  private PageImpl<LearningLockerModuleInstance> fetch(Pageable pageable, Tenant tenant, String path) {
+  @Override
+  public Course getContext(ProviderData providerData, String contextId) throws ProviderException {
+    Course course = null;
     
-    log.debug("{}",path);
-    
-    ProviderData providerData = tenant.findByKey(KEY);
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
+    String baseUrl = providerData.findValueForKey("base_url");
 
-    String url = providerData.findValueForKey("base_url");
-    if (!url.endsWith("/") && !path.startsWith("/")) {
-      url = url + "/";
-    }
+    String moduleInstanceUrl = buildUrl(baseUrl, MODULE_INSTANCE_URI);
+    MultiValueMap<String, String> moduleInstanceParams = new LinkedMultiValueMap<String, String>();
+    moduleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":\"%s\"}", contextId));
     
-    url = url + path;
-    
-    ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
-    resourceDetails.setClientId(providerData.findValueForKey("key"));
-    resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
-    resourceDetails.setAccessTokenUri(getUrl(providerData.findValueForKey("base_url"), LL_OAUTH_TOKEN_URI, null));
-    DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+    log.debug(buildUri(moduleInstanceUrl, moduleInstanceParams).toString());
 
-    OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
-        MediaType.valueOf("text/javascript")));
-    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-    ParameterizedTypeReference<PageWrapper<LearningLockerModuleInstance>> responseType = new ParameterizedTypeReference<PageWrapper<LearningLockerModuleInstance>>() {};
+    LearningLockerModuleInstance [] moduleInstances = restTemplate.exchange(buildUri(moduleInstanceUrl, moduleInstanceParams), HttpMethod.GET, headers, LearningLockerModuleInstance[].class).getBody();
     
-    PageWrapper<LearningLockerModuleInstance> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, null, responseType).getBody();
-    log.debug(pageWrapper.toString());
-    List<LearningLockerModuleInstance> output;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      output = new LinkedList<>(pageWrapper.getContent());
+    if (moduleInstances != null && moduleInstances.length > 0) {
+      if (moduleInstances.length == 1) {
+        course = toCourse(moduleInstances[0]);
+      }
+      else {
+        log.warn(String.format("Found multiple module instances for contextId: {}", contextId));
+        log.warn("Using last in list");
+        for (LearningLockerModuleInstance mi : moduleInstances) {
+          course = toCourse(mi);
+        }
+      }
     }
     else {
-      output = new ArrayList<>();
-    }
-    
-    return new PageImpl<LearningLockerModuleInstance>(output, pageable, pageWrapper.getPage().getTotalElements());
-  }
-
-
-  @Override
-  public Course getContext(ProviderOptions options) throws ProviderException {
-    CourseImpl course = null;
-    
-    String path = "/api/v1/LearningLockerModuleInstances?query={\"_id\":\"%s\"}&populate=MODULE";
-    path = String.format(path, options.getCourseId());
-    
-    Pageable pageable = new PageRequest(0, 1);  
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-    PageImpl<LearningLockerModuleInstance> page = fetch(pageable, tenant, path);
-    
-    if (page != null && page.hasContent()) {
-      List<LearningLockerModuleInstance> LearningLockerModuleInstances = page.getContent();
-      if (LearningLockerModuleInstances != null && !LearningLockerModuleInstances.isEmpty()) {
-        LearningLockerModuleInstance learningLockerModuleInstance = LearningLockerModuleInstances.get(0);
-        course = new CourseImpl();
-        course.setId(options.getCourseId());
-        course.setTitle(learningLockerModuleInstance.getModule().getModName());
-      }
+      log.error(String.format("No module instances found for contextId: {}", contextId));
+      throw new ProviderException(ProviderException.NO_MODULE_INSTANCES_ERROR_CODE);
     }
     
     return course;
   }
 
   @Override
-  public List<Course> getContexts(ProviderOptions options) throws ProviderException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<Course> getContextsForUser(ProviderOptions options) throws ProviderException {
+  public List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException {
     
     
     if (DEMO) {
@@ -168,53 +133,78 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
       return courses;
     }
     
-    
     List<Course> output = null;
 
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-    ProviderData providerData = tenant.findByKey(KEY);
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
-    if (!baseUrl.endsWith("/")) {
-      baseUrl = baseUrl + "/";
-    }
-
-    RestTemplate restTemplate;
+    String staffUrl = buildUrl(baseUrl, STAFF_URI);
+    MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
+    staffParams.add("query", String.format("{\"HESA_STAFF_ID\":\"%s\"}", "10005000")); // TODO FIXME 10005000
     
-    if (OAUTH) {
-      ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
-      resourceDetails.setClientId(providerData.findValueForKey("key"));
-      resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
-      resourceDetails.setAccessTokenUri(getUrl(baseUrl, LL_OAUTH_TOKEN_URI, null));
-      DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+    log.debug(buildUri(staffUrl, staffParams).toString());
+    
+    ResponseEntity<LearningLockerStaff[]> responseEntity 
+      = restTemplate.exchange(buildUri(staffUrl,staffParams), HttpMethod.GET, 
+          headers, LearningLockerStaff[].class);
+    
+    if (responseEntity == null) {
+      log.error(String.format("ResponseEntity null for {} {}", staffUrl, staffParams));
+      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
+    }
+    
+    LearningLockerStaff [] staff = responseEntity.getBody();
 
-      restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
+    String staffId = null;
+    if (staff != null && staff.length > 0) {
+      if (staff.length == 1) {
+        LearningLockerStaff s = staff[0];
+        staffId = s.getStaffId();
+      }
+      else {
+        log.error(String.format("Too many staff entries for user id %s", userId));
+        throw new ProviderException(ProviderException.TOO_MANY_STAFF_ENTRIES_ERROR_CODE);
+      }
     }
     else {
-      restTemplate = new RestTemplate();
+      log.error(String.format("No staff entries for user id %s", userId));
+      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
     }
     
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
-        MediaType.valueOf("text/javascript")));
-    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+    log.debug("staff id is {}", staffId);
     
-    String staffModuleInstancePath = ""; // TODO
-    LearningLockerStaffModuleInstance [] staffModuleInstances = restTemplate.exchange(baseUrl + staffModuleInstancePath, 
-        HttpMethod.GET, null, LearningLockerStaffModuleInstance[].class, options.getUserId()).getBody();
+    String staffModuleInstanceUrl = buildUrl(baseUrl, STAFF_MODULE_INSTANCE_URI);
+    MultiValueMap<String, String> staffModuleInstanceParams = new LinkedMultiValueMap<String, String>();
+    staffModuleInstanceParams.add("query", String.format("{\"STAFF_ID\":\"%s\"}", staffId));
+    
+    log.debug(buildUri(staffModuleInstanceUrl, staffModuleInstanceParams).toString());
+    
+    LearningLockerStaffModuleInstance [] staffModuleInstances 
+      = restTemplate.exchange(buildUri(staffModuleInstanceUrl, staffModuleInstanceParams), 
+        HttpMethod.GET, headers, LearningLockerStaffModuleInstance[].class).getBody();
       
     if (staffModuleInstances != null && staffModuleInstances.length > 0) {
       StringBuilder result = new StringBuilder();
       for(LearningLockerStaffModuleInstance smi : staffModuleInstances) {
-        result.append("'");
-        result.append("TBD"); // TODO
-        result.append("'");
+        result.append("\"");
+        result.append(smi.getModInstanceId());
+        result.append("\"");
         result.append(",");
       }
-      String staffModuleIdList = result.length() > 0 ? result.substring(0, result.length() - 1): "";
       
-      String moduleInstancePath = ""; // TODO
-      String queryValue = String.format("", staffModuleIdList); // TODO
-      LearningLockerModuleInstance [] moduleInstances = restTemplate.exchange(baseUrl + moduleInstancePath, HttpMethod.GET, null, LearningLockerModuleInstance[].class, queryValue).getBody();
+      String staffModuleIdList = result.length() > 0 ? result.substring(0, result.length() - 1): null;
+      
+      if (StringUtils.isBlank(staffModuleIdList)) {
+        throw new ProviderException(String.format("No staff module instances for %s %s",staffModuleInstanceUrl, staffModuleInstanceParams));
+      }
+      
+      String moduleInstanceUrl = buildUrl(baseUrl, MODULE_INSTANCE_URI);
+      MultiValueMap<String, String> moduleInstanceParams = new LinkedMultiValueMap<String, String>();
+      moduleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":[%s]}", staffModuleIdList));
+      
+      log.debug(buildUri(moduleInstanceUrl, moduleInstanceParams).toString());
+
+      LearningLockerModuleInstance [] moduleInstances = restTemplate.exchange(buildUri(moduleInstanceUrl, moduleInstanceParams), HttpMethod.GET, headers, LearningLockerModuleInstance[].class).getBody();
       
       if (moduleInstances != null && moduleInstances.length > 0) {
         output = new ArrayList<>();
@@ -232,22 +222,58 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   }
   
   @Override
-  public String getLTIContextIdByCourseId(String courseId) throws ProviderException {
-    // TODO Auto-generated method stub
-    return "13";
-  }
+  public String getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
+    String courseId = null;
+    
+    ProviderData providerData = tenant.findByKey(KEY);
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
+    String baseUrl = providerData.findValueForKey("base_url");
+    String moduleVleMapUrl = buildUrl(baseUrl, MODULE_VLE_MAP_URI);
+    MultiValueMap<String, String> moduleVleMapParams = new LinkedMultiValueMap<String, String>();
+    moduleVleMapParams.add("query", String.format("{\"VLE_MOD_ID\":\"%s\"}", ltiContextId));
+    
+    log.debug(buildUri(moduleVleMapUrl, moduleVleMapParams).toString());
 
+    LearningLockerVLEModuleMap [] moduleVleMaps = restTemplate.exchange(buildUri(moduleVleMapUrl, moduleVleMapParams), HttpMethod.GET, headers, LearningLockerVLEModuleMap[].class).getBody();
+    
+    if (moduleVleMaps != null && moduleVleMaps.length > 0) {
+      if (moduleVleMaps.length == 1) {
+        LearningLockerVLEModuleMap moduleMap = moduleVleMaps[0];
+        courseId = moduleMap.getModuleInstanceId();
+      }
+      else {
+        log.error(String.format("Too many vle module maps for tenant %s lti context %s", tenant.getId(), ltiContextId));
+        throw new ProviderException(ProviderException.TOO_MANY_VLE_MODULE_MAPS_ERROR_CODE);
+      }
+    }
+    else {
+      log.error(String.format("No vle module maps for tenant %s lti context %s", tenant.getId(), ltiContextId));
+      throw new ProviderException(ProviderException.NO_VLE_MODULE_MAPS_ERROR_CODE);
+    }
+    
+    log.debug("course id is {} for tenant {} lti context {}", courseId, tenant.getId(), ltiContextId);
+    return courseId;
+  }
+  
   private Course toCourse(LearningLockerModuleInstance llModuleInstance) {
     CourseImpl course = new CourseImpl();
     course.setId(llModuleInstance.getModInstanceId());
-    course.setTitle(llModuleInstance.getModule().getModName());
+    if (llModuleInstance.getModule() != null) {
+      course.setTitle(llModuleInstance.getModule().getModName());
+    }
+    else {
+      course.setTitle(llModuleInstance.getModInstanceId());
+    }
     return course;
   }
 
-  @Override
-  public String getCourseIdByLTIContextId(String ltiContextId) throws ProviderException {
-    // TODO Auto-generated method stub
-    return "1";
+  private String getBaseUrl(ProviderData providerData) {
+    String baseUrl = providerData.findValueForKey("base_url");
+    if (!baseUrl.endsWith("/")) {
+      baseUrl = baseUrl + "/";
+    }
+    
+    return baseUrl;
   }
-
 }

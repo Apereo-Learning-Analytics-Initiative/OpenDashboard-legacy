@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import od.providers.NoVLEModuleMapException;
+import od.providers.ProviderException;
 import od.providers.config.ProviderDataConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,18 +54,26 @@ public class AppControllerAdvice {
     
     @ExceptionHandler(UnauthorizedUserException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public @ResponseBody Object unauthorized(HttpServletRequest request, UnauthorizedUserException ex) {
+    public @ResponseBody Object unauthorized(HttpServletRequest request, HttpServletResponse response, UnauthorizedUserException ex) throws IOException {
       if (isAjaxCall(request)) {
         logger.error(ex.getMessage(), ex);
-        Response response = new Response();
-        response.setErrors(Arrays.asList(ex.getMessage()));
-        response.setData(ExceptionUtils.getStackTrace(ex));
-        response.setUrl(request.getRequestURL().toString());
-        return response;
-    } else {
-      ModelAndView modelAndView = new ModelAndView("unauthorized");
-      return modelAndView;
+        Response resp = new Response();
+        resp.setErrors(Arrays.asList(ex.getMessage()));
+        resp.setData(ExceptionUtils.getStackTrace(ex));
+        resp.setUrl(request.getRequestURL().toString());
+        return resp;
+      } else {
+        logger.debug("sending redirect to /err");
+        response.sendRedirect("/err/ERROR_0");
+        return null;
+      }
     }
+    
+    @ExceptionHandler(NoVLEModuleMapException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void noVLEModuleMap(HttpServletResponse response, NoVLEModuleMapException noVLEModuleMapException) throws IOException {
+      logger.debug("sending redirect to /err");
+      response.sendRedirect("/err/"+ProviderException.NO_VLE_MODULE_MAPS_ERROR_CODE);
     }
 
     @ExceptionHandler(Exception.class)

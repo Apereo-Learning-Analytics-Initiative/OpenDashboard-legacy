@@ -44,11 +44,7 @@ public class ProviderOptions implements Serializable {
   private String courseId;
   private String userId;
   private String roles;
-  
-  private String strategy;
-  private String strategyKey;
-  private String strategyHost;
-  
+    
   private boolean isLti;
   
   public String getTenantId() {
@@ -92,25 +88,6 @@ public class ProviderOptions implements Serializable {
   }
   public void setRoles(String roles) {
     this.roles = roles;
-  }
-  public String getStrategy() {
-    return strategy;
-  }
-  public void setStrategy(String strategy) {
-    this.strategy = strategy;
-  }
-  public String getStrategyHost() {
-    return strategyHost;
-  }
-  public void setStrategyHost(String strategyHost) {
-    this.strategyHost = strategyHost;
-  }
-  
-  public String getStrategyKey() {
-    return strategyKey;
-  }
-  public void setStrategyKey(String strategyKey) {
-    this.strategyKey = strategyKey;
   }
   public boolean isLti() {
     return isLti;

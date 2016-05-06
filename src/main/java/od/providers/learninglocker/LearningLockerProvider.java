@@ -14,9 +14,27 @@
  *******************************************************************************/
 package od.providers.learninglocker;
 
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.LinkedList;
 
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import od.providers.BaseProvider;
+import od.providers.ProviderData;
 import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
@@ -29,6 +47,9 @@ import od.providers.config.TranslatableKeyValueConfigurationOptions;
 public abstract class LearningLockerProvider extends BaseProvider {
   
   protected static final String LL_OAUTH_TOKEN_URI = "/oauth/token";
+  
+  @Value("${ll.use.oauth:false}")
+  protected boolean OAUTH;
   
   protected ProviderConfiguration providerConfiguration;
   
@@ -43,9 +64,56 @@ public abstract class LearningLockerProvider extends BaseProvider {
 
     return new DefaultProviderConfiguration(options);
   }
+  
   @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
+  }
+  
+  protected RestTemplate getRestTemplate(ProviderData providerData) {
+    RestTemplate restTemplate = null;
+    
+    if (OAUTH) {
+      
+      String baseUrl = buildUrl(providerData.findValueForKey("base_url"), LL_OAUTH_TOKEN_URI);
+
+      ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+      resourceDetails.setClientId(providerData.findValueForKey("key"));
+      resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
+      resourceDetails.setAccessTokenUri(baseUrl);
+      DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
+
+      restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
+    }
+    else {
+      restTemplate = new RestTemplate();
+      
+    }
+    
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
+    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+    
+    return restTemplate;
+  }
+
+  
+  protected String buildUrl(String uri, String path) {
+    String url = uri;
+    if (StringUtils.endsWithIgnoreCase(url, "/")) {
+      url = StringUtils.trimTrailingCharacter(url, '/');
+    }
+    
+    return url.concat(path);
+  }
+
+  protected URI buildUri(String url, MultiValueMap<String,String> params) {
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+    if (params != null && !params.isEmpty()) {
+      builder.queryParams(params);
+    }
+    return builder.build().toUri();
   }
 
 }

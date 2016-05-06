@@ -197,6 +197,11 @@ angular
           },
           controller: 'LoginCtrl'
         })
+        .state('error',{
+          url: '/err/:errorCode',
+          templateUrl: '/assets/templates/error.html',
+          controller: 'ErrorCtrl'
+        })
 	    .state('index', {
 	        url: '/',
 	        params: {

@@ -20,8 +20,8 @@ package od.providers.roster;
 import java.util.Set;
 
 import od.providers.Provider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.Member;
 
@@ -30,5 +30,5 @@ import org.apereo.lai.Member;
  *
  */
 public interface RosterProvider extends Provider {
-	Set<Member> getRoster(ProviderOptions options) throws ProviderException;
+	Set<Member> getRoster(ProviderData providerData, String contextId) throws ProviderException;
 }

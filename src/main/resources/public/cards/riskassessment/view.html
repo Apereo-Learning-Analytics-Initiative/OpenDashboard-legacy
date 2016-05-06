@@ -1,5 +1,13 @@
 <div class="col-xs-12 od-background-color" ng-controller="RiskAssessmentController">
-  <div class="row" ng-show="view == listView">
+  <div class="row" ng-show="error">
+    <div class="col-xs-12 col-md-offset-3 col-md-6" ng-show="error">
+      <div class="alert alert-danger" role="alert">
+        <h3 translate="{{error}}" translate-values="{{errorData}}"></h3>
+        <h5 translate="ERROR_CODE" translate-values="{{errorData}}"></h5>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-show="!error && view == listView">
   
     <!-- LEFT COLUMN -->
     <div class="col-md-4">
@@ -85,7 +93,7 @@
       </table>
     </div>
   </div>
-  <div class="row" ng-show="view == radarView">
+  <div class="row" ng-show="!error && view == radarView">
     <!-- LEFT COLUMN -->  
     <div class="col-md-4">
       <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">

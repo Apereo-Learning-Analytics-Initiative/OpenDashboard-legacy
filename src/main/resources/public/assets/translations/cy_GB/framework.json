@@ -7,6 +7,13 @@
 "PLACEHOLDER_PASSWORD":"cyfrinair",
 "IM_AN_ADMIN":"Yr wyf yn weinyddwr",
 
+"ERROR_CODE":"Error code: {{errorCode}}",
+"ERROR_0":"You are not authorized to access this resource",
+"ERROR_PROVIDER_100":"Unable to retrieve courses for user: {{userId}}.",
+"ERROR_PROVIDER_101":"More than one staff records found for user: {{userId}}.",
+"ERROR_PROVIDER_301":"No VLE Module Map record found",
+"ERROR_PROVIDER_400":"No student records found",
+
 "BUTTON_SIGN_IN": "Mewngofnodi",
 "BUTTON_CANCEL":"Diddymu",
 
@@ -17,9 +24,6 @@
 "ERROR_PASSWORD_REQUIRED": "Mae angen cyfrinair.",
 "ERROR_LOGIN":"Cofrestrwch yn methu",
 
-"TEXT_IDP_SELECTION":"Dewiswch eich sefydliad o'r rhestr isod ac yna gwasgwch y botwm Mewngofnodi.",
-
-"COURSE_LIST_HEADER":"",
-"COURSE_LIST_INSTRUCTIONS":""
+"TEXT_IDP_SELECTION":"Dewiswch eich sefydliad o'r rhestr isod ac yna gwasgwch y botwm Mewngofnodi."
 
 }

@@ -172,103 +172,103 @@
 			</plugin>
 
 			<!-- Requires Maven 3.1 -->
-			<plugin>
-				<groupId>com.github.klieber</groupId>
-				<artifactId>phantomjs-maven-plugin</artifactId>
-				<version>0.7</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>install</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<version>1.9.8</version>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.github.searls</groupId>
-				<artifactId>jasmine-maven-plugin</artifactId>
-				<version>2.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<jsSrcDir>src/main/resources/public/assets/js/lib</jsSrcDir>
-					<jsTestSrcDir>src/test/resources/js/specs</jsTestSrcDir>
-					<preloadSources>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-sanitize.js</source>
-						<source>http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-cookies.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.7.2/angular-translate.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-cookie/2.8.1/angular-translate-storage-cookie.min.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-local/2.8.1/angular-translate-storage-local.min.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.7.2/angular-translate-loader-partial.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-mocks.js</source>
+<!-- 			<plugin> -->
+<!-- 				<groupId>com.github.klieber</groupId> -->
+<!-- 				<artifactId>phantomjs-maven-plugin</artifactId> -->
+<!-- 				<version>0.7</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<goals> -->
+<!-- 							<goal>install</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<configuration> -->
+<!-- 					<version>1.9.8</version> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>com.github.searls</groupId> -->
+<!-- 				<artifactId>jasmine-maven-plugin</artifactId> -->
+<!-- 				<version>2.0</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<goals> -->
+<!-- 							<goal>test</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<configuration> -->
+<!-- 					<jsSrcDir>src/main/resources/public/assets/js/lib</jsSrcDir> -->
+<!-- 					<jsTestSrcDir>src/test/resources/js/specs</jsTestSrcDir> -->
+<!-- 					<preloadSources> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-sanitize.js</source> -->
+<!-- 						<source>http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-cookies.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.7.2/angular-translate.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-cookie/2.8.1/angular-translate-storage-cookie.min.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-storage-local/2.8.1/angular-translate-storage-local.min.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-partial/2.7.2/angular-translate-loader-partial.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-mocks.js</source> -->
 
-						<source>http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.js</source>
-						<source>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js</source>
-						<source>http://demos.amitavroy.com/learningci/assets/js/xml2json.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/lodash-compat/3.10.1/lodash.js</source>
-						<source>http://cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js</source>
-						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js</source>
+<!-- 						<source>http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.js</source> -->
+<!-- 						<source>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js</source> -->
+<!-- 						<source>http://demos.amitavroy.com/learningci/assets/js/xml2json.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/vis/4.6.0/vis.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/lodash-compat/3.10.1/lodash.js</source> -->
+<!-- 						<source>http://cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js</source> -->
+<!-- 						<source>https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js</source> -->
 
-						<source>src/main/resources/public/assets/js/lib/angular-notification-min.js</source>
-						<source>src/main/resources/public/assets/js/lib/angular-vis.js</source>
-						<source>src/main/resources/public/assets/js/lib/holder.js</source>
-						<source>src/main/resources/public/assets/js/lib/keen.min.js</source>
+<!-- 						<source>src/main/resources/public/assets/js/lib/angular-notification-min.js</source> -->
+<!-- 						<source>src/main/resources/public/assets/js/lib/angular-vis.js</source> -->
+<!-- 						<source>src/main/resources/public/assets/js/lib/holder.js</source> -->
+<!-- 						<source>src/main/resources/public/assets/js/lib/keen.min.js</source> -->
 
-						<include>src/main/resources/public/assets/js/app.js</include>
-						<include>src/main/resources/public/assets/js/admin-ctrl.js</include>
-						<include>src/main/resources/public/assets/js/api.js</include>
-						<include>src/main/resources/public/assets/js/card-ctrl.js</include>
-						<include>src/main/resources/public/assets/js/dashboard-ctrl.js</include>
-						<include>src/main/resources/public/assets/js/data-services.js</include>
-						<include>src/main/resources/public/assets/js/directives.js</include>
-						<include>src/main/resources/public/assets/js/framework-services.js</include>
-						<include>src/main/resources/public/assets/js/login-ctrl.js</include>
-						<include>src/main/resources/public/assets/js/models.js</include>
-						<include>src/main/resources/public/assets/js/welcome-ctrl.js</include>
+<!-- 						<include>src/main/resources/public/assets/js/app.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/admin-ctrl.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/api.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/card-ctrl.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/dashboard-ctrl.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/data-services.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/directives.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/framework-services.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/login-ctrl.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/models.js</include> -->
+<!-- 						<include>src/main/resources/public/assets/js/welcome-ctrl.js</include> -->
 
-						<source>src/main/resources/public/cards/snapp/module.js</source>
-						<source>src/main/resources/public/cards/roster/module.js</source>
-						<source>src/main/resources/public/cards/modelviewer/module.js</source>
-						<source>src/main/resources/public/cards/lti/module.js</source>
-						<source>src/main/resources/public/cards/eventviewer/module.js</source>
-						<source>src/main/resources/public/cards/demo/module.js</source>
-						<source>src/main/resources/public/cards/activityradar/module.js</source>
-						<source>src/main/resources/public/cards/riskassessment/module.js</source>
-						<source>src/main/resources/public/cards/activity/module.js</source>
-					</preloadSources>
-					<!-- </sourceIncludes> -->
-					<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
-					<webDriverCapabilities>
-						<capability>
-							<name>phantomjs.binary.path</name>
-							<value>${phantomjs.binary}</value>
-						</capability>
-					</webDriverCapabilities>
-					<haltOnFailure>true</haltOnFailure>
-				</configuration>
-			</plugin>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-enforcer-plugin</artifactId> 
-				<version>1.3.1</version> <executions> <execution> <id>enforce-versions</id> 
-				<goals> <goal>enforce</goal> </goals> <configuration> <rules> <requireMavenVersion> 
-				<version>${maven.version}</version> </requireMavenVersion> </rules> </configuration> 
-				</execution> </executions> </plugin> -->
+<!-- 						<source>src/main/resources/public/cards/snapp/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/roster/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/modelviewer/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/lti/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/eventviewer/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/demo/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/activityradar/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/riskassessment/module.js</source> -->
+<!-- 						<source>src/main/resources/public/cards/activity/module.js</source> -->
+<!-- 					</preloadSources> -->
+<!-- 					</sourceIncludes> -->
+<!-- 					<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName> -->
+<!-- 					<webDriverCapabilities> -->
+<!-- 						<capability> -->
+<!-- 							<name>phantomjs.binary.path</name> -->
+<!-- 							<value>${phantomjs.binary}</value> -->
+<!-- 						</capability> -->
+<!-- 					</webDriverCapabilities> -->
+<!-- 					<haltOnFailure>true</haltOnFailure> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+<!-- 			<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-enforcer-plugin</artifactId>  -->
+<!-- 				<version>1.3.1</version> <executions> <execution> <id>enforce-versions</id>  -->
+<!-- 				<goals> <goal>enforce</goal> </goals> <configuration> <rules> <requireMavenVersion>  -->
+<!-- 				<version>${maven.version}</version> </requireMavenVersion> </rules> </configuration>  -->
+<!-- 				</execution> </executions> </plugin> -->
 			<!-- <plugin> -->
 			<!-- Test Coverage Report found in /target/site/jacoco/index.html -->
 			<!-- <groupId>org.jacoco</groupId> -->
