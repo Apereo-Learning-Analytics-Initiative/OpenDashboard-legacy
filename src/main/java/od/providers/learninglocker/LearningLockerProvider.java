@@ -47,10 +47,20 @@ import od.providers.config.TranslatableKeyValueConfigurationOptions;
 public abstract class LearningLockerProvider extends BaseProvider {
   
   protected static final String LL_OAUTH_TOKEN_URI = "/oauth/token";
+  protected static final String STAFF_URI = "/api/jisc/v1.2.1/staff";
+  protected static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/staffmoduleinstance";
+  protected static final String MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/moduleinstance";
+  protected static final String MODULE_VLE_MAP_URI = "/api/jisc/v1.2.1/modulevlemap";
+  protected static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/studentmoduleinstance";
+  protected static final String STUDENT_URI = "/api/jisc/v1.2.1/student";
+
   
   @Value("${ll.use.oauth:false}")
   protected boolean OAUTH;
   
+  @Value("${ll.use.demo:false}")
+  protected boolean DEMO = false;
+
   protected ProviderConfiguration providerConfiguration;
   
   public ProviderConfiguration getDefaultLearningLockerConfiguration() {

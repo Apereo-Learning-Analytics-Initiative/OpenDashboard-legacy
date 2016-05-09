@@ -44,17 +44,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   private static final String BASE = "LEARNING_LOCKER_COURSE";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-  
-  private static final String STAFF_URI = "/api/jisc/v1/staff";
-  private static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1/staffmoduleinstance";
-  private static final String MODULE_INSTANCE_URI = "/api/jisc/v1/moduleinstance";
-  private static final String MODULE_VLE_MAP_URI = "/api/jisc/v1/modulevlemap";
-  
-  @Value("${ll.use.oauth:false}")
-  private boolean OAUTH;
-  
-  private boolean DEMO = false;
-  
+      
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
@@ -223,6 +213,11 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   
   @Override
   public String getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
+    
+    if (DEMO) {
+      return "13";
+    }
+
     String courseId = null;
     
     ProviderData providerData = tenant.findByKey(KEY);

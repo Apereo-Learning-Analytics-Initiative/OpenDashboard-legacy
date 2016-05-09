@@ -56,15 +56,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   private static final String BASE = "LEARNING_LOCKER_ROSTER";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-  
-  private static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1/studentmoduleinstance";
-  private static final String STUDENT_URI = "/api/jisc/v1/student";
-  
-  private boolean DEMO = false;
-  @Value("${ll.use.oauth:false}")
-  private boolean OAUTH;
-
-  
+     
   @Autowired private MongoTenantRepository mongoTenantRepository;
   //@Autowired private CourseProvider courseProvider;
   
