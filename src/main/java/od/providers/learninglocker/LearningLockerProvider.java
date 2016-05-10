@@ -14,24 +14,8 @@
  *******************************************************************************/
 package od.providers.learninglocker;
 
-import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.LinkedList;
-
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
@@ -40,6 +24,15 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.web.client.RestTemplate;
+
 /**
  * @author ggilbert
  *
@@ -47,12 +40,12 @@ import od.providers.config.TranslatableKeyValueConfigurationOptions;
 public abstract class LearningLockerProvider extends BaseProvider {
   
   protected static final String LL_OAUTH_TOKEN_URI = "/oauth/token";
-  protected static final String STAFF_URI = "/api/jisc/v1.2.1/staff";
-  protected static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/staffmoduleinstance";
-  protected static final String MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/moduleinstance";
-  protected static final String MODULE_VLE_MAP_URI = "/api/jisc/v1.2.1/modulevlemap";
-  protected static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1.2.1/studentmoduleinstance";
-  protected static final String STUDENT_URI = "/api/jisc/v1.2.1/student";
+  protected static final String STAFF_URI = "/api/jisc/v1.2.3/staff";
+  protected static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/staffmoduleinstance";
+  protected static final String MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/moduleinstance";
+  protected static final String MODULE_VLE_MAP_URI = "/api/jisc/v1.2.3/modulevlemap";
+  protected static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/studentmoduleinstance";
+  protected static final String STUDENT_URI = "/api/jisc/v1.2.3/student";
 
   
   @Value("${ll.use.oauth:false}")
@@ -109,21 +102,5 @@ public abstract class LearningLockerProvider extends BaseProvider {
   }
 
   
-  protected String buildUrl(String uri, String path) {
-    String url = uri;
-    if (StringUtils.endsWithIgnoreCase(url, "/")) {
-      url = StringUtils.trimTrailingCharacter(url, '/');
-    }
-    
-    return url.concat(path);
-  }
-
-  protected URI buildUri(String url, MultiValueMap<String,String> params) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-    if (params != null && !params.isEmpty()) {
-      builder.queryParams(params);
-    }
-    return builder.build().toUri();
-  }
 
 }

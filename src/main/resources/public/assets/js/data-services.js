@@ -131,36 +131,39 @@ angular
 		}
 	}
 });
-		angular.
-		module('OpenDashboard')
-		.service('EventService',function($log, $http, _) {
-			
-			return {
-				getEventsForCourse : function (options, courseId, page, size) {
-					$log.debug(options);
-					$log.debug(courseId);
-					$log.debug(page);
-					$log.debug(size);
-					var p = page || 0;
-		            var s = size || 10;
-		
-				
-					var url = '/api/event/course/'+courseId+'?page='+p+'&size='+s;
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		$log.debug(response);
-			    		if (response && response.data) {
-			    		  return response.data.content;	    	
-			    		}
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
-				},
+
+angular
+  .module('OpenDashboard')
+    .service('EventService',function($log, $http, _) {
+      return {
+        getEventsForCourse : function (options, courseId, page, size) {
+          var p = page || 0;
+          var s = size || 10;
+    	
+          var url = '/api/event/course/'+courseId+'?page='+p+'&size='+s;
+          var promise = $http({
+            method  : 'POST',
+        	url		: url,
+        	data    : JSON.stringify(options),
+        	headers : { 'Content-Type': 'application/json'}
+          })
+          .then(function (response) {
+              $log.debug(response);
+              if (response && response.data) {
+                return response.data.content;	    	
+              }
+        	  return null;
+        	}, function (error) {
+    	    	$log.debug(error);
+    	    	var errorObj = {};
+    	    	errorObj['isError'] = true;
+    	    	errorObj['errorCode'] = error.data.errors[0];
+    	    	
+    	    	return errorObj;
+        	}
+          );
+    		return promise;
+		},
 				getEventsForUser : function (options, userId, page, size) {
 					$log.debug(options);
 					$log.debug(userId);

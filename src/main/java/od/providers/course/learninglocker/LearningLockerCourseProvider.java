@@ -3,6 +3,8 @@
  */
 package od.providers.course.learninglocker;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     
     return course;
   }
-
+  
   @Override
   public List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException {
     
@@ -130,7 +132,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     String baseUrl = providerData.findValueForKey("base_url");
     String staffUrl = buildUrl(baseUrl, STAFF_URI);
     MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
-    staffParams.add("query", String.format("{\"HESA_STAFF_ID\":\"%s\"}", "10005000")); // TODO FIXME 10005000
+    staffParams.add("query", String.format("{\"STAFF_ID\":\"%s\"}", userId));
     
     log.debug(buildUri(staffUrl, staffParams).toString());
     
@@ -263,12 +265,35 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return course;
   }
 
-  private String getBaseUrl(ProviderData providerData) {
+  @Override
+  public LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException {
+    
+    ProviderData providerData = tenant.findByKey(KEY);
+
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
-    if (!baseUrl.endsWith("/")) {
-      baseUrl = baseUrl + "/";
+    String staffUrl = buildUrl(baseUrl, STAFF_URI);
+    MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
+    try {
+      staffParams.add("query", String.format("{\"DASH_SHIB_ID\":\"%s\"}", URLEncoder.encode(pid, "UTF-8")));
+    } 
+    catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
     }
     
-    return baseUrl;
+    log.debug(buildUri(staffUrl, staffParams).toString());
+    
+    ResponseEntity<LearningLockerStaff[]> responseEntity 
+      = restTemplate.exchange(buildUri(staffUrl,staffParams), HttpMethod.GET, 
+          headers, LearningLockerStaff[].class);
+    
+    if (responseEntity == null || responseEntity.getBody() == null || responseEntity.getBody().length == 0) {
+      log.error(String.format("ResponseEntity null for %s %s", staffUrl, staffParams));
+      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
+    }
+    
+    return responseEntity.getBody()[0];
   }
+
 }

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -59,6 +60,9 @@ public class JWTController {
   
   @Value("${jwt.target:https://sp.data.alpha.jisc.ac.uk/secure/auth-web.php}")
   private String jwtTarget;
+  
+  @Value("${jwt.regTarget:https://sp.data.alpha.jisc.ac.uk/secure/register/reg-staff.php}")
+  private String jwtRegTarget;
 
   @Value("${jwt.returnUrl:http://localhost:8081/jwtlogin/<tid>}")
   private String jwtReturnUrl;
@@ -88,13 +92,15 @@ public class JWTController {
   
   @RequestMapping(value = "/jwtlogin/{tenantId}", method = RequestMethod.GET)
   public String jwtlogin(HttpServletRequest request, @RequestParam(value = "token", required = true) final String token, 
-      @PathVariable(value = "tenantId") final String tenant) throws JsonProcessingException, IOException {
+      @PathVariable(value = "tenantId") final String tenantId) throws JsonProcessingException, IOException {
     LOG.info("token {}", token);
-    LOG.info("tenant {}", tenant);
+    LOG.info("tenant {}", tenantId);
+    
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
     
     // Create a token using spring provided class :
     // org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-    UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken("TENANTID:"+tenant,token);
+    UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken("TENANTID:"+tenantId,token);
 
     // generate session if one doesn't exist
     request.getSession();
@@ -106,7 +112,22 @@ public class JWTController {
 
     // authenticationManager injected as spring bean, you can use custom or
     // spring provided authentication manager
-    Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthToken);
+    Authentication authentication = null;
+    try {
+      authentication = authenticationManager.authenticate(usernamePasswordAuthToken);
+    } 
+    catch (AuthenticationException e) {
+      LOG.error(e.getMessage(),e);
+      
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.append(jwtEndpoint);
+      stringBuilder.append("target=");
+      stringBuilder.append(URLEncoder.encode(jwtRegTarget, "UTF-8"));
+      stringBuilder.append("&entityID=");
+      stringBuilder.append(URLEncoder.encode(tenant.getIdpEndpoint().toString(), "UTF-8"));
+
+      return "redirect:"+stringBuilder.toString();
+    }
 
     // Need to set this as thread locale as available throughout
     SecurityContextHolder.getContext().setAuthentication(authentication);

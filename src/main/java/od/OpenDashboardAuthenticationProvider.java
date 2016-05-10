@@ -4,21 +4,23 @@
 package od;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import od.providers.ProviderException;
+import od.providers.course.CourseProvider;
+import od.providers.course.learninglocker.LearningLockerStaff;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +28,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,6 +39,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboardAuthenticationProvider.class);
+  
+  @Value("${ll.use.demo:false}")
+  protected boolean DEMO = false;
+  
+  @Autowired private CourseProvider courseProvider;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @Value("${od.admin.user:admin}")
   private String adminUsername;
@@ -72,14 +79,10 @@ public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuth
       try {
         actualObj = mapper.readTree(jwtJson);
       } 
-      catch (JsonProcessingException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      catch (Exception e) {
+        log.error(e.getMessage(),e);
+        throw new AuthenticationServiceException(e.getMessage());
       } 
-      catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
       log.info("{}", actualObj.get("jwt").textValue());
       
       // parse the token into claims
@@ -87,43 +90,33 @@ public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuth
       try {
         claims = Jwts.parser().setSigningKey(jwtKey.getBytes("UTF-8")).parseClaimsJws(actualObj.get("jwt").textValue());
       } 
-      catch (ExpiredJwtException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      catch (Exception e) {
+        log.error(e.getMessage(),e);
+        throw new AuthenticationServiceException(e.getMessage());
       } 
-      catch (UnsupportedJwtException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } 
-      catch (MalformedJwtException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } 
-      catch (SignatureException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } 
-      catch (IllegalArgumentException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } 
-      catch (UnsupportedEncodingException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      
       
       log.info("data: {}", claims.getBody().get("data"));
       Map<String, String> data = (Map<String, String>)claims.getBody().get("data");
       log.info("data map: {}", data);
-      String eppn = data.get("eppn");
-      log.info("eppn: {}", eppn);
+      String pid = data.get("pid");
+      log.info("pid: {}", pid);
       
-      // TODO look up Staff record
-
-      user = new OpenDashboardUser(eppn, eppn, 
-          AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"), StringUtils.substringAfter(username, "TENANTID:"), null);
-
+      if (DEMO) {
+        user = new OpenDashboardUser(pid, pid, 
+            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"), StringUtils.substringAfter(username, "TENANTID:"), null);
+      }
+      else {
+        try {
+          LearningLockerStaff staff = courseProvider.getStaffWithPid(mongoTenantRepository.findOne(StringUtils.substringAfter(username, "TENANTID:")), pid);
+          user = new OpenDashboardUser(staff.getStaffId(), pid, 
+              AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"), StringUtils.substringAfter(username, "TENANTID:"), null);
+        } 
+        catch (ProviderException e) {
+          log.error(e.getMessage(),e);
+          throw new AuthenticationCredentialsNotFoundException(e.getMessage(), e);
+        }
+      }
+      
     }
     else if (StringUtils.isNotBlank(username)
         && username.equals(adminUsername)

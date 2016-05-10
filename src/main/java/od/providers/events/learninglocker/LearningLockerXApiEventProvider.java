@@ -73,15 +73,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   
   @PostConstruct
   public void init() {
-    LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
-    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
-    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
-    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Learning Locker xAPI Base URL", "LABEL_LL_BASE_URL", false);
-    options.add(key);
-    options.add(secret);
-    options.add(baseUrl);
-
-    providerConfiguration = new DefaultProviderConfiguration(options);
+    providerConfiguration = getDefaultLearningLockerConfiguration();
   }
 
   @Override

@@ -23,6 +23,7 @@ import od.framework.model.Tenant;
 import od.providers.Provider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
+import od.providers.course.learninglocker.LearningLockerStaff;
 
 import org.apereo.lai.Course;
 
@@ -34,4 +35,5 @@ public interface CourseProvider extends Provider {
   Course getContext(ProviderData providerData, String contextId) throws ProviderException;
   List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException;
   String getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException;
+  LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException;
 }
