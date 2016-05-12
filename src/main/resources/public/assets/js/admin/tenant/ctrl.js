@@ -48,7 +48,7 @@ function EditTenantCtrl($log, $scope, $state, Notification, TenantService, tenan
     .then(
       function (updatedContextMapping) {
     	Notification.success('Tenant updated');
-        $state.go('index.admin.tenants',{}, {reload: true});                    
+        $state.go('index.admin.tenants.tenant',{id:tenant.id}, {reload: true});                    
       },
       function (error) {
         $log.error(error);
