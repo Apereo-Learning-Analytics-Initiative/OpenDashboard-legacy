@@ -81,40 +81,43 @@ public class LTIController {
     Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);   
     
-    String courseId = null;
+    List<String> courseIds = null;//"MODS101-1-2015S1-1"
     try {
-      courseId = courseProvider.getCourseIdByLTIContextId(tenant, contextId);
+      courseIds = courseProvider.getCourseIdByLTIContextId(tenant, contextId);
     } 
     catch (ProviderException e) {
       throw new NoVLEModuleMapException(launchRequest.getContext_id());
     }
     
-    ContextMapping contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
-    
-    if (contextMapping == null) {
-      contextMapping = new ContextMapping();
-      contextMapping.setContext(courseId);
-      contextMapping.setTenantId(tenant.getId());
-      contextMapping.setModified(new Date());
+    for (String courseId : courseIds) {
+      ContextMapping contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
       
-      Set<Dashboard> dashboards = tenant.getDashboards();
-      if (dashboards != null && !dashboards.isEmpty()) {
-        Set<Dashboard> dashboardSet = new HashSet<>();
-        for (Dashboard db : dashboards) {
-          db.setId(UUID.randomUUID().toString());
-          List<Card> cards = db.getCards();
-          if (cards != null && !cards.isEmpty()) {
-            for (Card c : cards) {
-              c.setId(UUID.randomUUID().toString());
+      if (contextMapping == null) {
+        contextMapping = new ContextMapping();
+        contextMapping.setContext(courseId);
+        contextMapping.setTenantId(tenant.getId());
+        contextMapping.setModified(new Date());
+        
+        Set<Dashboard> dashboards = tenant.getDashboards();
+        if (dashboards != null && !dashboards.isEmpty()) {
+          Set<Dashboard> dashboardSet = new HashSet<>();
+          for (Dashboard db : dashboards) {
+            db.setId(UUID.randomUUID().toString());
+            List<Card> cards = db.getCards();
+            if (cards != null && !cards.isEmpty()) {
+              for (Card c : cards) {
+                c.setId(UUID.randomUUID().toString());
+              }
             }
+            dashboardSet.add(db);
           }
-          dashboardSet.add(db);
+          contextMapping.setDashboards(dashboardSet);
         }
-        contextMapping.setDashboards(dashboardSet);
-      }
 
-      contextMappingRepository.save(contextMapping);
+        contextMappingRepository.save(contextMapping);
+      }
     }
+    
     
 
     String uuid = UUID.randomUUID().toString();

@@ -3,9 +3,8 @@
  */
 package od.providers.course.learninglocker;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -18,13 +17,11 @@ import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.learninglocker.LearningLockerStaffModuleInstance;
 import od.repository.mongo.MongoTenantRepository;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -130,44 +127,13 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     RestTemplate restTemplate = getRestTemplate(providerData);
     HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
-    String staffUrl = buildUrl(baseUrl, STAFF_URI);
-    MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
-    staffParams.add("query", String.format("{\"STAFF_ID\":\"%s\"}", userId));
     
-    log.debug(buildUri(staffUrl, staffParams).toString());
-    
-    ResponseEntity<LearningLockerStaff[]> responseEntity 
-      = restTemplate.exchange(buildUri(staffUrl,staffParams), HttpMethod.GET, 
-          headers, LearningLockerStaff[].class);
-    
-    if (responseEntity == null) {
-      log.error(String.format("ResponseEntity null for {} {}", staffUrl, staffParams));
-      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
-    }
-    
-    LearningLockerStaff [] staff = responseEntity.getBody();
-
-    String staffId = null;
-    if (staff != null && staff.length > 0) {
-      if (staff.length == 1) {
-        LearningLockerStaff s = staff[0];
-        staffId = s.getStaffId();
-      }
-      else {
-        log.error(String.format("Too many staff entries for user id %s", userId));
-        throw new ProviderException(ProviderException.TOO_MANY_STAFF_ENTRIES_ERROR_CODE);
-      }
-    }
-    else {
-      log.error(String.format("No staff entries for user id %s", userId));
-      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
-    }
-    
-    log.debug("staff id is {}", staffId);
+    log.debug("staff id is {}", userId);
     
     String staffModuleInstanceUrl = buildUrl(baseUrl, STAFF_MODULE_INSTANCE_URI);
     MultiValueMap<String, String> staffModuleInstanceParams = new LinkedMultiValueMap<String, String>();
-    staffModuleInstanceParams.add("query", String.format("{\"STAFF_ID\":\"%s\"}", staffId));
+    staffModuleInstanceParams.add("query", String.format("{\"STAFF_ID\":\"%s\"}", userId));
+    staffModuleInstanceParams.add("populate", "{\"path\":\"moduleInstance\",\"populate\":{\"path\":\"module\"}}");
     
     log.debug(buildUri(staffModuleInstanceUrl, staffModuleInstanceParams).toString());
     
@@ -176,51 +142,24 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
         HttpMethod.GET, headers, LearningLockerStaffModuleInstance[].class).getBody();
       
     if (staffModuleInstances != null && staffModuleInstances.length > 0) {
-      StringBuilder result = new StringBuilder();
+      output = new ArrayList<>();
       for(LearningLockerStaffModuleInstance smi : staffModuleInstances) {
-        result.append("\"");
-        result.append(smi.getModInstanceId());
-        result.append("\"");
-        result.append(",");
+        output.add(toCourse(smi.getModuleInstance()));
       }
       
-      String staffModuleIdList = result.length() > 0 ? result.substring(0, result.length() - 1): null;
-      
-      if (StringUtils.isBlank(staffModuleIdList)) {
-        throw new ProviderException(String.format("No staff module instances for %s %s",staffModuleInstanceUrl, staffModuleInstanceParams));
-      }
-      
-      String moduleInstanceUrl = buildUrl(baseUrl, MODULE_INSTANCE_URI);
-      MultiValueMap<String, String> moduleInstanceParams = new LinkedMultiValueMap<String, String>();
-      moduleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":[%s]}", staffModuleIdList));
-      
-      log.debug(buildUri(moduleInstanceUrl, moduleInstanceParams).toString());
-
-      LearningLockerModuleInstance [] moduleInstances = restTemplate.exchange(buildUri(moduleInstanceUrl, moduleInstanceParams), HttpMethod.GET, headers, LearningLockerModuleInstance[].class).getBody();
-      
-      if (moduleInstances != null && moduleInstances.length > 0) {
-        output = new ArrayList<>();
-        
-        for (LearningLockerModuleInstance mi : moduleInstances) {
-          output.add(toCourse(mi));
-        }
-      }
-      else {
-        output = new ArrayList<>();
-      }
     }
     
     return output;
   }
   
   @Override
-  public String getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
+  public List<String> getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
     
     if (DEMO) {
-      return "13";
+      return Collections.singletonList("13");
     }
 
-    String courseId = null;
+    List<String> courseIds = null;
     
     ProviderData providerData = tenant.findByKey(KEY);
     RestTemplate restTemplate = getRestTemplate(providerData);
@@ -235,22 +174,26 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     LearningLockerVLEModuleMap [] moduleVleMaps = restTemplate.exchange(buildUri(moduleVleMapUrl, moduleVleMapParams), HttpMethod.GET, headers, LearningLockerVLEModuleMap[].class).getBody();
     
     if (moduleVleMaps != null && moduleVleMaps.length > 0) {
-      if (moduleVleMaps.length == 1) {
-        LearningLockerVLEModuleMap moduleMap = moduleVleMaps[0];
-        courseId = moduleMap.getModuleInstanceId();
+      courseIds = new ArrayList<>();
+      for (LearningLockerVLEModuleMap maps : moduleVleMaps) {
+        courseIds.add(maps.getModuleInstanceId());
       }
-      else {
-        log.error(String.format("Too many vle module maps for tenant %s lti context %s", tenant.getId(), ltiContextId));
-        throw new ProviderException(ProviderException.TOO_MANY_VLE_MODULE_MAPS_ERROR_CODE);
-      }
+//      if (moduleVleMaps.length == 1) {
+//        LearningLockerVLEModuleMap moduleMap = moduleVleMaps[0];
+//        courseId = moduleMap.getModuleInstanceId();
+//      }
+//      else {
+//        log.error(String.format("Too many vle module maps for tenant %s lti context %s", tenant.getId(), ltiContextId));
+//        throw new ProviderException(ProviderException.TOO_MANY_VLE_MODULE_MAPS_ERROR_CODE);
+//      }
     }
     else {
       log.error(String.format("No vle module maps for tenant %s lti context %s", tenant.getId(), ltiContextId));
       throw new ProviderException(ProviderException.NO_VLE_MODULE_MAPS_ERROR_CODE);
     }
     
-    log.debug("course id is {} for tenant {} lti context {}", courseId, tenant.getId(), ltiContextId);
-    return courseId;
+    log.debug("course id is {} for tenant {} lti context {}", courseIds, tenant.getId(), ltiContextId);
+    return courseIds;
   }
   
   private Course toCourse(LearningLockerModuleInstance llModuleInstance) {
@@ -275,12 +218,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     String baseUrl = providerData.findValueForKey("base_url");
     String staffUrl = buildUrl(baseUrl, STAFF_URI);
     MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
-    try {
-      staffParams.add("query", String.format("{\"DASH_SHIB_ID\":\"%s\"}", URLEncoder.encode(pid, "UTF-8")));
-    } 
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    staffParams.add("query", String.format("{\"DASH_SHIB_ID\":{\"$regex\":\"'%s'\"}}", pid));
     
     log.debug(buildUri(staffUrl, staffParams).toString());
     

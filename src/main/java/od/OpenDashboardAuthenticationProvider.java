@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
@@ -42,6 +43,9 @@ public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuth
   
   @Value("${ll.use.demo:false}")
   protected boolean DEMO = false;
+  
+  @Value("${ukfederation.role:staff}")
+  private String validRole;
   
   @Autowired private CourseProvider courseProvider;
   @Autowired private MongoTenantRepository mongoTenantRepository;
@@ -100,6 +104,12 @@ public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuth
       log.info("data map: {}", data);
       String pid = data.get("pid");
       log.info("pid: {}", pid);
+      String affiliation = data.get("affiliation");
+      log.info("affiliation: {}",affiliation);
+      
+      if (StringUtils.isBlank(affiliation) || !StringUtils.contains(affiliation, validRole)) {
+        throw new InsufficientAuthenticationException(String.format("Invalid affiliation: {}",affiliation));
+      }
       
       if (DEMO) {
         user = new OpenDashboardUser(pid, pid, 

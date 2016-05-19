@@ -5,6 +5,8 @@ package od.providers.learninglocker;
 
 import java.io.Serializable;
 
+import od.providers.course.learninglocker.LearningLockerModuleInstance;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -18,17 +20,20 @@ public class LearningLockerStaffModuleInstance extends LearningLockerEntity impl
   public LearningLockerStaffModuleInstance(
       @JsonProperty("_id") String id, 
       @JsonProperty("STAFF_ID") String staffId, 
-      @JsonProperty("MOD_INSTANCE_ID") String modInstanceId) {
+      @JsonProperty("MOD_INSTANCE_ID") String modInstanceId,
+      @JsonProperty("moduleInstance") LearningLockerModuleInstance moduleInstance) {
     super();
     this.id = id;
     this.staffId = staffId;
     this.modInstanceId = modInstanceId;
+    this.moduleInstance = moduleInstance;
   }
 
     
   private String id;
   private String staffId;
   private String modInstanceId;
+  private LearningLockerModuleInstance moduleInstance;
 
   public String getId() {
     return id;
@@ -38,6 +43,9 @@ public class LearningLockerStaffModuleInstance extends LearningLockerEntity impl
   }
   public String getModInstanceId() {
     return modInstanceId;
+  }
+  public LearningLockerModuleInstance getModuleInstance() {
+    return moduleInstance;
   }
   @Override
   public String toString() {

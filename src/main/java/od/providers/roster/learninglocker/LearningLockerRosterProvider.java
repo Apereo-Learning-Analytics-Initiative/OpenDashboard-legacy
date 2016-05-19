@@ -35,7 +35,6 @@ import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -58,7 +57,6 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   private static final String DESC = String.format("%s_DESC", BASE);
      
   @Autowired private MongoTenantRepository mongoTenantRepository;
-  //@Autowired private CourseProvider courseProvider;
   
   @PostConstruct
   public void init() {
@@ -176,6 +174,7 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     String studentModuleInstanceUrl = buildUrl(baseUrl, STUDENT_MODULE_INSTANCE_URI);
     MultiValueMap<String, String> studentModuleInstanceParams = new LinkedMultiValueMap<String, String>();
     studentModuleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":\"%s\"}", contextId));
+    studentModuleInstanceParams.add("populate", "student");
     URI studentModuleInstanceURI = buildUri(studentModuleInstanceUrl, studentModuleInstanceParams);
     log.debug(studentModuleInstanceURI.toString());
     
@@ -184,41 +183,10 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
         HttpMethod.GET, headers, LearningLockerStudentModuleInstance[].class).getBody();
     
     if (studentModuleInstances != null && studentModuleInstances.length > 0) {
-      StringBuilder result = new StringBuilder();
+      output = new HashSet<>();
       for(LearningLockerStudentModuleInstance smi : studentModuleInstances) {
-        result.append("\"");
-        result.append(smi.getSTUDENT_ID());
-        result.append("\"");
-        result.append(",");
+        output.add(toMember("Learner", smi.getStudent()));
       }
-      String studentIdList = result.length() > 0 ? result.substring(0, result.length() - 1): null;
-      
-      if (StringUtils.isBlank(studentIdList)) {
-        log.error(String.format("No student module instances for %s %s",studentModuleInstanceUrl, studentModuleInstanceParams));
-        throw new ProviderException(ProviderException.NO_STUDENT_MODULE_INSTANCE_ENTRIES_ERROR_CODE);
-      }
-      
-      String studentUrl = buildUrl(baseUrl, STUDENT_URI);
-      MultiValueMap<String, String> studentParams = new LinkedMultiValueMap<String, String>();
-      studentParams.add("query", String.format("{\"STUDENT_ID\":[%s]}", studentIdList));
-      URI studentURI = buildUri(studentUrl, studentParams);      
-      log.debug(studentURI.toString());
-
-      LearningLockerStudent [] students 
-        = restTemplate.exchange(studentURI, 
-            HttpMethod.GET, headers, LearningLockerStudent[].class).getBody();
-      
-      if (students != null && students.length > 0) {
-        output = new HashSet<>();
-        
-        for (LearningLockerStudent student : students) {
-          output.add(toMember("Learner",student));
-        }
-      }
-      else {
-        output = new HashSet<>();
-      }
-
     }
     
     return output;

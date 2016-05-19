@@ -3,6 +3,8 @@
  */
 package od.providers.modeloutput.learninglocker;
 
+import gov.adlnet.xapi.model.Agent;
+import gov.adlnet.xapi.model.Result;
 import gov.adlnet.xapi.model.Statement;
 
 import java.io.IOException;
@@ -45,6 +47,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
 /**
  * @author ggilbert
@@ -68,11 +71,10 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
       "[ {\"$match\": {\"statement.verb.id\": \"http://activitystrea.ms/schema/1.0/receive\""
       + ",  \"statement.object.definition.type\":\"http://activitystrea.ms/schema/1.0/alert\""
       + ", \"statement.context.contextActivities.grouping.id\":\"%s\"}},"
-      + " {\"$sort\": {\"statement.actor.account.name\":1, \"statement.timestamp\":-1}},"
+      + "{\"$project\":{\"statement\":{\"actor\": \"$statement.actor\", \"timestamp\": \"$statement.timestamp\", \"result\":\"$statement.result\"} } },"
+      + " {\"$sort\": {\"statement.timestamp\":-1}},"
       + " { \"$group\" : { \"_id\" : \"$statement.actor.account.name\", \"statement\":{\"$first\":\"$statement\"} } }, "
       + "{\"$skip\": 0}, {\"$limit\": 1000}]";
-  
-  private boolean DEMO = true;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
@@ -118,63 +120,67 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
 
     String xapiUrl = buildUrl(baseUrl, XAPI_URI);
     MultiValueMap<String, String> xapiParams = new LinkedMultiValueMap<String, String>();
-    xapiParams.add("pipeline", String.format(PIPELINE, contextId));
+    xapiParams.add("pipeline", String.format(PIPELINE, String.format("https://github.com/jiscdev/analytics-udd/blob/master/predictive-core.md#mod_instance/%s",contextId)));
 
+    log.debug(buildUri(xapiUrl, xapiParams).toString());
+    
     JsonNode node = restTemplate.exchange(buildUri(xapiUrl, xapiParams), HttpMethod.GET, headers, JsonNode.class).getBody();
 
     JsonNode results = node.get("result");
     for (JsonNode result : results) {
       String userId = result.get("_id").textValue();
       log.debug("Found result for userId {}",userId);
-      String statementJson = result.get("statement").textValue();
+      JsonNode statementJson = result.get("statement");
       try {
-        Statement statement = objectMapper.readValue(statementJson, Statement.class);
-        
-        Map<String, Object> outputParams = new HashMap<>();
+        log.debug(statementJson.toString());
+        objectMapper.registerSubtypes(Agent.class);
+        JsonNode resultNode = statementJson.findValue("result");
+        Map<String,Object> resultExtensions = objectMapper.convertValue(resultNode.findValue("extensions"), Map.class);
+         Map<String, Object> outputParams = new HashMap<>();
         outputParams.put("ALTERNATIVE_ID", userId);
+        outputParams.put("MODEL_RISK_CONFIDENCE", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/modelRiskConfidence"));
+        outputParams.put("R_CONTENT_READ", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/rContentRead"));
+        outputParams.put("GPA_CUMULATIVE", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/gpaCumulative"));
+        outputParams.put("RMN_SCORE", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/rmnScore"));
+        outputParams.put("R_FORUM_POST", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/rForumPost"));
+        outputParams.put("R_ASN_SUB", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/rAsnSub"));
+        outputParams.put("R_SESSIONS", resultExtensions.get("https://lap.jisc.ac.uk/earlyAlert/rSessions"));
         
-        outputParams.put("RMN_SCORE_PARTIAL", null);
-        outputParams.put("RC_FINAL_GRADE", null);
-        outputParams.put("R_ASSMT_SUB", null);
-        outputParams.put("COURSE_ID", null);
-        outputParams.put("PERCENTILE", null);
-        outputParams.put("SAT_MATH", null);
-        outputParams.put("ENROLLMENT", null);
-        outputParams.put("SAT_VERBAL", null);
-        outputParams.put("R_CONTENT_READ", null);
-        outputParams.put("ACADEMIC_RISK", null);
-        outputParams.put("APTITUDE_SCORE", null);
-        outputParams.put("R_ASN_SUB", null);
-        outputParams.put("ID", null);
-        outputParams.put("MODEL_RISK_CONFIDENCE", null);
-        outputParams.put("R_ASN_READ", null);
-        outputParams.put("AGE", null);
-        outputParams.put("ONLINE_FLAG", null);
-        outputParams.put("R_FORUM_POST", null);
-        outputParams.put("R_LESSONS_VIEW", null);
-        outputParams.put("FAIL_PROBABILITY", null);
-        outputParams.put("PASS_PROBABILITY", null);
-        outputParams.put("RC_GENDER", null);
-        outputParams.put("GPA_CUMULATIVE", null);
-        outputParams.put("RC_CLASS_CODE", null);
-        outputParams.put("STANDING", null);
-        outputParams.put("GPA_SEMESTER", null);
-        outputParams.put("R_FORUM_READ", null);
-        outputParams.put("RC_ENROLLMENT_STATUS", null);
-        outputParams.put("SUBJECT", null);
-        outputParams.put("R_SESSIONS", null);
-        outputParams.put("R_ASSMT_TAKE", null);
-        outputParams.put("RMN_SCORE", null);
+//        outputParams.put("RMN_SCORE_PARTIAL", null);
+//        outputParams.put("RC_FINAL_GRADE", null);
+//        outputParams.put("R_ASSMT_SUB", null);
+//        outputParams.put("COURSE_ID", null);
+//        outputParams.put("PERCENTILE", null);
+//        outputParams.put("SAT_MATH", null);
+//        outputParams.put("ENROLLMENT", null);
+//        outputParams.put("SAT_VERBAL", null);
+//        outputParams.put("ACADEMIC_RISK", null);
+//        outputParams.put("APTITUDE_SCORE", null);   
+//        outputParams.put("ID", null);
+//        outputParams.put("R_ASN_READ", null);
+//        outputParams.put("AGE", null);
+//        outputParams.put("ONLINE_FLAG", null);  
+//        outputParams.put("R_LESSONS_VIEW", null);
+//        outputParams.put("FAIL_PROBABILITY", null);
+//        outputParams.put("PASS_PROBABILITY", null);
+//        outputParams.put("RC_GENDER", null);   
+//        outputParams.put("RC_CLASS_CODE", null);
+//        outputParams.put("STANDING", null);
+//        outputParams.put("GPA_SEMESTER", null);
+//        outputParams.put("R_FORUM_READ", null);
+//        outputParams.put("RC_ENROLLMENT_STATUS", null);
+//        outputParams.put("SUBJECT", null);    
+//        outputParams.put("R_ASSMT_TAKE", null);     
         
         ModelOutputImpl output = new ModelOutputImpl(outputParams,
-            DatatypeConverter.parseDateTime(statement.getTimestamp()).getTime());
+            DatatypeConverter.parseDateTime(statementJson.get("timestamp").textValue()).getTime());
         log.debug("{}",output);
         
         modelOutput.add(output);
       } 
       catch (Exception e) {
         log.error(e.getMessage(),e);
-        log.error(statementJson);
+        log.error(statementJson.toString());
       } 
     }
     
