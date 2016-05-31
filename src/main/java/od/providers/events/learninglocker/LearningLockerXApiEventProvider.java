@@ -122,93 +122,93 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   private static final String EN_US = "en-US";
   private static final String EN_GB = "en-GB";
 
-  public void post() throws IOException {
-
-    StatementClient statementClient = new StatementClient("https://jisc.learninglocker.net/data/xAPI/", "4de4712289f6ce2e3404b7e92e71c919b480604a", "7deabdfc523fd12acde83c51947f6e2c1653cd36");
-    
-    RestTemplate rt = getRestTemplate(new ProviderData());
-    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth("3f2c9b5714eb9c333f843cfa89de0b7a97817150", "8b7841d35e308c8907ec086061652e14f9ac95d8"));
-    String studentModuleInstanceUrl = buildUrl("http://78.136.52.242", STUDENT_MODULE_INSTANCE_URI);
-    MultiValueMap<String, String> studentModuleInstanceParams = new LinkedMultiValueMap<String, String>();
-    studentModuleInstanceParams.add("populate", "student");
-    URI studentModuleInstanceURI = buildUri(studentModuleInstanceUrl, studentModuleInstanceParams);
-    
-    LearningLockerStudentModuleInstance [] studentModuleInstances 
-    = rt.exchange(studentModuleInstanceURI, 
-      HttpMethod.GET, headers, LearningLockerStudentModuleInstance[].class).getBody();
-    
-    if (studentModuleInstances != null) {
-      for (LearningLockerStudentModuleInstance smi : studentModuleInstances) {
-        Statement statement = new Statement();
-        
-        statement = new Statement();
-        statement.setVersion("1.0.0");
-        Account account = new Account();
-        Agent agent = new Agent();
-        account.setHomePage("https://github.com/jiscdev/analytics-udd/blob/master/predictive-core.md#student_id");
-        account.setName(smi.getSTUDENT_ID());
-        agent.setAccount(account);
-
-        statement.setActor(agent);
-        statement.setVerb(new Verb(
-                "http://activitystrea.ms/schema/1.0/receive",
-                new MapBuilder<String>().put(EN_GB, "receive").put(EN_US, "receive").build()
-        ));
-        
-        Activity a = new Activity();
-        a.setId("https://lap.jisc.ac.uk/earlyAlert/unicon/id");
-        ActivityDefinition ad = new ActivityDefinition();
-        ad.setType("http://activitystrea.ms/schema/1.0/alert");
-        ad.setName(new MapBuilder<String>().put(EN_GB, "An early alert").put(EN_US, "An early alert").build());
-        ad.setDescription(new MapBuilder<String>().put(EN_GB, "An early alert").put(EN_US, "An early alert").build());
-        ad.setMoreInfo("todo://urltoviewthealert");
-
-        ad.setExtensions(new MapBuilder<JsonElement>().put("https://lap.jisc.ac.uk/earlyAlert/type", new JsonPrimitive("UNICON")).build());
-        a.setDefinition(ad);
-
-        statement.setObject(a);
-        
-        ActivityDefinition adef = new ActivityDefinition();
-        adef.setType("http://adlnet.gov/expapi/activities/module");
-        adef.setDescription(new MapBuilder<String>().put(EN_US, "Jisc Module Instance").build());
-        adef.setName(new MapBuilder<String>().put(EN_US, "Jisc Module Instance").build());
-        adef.setExtensions(new MapBuilder<JsonElement>().put("https://lap.jisc.ac.uk/taxonomy", new JsonPrimitive("MOD_INSTANCE")).build());
-        Activity activity = new Activity(String.format("https://github.com/jiscdev/analytics-udd/blob/master/predictive-core.md#mod_instance/%s",smi.getMOD_INSTANCE_ID()), adef);
-        ContextActivities ca = new ContextActivities();
-        ca.setGrouping(new ArrayList<Activity>(Collections.singletonList(activity)));
-        Context context = new Context();
-        context.setContextActivities(ca);
-
-        statement.setContext(context);
-
-        // build just enough of the structure of the result to serve as a placeholder.
-        // we'll update the result contents as we iterate over records.
-        Result result = new Result();
-        JsonObject obj = new JsonObject();
-        
-        final String[] risks = {"NO RISK", "LOW RISK", "MEDIUM RISK", "HIGH RISK"};
-        Random random = new Random();
-        
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/modelRiskConfidence", new JsonPrimitive(risks[random.nextInt(risks.length)]));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/rContentRead", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/gpaCumulative",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextDouble(0.0,4.0))));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/rmnScore",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/rForumPost",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/rAsnSub", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
-        obj.add("https://lap.jisc.ac.uk/earlyAlert/rSessions", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
-
-        result.setExtensions(obj);
-        statement.setResult(result);
-
-        Actor authority = new Agent();
-        authority.setName("Unicon");
-        authority.setMbox("mailto:hello@unicon.net");
-        
-        statementClient.postStatement(statement);
-      }
-    }
-
-  }
+//  public void post() throws IOException {
+//
+//    StatementClient statementClient = new StatementClient("https://jisc.learninglocker.net/data/xAPI/", "4de4712289f6ce2e3404b7e92e71c919b480604a", "7deabdfc523fd12acde83c51947f6e2c1653cd36");
+//    
+//    RestTemplate rt = getRestTemplate(new ProviderData());
+//    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth("3f2c9b5714eb9c333f843cfa89de0b7a97817150", "8b7841d35e308c8907ec086061652e14f9ac95d8"));
+//    String studentModuleInstanceUrl = buildUrl("http://78.136.52.242", STUDENT_MODULE_INSTANCE_URI);
+//    MultiValueMap<String, String> studentModuleInstanceParams = new LinkedMultiValueMap<String, String>();
+//    studentModuleInstanceParams.add("populate", "student");
+//    URI studentModuleInstanceURI = buildUri(studentModuleInstanceUrl, studentModuleInstanceParams);
+//    
+//    LearningLockerStudentModuleInstance [] studentModuleInstances 
+//    = rt.exchange(studentModuleInstanceURI, 
+//      HttpMethod.GET, headers, LearningLockerStudentModuleInstance[].class).getBody();
+//    
+//    if (studentModuleInstances != null) {
+//      for (LearningLockerStudentModuleInstance smi : studentModuleInstances) {
+//        Statement statement = new Statement();
+//        
+//        statement = new Statement();
+//        statement.setVersion("1.0.0");
+//        Account account = new Account();
+//        Agent agent = new Agent();
+//        account.setHomePage("https://github.com/jiscdev/analytics-udd/blob/master/predictive-core.md#student_id");
+//        account.setName(smi.getSTUDENT_ID());
+//        agent.setAccount(account);
+//
+//        statement.setActor(agent);
+//        statement.setVerb(new Verb(
+//                "http://activitystrea.ms/schema/1.0/receive",
+//                new MapBuilder<String>().put(EN_GB, "receive").put(EN_US, "receive").build()
+//        ));
+//        
+//        Activity a = new Activity();
+//        a.setId("https://lap.jisc.ac.uk/earlyAlert/unicon/id");
+//        ActivityDefinition ad = new ActivityDefinition();
+//        ad.setType("http://activitystrea.ms/schema/1.0/alert");
+//        ad.setName(new MapBuilder<String>().put(EN_GB, "An early alert").put(EN_US, "An early alert").build());
+//        ad.setDescription(new MapBuilder<String>().put(EN_GB, "An early alert").put(EN_US, "An early alert").build());
+//        ad.setMoreInfo("todo://urltoviewthealert");
+//
+//        ad.setExtensions(new MapBuilder<JsonElement>().put("https://lap.jisc.ac.uk/earlyAlert/type", new JsonPrimitive("UNICON")).build());
+//        a.setDefinition(ad);
+//
+//        statement.setObject(a);
+//        
+//        ActivityDefinition adef = new ActivityDefinition();
+//        adef.setType("http://adlnet.gov/expapi/activities/module");
+//        adef.setDescription(new MapBuilder<String>().put(EN_US, "Jisc Module Instance").build());
+//        adef.setName(new MapBuilder<String>().put(EN_US, "Jisc Module Instance").build());
+//        adef.setExtensions(new MapBuilder<JsonElement>().put("https://lap.jisc.ac.uk/taxonomy", new JsonPrimitive("MOD_INSTANCE")).build());
+//        Activity activity = new Activity(String.format("https://github.com/jiscdev/analytics-udd/blob/master/predictive-core.md#mod_instance/%s",smi.getMOD_INSTANCE_ID()), adef);
+//        ContextActivities ca = new ContextActivities();
+//        ca.setGrouping(new ArrayList<Activity>(Collections.singletonList(activity)));
+//        Context context = new Context();
+//        context.setContextActivities(ca);
+//
+//        statement.setContext(context);
+//
+//        // build just enough of the structure of the result to serve as a placeholder.
+//        // we'll update the result contents as we iterate over records.
+//        Result result = new Result();
+//        JsonObject obj = new JsonObject();
+//        
+//        final String[] risks = {"NO RISK", "LOW RISK", "MEDIUM RISK", "HIGH RISK"};
+//        Random random = new Random();
+//        
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/modelRiskConfidence", new JsonPrimitive(risks[random.nextInt(risks.length)]));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/rContentRead", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/gpaCumulative",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextDouble(0.0,4.0))));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/rmnScore",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/rForumPost",new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/rAsnSub", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextInt(0, 200 + 1))));
+//        obj.add("https://lap.jisc.ac.uk/earlyAlert/rSessions", new JsonPrimitive(String.valueOf(ThreadLocalRandom.current().nextDouble(0.0,2.0))));
+//
+//        result.setExtensions(obj);
+//        statement.setResult(result);
+//
+//        Actor authority = new Agent();
+//        authority.setName("Unicon");
+//        authority.setMbox("mailto:hello@unicon.net");
+//        
+//        statementClient.postStatement(statement);
+//      }
+//    }
+//
+//  }
 
   private Page<Event> fetch(String tenantId, String more) throws IOException {
     Page<Event> page = null;

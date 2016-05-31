@@ -18,6 +18,7 @@
     angular
     .module('OpenDashboard')
     .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
+      $log.debug('CourseList Controller');
       $scope.error = null;
       $scope.courses = null;
       $scope.tenant = null;
@@ -57,7 +58,11 @@
     		  options['id'] = data.context;
     		  options['title'] = course.title;
     		  OpenDashboard_API.setCourse(options);
-    		  $state.go('index',{"tenantId":tenant.id,"courseId":course.id});
+    		  //$state.go('index',{"tenantId":tenant.id,"courseId":course.id});
+    		  $scope.contextMapping = data;
+    	      $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+    	      $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+
     		});
     	  }
     	  else {
@@ -65,7 +70,10 @@
     	    options['id'] = data.context;
     	    options['title'] = course.title;
     	    OpenDashboard_API.setCourse(options);
-    		$state.go('index',{"tenantId":tenant.id,"courseId":course.id});
+    		//$state.go('index',{"tenantId":tenant.id,"courseId":course.id});
+      		$scope.contextMapping = data;
+    	    $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+    	    $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
     	  }
     	});
     	  

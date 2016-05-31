@@ -13,13 +13,22 @@
 "ERROR_PROVIDER_101":"More than one staff records found for user: {{userId}}.",
 "ERROR_PROVIDER_301":"No VLE Module Map record found",
 "ERROR_PROVIDER_400":"No student records found",
+"ERROR_USERNAME_REQUIRED": "Username is required.",
+"ERROR_PASSWORD_REQUIRED": "Password is required.",
+"ERROR_LOGIN":"Sign in failed",
 
 "BUTTON_SIGN_IN": "Sign In",
+"BUTTON_CANCEL":"Cancel",
+
+"LABEL_IDP_SELECTION":"Select your identity provider",
+"TEXT_IDP_SELECTION":"Select your institution from the list below and then press the Sign in button.",
+"LABEL_SELECT_IDP":"Select your institution",
+
 "BUTTON_GET_STARTED": "Get Started",
 "BUTTON_CONFIGURE":"Configure",
 "BUTTON_EDIT_CONFIGURE":"Edit Configuration",
 "BUTTON_SAVE":"Save",
-"BUTTON_CANCEL":"Cancel",
+
 "BUTTON_EDIT":"Edit",
 "BUTTON_DELETE":"Delete",
 "BUTTON_ADD_CARD":"Add Card",
@@ -113,9 +122,6 @@
 "ERROR_MAX_LENGTH_LABEL_SECRET":"Secret must be less than 100 characters",
 "ERROR_MAX_LENGTH_LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key must be less than 100 characters",
 "ERROR_URL_FORMAT":"Please enter a URL with the the following format: http:// or https://mysite.com",
-"ERROR_USERNAME_REQUIRED": "Username is required.",
-"ERROR_PASSWORD_REQUIRED": "Password is required.",
-"ERROR_LOGIN":"Sign in failed",
 "ERROR_REQUIRED_LABEL_EXAMPLE_FIELD":"Example Field is required",
 "ERROR_REQUIRED_LABEL_LAUNCH_URL":"Launch URL is required",
 "ERROR_REQUIRED_LABEL_CONSUMER_KEY":"Consumer key is required",
@@ -156,10 +162,6 @@
 "COOKIE_ERROR":"OpenDashboard needs to be able to set cookies to work properly. Please check your browser's cookie settings.",
 "AUTHORIZATION_ERROR":"OpenDashboard does not think you are authorized to view the content that you requested.",
 "GENERAL_ERROR":"OpenDashboard is not sure what is just happened.",
-
-"LABEL_IDP_SELECTION":"Select your identity provider",
-"TEXT_IDP_SELECTION":"Select your institution from the list below and then press the Sign in button.",
-"LABEL_SELECT_IDP":"Select your institution",
 
 "LABEL_ADD_TENANT":"Add a new tenant",
 "LABEL_TENANT_NAME":"Tenant Name",

@@ -30,7 +30,7 @@ angular
     });
  })
  .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
-	 SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
+     OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
 	 
    $translatePartialLoader.addPart('risk-assessment');
    $translate
@@ -100,12 +100,12 @@ angular
     	_.remove($scope.roster,function(member){return member.role == 'Instructor'});
        
         _.forEach($scope.roster, function(obj){
-        		var match = _.find($scope.model_output, function(o) {
-        			return o.output['ALTERNATIVE_ID'].toString() == obj.user_id;
-        		});
-        		
-        		if (match)
-        		  _.merge(obj,match);
+    		var match = _.find($scope.model_output, function(o) {
+    		  return o.output['ALTERNATIVE_ID'].toString() == obj.user_id;
+    		});
+    		
+    		if (match)
+    		  _.merge(obj,match);
         });
             
        var riskCountFunction = function(modelOutput) {
@@ -150,7 +150,35 @@ angular
          if ($scope.courses) {
            var course = _.find($scope.courses,{'id':courseId});
            if (course) {
-        	   $scope.activeCourse = course;
+           	ContextMappingService.getWithTenantAndCourse($scope.contextMapping.tenantId,course.id)
+        	.then(function(data){
+        	  $log.log(data);
+        	  if (!data) {
+        		ContextMappingService.createWithTenantAndCourse(tenant.id,course.id)
+        		.then(function(data) {
+        		  var options = {};
+        		  options['id'] = data.context;
+        		  options['title'] = course.title;
+        		  OpenDashboard_API.setCourse(options);
+        		  $scope.contextMapping = data;
+        	      $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+        	      $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+
+        		});
+        	  }
+        	  else {
+        	    var options = {};
+        	    options['id'] = data.context;
+        	    options['title'] = course.title;
+        	    OpenDashboard_API.setCourse(options);
+          		$scope.contextMapping = data;
+        	    $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+        	    $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+        	  }
+        	});
+           }
+           else {
+             $state.go('index.courselist');   
            }
          }
        }

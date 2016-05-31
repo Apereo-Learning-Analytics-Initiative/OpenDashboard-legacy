@@ -18,6 +18,8 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_ACTIVITY_COURSE_LIST"><strong class="od-text-black">{{activeCourse.title}}</strong> <span class="od-text-black" class="caret" ng-show="courses"></span></a>
             <ul class="dropdown-menu" ng-show="courses">
               <li ng-repeat="course in courses"><a href ng-click="switchCourse(course.id)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{course.title}}</a></li>
+              <li class="divider"></li>
+              <li ><a href ng-click="switchCourse(null)" translate="CL_HEADER">My Courses</a></li>
             </ul>
           </li>
         </ul>

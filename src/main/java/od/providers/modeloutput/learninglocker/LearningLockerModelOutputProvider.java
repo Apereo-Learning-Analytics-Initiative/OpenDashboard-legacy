@@ -218,7 +218,7 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
       + "\"ID\":4,\"MODEL_RISK_CONFIDENCE\":\"NO RISK\",\"R_ASN_READ\":null,\"AGE\":22,\"ONLINE_FLAG\":false,\"R_FORUM_POST\":null,\"R_LESSONS_VIEW\":null,"
       + "\"FAIL_PROBABILITY\":\"0.272\",\"PASS_PROBABILITY\":\"0.728\",\"ALTERNATIVE_ID\":\"5\",\"RC_GENDER\":2,\"GPA_CUMULATIVE\":\"2.5000\","
       + "\"RC_CLASS_CODE\":\"3\",\"STANDING\":\"0\",\"GPA_SEMESTER\":\"2.3400\",\"R_FORUM_READ\":null,\"RC_ENROLLMENT_STATUS\":null,\"SUBJECT\":\"Analysis\","
-      + "\"R_SESSIONS\":\"0.8434\",\"R_ASSMT_TAKE\":null,\"RMN_SCORE\":\"93.6217\"},\"createdDate\":1446481125673},  "
+      + "\"IONS\":\"0.8434\",\"R_ASSMT_TAKE\":null,\"RMN_SCORE\":\"93.6217\"},\"createdDate\":1446481125673},  "
       + "{\"output\":{\"RMN_SCORE_PARTIAL\":\"77.2500\",\"RC_FINAL_GRADE\":\"1.0\",\"R_ASSMT_SUB\":null,\"COURSE_ID\":\"13\","
       + "\"PERCENTILE\":0,\"SAT_MATH\":0,\"ENROLLMENT\":5,\"SAT_VERBAL\":0,\"R_CONTENT_READ\":\"0.3\",\"ACADEMIC_RISK\":1,\"APTITUDE_SCORE\":0,"
       + "\"R_ASN_SUB\":null,\"ID\":5,\"MODEL_RISK_CONFIDENCE\":\"MEDIUM RISK\",\"R_ASN_READ\":null,\"AGE\":36,\"ONLINE_FLAG\":false,\"R_FORUM_POST\":null,"
