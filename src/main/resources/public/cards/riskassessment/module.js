@@ -185,11 +185,11 @@ angular
 
       $scope.changeGrouping = function(grouping) {
            $scope.grouping = grouping;
-           if (grouping == $scope.ALL_STUDENTS.label) {
+           if (grouping.label == $scope.ALL_STUDENTS.label) {
         	   $scope.filterExpression = null;
            }
            else {
-        	   $scope.filterExpression = grouping;
+        	   $scope.filterExpression = grouping.label;
            }
        }
         
@@ -205,13 +205,13 @@ angular
      
        $scope.donutClick = function(points, evt) {
     	 var category = _.find($scope.categories, {'translationValue':points[0].label});
-    	 $scope.changeGrouping(category.label);
+    	 $scope.changeGrouping(category);
        }
        
        // TABLE
 
 	   $scope.categories = [$scope.ALL_STUDENTS, $scope.HIGH_RISK, $scope.MEDIUM_RISK, $scope.LOW_RISK, $scope.NO_RISK];
-	   $scope.groupings = [$scope.ALL_STUDENTS.label, $scope.HIGH_RISK.label, $scope.MEDIUM_RISK.label, $scope.LOW_RISK.label, $scope.NO_RISK.label];
+	   $scope.groupings = [$scope.ALL_STUDENTS, $scope.HIGH_RISK, $scope.MEDIUM_RISK, $scope.LOW_RISK, $scope.NO_RISK];
 	   $scope.grouping = $scope.groupings[0];
 
        $scope.changeToView = function(view) {

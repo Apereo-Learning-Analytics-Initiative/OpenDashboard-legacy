@@ -26,26 +26,26 @@
       </div>
     
       <div class="list-group box-shadow--6dp">
-        <a class="list-group-item" ng-class="{'active': grouping == ALL_STUDENTS.label}" href ng-click="changeGrouping(ALL_STUDENTS.label);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
-        <a class="list-group-item" ng-class="{'active': grouping == HIGH_RISK.label}" href ng-click="changeGrouping(HIGH_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == ALL_STUDENTS.translationValue}" href ng-click="changeGrouping(ALL_STUDENTS);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == HIGH_RISK.translationValue}" href ng-click="changeGrouping(HIGH_RISK);">
           <span class="label label-danger">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_HIGH_RISK">HIGH RISK</strong>
           <strong class="pull-right" ng-show="highRiskPercentage">{{highRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == MEDIUM_RISK.label}" href ng-click="changeGrouping(MEDIUM_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == MEDIUM_RISK.translationValue}" href ng-click="changeGrouping(MEDIUM_RISK);">
           <span class="label label-warning">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_MEDIUM_RISK">MEDIUM RISK</strong>
           <strong class="pull-right" ng-show="mediumRiskPercentage">{{mediumRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == LOW_RISK.label}" href ng-click="changeGrouping(LOW_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == LOW_RISK.translationValue}" href ng-click="changeGrouping(LOW_RISK);">
           <span class="label label-info">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_LOW_RISK">LOW RISK</strong>
           <strong class="pull-right" ng-show="lowRiskPercentage">{{lowRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == NO_RISK.label}" href ng-click="changeGrouping(NO_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == NO_RISK.translationValue}" href ng-click="changeGrouping(NO_RISK);">
           <span class="label label-success">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_NO_RISK">NO RISK</strong>
@@ -63,8 +63,8 @@
     
        <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
         <div class="nav navbar-nav">
-        <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping}}</strong></p>
-        <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping]}}</strong></p>
+        <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping.translationValue}}</strong></p>
+        <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping.label]}}</strong></p>
         </div>
         <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 1">
               <li><a href ng-click="changeToView(radarView)"><strong class="od-text-black" translate="RA_LABEL_COMPARE_STUDENTS">COMPARE STUDENTS</strong></a></li>
