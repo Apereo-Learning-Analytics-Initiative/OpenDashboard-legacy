@@ -32,6 +32,7 @@ angular
  .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
      OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
 	 
+   $scope.loaded = false;
    $translatePartialLoader.addPart('risk-assessment');
    $translate
    .refresh()
@@ -82,6 +83,7 @@ angular
          $scope.radarView = 1;
          $scope.views = [$scope.listView, $scope.radarView];
          $scope.view = $scope.listView;
+         $scope.loaded = true;
          $scope.filtered = null;
          
          var benchmarkData = [100,150,"70",100,100,100];
