@@ -89,8 +89,10 @@ public class LTIController {
       throw new NoVLEModuleMapException(launchRequest.getContext_id());
     }
     
+    ContextMapping contextMapping = null;
+    
     for (String courseId : courseIds) {
-      ContextMapping contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
+      contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
       
       if (contextMapping == null) {
         contextMapping = new ContextMapping();
@@ -114,14 +116,12 @@ public class LTIController {
           contextMapping.setDashboards(dashboardSet);
         }
 
-        contextMappingRepository.save(contextMapping);
+        contextMapping = contextMappingRepository.save(contextMapping);
       }
     }
-    
-    
 
     String uuid = UUID.randomUUID().toString();
-    model.addAttribute("token", uuid);
+//    model.addAttribute("token", uuid);
 
     // Create a token using spring provided class : LTIAuthenticationToken
     String role;
@@ -153,7 +153,9 @@ public class LTIController {
     // context through this attribute
     request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-    return "index";
+    //return "index";
+    String cmUrl = String.format("/cm/%s/dashboard/%s",contextMapping.getId(),(new ArrayList<>(contextMapping.getDashboards())).get(0).getId());
+    return "redirect:"+cmUrl;
   }
 
   public static boolean hasInstructorRole(List<String> instructorRoles, String roles) {

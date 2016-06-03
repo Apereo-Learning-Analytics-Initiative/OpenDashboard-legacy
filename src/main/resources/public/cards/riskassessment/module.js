@@ -235,11 +235,12 @@ angular
            var data = [];
            data[0] = ((learner.output.R_CONTENT_READ * 100) >= 200) ? 200 : learner.output.R_CONTENT_READ * 100;
            data[1] = (learner.output.GPA_CUMULATIVE  >= 4) ? 200 : learner.output.GPA_CUMULATIVE * 50;
-           data[2] = (learner.output.RMN_SCORE >= 100) ? 200 : learner.output.RMN_SCORE + 100
+           data[2] = (learner.output.RMN_SCORE >= 100) ? 200 : (learner.output.RMN_SCORE * 1) + 100
            data[3] = ((learner.output.R_FORUM_POST * 100) >= 200) ? 200 : learner.output.R_FORUM_POST * 100;
            data[4] = ((learner.output.R_ASN_SUB * 100) >= 200) ? 200 : learner.output.R_ASN_SUB * 100;
            data[5] = ((learner.output.R_SESSIONS * 100) >= 200) ? 200 : learner.output.R_SESSIONS * 100;
            $scope.radarColors.push(learner.color);
+
            $scope.radarData.push(data);
          }
          
