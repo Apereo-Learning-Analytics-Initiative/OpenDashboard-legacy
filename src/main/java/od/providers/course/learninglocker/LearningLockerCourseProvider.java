@@ -162,6 +162,11 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     List<String> courseIds = null;
     
     ProviderData providerData = tenant.findByKey(KEY);
+    
+    if (providerData == null) {
+      throw new ProviderException(ProviderException.MISSING_PROVIDER_DATA);
+    }
+    
     RestTemplate restTemplate = getRestTemplate(providerData);
     HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
@@ -212,6 +217,10 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   public LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException {
     
     ProviderData providerData = tenant.findByKey(KEY);
+    
+    if (providerData == null) {
+      throw new ProviderException(ProviderException.MISSING_PROVIDER_DATA);
+    }
 
     RestTemplate restTemplate = getRestTemplate(providerData);
     HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));

@@ -26,6 +26,8 @@ public class ProviderException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private String errorCode;
 	
+	public static final String MISSING_PROVIDER_DATA = "ERROR_PROVIDER_0";
+	
 	public static final String NO_STAFF_ENTRY_ERROR_CODE = "ERROR_PROVIDER_100";
 	public static final String TOO_MANY_STAFF_ENTRIES_ERROR_CODE = "ERROR_PROVIDER_101";
 	

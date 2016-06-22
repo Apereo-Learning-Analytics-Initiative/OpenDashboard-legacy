@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import od.framework.model.Tenant;
+import od.providers.ProviderException;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -119,14 +120,19 @@ public class JWTController {
     catch (AuthenticationException e) {
       LOG.error(e.getMessage(),e);
       
-      StringBuilder stringBuilder = new StringBuilder();
-      stringBuilder.append(jwtEndpoint);
-      stringBuilder.append("target=");
-      stringBuilder.append(URLEncoder.encode(jwtRegTarget, "UTF-8"));
-      stringBuilder.append("&entityID=");
-      stringBuilder.append(URLEncoder.encode(tenant.getIdpEndpoint().toString(), "UTF-8"));
+      if (e.getMessage().equals(ProviderException.NO_STAFF_ENTRY_ERROR_CODE)) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(jwtEndpoint);
+        stringBuilder.append("target=");
+        stringBuilder.append(URLEncoder.encode(jwtRegTarget, "UTF-8"));
+        stringBuilder.append("&entityID=");
+        stringBuilder.append(URLEncoder.encode(tenant.getIdpEndpoint().toString(), "UTF-8"));
 
-      return "redirect:"+stringBuilder.toString();
+        return "redirect:"+stringBuilder.toString();
+      }
+      else {
+        return "redirect:/error";
+      }
     }
 
     // Need to set this as thread locale as available throughout
