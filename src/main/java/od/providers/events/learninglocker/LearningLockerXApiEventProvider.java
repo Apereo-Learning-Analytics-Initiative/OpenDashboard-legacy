@@ -41,6 +41,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.PostConstruct;
 
+import od.exception.MethodNotImplementedException;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -66,6 +67,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -375,6 +377,13 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     
     return objectIdandType;
   }
+
+	@Override
+	public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options)
+			throws ProviderException, MethodNotImplementedException {
+		
+			throw new MethodNotImplementedException();
+	}
 
 
 }

@@ -17,3 +17,4 @@ hs_err_pid*
 phantomjsdriver.log
 /bin/
 /target/
+src/main/java/od/lti/LTIController.java

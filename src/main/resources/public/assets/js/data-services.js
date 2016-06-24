@@ -136,6 +136,87 @@ angular
   .module('OpenDashboard')
     .service('EventService',function($log, $http, _) {
       return {
+    	 
+    	 
+    	  postCaliperEvent2 : function (options, caliperEvent) {
+      		  
+              var url = '/api/proxy/event';
+              var promise = $http({
+                method  : 'POST',
+            	url		: url,
+            	data    : JSON.stringify({
+			                 options: options,
+			                 caliperEvent: caliperEvent
+			              }),
+            	headers : { 'Content-Type': 'application/json'}
+              })
+              .then(function (response) {
+            	  alert("response: " + response.status);
+                  $log.debug(response);
+                  if (response && response.data) {
+                    return response.data.content;	    	
+                  }
+            	  return null;
+            	}, function (response) {
+            		alert(response.status);
+            	
+        	    	//$log.debug(error);
+        	    	var errorObj = {};
+        	    	errorObj['isError'] = true;
+        	    	//errorObj['errorCode'] = error.data.errors[0];
+        	    	
+        	    	return errorObj;
+            	}
+              );
+              
+        		return promise;
+    		},  
+    	  
+    		
+    	successCallback : function(response) {
+    		alert (response);
+    	},	
+    	
+    	errorCallback : function(response) {
+        		alert (response);
+        	},	
+    	
+    	  postCaliperEvent : function (options, caliperEvent) {
+    		      		  
+              var url = '/api/proxy/event';
+              var promise = $http({
+                method  : 'POST',
+            	url		: url,
+            	data    : JSON.stringify({
+			                 options: options,
+			                 caliperEvent: caliperEvent
+			              }),
+            	headers : { 'Content-Type': 'application/json'}
+              }).then(function (response) {
+                  $log.debug(response);
+                  $log.debug(response.data[0]);
+                  
+                  
+                  if (response && response.data) {
+                    return response.data[0];	    	
+                  }
+            	  return null;
+            	}, function (error) {
+        	    	$log.debug(error);
+        	    	$log.debug("TEST2");        	    	
+        	    	var errorObj = {};
+        	    	errorObj['isError'] = true;
+        	    	errorObj['errorCode'] = error.data.errors[0];
+        	    	
+        	    	return errorObj;
+            	}
+              );
+        		return promise;
+    	  },  
+    	  
+    	  
+    	  
+    	  
         getEventsForCourse : function (options, courseId, page, size) {
           var p = page || 0;
           var s = size || 10;

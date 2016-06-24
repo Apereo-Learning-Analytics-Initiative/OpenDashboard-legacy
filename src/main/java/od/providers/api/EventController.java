@@ -17,6 +17,7 @@
  */
 package od.providers.api;
 
+
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.events.EventProvider;
@@ -34,6 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+
 
 /**
  * @author ggilbert
@@ -86,6 +93,15 @@ public class EventController {
 
     return eventProvider.getEventsForCourseAndUser(options, new PageRequest(page, size));
   }
-
-
+ 
+  
+  @RequestMapping(value = "/api/proxy/event", method = RequestMethod.POST)  
+  public JsonNode postEvent(@RequestBody ObjectNode object)
+      throws Exception {	  
+	  ObjectMapper mapper = new ObjectMapper();	  
+	  ProviderOptions options = mapper.convertValue(object.get("options"), ProviderOptions.class);
+	  	  
+	  EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));	 	 
+      return eventProvider.postEvent(object.get("caliperEvent"), options);
+  }  
 }
