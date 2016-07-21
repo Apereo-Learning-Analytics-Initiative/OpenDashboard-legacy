@@ -73,7 +73,7 @@
     angular
     .module('OpenDashboard')
     .controller('DashboardController', function($log, $scope, $state, _, registry, contextMapping, dashboardId) {
-    	$scope.showNavbar = false;
+    	$log.debug('DashboardController');
     	$scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;

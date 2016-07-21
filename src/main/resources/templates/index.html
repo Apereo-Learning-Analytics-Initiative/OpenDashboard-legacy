@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.thymeleaf.org" ng-app="OpenDashboard">
+  xsi:schemaLocation="http://www.thymeleaf.org" ng-app="OpenDashboard" ng-controller="AuthCtrl" ng-class="{full:isLogin()}">
 <head>
 <!-- TODO: Translate -->
-<title>OpenDashboard</title>
+<title>Jisc Staff Dashboard</title>
 
 <base href="/"></base>
 <meta charset="utf-8"></meta>
@@ -39,7 +39,7 @@
 
 </head>
 
-<body id="ng-app" class="application" ng-controller="AuthCtrl" style="background-color: #F1F0EB;">
+<body id="ng-app" ng-class="{application:!isLogin(), none:isLogin()}">
   <div loading-widget="" class="spinner"></div>
   <div class="ui-view"></div>
 
@@ -58,7 +58,7 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.js"></script>
-  
+      
   <!-- TODO upgrade -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>
@@ -81,23 +81,35 @@
   <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/auth-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/login-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/error-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/directives.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/framework-services.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/admin-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/admin/ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/admin/tenant/ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/admin/tenant/provider/ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/admin/tenant/dashboards/ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/index-ctrl.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/welcome-ctrl.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/courselist-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/dashboard-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/card-ctrl.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/data-services.js}"></script>
 
-  <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/eventviewer/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/roster/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/demo/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/snapp/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/modelviewer/module.js}"></script>
-  <script type="text/javascript" th:src="@{/cards/activityradar/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/riskassessment/module.js}"></script>
   <script type="text/javascript" th:src="@{/cards/activity/module.js}"></script>
+  <script type="text/javascript" th:src="@{/cards/caliperform/module.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/caliper/caliperSensor-1.0.0.js}"></script>
+  
 </body>
 </html>
+
+<!--   <script type="text/javascript" th:src="@{/cards/lti/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/eventviewer/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/roster/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/demo/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/snapp/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/modelviewer/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/activityradar/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/riskassessment/module.js}"></script> -->
+<!--   <script type="text/javascript" th:src="@{/cards/activity/module.js}"></script> -->
+<!-- </body> -->
+<!-- </html> -->

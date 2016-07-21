@@ -1,0 +1,44 @@
+<div class="row m-t">
+  <div class="col-xs-12 col-md-offset-3 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading" translate="LABEL_ADD_TENANT"></div>
+      <div class="panel-body">
+        <form name="tenantDataForm" class="" novalidate="novalidate">
+          <div class="form-group">
+            <label for="name" translate="LABEL_TENANT_NAME"></label>
+            <div ng-class="{ 'has-error' : (tenantDataForm.name.$dirty && tenantDataForm.name.$error.required)
+            || (tenantDataForm.name.$dirty && tenantDataForm.name.$error.maxlength) }">
+                <input type="text" ng-maxlength="99" class="form-control" id="name" name="name" ng-required="true" ng-model="tenant.name">
+                <!-- Required Text -->
+                <p ng-show="tenantDataForm.name.$dirty && tenantDataForm.name.$error.required" class="help-block" translate="ERROR_REQUIRED"></p>
+                <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                <p ng-show="tenantDataForm.name.$dirty && tenantDataForm.name.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+            </div>
+          </div> 
+          <div class="form-group">
+            <label for="description" translate="LABEL_TENANT_DESCRIPTION"></label>
+            <div ng-class="{ 'has-error' : (tenantDataForm.description.$dirty && tenantDataForm.description.$error.maxlength) }">
+                <input type="text" ng-maxlength="99" class="form-control" id="description" name="description" ng-model="tenant.description">
+                <!-- Help Text MAX LENGTH of desc and keys == 100 -->
+                <p ng-show="tenantDataForm.description.$dirty && tenantDataForm.description.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+            </div>
+          </div>  
+          <div class="form-group">
+            <label for="description" translate="LABEL_IDP_ENDPOINT"></label>
+            <div ng-class="{ 'has-error' :(tenantDataForm.description.$dirty && tenantDataForm.description.$error.maxlength) }">
+                <input type="url" ng-maxlength="99" class="form-control" id="idpEndpoint" name="idpEndpoint" ng-required="true" ng-model="tenant.idpEndpoint">
+                <!-- URL -->
+                <p ng-show="tenantDataForm.idpEndpoint.$dirty && tenantDataForm.idpEndpoint.$error.url" class="help-block" translate="ERROR_URL"></p>
+                <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                <p ng-show="tenantDataForm.idpEndpoint.$dirty && tenantDataForm.idpEndpoint.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+            </div>
+          </div>  
+          <button class="btn btn-primary" type="button"
+            ng-disabled="!tenantDataForm.$valid || submitted" ng-click="save();" translate="BUTTON_SAVE" id="TENANT_SAVE"></button>
+          <button class="btn btn-link" type="button"
+            onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="TENANT_CANCEL"></button>
+        </form>
+      </div>
+    </div>                
+  </div>
+</div>

@@ -24,18 +24,15 @@ import javax.annotation.PostConstruct;
 
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.config.ProviderConfiguration;
 import od.providers.forum.ForumsProvider;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.ForumImpl;
 import org.apereo.lai.impl.MessageImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +52,6 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
   @PostConstruct
   public void init() {
@@ -63,12 +59,11 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
   }
 
   @Override
-  public List<ForumImpl> getForums(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+  public List<ForumImpl> getForums(ProviderData providerData, String contextId) {
 
     List<ForumImpl> f = null;
 
-    String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", options.getCourseId()));
+    String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", contextId));
     ResponseEntity<SakaiTopicCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiTopicCollection.class);
     List<SakaiForum> forums = messageResponse.getBody().getTopic_collection();
     
@@ -84,8 +79,7 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
 
 
   @Override
-  public List<MessageImpl> getMessages(ProviderOptions options, final String topicId) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+  public List<MessageImpl> getMessages(ProviderData providerData, final String topicId) throws ProviderException {
 
     List<MessageImpl> m = null;
 

@@ -1,7 +1,0 @@
-{
-"LABEL_LEARNER":"Alumno",
-"LABEL_RISK":"Riesgo",
-"TEXT_NO_OUTPUT":"No hay una salida para el modelo {{cursoTitulo}}",
-"TEXT_OUTPUT":"Modelo de salida {{cursoTitulo}}",
-"ERROR_NO_PROVIDER_MODELOUTPUT":"No se puede acceder a los datos del evento porque no hay ningún suceso a proveedores de datos que este configurado. Póngase en contacto con el administrador del sistema ."
-}

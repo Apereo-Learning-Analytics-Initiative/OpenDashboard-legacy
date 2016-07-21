@@ -1,0 +1,77 @@
+<div class="col-xs-12" ng-controller="CaliperFormCardController">
+	
+	<div class="row">		
+		 <div class="col-sm-3 col-md-9 col-md-offset-2">
+			<form name="caliperForm" novalidate class="form-horizontal">
+				<legend>Generate Caliper Event</legend>
+				<div class="form-group">
+					<label for="caliper_actor" class="col-sm-3 control-label">Select
+						an Actor</label>
+					<div class="col-sm-5">
+						<select id="caliper_actor" ng-change="getCaliperJSON()"
+							ng-model="caliper_actor"
+							ng-options="caliper_actor.caliperActorObjectId as caliper_actor.name for caliper_actor in caliperActorObjects"
+							class="form-control"></select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="caliper_action" class="col-sm-3 control-label">Select
+						an Action</label>
+					<div class="col-sm-5">
+						<select id="caliper_action" ng-change="getCaliperJSON()"
+							ng-model="caliper_action"
+							ng-options="caliper_action.caliperActionObjectId as caliper_action.name for caliper_action in caliperActionObjects"
+							class="form-control"></select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="caliper_object" class="col-sm-3 control-label">Select
+						an Object</label>
+					<div class="col-sm-5">
+						<select id="caliper_object" ng-change="getCaliperJSON()"
+							ng-model="caliper_object"
+							ng-options="caliper_object.caliperEventObjectId as caliper_object.name for caliper_object in caliperEventObjects"
+							class="form-control"></select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="caliper_application" class="col-sm-3 control-label">Select
+						an Application</label>
+					<div class="col-sm-5">
+						<select ng-model="caliper_application"
+							ng-change="getCaliperJSON()"
+							ng-options="caliper_application.caliperApplicationObjectId as caliper_application.name for caliper_application in caliperApplicationObjects"
+							class="form-control"></select>
+					</div>
+				</div>
+				<div class="form-group text-center">
+					<button type="submit" class="btn btn-default"
+						ng-click='postAway()'>Submit to LRS</button>
+					<button class="btn btn-default" ng-click='resetForm()'>Reset</button>
+				</div>
+				<br />
+				<hr />
+
+			</form>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col-xs-6">
+			<div ng-show="caliperJSON!=null" style="float: left;">
+				<span>Caliper Event</span>
+				<pre>{{caliperJSON|json}}</pre>
+			</div>
+		</div>
+		<div class="col-xs-6">
+			<div ng-show="caliperId!=null">
+				<span>Caliper Ids Generated in LRW</span>
+				<pre style="white-space: pre; height: 100%; overflow-y: auto;">{{caliperId}}</pre>
+			</div>
+		</div>
+	</div>
+</div>

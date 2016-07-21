@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -36,7 +37,7 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.modeloutput.ModelOutputProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.ModelOutput;
@@ -75,7 +76,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   
   private static final String LAP_OAUTH_TOKEN_URI = "/oauth/token";
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   private RestTemplate restTemplate;
   
   @PostConstruct
@@ -93,13 +94,11 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
   
-  private PageImpl<ModelOutput> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
+  private PageImpl<ModelOutput> fetch(ProviderData providerData, String tenantId, Map<String, String> urlVariables, Pageable pageable, String uri) {
     
     log.debug("{}",urlVariables);
     log.debug("{}",uri);
     
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
-
     String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
     
     ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
@@ -125,7 +124,7 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
       output = new ArrayList<>();
     }
     
-    return new PageImpl<>(output, pageable, pageWrapper.getPage().getTotalElements());
+    return new PageImpl<ModelOutput>(output, pageable, pageWrapper.getPage().getTotalElements());
   }
 
   @Override
@@ -149,20 +148,11 @@ public class LAPModelOutputProvider extends BaseProvider implements ModelOutputP
   }
 
   @Override
-  public Page<ModelOutput> getModelOutputForCourse(ProviderOptions options, String tenant, String course, Pageable pageable) throws ProviderException {
+  public Page<ModelOutput> getModelOutputForContext(ProviderData providerData, String tenantId, String contextId, Pageable pageable) throws ProviderException {
     Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("id", course);
-    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
+    urlVariables.put("id", contextId);
+    urlVariables.put("tenant", StringUtils.isNotBlank(tenantId) ? tenantId : "lap");
     
-    return fetch(urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
-  }
-
-  @Override
-  public Page<ModelOutput> getModelOutputForStudent(ProviderOptions options, String tenant, String student, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("id", student);
-    urlVariables.put("tenant", StringUtils.isNotBlank(tenant) ? tenant : "lap");
-    
-    return fetch(urlVariables, pageable, "/api/outpu/{tenant}t/student/{id}");
+    return fetch(providerData, tenantId, urlVariables, pageable, "/api/output/{tenant}/course/{id}?lastRunOnly=true");
   }
 }

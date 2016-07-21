@@ -18,8 +18,13 @@ angular
 .module('OpenDashboard')
 .controller('AuthCtrl',
 
-function AuthCtrl($scope, $state, SessionService) {
-  if (!SessionService.isAuthenticated()) {
+function AuthCtrl($scope, $state, $location, SessionService) {
+  $scope.isLogin = function () {
+    return $state.is('login');
+  }
+
+  if (!$location.path().startsWith("/err")
+		  && !SessionService.isAuthenticated()) {
 	  SessionService
 	  .authenticate()
 	  .then(

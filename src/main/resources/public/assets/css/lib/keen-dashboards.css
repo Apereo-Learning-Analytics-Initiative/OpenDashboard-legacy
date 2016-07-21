@@ -4,7 +4,7 @@
  */
 
 body.application {
-  background: #ffffff;
+  background-color: #F1F0EB;
   padding: 60px 20px 0;
 }
 body.application > .container-fluid {

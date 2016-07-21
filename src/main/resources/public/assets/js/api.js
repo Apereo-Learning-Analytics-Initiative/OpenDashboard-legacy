@@ -48,12 +48,29 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 	 */
 	
 	function getCourse() {
-		if (!this.course && this.inbound_lti_launch) {
-			this.course = new this.Course();
-			this.course.fromLTI(this.inbound_lti_launch);
+		if (!this.course) {
+		  if (this.inbound_lti_launch) {
+		    this.course = new this.Course();
+		    this.course.fromLTI(this.inbound_lti_launch);
+		  }
+		  else if (window.sessionStorage) {
+		    var courseJson = window.sessionStorage.getItem('od_current_course');	
+			if (courseJson && courseJson !== 'undefined') {
+			  this.course = JSON.parse(courseJson);
+			}
+		  }		  
 		}
+		
 		return this.course;
 	};
+	
+	function setCourse(options) {
+	  this.course = new this.Course(options);
+      if (window.sessionStorage) {
+        window.sessionStorage.setItem('od_current_course',JSON.stringify(this.course));
+      }
+	};
+	
 	
 	/**
 	 * Roster
@@ -68,28 +85,36 @@ var OpenDashboardApi = ( function( window, JSON, undefined ) {
 	};
 	
 	function getCurrentUser() {
-		if (!this.currentUser && this.inbound_lti_launch) {
+		if (!this.currentUser) {
+		  if (this.inbound_lti_launch) {
 			this.currentUser = new this.Member()
 			this.currentUser.fromLTI(this.inbound_lti_launch);
+		  }
+		  else if (window.sessionStorage) {
+		    var userJson = window.sessionStorage.getItem('od_current_user');	
+		    if (userJson && userJson !== 'undefined') {
+		      this.currentUser = JSON.parse(userJson);
+		    }
+		  }		  
 		}
 		return this.currentUser;
 	};
 	
-	/**
-	 * Framework
-	 */
-	
-	function createContextMappingInstance (options) {
-		return new this.ContextMapping(options);
-	};
+	function setCurrentUser(options) {
+	  this.currentUser = new this.Member(options);
+      if (window.sessionStorage) {
+        window.sessionStorage.setItem('od_current_user',JSON.stringify(this.currentUser));
+      }
+	}
 	
 	
 	return {
 		setInbound_LTI_Launch : setLTIToolLaunch,
 		getInbound_LTI_Launch : getLTIToolLaunch,
 		getCourse : getCourse,
+		setCourse : setCourse,
 		getCurrentUser : getCurrentUser,
-		createContextMappingInstance : createContextMappingInstance,
+		setCurrentUser : setCurrentUser,
 		createMemberInstance : createMemberInstance,
 		createPersonInstance : createPersonInstance
 	};

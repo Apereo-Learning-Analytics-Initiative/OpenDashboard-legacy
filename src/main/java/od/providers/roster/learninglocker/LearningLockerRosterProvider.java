@@ -14,7 +14,7 @@
  *******************************************************************************/
 package od.providers.roster.learninglocker;
 
-import java.util.Arrays;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -23,11 +23,11 @@ import javax.annotation.PostConstruct;
 
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.learninglocker.LearningLockerStudent;
+import od.providers.learninglocker.LearningLockerStudentModuleInstance;
 import od.providers.roster.RosterProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
@@ -35,14 +35,12 @@ import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author ggilbert
@@ -57,10 +55,8 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   private static final String BASE = "LEARNING_LOCKER_ROSTER";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-  
-  private boolean DEMO = true;
-  
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
+     
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @PostConstruct
   public void init() {
@@ -163,48 +159,34 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
   }
 
   @Override
-  public Set<Member> getRoster(ProviderOptions options) throws ProviderException {
+  public Set<Member> getRoster(ProviderData providerData, String contextId) throws ProviderException {
+    
+    Set<Member> output = null;
+
     if (DEMO) {
       return demo();
     }
+       
+    RestTemplate restTemplate = getRestTemplate(providerData);
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
+    String baseUrl = providerData.findValueForKey("base_url");
+            
+    String studentModuleInstanceUrl = buildUrl(baseUrl, STUDENT_MODULE_INSTANCE_URI);
+    MultiValueMap<String, String> studentModuleInstanceParams = new LinkedMultiValueMap<String, String>();
+    studentModuleInstanceParams.add("query", String.format("{\"MOD_INSTANCE_ID\":\"%s\"}", contextId));
+    studentModuleInstanceParams.add("populate", "student");
+    URI studentModuleInstanceURI = buildUri(studentModuleInstanceUrl, studentModuleInstanceParams);
+    log.debug(studentModuleInstanceURI.toString());
     
-    String path = "/api/v1/students?query={\"MODULE_INSTANCES\":\"%s\"}";
-    path = String.format(path, options.getCourseId());
+    LearningLockerStudentModuleInstance [] studentModuleInstances 
+      = restTemplate.exchange(studentModuleInstanceURI, 
+        HttpMethod.GET, headers, LearningLockerStudentModuleInstance[].class).getBody();
     
-    log.debug("{}",path);
-    
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
-
-    String url = providerData.findValueForKey("base_url");
-    if (!url.endsWith("/") && !path.startsWith("/")) {
-      url = url + "/";
-    }
-    
-    url = url + path;
-    
-    ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
-    resourceDetails.setClientId(providerData.findValueForKey("key"));
-    resourceDetails.setClientSecret(providerData.findValueForKey("secret"));
-    resourceDetails.setAccessTokenUri(getUrl(providerData.findValueForKey("base_url"), LL_OAUTH_TOKEN_URI, null));
-    DefaultOAuth2ClientContext clientContext = new DefaultOAuth2ClientContext();
-
-    OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resourceDetails, clientContext);
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
-        MediaType.valueOf("text/javascript")));
-    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-    
-    LearningLockerStudent [] students = restTemplate.exchange(url, HttpMethod.GET, null, LearningLockerStudent[].class).getBody();
-    Set<Member> output;
-    if (students != null && students.length > 0) {
+    if (studentModuleInstances != null && studentModuleInstances.length > 0) {
       output = new HashSet<>();
-      
-      for (LearningLockerStudent student : students) {
-        output.add(toMember("Learner",student));
+      for(LearningLockerStudentModuleInstance smi : studentModuleInstances) {
+        output.add(toMember("Learner", smi.getStudent()));
       }
-    }
-    else {
-      output = new HashSet<>();
     }
     
     return output;
@@ -218,16 +200,23 @@ public class LearningLockerRosterProvider extends LearningLockerProvider impleme
     member.setRole(role);
     
     PersonImpl person = new PersonImpl();
+    
     StringBuilder fullName = new StringBuilder();
     
     if (StringUtils.isNotBlank(student.getFirstName())) {
       fullName.append(student.getFirstName()).append(" ");
       person.setName_given(student.getFirstName());
     }
+    else {
+      log.warn("{} has null or blank first name",student.getId());
+    }
     
     if (StringUtils.isNotBlank(student.getLastName())) {
       fullName.append(student.getLastName());
       person.setName_family(student.getLastName());
+    }
+    else {
+      log.warn("{} has null or blank last name",student.getId());
     }
     
     if (fullName.length() > 0) {

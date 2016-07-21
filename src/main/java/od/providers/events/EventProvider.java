@@ -17,13 +17,15 @@
  */
 package od.providers.events;
 
+import od.exception.MethodNotImplementedException;
 import od.providers.Provider;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 
-import org.apereo.lai.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author ggilbert
@@ -31,7 +33,8 @@ import org.springframework.data.domain.Pageable;
  */
 public interface EventProvider extends Provider {
   
-  Page<Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException;
-  Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException;
-  Page<Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException;
+  Page<org.apereo.lai.Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException;
+  Page<org.apereo.lai.Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException;
+  Page<org.apereo.lai.Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException;
+  JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException, MethodNotImplementedException;
 }

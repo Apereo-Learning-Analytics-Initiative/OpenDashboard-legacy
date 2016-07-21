@@ -18,18 +18,17 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.config.ProviderConfiguration;
 import od.providers.course.CourseProvider;
+import od.providers.course.learninglocker.LearningLockerStaff;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Course;
 import org.apereo.lai.impl.CourseImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -48,29 +47,10 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
   @PostConstruct
   public void init() {
     providerConfiguration = getDefaultSakaiProviderConfiguration();
-  }
-
-  @Override
-  public Course getContext(ProviderOptions options) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
-
-    String url = fullUrl(providerData, StringUtils.replace(ENTITY_URI, "{ID}", options.getCourseId()));
-    ResponseEntity<CourseImpl> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), CourseImpl.class);
-    return messageResponse.getBody();
-  }
-
-  @Override
-  public List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
-
-    String url = fullUrl(providerData, COLLECTION_URI);
-    ResponseEntity<SakaiSiteCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiSiteCollection.class);
-    return messageResponse.getBody().getSite_collection();
   }
 
   @Override
@@ -88,9 +68,38 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
     return DESC;
 }
 
-@Override
+  @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
+  }
+  
+  @Override
+  public Course getContext(ProviderData providerData, String contextId) throws ProviderException {
+    String url = fullUrl(providerData, StringUtils.replace(ENTITY_URI, "{ID}", contextId));
+    ResponseEntity<CourseImpl> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), CourseImpl.class);
+    return messageResponse.getBody();
+  }
+
+  @Override
+  public List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException {
+
+    String url = fullUrl(providerData, COLLECTION_URI);
+    ResponseEntity<SakaiSiteCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiSiteCollection.class);
+    //TODO
+    //return messageResponse.getBody().getSite_collection();
+    return null;
+  }
+
+  @Override
+  public List<String> getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }

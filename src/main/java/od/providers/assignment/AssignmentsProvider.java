@@ -20,8 +20,8 @@ package od.providers.assignment;
 import java.util.List;
 
 import od.providers.Provider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.impl.AssignmentImpl;
 
@@ -30,5 +30,5 @@ import org.apereo.lai.impl.AssignmentImpl;
  *
  */
 public interface AssignmentsProvider extends Provider {
-	List<AssignmentImpl> getAssignments(ProviderOptions options) throws ProviderException;
+	List<AssignmentImpl> getAssignments(ProviderData providerData, String contextId) throws ProviderException;
 }
