@@ -1,5 +1,13 @@
-<div class="col-xs-12 od-background-color" ng-controller="RiskAssessmentController">
-  <div class="row" ng-show="view == listView">
+<div class="col-xs-12 od-background-color" ng-controller="RiskAssessmentController" ng-show="loaded">
+  <div class="row" ng-show="error">
+    <div class="col-xs-12 col-md-offset-3 col-md-6" ng-show="error">
+      <div class="alert alert-danger" role="alert">
+        <h3 translate="{{error}}" translate-values="{{errorData}}"></h3>
+        <h5 translate="ERROR_CODE" translate-values="{{errorData}}"></h5>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-show="!error && view == listView">
   
     <!-- LEFT COLUMN -->
     <div class="col-md-4">
@@ -10,39 +18,41 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_ACTIVITY_COURSE_LIST"><strong class="od-text-black">{{activeCourse.title}}</strong> <span class="od-text-black" class="caret" ng-show="courses"></span></a>
             <ul class="dropdown-menu" ng-show="courses">
               <li ng-repeat="course in courses"><a href ng-click="switchCourse(course.id)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{course.title}}</a></li>
+              <li class="divider"></li>
+              <li ><a href ng-click="switchCourse(null)" translate="CL_HEADER">My Courses</a></li>
             </ul>
           </li>
         </ul>
       </div>
     
       <div class="list-group box-shadow--6dp">
-        <a class="list-group-item" ng-class="{'active': grouping == ALL_STUDENTS.label}" href ng-click="changeGrouping(ALL_STUDENTS.label);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
-        <a class="list-group-item" ng-class="{'active': grouping == HIGH_RISK.label}" href ng-click="changeGrouping(HIGH_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == ALL_STUDENTS.translationValue}" href ng-click="changeGrouping(ALL_STUDENTS);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == HIGH_RISK.translationValue}" href ng-click="changeGrouping(HIGH_RISK);">
           <span class="label label-danger">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_HIGH_RISK">HIGH RISK</strong>
           <strong class="pull-right" ng-show="highRiskPercentage">{{highRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == MEDIUM_RISK.label}" href ng-click="changeGrouping(MEDIUM_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == MEDIUM_RISK.translationValue}" href ng-click="changeGrouping(MEDIUM_RISK);">
           <span class="label label-warning">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_MEDIUM_RISK">MEDIUM RISK</strong>
           <strong class="pull-right" ng-show="mediumRiskPercentage">{{mediumRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == LOW_RISK.label}" href ng-click="changeGrouping(LOW_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == LOW_RISK.translationValue}" href ng-click="changeGrouping(LOW_RISK);">
           <span class="label label-info">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_LOW_RISK">LOW RISK</strong>
           <strong class="pull-right" ng-show="lowRiskPercentage">{{lowRiskPercentage}}%</strong>
         </a>
-        <a class="list-group-item" ng-class="{'active': grouping == NO_RISK.label}" href ng-click="changeGrouping(NO_RISK.label);">
+        <a class="list-group-item" ng-class="{'active': grouping.translationValue == NO_RISK.translationValue}" href ng-click="changeGrouping(NO_RISK);">
           <span class="label label-success">&nbsp;</span>
           &nbsp;
           <strong translate="RA_LABEL_NO_RISK">NO RISK</strong>
           <strong class="pull-right" ng-show="noRiskPercentage">{{noRiskPercentage}}%</strong>
         </a>
       </div> 
-      <canvas id="doughnut" class="chart chart-doughnut box-shadow--6dp"
+      <canvas id="doughnut" class="chart chart-doughnut box-shadow--6dp hidden-xs hidden-sm"
         chart-data="data" chart-labels="labels" chart-colours="colors" chart-click="donutClick">
       </canvas> 
       
@@ -53,8 +63,8 @@
     
        <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
         <div class="nav navbar-nav">
-        <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping}}</strong></p>
-        <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping]}}</strong></p>
+        <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping.translationValue}}</strong></p>
+        <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping.label]}}</strong></p>
         </div>
         <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 1">
               <li><a href ng-click="changeToView(radarView)"><strong class="od-text-black" translate="RA_LABEL_COMPARE_STUDENTS">COMPARE STUDENTS</strong></a></li>
@@ -85,7 +95,7 @@
       </table>
     </div>
   </div>
-  <div class="row" ng-show="view == radarView">
+  <div class="row" ng-show="!error && view == radarView">
     <!-- LEFT COLUMN -->  
     <div class="col-md-4">
       <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
@@ -138,7 +148,7 @@
             &nbsp;
             <strong>{{learner.person.name_full}}</strong>
             <span class="od-text-black label pull-right" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{learner.output.MODEL_RISK_CONFIDENCE}}</span>
+            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{translateRiskLevel(learner.output.MODEL_RISK_CONFIDENCE)}}</span>
             <div class="row m-t" ng-show="expand" ng-init="indicators = getIndicators(learner)">
               <div class="col-xs-12">
                 <div class="list-group">

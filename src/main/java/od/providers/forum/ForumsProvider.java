@@ -22,7 +22,6 @@ import java.util.List;
 import od.providers.Provider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.impl.ForumImpl;
 import org.apereo.lai.impl.MessageImpl;

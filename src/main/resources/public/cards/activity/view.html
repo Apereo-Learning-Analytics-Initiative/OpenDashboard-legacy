@@ -61,7 +61,7 @@
             <div class="panel-heading text-center"><strong>MOST ACTIVE USERS</strong></div>
             <div class="panel-body">
               <ol class="list-group">
-                <li class="list-group-item" ng-repeat="actor in eventsByActor | limitTo:3"><span class="badge">{{actor[1]}}</span>{{actor[0]}}</li>
+                <li class="list-group-item" style="word-wrap: break-word;" ng-repeat="actor in eventsByActor | limitTo:3"><span class="badge">{{actor[1]}}</span>{{actor[0]}}</li>
               </ol>
             </div>
           </div>
@@ -71,7 +71,7 @@
             <div class="panel-heading text-center"><strong>TOP ACTIONS</strong></div>
             <div class="panel-body">
               <ol class="list-group">
-                <li class="list-group-item" ng-repeat="verb in eventsByVerb | limitTo:3"><span class="badge">{{verb[1]}}</span>{{verb[0]}}</li>
+                <li class="list-group-item" style="word-wrap: break-word;" ng-repeat="verb in eventsByVerb | limitTo:3"><span class="badge">{{verb[1]}}</span>{{verb[0]}}</li>
               </ol>
             </div>
           </div>

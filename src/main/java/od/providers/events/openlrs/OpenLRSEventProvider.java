@@ -64,20 +64,16 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final String BASE = "OPENLRS_EVENT";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-
-  @Autowired
-  private MongoTenantRepository mongoTenantRepository;
+  
+  @Autowired private MongoTenantRepository mongoTenantRepository;
   private ProviderConfiguration providerConfiguration;
-
+  
   @PostConstruct
   public void init() {
     LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
-    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key",
-        "LABEL_KEY", true);
-    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE,
-        true, "Secret", "LABEL_SECRET", true);
-    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true,
-        "OpenLRS Base URL", "LABEL_OPENLRS_BASE_URL", false);
+    ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("key", null, ProviderConfigurationOption.TEXT_TYPE, true, "Key", "LABEL_KEY",  true);
+    ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
+    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "OpenLRS Base URL", "LABEL_OPENLRS_BASE_URL", false);
     options.add(key);
     options.add(secret);
     options.add(baseUrl);
@@ -100,17 +96,13 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     return DESC;
   }
 
-  @Override
+   @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * od.providers.events.EventProvider#getEventsForUser(od.providers.ProviderOptions
-   * , org.springframework.data.domain.Pageable)
+  /* (non-Javadoc)
+   * @see od.providers.events.EventProvider#getEventsForUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
    */
   @Override
   public Page<org.apereo.lai.Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
@@ -122,22 +114,21 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   public Page<org.apereo.lai.Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
     RestTemplate restTemplate = new RestTemplate();
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.valueOf("text/javascript")));
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-
+    
     Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-
+    
     ProviderData providerData = tenant.findByKey(KEY);
-
+    
     HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
     String baseUrl = providerData.findValueForKey("base_url");
 
     String caliperUrl = buildUrl(baseUrl, "/v1/caliper");
-    ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>> responseType = new ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>>() {
-    };
-    PageWrapper<org.apereo.openlrs.model.event.v2.Event> pageWrapper = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.GET, headers,
-        responseType).getBody();
-
+    ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>> responseType = new ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>>() {};
+    PageWrapper<org.apereo.openlrs.model.event.v2.Event> pageWrapper = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.GET, headers, responseType).getBody();
+    
     log.debug(pageWrapper.toString());
     List<Event> output;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
@@ -155,19 +146,16 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
         event.setId(v2Event.getId());
         output.add(event);
       }
-    } else {
+    }
+    else {
       output = new ArrayList<>();
     }
-
+    
     return new PageImpl<Event>(output, pageable, output.size());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * od.providers.events.EventProvider#getEventsForCourseAndUser(od.providers
-   * .ProviderOptions, org.springframework.data.domain.Pageable)
+  /* (non-Javadoc)
+   * @see od.providers.events.EventProvider#getEventsForCourseAndUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
    */
   @Override
   public Page<org.apereo.lai.Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
@@ -175,39 +163,40 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     return null;
   }
 
-  /*
-   * Returns ID of the created event (non-Javadoc)
-   * 
-   * @see
-   * od.providers.events.EventProvider#postEvent(com.fasterxml.jackson.databind
-   * .JsonNode, od.providers.ProviderOptions)
-   */
-  @Override
-  public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException {
-    RestTemplate restTemplate = new RestTemplate();
 
-    // set interceptors/requestFactory
-    ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-    List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
-    ris.add(ri);
-    restTemplate.setInterceptors(ris);
-    restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+	@Override
+	/*
+	 * Returns ID of the created event
+	 * (non-Javadoc)
+	 * @see od.providers.events.EventProvider#postEvent(com.fasterxml.jackson.databind.JsonNode, od.providers.ProviderOptions)
+	 */
+	public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException {
+		RestTemplate restTemplate = new RestTemplate();
+		
+		//set interceptors/requestFactory
+		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+		ris.add(ri);
+		restTemplate.setInterceptors(ris);
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		
+		
+	    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+	    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+	        MediaType.valueOf("text/javascript")));
+	    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+	    
+	    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+	    
+	    ProviderData providerData = tenant.findByKey(KEY);
+	    String baseUrl = providerData.findValueForKey("base_url");
+	    String caliperUrl = buildUrl(baseUrl, "/v1/caliper");
+	    
+	    HttpHeaders headers = createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
+	    HttpEntity<JsonNode> entity = new HttpEntity<JsonNode>(marshallableObject, headers);
+	    
+	    ResponseEntity<JsonNode> res = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.POST, entity, JsonNode.class);
 
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.valueOf("text/javascript")));
-    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
-
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
-
-    ProviderData providerData = tenant.findByKey(KEY);
-    String baseUrl = providerData.findValueForKey("base_url");
-    String caliperUrl = buildUrl(baseUrl, "/v1/caliper");
-
-    HttpHeaders headers = createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
-    HttpEntity<JsonNode> entity = new HttpEntity<JsonNode>(marshallableObject, headers);
-
-    ResponseEntity<JsonNode> res = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.POST, entity, JsonNode.class);
-
-    return res.getBody();
-  }
+	    return res.getBody();	
+	}
 }

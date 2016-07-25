@@ -23,7 +23,6 @@ import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.config.ProviderConfiguration;
 import od.providers.course.CourseProvider;
-import od.providers.course.learninglocker.LearningLockerStaff;
 import od.providers.sakai.BaseSakaiProvider;
 
 import org.apache.commons.lang3.StringUtils;
@@ -95,13 +94,6 @@ public class SakaiCourseProvider extends BaseSakaiProvider implements CourseProv
     // TODO Auto-generated method stub
     return null;
   }
-
-  @Override
-  public LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
 }
 
 

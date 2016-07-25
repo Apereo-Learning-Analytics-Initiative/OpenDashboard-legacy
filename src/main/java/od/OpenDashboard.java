@@ -14,7 +14,6 @@
  *******************************************************************************/
 package od;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
@@ -22,12 +21,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import od.providers.events.learninglocker.LearningLockerXApiEventProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
@@ -54,20 +50,10 @@ public class OpenDashboard {
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboard.class);
   
-  @Autowired()
-  @Qualifier("events_learninglocker")
-  private LearningLockerXApiEventProvider ep;
-
   public static void main(String[] args) {
     SpringApplication.run(OpenDashboard.class, args);
   }
   
-//  @Bean 
-//  public String done() throws IOException {
-//    ep.post();
-//    return "done";
-//  }
-
   @Bean
   public LocaleResolver localeResolver() {
     SessionLocaleResolver slr = new SessionLocaleResolver();
