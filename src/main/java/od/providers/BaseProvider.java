@@ -17,12 +17,15 @@
  */
 package od.providers;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author ggilbert
@@ -38,8 +41,26 @@ public abstract class BaseProvider implements Provider {
              auth.getBytes(Charset.forName("US-ASCII")) );
           String authHeader = "Basic " + new String( encodedAuth );
           set( "Authorization", authHeader );
+          set("Content-Type","application/json");
        }
     };
+  }
+  
+  protected String buildUrl(String uri, String path) {
+    String url = uri;
+    if (StringUtils.endsWithIgnoreCase(url, "/")) {
+      url = StringUtils.trimTrailingCharacter(url, '/');
+    }
+    
+    return url.concat(path);
+  }
+
+  protected URI buildUri(String url, MultiValueMap<String,String> params) {
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+    if (params != null && !params.isEmpty()) {
+      builder.queryParams(params);
+    }
+    return builder.build().toUri();
   }
   
   protected String getUrl(String url, String path, Pageable pageable) {
@@ -55,8 +76,8 @@ public abstract class BaseProvider implements Provider {
       int size = pageable.getPageSize();
       
       if (url.contains("?")) {
-        String queryParams = StringUtils.substringAfterLast(url, "?");
-        if (StringUtils.isNotBlank(queryParams)) {
+        String queryParams = org.apache.commons.lang3.StringUtils.substringAfterLast(url, "?");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(queryParams)) {
           url = url + "&";
         }
       }

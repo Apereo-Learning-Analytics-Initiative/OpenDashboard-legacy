@@ -27,7 +27,16 @@ import org.apereo.lai.ModelOutput;
  *
  */
 public class ModelOutputImpl implements ModelOutput {
-  private static final long serialVersionUID = 1L;
+  
+  public ModelOutputImpl() {
+    super();
+  }
+  
+  public ModelOutputImpl(Map<String, Object> output, Date createdDate) {
+    super();
+    this.output = output;
+    this.createdDate = createdDate;
+  }
   
   private Map<String, Object> output;
   private Date createdDate;

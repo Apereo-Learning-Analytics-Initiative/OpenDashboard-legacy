@@ -35,20 +35,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import lti.oauth.OAuthMessageSigner;
 import lti.oauth.OAuthUtil;
 import od.providers.ProviderData;
-import od.providers.ProviderOptions;
 import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.roster.RosterProvider;
-import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Member;
 import org.apereo.lai.impl.PersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -88,7 +85,6 @@ public class BasicLISRosterProvider implements RosterProvider {
   private ProviderConfiguration providerConfiguration;
   
   private RestTemplate restTemplate = new RestTemplate();
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
 
   @PostConstruct
   public void init() {
@@ -123,21 +119,19 @@ public class BasicLISRosterProvider implements RosterProvider {
   }
 
   @Override
-  public Set<Member> getRoster(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
+  public Set<Member> getRoster(ProviderData providerData, String contextId) {
 
-    String url = options.getStrategyHost();
-    String rosterIdentifier = options.getStrategyKey();
+    String url = providerData.findValueForKey("base_url");
     
     log.debug("url: {}", url);
-    log.debug("rosterIdentifier: {}", rosterIdentifier);
+    log.debug("rosterIdentifier: {}", contextId);
 
     Set<Member> memberSet = null;
 
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("lti_version", "LTI-1p0");
     map.add("lti_message_type", "basic-lis-readmembershipsforcontext");
-    map.add("id", rosterIdentifier);
+    map.add("id", contextId);
     map.add(OAuthUtil.CONSUMER_KEY_PARAM, providerData.findValueForKey("oauth_consumer_key"));
     map.add(OAuthUtil.SIGNATURE_METHOD_PARAM, "HMAC-SHA1");
     map.add(OAuthUtil.VERSION_PARAM, "1.0");

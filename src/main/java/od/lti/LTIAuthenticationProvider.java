@@ -34,7 +34,7 @@ public class LTIAuthenticationProvider implements AuthenticationProvider {
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-    log.debug(authentication.toString());
+    log.info(authentication.toString());
     // Nothing to do, just return it
     return authentication;
   }

@@ -20,8 +20,8 @@ package od.providers.forum;
 import java.util.List;
 
 import od.providers.Provider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.impl.ForumImpl;
 import org.apereo.lai.impl.MessageImpl;
@@ -31,6 +31,6 @@ import org.apereo.lai.impl.MessageImpl;
  *
  */
 public interface ForumsProvider extends Provider {
-	List<ForumImpl> getForums(ProviderOptions options) throws ProviderException;
-	List<MessageImpl> getMessages(ProviderOptions options, String topicId) throws ProviderException;
+	List<ForumImpl> getForums(ProviderData providerData, String contextId) throws ProviderException;
+	List<MessageImpl> getMessages(ProviderData providerData, String topicId) throws ProviderException;
 }

@@ -19,16 +19,20 @@ package od.providers.api;
 
 import java.util.List;
 
-import od.providers.ProviderOptions;
+import od.framework.model.ContextMapping;
+import od.framework.model.Tenant;
+import od.providers.ProviderData;
 import od.providers.ProviderService;
 import od.providers.outcomes.OutcomesProvider;
+import od.repository.mongo.ContextMappingRepository;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.LineItemImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,17 +46,23 @@ public class OutcomesController {
 	private static final Logger log = LoggerFactory.getLogger(OutcomesController.class);
 	
   @Autowired private ProviderService providerService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  @Autowired private ContextMappingRepository contextMappingRepository;
 	
 	@Secured("ROLE_INSTRUCTOR")
-	@RequestMapping(value = "/api/outcomes", method = RequestMethod.POST)
-	public List<LineItemImpl> outcomes(@RequestBody ProviderOptions providerOptions)
+	@RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/outcomes", method = RequestMethod.GET)
+	public List<LineItemImpl> outcomes(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("contextMappingId") final String contextMappingId)
 			throws Exception {
 
-		if (log.isDebugEnabled()) {
-			log.debug(providerOptions.toString());
-		}
-    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider();
+    log.debug("tenantId: {}", tenantId);
+    log.debug("contextMappingId: {}", contextMappingId);
 
-		return outcomesProvider.getOutcomesForCourse(providerOptions);
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
+    OutcomesProvider outcomesProvider = providerService.getOutcomesProvider(tenant);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
+    
+    return outcomesProvider.getOutcomesForCourse(providerData,contextMapping.getContext());
 	}
 }

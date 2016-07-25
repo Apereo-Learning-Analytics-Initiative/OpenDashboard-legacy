@@ -22,17 +22,14 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import od.providers.ProviderData;
-import od.providers.ProviderOptions;
 import od.providers.assignment.AssignmentsProvider;
 import od.providers.config.ProviderConfiguration;
 import od.providers.sakai.BaseSakaiProvider;
-import od.repository.ProviderDataRepositoryInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.AssignmentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -52,20 +49,9 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
   private static final String DESC = String.format("%s_DESC", BASE);
   private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
-  
   @PostConstruct
   public void init() {
     providerConfiguration = getDefaultSakaiProviderConfiguration();
-  }
-
-  @Override
-  public List<AssignmentImpl> getAssignments(ProviderOptions options) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
-    
-    String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", options.getCourseId()));
-    ResponseEntity<SakaiAssignmentCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiAssignmentCollection.class);
-    return messageResponse.getBody().getAssignment_collection();
   }
 
   @Override
@@ -87,5 +73,15 @@ public class SakaiAssignmentsProvider extends BaseSakaiProvider implements Assig
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }
+  
+  @Override
+  public List<AssignmentImpl> getAssignments(ProviderData providerData, String contextId) {
+    
+    String url = fullUrl(providerData, StringUtils.replace(COLLECTION_URI, "{ID}", contextId));
+    ResponseEntity<SakaiAssignmentCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiAssignmentCollection.class);
+    return messageResponse.getBody().getAssignment_collection();
+  }
+
+
 
 }

@@ -39,7 +39,7 @@ public class LTIUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String ltiJson) throws UsernameNotFoundException {
-    log.debug(ltiJson);
+    log.info(ltiJson);
     LaunchRequest launchRequest = LaunchRequest.fromJSON(ltiJson);
     String role;
     if (LTIController.hasInstructorRole(null, launchRequest.getRoles())) {

@@ -90,7 +90,7 @@ describe('the framework-services test', function () {
         describe('authenticate', function () {
             it('should return true when response is authenticated and has name', function () {
                 httpBackend.when('GET', '/user').respond({"authenticated": true,
-                    "name": "admin"
+                    "name": "admin", "principal" : {"tenantId" : "12345"}
                 });
                 service.authenticate();
                 httpBackend.flush();
@@ -295,48 +295,9 @@ describe('the framework-services test', function () {
             });
         });
 
-        describe('ContextMappingService.create', function () {
-            it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('POST', '/api/consumer/' + contextMapping.key + '/context').respond({'contextMappingKey': 'false'});
-
-                service.create(contextMapping)
-                        .then(function (response) {
-                            expect(response).not.toBe(contextMapping);
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-            it('should not be equal to the contextMap when key value does not match in response', function () {
-                httpBackend.when('POST', '/api/consumer/' + contextMapping.key + '/context').respond({'contextMappingKey': 'false'});
-
-                service.create(contextMapping)
-                        .then(function (response) {
-                            expect(response).not.toBe(contextMapping);
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-            it('should return the contextMap value when key matches response', function () {
-                httpBackend.when('POST', '/api/consumer/' + contextMapping.key + '/context').respond({'key': 'contextKey'});
-
-                service.create(contextMapping)
-                        .then(function (response) {
-                            expect(response).toEqual(contextMapping);
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-        });
-
         describe('ContextMappingService.update', function () {
             it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('PUT', '/api/consumer/' + contextMapValue.key + '/context/' + contextMapValue.context).respond({'contextMappingValue': 'false', 'context': 'contextValue'});
+                httpBackend.when('PUT', '/api/consumer/context').respond({'contextMappingValue': 'false', 'context': 'contextValue'});
 
                 service.update(contextMapValue)
                         .then(function (response) {
@@ -348,7 +309,7 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
             it('should not be equal to the contextMap when key value does not match in response', function () {
-                httpBackend.when('PUT', '/api/consumer/' + contextMapValue.key + '/context/' + contextMapValue.context).respond({'key': 'false', 'context': 'contextValue'});
+                httpBackend.when('PUT', '/api/consumer/context').respond({'key': 'false', 'context': 'contextValue'});
 
                 service.update(contextMapValue)
                         .then(function (response) {
@@ -360,7 +321,7 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
             it('should not be equal to the contextMap when context does not match in response', function () {
-                httpBackend.when('PUT', '/api/consumer/' + contextMapValue.key + '/context/' + contextMapValue.context).respond({'key': 'contextKey', 'contextValue': 'contextValue'});
+                httpBackend.when('PUT', '/api/consumer/context').respond({'key': 'contextKey', 'contextValue': 'contextValue'});
 
                 service.update(contextMapValue)
                         .then(function (response) {
@@ -372,7 +333,7 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
             it('should not be equal to the contextMap when context value does not match in response', function () {
-                httpBackend.when('PUT', '/api/consumer/' + contextMapValue.key + '/context/' + contextMapValue.context).respond({'key': 'contextKey', 'context': 'contextValue1'});
+                httpBackend.when('PUT', '/api/consumer/context').respond({'key': 'contextKey', 'context': 'contextValue1'});
 
                 service.update(contextMapValue)
                         .then(function (response) {
@@ -384,7 +345,7 @@ describe('the framework-services test', function () {
                 httpBackend.flush();
             });
             it('should return the contextMap value when key matches response', function () {
-                httpBackend.when('PUT', '/api/consumer/' + contextMapValue.key + '/context/' + contextMapValue.context).respond({'key': 'contextKey', 'context': 'contextValue'});
+                httpBackend.when('PUT', '/api/consumer/context').respond({'key': 'contextKey', 'context': 'contextValue'});
 
                 service.update(contextMapValue)
                         .then(function (response) {
@@ -462,7 +423,7 @@ describe('the framework-services test', function () {
                 var dashboard = {id: null};
 
                 spyOn(service, 'update').and.callThrough();
-                httpBackend.when('PUT', '/api/consumer/' + mockContextMapping.key + '/context/' + mockContextMapping.context)
+                httpBackend.when('PUT', '/api/consumer/context')
                         .respond({"testValue": true,
                             "mockUser": "admin"
                         });
@@ -476,58 +437,58 @@ describe('the framework-services test', function () {
             });
         });
 
-        describe('ContextMappingService.get', function () {
-            it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/consumer/Key/context/context').respond({'contextMappingValue': 'false', 'context': 'contextValue'});
+//        describe('ContextMappingService.getWithKeyAndContext', function () {
+//            it('should not be equal to the contextMap when key does not match in response', function () {
+//                httpBackend.when('GET', '/api/consumer/Key/context/context').respond({'contextMappingValue': 'false', 'context': 'contextValue'});
+//
+//                service.get("Key", "context")
+//                        .then(function (response) {
+//                            expect(response).not.toEqual(jasmine.objectContaining(contextMapValue));
+//                        },
+//                                function (error) {
+//                                    expect(error).toBeUndefined();
+//                                });
+//                httpBackend.flush();
+//            });
+//            it('should not be equal to the contextMap when key does not match in response', function () {
+//                httpBackend.when('GET', '/api/consumer/contextKey/context/contextValue').respond({'key': 'contextKey', 'context': 'contextValue'});
+//
+//                service.get("contextKey", "contextValue")
+//                        .then(function (response) {
+//                            expect(response).toEqual(jasmine.objectContaining(contextMapValue));
+//                        },
+//                                function (error) {
+//                                    expect(error).toBeUndefined();
+//                                });
+//                httpBackend.flush();
+//            });
+//        });
 
-                service.get("Key", "context")
-                        .then(function (response) {
-                            expect(response).not.toEqual(jasmine.objectContaining(contextMapValue));
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-            it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/consumer/contextKey/context/contextValue').respond({'key': 'contextKey', 'context': 'contextValue'});
-
-                service.get("contextKey", "contextValue")
-                        .then(function (response) {
-                            expect(response).toEqual(jasmine.objectContaining(contextMapValue));
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-        });
-
-        describe('ContextMappingService.getById', function () {
-            it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/cm/123').respond({'id': '124'});
-
-                service.getById("123")
-                        .then(function (response) {
-                            expect(response).not.toEqual(jasmine.objectContaining(contextMapId));
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-            it('should not be equal to the contextMap when key does not match in response', function () {
-                httpBackend.when('GET', '/api/cm/123').respond({'id': '123'});
-
-                service.getById("123")
-                        .then(function (response) {
-                            expect(response).toEqual(jasmine.objectContaining(contextMapId));
-                        },
-                                function (error) {
-                                    expect(error).toBeUndefined();
-                                });
-                httpBackend.flush();
-            });
-        });
+//        describe('ContextMappingService.getById', function () {
+//            it('should not be equal to the contextMap when key does not match in response', function () {
+//                httpBackend.when('GET', '/api/cm/123').respond({'id': '124'});
+//
+//                service.getById("123")
+//                        .then(function (response) {
+//                            expect(response).not.toEqual(jasmine.objectContaining(contextMapId));
+//                        },
+//                                function (error) {
+//                                    expect(error).toBeUndefined();
+//                                });
+//                httpBackend.flush();
+//            });
+//            it('should not be equal to the contextMap when key does not match in response', function () {
+//                httpBackend.when('GET', '/api/cm/123').respond({'id': '123'});
+//
+//                service.getById("123")
+//                        .then(function (response) {
+//                            expect(response).toEqual(jasmine.objectContaining(contextMapId));
+//                        },
+//                                function (error) {
+//                                    expect(error).toBeUndefined();
+//                                });
+//                httpBackend.flush();
+//            });
+//        });
     });
 });

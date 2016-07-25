@@ -20,8 +20,8 @@ package od.providers.outcomes;
 import java.util.List;
 
 import od.providers.Provider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.impl.LineItemImpl;
 
@@ -30,5 +30,5 @@ import org.apereo.lai.impl.LineItemImpl;
  *
  */
 public interface OutcomesProvider extends Provider {
-	List<LineItemImpl> getOutcomesForCourse(ProviderOptions options) throws ProviderException;
+	List<LineItemImpl> getOutcomesForCourse(ProviderData providerData, String courseId) throws ProviderException;
 }

@@ -1,0 +1,46 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="m-t">
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+        
+          <div class="panel panel-default">
+            <div class="panel-heading" translate="{{provider.name}}"></div>
+            <div class="panel-body">
+              <form name="providerDataForm" class="" novalidate="novalidate">
+               <div class="form-group" ng-repeat="option in providerData.options">
+                  <label for="{{option.key}}" translate="{{getTranslatableLabel(option.key)}}"></label>
+                  <div ng-class="{ 'has-error' : (providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required)
+                  || ({{(option.type !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength)
+                  || (providerDataForm.{{option.key}}.$error.url) }">
+                      <input type="{{getType(option.key)}}" ng-maxlength="{{(getType(option.key) !== 'url') ? 99 : undefined}}" class="form-control" id="{{option.key}}" name="{{option.key}}" ng-required="{{option.required}}" ng-model="option.value">
+                      <!-- Required Text -->
+                      <p ng-show="providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.required" class="help-block" translate="ERROR_REQUIRED_{{getTranslatableLabel(option.key)}}"></p>
+                      <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                      <p ng-show="{{(getType(option.key) !== 'url')}} && providerDataForm.{{option.key}}.$dirty && providerDataForm.{{option.key}}.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH_{{getTranslatableLabel(option.key)}}"></p>
+                      <!-- Help Text URL must be in correct format -->
+                      <p ng-show="providerDataForm.{{option.key}}.$error.url" class="help-block" translate="ERROR_URL_FORMAT"></p>
+                  </div>
+                </div>  
+                <button class="btn btn-primary" type="button"
+                  ng-disabled="!providerDataForm.$valid || submitted" ng-click="save();" translate="BUTTON_SAVE" id="BUTTON_EDITCONFIGUREPROVIDER_ADMIN_SAVE"></button>
+                <button class="btn btn-link" type="button"
+                  onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_EDITCONFIGUREPROVIDER_ADMIN_CANCEL"></button>
+              </form>
+            </div>
+          </div>        
+        </div>
+    </div>
+</div>

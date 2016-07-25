@@ -17,9 +17,11 @@
  */
 package od.providers.api;
 
+
 import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.events.EventProvider;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Event;
 import org.slf4j.Logger;
@@ -34,6 +36,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+
+
 /**
  * @author ggilbert
  *
@@ -42,7 +50,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController {
   private static final Logger log = LoggerFactory.getLogger(EventController.class);
   @Autowired private ProviderService providerService;
-
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  
   @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/event/course/{id}", method = RequestMethod.POST)
   public Page<Event> getEventsForCourse(@RequestBody ProviderOptions options, @RequestParam(value="page", required=false) int page,
@@ -52,7 +61,7 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider();
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
     return eventProvider.getEventsForCourse(options, new PageRequest(page, size));
   }
@@ -66,7 +75,7 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider();
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
     return eventProvider.getEventsForUser(options, new PageRequest(page, size));
   }
@@ -80,10 +89,19 @@ public class EventController {
     if (log.isDebugEnabled()) {
       log.debug("options " + options);
     }
-    EventProvider eventProvider = providerService.getEventProvider();
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
 
     return eventProvider.getEventsForCourseAndUser(options, new PageRequest(page, size));
   }
-
-
+ 
+  
+  @RequestMapping(value = "/api/proxy/event", method = RequestMethod.POST)  
+  public JsonNode postEvent(@RequestBody ObjectNode object)
+      throws Exception {	  
+	  ObjectMapper mapper = new ObjectMapper();	  
+	  ProviderOptions options = mapper.convertValue(object.get("options"), ProviderOptions.class);
+	  	  
+	  EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));	 	 
+      return eventProvider.postEvent(object.get("caliperEvent"), options);
+  }  
 }

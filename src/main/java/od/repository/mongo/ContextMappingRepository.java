@@ -18,7 +18,6 @@
 package od.repository.mongo;
 
 import od.framework.model.ContextMapping;
-import od.repository.ContextMappingRepositoryInterface;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -26,7 +25,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author ggilbert
  *
  */
-public interface ContextMappingRepository extends MongoRepository<ContextMapping, String>, ContextMappingRepositoryInterface {
-    @Override
-    ContextMapping findByKeyAndContext(final String key, final String context);
+public interface ContextMappingRepository extends MongoRepository<ContextMapping, String> {
+    ContextMapping findByTenantIdAndContext(final String tenantId, final String context);
 }

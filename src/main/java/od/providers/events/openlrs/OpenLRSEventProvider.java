@@ -1,26 +1,17 @@
-/*******************************************************************************
- * Copyright 2015 Unicon (R) Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
- *
- * http://www.osedu.org/licenses/ECL-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- *******************************************************************************/
+/**
+ * 
+ */
 package od.providers.events.openlrs;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+//import org.imsglobal.caliper.events.Event;
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
@@ -31,10 +22,13 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
-import od.repository.ProviderDataRepositoryInterface;
+import od.repository.mongo.MongoTenantRepository;
+import od.utils.LoggingRequestInterceptor;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +37,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author ggilbert
@@ -57,13 +61,12 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final Logger log = LoggerFactory.getLogger(OpenLRSEventProvider.class);
 
   private static final String KEY = "events_openlrs";
-  private static final String BASE = "OPEN_LRS";
+  private static final String BASE = "OPENLRS_EVENT";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-  private ProviderConfiguration providerConfiguration;
   
-  @Autowired private ProviderDataRepositoryInterface providerDataRepositoryInterface;
-  private RestTemplate restTemplate;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  private ProviderConfiguration providerConfiguration;
   
   @PostConstruct
   public void init() {
@@ -77,56 +80,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
-  
-  private PageImpl<Event> fetch(Map<String, String> urlVariables, Pageable pageable, String uri) {
-    ProviderData providerData = providerDataRepositoryInterface.findByProviderKey(KEY);
 
-    String url = getUrl(providerData.findValueForKey("base_url"), uri, pageable);
-    
-    restTemplate = new RestTemplate();
-    
-    ParameterizedTypeReference<PageWrapper<EventImpl>> responseType = new ParameterizedTypeReference<PageWrapper<EventImpl>>() {};
-    
-    PageWrapper<EventImpl> pageWrapper = restTemplate.exchange(url, HttpMethod.GET, 
-        new HttpEntity(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"))), 
-        responseType, urlVariables).getBody();
-    log.debug(pageWrapper.toString());
-    List<Event> events = null;
-    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
-      events = new LinkedList<Event>(pageWrapper.getContent());
-    }
-    
-    return new PageImpl<>(events, pageable, pageWrapper.getPage().getTotalElements());
-
-  }
-  
-  @Override
-  public Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
-    Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("contextId", options.getCourseId());
-
-    return fetch(urlVariables, pageable, "/api/context/{contextId}");
-  }
-
-  @Override
-  public Page<Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
-    
-    Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("userId", options.getUserId());
-    
-    return fetch(urlVariables, pageable, "/api/user/{userId}");
-  }
-
-  @Override
-  public Page<Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
-    
-    Map<String, String> urlVariables = new HashMap<>();
-    urlVariables.put("userId", options.getUserId());
-    urlVariables.put("contextId", options.getCourseId());
-    
-    return fetch(urlVariables, pageable, "/api/user/{userId}/context/{contextId}");
-  }
-  
   @Override
   public String getKey() {
     return KEY;
@@ -142,9 +96,107 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     return DESC;
   }
 
-  @Override
+   @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;
   }
 
+  /* (non-Javadoc)
+   * @see od.providers.events.EventProvider#getEventsForUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
+   */
+  @Override
+  public Page<org.apereo.lai.Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Page<org.apereo.lai.Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
+    RestTemplate restTemplate = new RestTemplate();
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+        MediaType.valueOf("text/javascript")));
+    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+    
+    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    
+    ProviderData providerData = tenant.findByKey(KEY);
+    
+    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
+    String baseUrl = providerData.findValueForKey("base_url");
+
+    String caliperUrl = buildUrl(baseUrl, "/v1/caliper");
+    ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>> responseType = new ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>>() {};
+    PageWrapper<org.apereo.openlrs.model.event.v2.Event> pageWrapper = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.GET, headers, responseType).getBody();
+    
+    log.debug(pageWrapper.toString());
+    List<Event> output;
+    if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
+      List<org.apereo.openlrs.model.event.v2.Event> page = pageWrapper.getContent();
+      output = new LinkedList<Event>();
+      DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+      for (org.apereo.openlrs.model.event.v2.Event v2Event : page) {
+        EventImpl event = new EventImpl();
+        event.setActor(v2Event.getActor().getId());
+        event.setVerb(v2Event.getAction());
+        event.setObject(v2Event.getObject().getId());
+        if (v2Event.getEventTime() != null) {
+          event.setTimestamp(fmt.print(v2Event.getEventTime()));
+        }
+        event.setId(v2Event.getId());
+        output.add(event);
+      }
+    }
+    else {
+      output = new ArrayList<>();
+    }
+    
+    return new PageImpl<Event>(output, pageable, output.size());
+  }
+
+  /* (non-Javadoc)
+   * @see od.providers.events.EventProvider#getEventsForCourseAndUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
+   */
+  @Override
+  public Page<org.apereo.lai.Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+	@Override
+	/*
+	 * Returns ID of the created event
+	 * (non-Javadoc)
+	 * @see od.providers.events.EventProvider#postEvent(com.fasterxml.jackson.databind.JsonNode, od.providers.ProviderOptions)
+	 */
+	public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException {
+		RestTemplate restTemplate = new RestTemplate();
+		
+		//set interceptors/requestFactory
+		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+		ris.add(ri);
+		restTemplate.setInterceptors(ris);
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		
+		
+	    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+	    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+	        MediaType.valueOf("text/javascript")));
+	    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+	    
+	    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+	    
+	    ProviderData providerData = tenant.findByKey(KEY);
+	    String baseUrl = providerData.findValueForKey("base_url");
+	    String caliperUrl = buildUrl(baseUrl, "/v1/caliper");
+	    
+	    HttpHeaders headers = createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
+	    HttpEntity<JsonNode> entity = new HttpEntity<JsonNode>(marshallableObject, headers);
+	    
+	    ResponseEntity<JsonNode> res = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.POST, entity, JsonNode.class);
+
+	    return res.getBody();	
+	}
 }

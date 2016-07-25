@@ -30,11 +30,6 @@
 			getProviderTypes : function() {
 			  // TODO - make this dynamic
 			  var providers = [];
-			  var assignmentProviders = {
-			    type : 'ASSIGNMENT',
-			    key : 'LABEL_ASSIGNMENT_PROVIDERS_KEY',
-			    desc : 'LABEL_ASSIGNMENT_PROVIDERS_DESC'
-			  };
 			  var courseProviders = {
 			    type : 'COURSE',
 			    key : 'LABEL_COURSE_PROVIDERS_KEY',
@@ -45,20 +40,10 @@
 			    key : 'LABEL_EVENT_PROVIDERS_KEY',
 			    desc : 'LABEL_EVENT_PROVIDERS_DESC'
 			  };
-			  var forumsProviders = {
-			    type : 'FORUM',
-			    key : 'LABEL_FORUM_PROVIDERS_KEY',
-				desc : 'LABEL_FORUM_PROVIDERS_DESC'                         
-			  };
 			  var modelOutputProviders = {
 			    type : 'MODELOUTPUT',
 			    key : 'LABEL_MODELOUTPUT_PROVIDERS_KEY',
 			    desc : 'LABEL_MODELOUTPUT_PROVIDERS_DESC'
-			  };
-			  var outcomesProviders = {
-			    type : 'OUTCOME',
-			    key : 'LABEL_OUTCOMES_PROVIDERS_KEY',
-			    desc : 'LABEL_OUTCOMES_PROVIDERS_DESC'
 			  };
 			  var rosterProviders = {
 			    type : 'ROSTER',
@@ -66,12 +51,9 @@
 			    desc : 'LABEL_ROSTER_PROVIDERS_DESC'
 			  };
 			  
-			  providers.push(assignmentProviders);
 			  providers.push(courseProviders);
 			  providers.push(eventProviders);
-			  providers.push(forumsProviders);
 			  providers.push(modelOutputProviders);
-			  providers.push(outcomesProviders);
 			  providers.push(rosterProviders);
 			  
 			  return providers;
@@ -109,195 +91,160 @@
 					return null;
 				}, genericHandleError);
 				return promise;
-			},
-			getProviderDataByKey: function(type,key) {
-				
-				var url = '/api/providerdata/'+type+'/'+key;
-				var promise = $http({
-					method  : 'GET',
-					url		: url,
-					headers : { 'Content-Type': 'application/json'}
-				})
-				.then(function (response) {
-					if (response && response.data) {
-						return response.data;		    			
-					}
-					$log.debug('No provider data found for '+type+' '+key);
-					return null;
-				}, genericHandleError);
-				return promise;
-			},
-			getProviderDataByType: function(type) {
-				
-				var url = '/api/providerdata/'+type;
-				var promise = $http({
-					method  : 'GET',
-					url		: url,
-					headers : { 'Content-Type': 'application/json'}
-				})
-				.then(function (response) {
-					if (response && response.data) {
-						return response.data;		    			
-					}
-					$log.debug('No provider data found for '+type);
-					return null;
-				}, genericHandleError);
-				return promise;
-			},
-			create : function (providerData) {
-				var promise =
-				$http({
-			        method  : 'POST',
-			        url     : '/api/providerdata',
-			        data    : JSON.stringify(providerData),
-			        headers : { 'Content-Type': 'application/json' }
-				})
-				.then(function (response) {
-					return response.data;
-				});
-				return promise;
-			},
-			update: function (providerData) {
-				var promise =
-				$http({
-			        method  : 'PUT',
-			        url     : '/api/providerdata/'+providerData.type+'/'+providerData.key,
-			        data    : JSON.stringify(providerData),
-			        headers : { 'Content-Type': 'application/json' }
-				})
-				.then(function (response) {
-					return response.data;
-				});
-				return promise;
-			},
-			remove: function (providerData) {
-				var promise =
-				$http({
-			        method  : 'DELETE',
-			        url     : '/api/providerdata/'+providerData.type+'/'+providerData.key,
-			        data    : JSON.stringify(providerData),
-			        headers : { 'Content-Type': 'application/json' }
-				})
-				.then(function (response) {
-					return response.data;
-				});
-				return promise;
 			}
 		}
 	});
 
-  	angular
-	.module('OpenDashboard')
-	.service('AssignmentService', function($log, $http, OpenDashboard_API) {
-
-		return {
-			getAssignments: function(options) {
-				
-					var url = '/api/assignments';
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		if (response && response.data) {
-			    			var assignments = [];
-			    			angular.forEach(response.data, function(value,key) {
-			                    assignments.push(value);
-			                });
+angular
+  .module('OpenDashboard')
+    .service('CourseDataService', function($log, $http, OpenDashboard_API) {
+      return {
+    	getMemberships: function(tenantId,userId) {
+		  var url = '/api/tenants/'+tenantId+'/user/'+userId+'/memberships';
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {
+			  var contexts = [];
+			  angular.forEach(response.data, function(value,key) {
+			    contexts.push(value);
+			  });
 			    			
-				    		return assignments;		    			
-			    		}
-			    		$log.debug('No assignments found for course');
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
+		      return contexts;		    			
 			}
+			$log.debug('No contexts found for user');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
 		}
-	});
-	  angular
-	  .module('OpenDashboard')
-	  	.service('CourseDataService', function($log, $http, OpenDashboard_API) {
+	}
+});
 
-			return {
-				getContexts: function(options) {
-					
-					$log.debug(options);
-				
-					var url = '/api/context';
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		if (response && response.data) {
-			    			var contexts = [];
-			    			angular.forEach(response.data, function(value,key) {
-			    				contexts.push(value);
-			                });
-			    			
-				    		return contexts;		    			
-			    		}
-			    		$log.debug('No contexts found for user');
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
-				},
-				getContext: function(options, contextId) {				
-					$log.debug(options);
-					
-					var url = '/api/context/'+contextId;
-					var promise = $http({
-						method  : 'POST',
-						url		: url,
-						data    : JSON.stringify(options),
-						headers : { 'Content-Type': 'application/json'}
-					})
-					.then(function (response) {
-						if (response && response.data) {
-							
-				    		return response.data;		    			
-						}
-						$log.debug('No contexts found for user');
-						return null;
-					}, genericHandleError);
-					return promise;
-				 }		
-			}
-		});
-		angular.
-		module('OpenDashboard')
-		.service('EventService',function($log, $http, _) {
-			
-			return {
-				getEventsForCourse : function (options, courseId, page, size) {
-					$log.debug(options);
-					$log.debug(courseId);
-					$log.debug(page);
-					$log.debug(size);
-					var p = page || 0;
-		            var s = size || 10;
-		
-				
-					var url = '/api/event/course/'+courseId+'?page='+p+'&size='+s;
-			    	var promise = $http({
-			    		method  : 'POST',
-			    		url		: url,
-			    		data    : JSON.stringify(options),
-			    		headers : { 'Content-Type': 'application/json'}
-			    	})
-			    	.then(function (response) {
-			    		$log.debug(response);
-			    		if (response && response.data) {
-			    		  return response.data.content;	    	
-			    		}
-			    		return null;
-			    	}, genericHandleError);
-					return promise;
-				},
+angular
+  .module('OpenDashboard')
+    .service('EventService',function($log, $http, _) {
+      return {
+    	 
+    	 
+    	  postCaliperEvent2 : function (options, caliperEvent) {
+      		  
+              var url = '/api/proxy/event';
+              var promise = $http({
+                method  : 'POST',
+            	url		: url,
+            	data    : JSON.stringify({
+			                 options: options,
+			                 caliperEvent: caliperEvent
+			              }),
+            	headers : { 'Content-Type': 'application/json'}
+              })
+              .then(function (response) {
+            	  alert("response: " + response.status);
+                  $log.debug(response);
+                  if (response && response.data) {
+                    return response.data.content;	    	
+                  }
+            	  return null;
+            	}, function (response) {
+            		alert(response.status);
+            	
+        	    	//$log.debug(error);
+        	    	var errorObj = {};
+        	    	errorObj['isError'] = true;
+        	    	//errorObj['errorCode'] = error.data.errors[0];
+        	    	
+        	    	return errorObj;
+            	}
+              );
+              
+        		return promise;
+    		},  
+    	  
+    		
+    	successCallback : function(response) {
+    		alert (response);
+    	},	
+    	
+    	errorCallback : function(response) {
+        		alert (response);
+        	},	
+    	
+    	  postCaliperEvent : function (options, caliperEvent) {
+    		      		  
+              var url = '/api/proxy/event';
+              var promise = $http({
+                method  : 'POST',
+            	url		: url,
+            	data    : JSON.stringify({
+			                 options: options,
+			                 caliperEvent: caliperEvent
+			              }),
+            	headers : { 'Content-Type': 'application/json'}
+              }).then(function (response) {
+                  $log.debug(response);
+                  $log.debug(response.data[0]);
+                  
+                  
+                  if (response && response.data) {
+                    return response.data[0];	    	
+                  }
+            	  return null;
+            	}, function (error) {
+        	    	$log.debug(error);
+        	    	$log.debug("TEST2");        	    	
+        	    	var errorObj = {};
+        	    	errorObj['isError'] = true;
+        	    	errorObj['errorCode'] = error.data.errors[0];
+        	    	
+        	    	return errorObj;
+            	}
+              );
+        		return promise;
+    	  },  
+    	  
+    	  
+    	  
+    	  
+        getEventsForCourse : function (options, courseId, page, size) {
+          var p = page || 0;
+          var s = size || 10;
+    	
+          var url = '/api/event/course/'+courseId+'?page='+p+'&size='+s;
+          var promise = $http({
+            method  : 'POST',
+        	url		: url,
+        	data    : JSON.stringify(options),
+        	headers : { 'Content-Type': 'application/json'}
+          })
+          .then(function (response) {
+              $log.debug(response);
+              if (response && response.data) {
+                return response.data.content;	    	
+              }
+        	  return null;
+        	}, function (error) {
+    	    	$log.debug(error);
+    	    	var errorObj = {};
+    	    	errorObj['isError'] = true;
+    	    	errorObj['errorCode'] = error.data.errors[0];
+    	    	
+    	    	return errorObj;
+        	}
+          );
+    		return promise;
+		},
 				getEventsForUser : function (options, userId, page, size) {
 					$log.debug(options);
 					$log.debug(userId);
@@ -382,53 +329,6 @@
 		});
 		  angular
 		  .module('OpenDashboard')
-		  	.service('ForumDataService', function($log, $http, OpenDashboard_API) {
-				return {
-					getForums: function(options) {
-						
-						$log.debug(options);
-					
-						var url = '/api/forums';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-				    		data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-					    		return response.data;		    			
-				    		}
-				    		$log.debug('No forums found for course');
-				    		return null;
-				    	}, genericHandleError);
-						return promise;
-					},
-					getMessages: function(options, topicId) {
-						
-						$log.debug(options);
-						$log.debug(topicId);
-						
-						var url = '/api/forums/'+topicId+'/messages';
-						var promise = $http({
-							method  : 'POST',
-							url		: url,
-							data    : JSON.stringify(options),
-							headers : { 'Content-Type': 'application/json'}
-						})
-						.then(function (response) {
-							if (response && response.data) {
-								return response.data;		    			
-							}
-							$log.debug('No messages found for course');
-							return null;
-						}, genericHandleError);
-						return promise;
-					}
-				}
-			});
-		  angular
-		  .module('OpenDashboard')
 		  	.service('ModelOutputDataService', function($log, $http, OpenDashboard_API) {
 
 				return {
@@ -486,64 +386,45 @@
 					}
 				}
 			});
-			angular
-			.module('OpenDashboard')
-			.service('OutcomesService', function($log, $http, OpenDashboard_API) {
-				return {
-					getOutcomesForCourse: function(options) {
-					
-						$log.debug(options);
-						var url = '/api/outcomes';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-					    	data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-					    		return response.data;		    			
-				    		}
-				    		
-				    		$log.debug('No outcomes found for getOutcomesForCourse');
-				    		return null;
-				    	}, genericHandleError);
-						return promise;
-					}
-				}
-			});
-			angular
-			.module('OpenDashboard')
-			.service('RosterService', function($log, $http, OpenDashboard_API) {
-				return {
-					getRoster: function(options) {
-						
-						$log.debug(options);
-						var url = '/api/roster';
-				    	var promise = $http({
-				    		method  : 'POST',
-				    		url		: url,
-				    		data    : JSON.stringify(options),
-				    		headers : { 'Content-Type': 'application/json'}
-				    	})
-				    	.then(function (response) {
-				    		if (response && response.data) {
-				    			var members = [];
-				    			angular.forEach(response.data, function(value,key) {
-				                    var member = OpenDashboard_API.createMemberInstance();
-				                    member.fromService(value);
-				                    members.push(member);
-				                });
-				    			
-					    		return members;		    			
-				    		}
-				    		$log.debug('No members found for getRoster');
-				    		return null;
-				    	}, genericHandleError);
-						return promise;
-					}
-				}
-			});
+angular
+.module('OpenDashboard')
+.service('RosterService', function($log, $http, OpenDashboard_API) {
+  return {
+    getRoster: function(tenantId,contextMappingId) {
+    		
+      var url = '/api/tenants/'+tenantId+'/contexts/'+contextMappingId+'/roster';
+      var promise = $http({
+        		method  : 'GET',
+        		url		: url,
+        		headers : { 'Content-Type': 'application/json'}
+      })
+      .then(
+        function (response) {
+          if (response && response.data) {
+            var members = [];
+        	angular.forEach(response.data, function(value,key) {
+              var member = OpenDashboard_API.createMemberInstance();
+              member.fromService(value);
+              members.push(member);
+            });
+        			
+        	return members;		    			
+          }
+          $log.debug('No members found for getRoster');
+          return null;
+        },
+        function (error) {
+          var errorObj = {};
+          errorObj['isError'] = true;
+          errorObj['errorCode'] = error.data.errors[0];
+        	
+          return errorObj;
+        }
+      );
+      return promise;
+    }
+  }
+});
 			angular.
 			module('OpenDashboard')
 			.service('dataService', function ($log) {

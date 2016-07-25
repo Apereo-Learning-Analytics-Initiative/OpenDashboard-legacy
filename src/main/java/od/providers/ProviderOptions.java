@@ -35,6 +35,8 @@ public class ProviderOptions implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
+  private String tenantId;
+  
   private String contextMappingId;
   private String dashboardId;
   private String cardId;
@@ -42,11 +44,15 @@ public class ProviderOptions implements Serializable {
   private String courseId;
   private String userId;
   private String roles;
+    
+  private boolean isLti;
   
-  private String strategy;
-  private String strategyKey;
-  private String strategyHost;
-  
+  public String getTenantId() {
+    return tenantId;
+  }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
   public String getContextMappingId() {
     return contextMappingId;
   }
@@ -83,24 +89,11 @@ public class ProviderOptions implements Serializable {
   public void setRoles(String roles) {
     this.roles = roles;
   }
-  public String getStrategy() {
-    return strategy;
+  public boolean isLti() {
+    return isLti;
   }
-  public void setStrategy(String strategy) {
-    this.strategy = strategy;
-  }
-  public String getStrategyHost() {
-    return strategyHost;
-  }
-  public void setStrategyHost(String strategyHost) {
-    this.strategyHost = strategyHost;
-  }
-  
-  public String getStrategyKey() {
-    return strategyKey;
-  }
-  public void setStrategyKey(String strategyKey) {
-    this.strategyKey = strategyKey;
+  public void setLti(boolean isLti) {
+    this.isLti = isLti;
   }
   @Override
   public String toString() {

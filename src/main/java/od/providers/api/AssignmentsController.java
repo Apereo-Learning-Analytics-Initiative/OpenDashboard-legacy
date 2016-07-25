@@ -19,16 +19,20 @@ package od.providers.api;
 
 import java.util.List;
 
-import od.providers.ProviderOptions;
+import od.framework.model.ContextMapping;
+import od.framework.model.Tenant;
+import od.providers.ProviderData;
 import od.providers.ProviderService;
 import od.providers.assignment.AssignmentsProvider;
+import od.repository.mongo.ContextMappingRepository;
+import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.AssignmentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,18 +47,23 @@ public class AssignmentsController {
 	private static final Logger log = LoggerFactory.getLogger(AssignmentsController.class);
 	
   @Autowired private ProviderService providerService;
+  @Autowired private MongoTenantRepository mongoTenantRepository;
+  @Autowired private ContextMappingRepository contextMappingRepository;
 	
 	@Secured("ROLE_INSTRUCTOR")
-	@RequestMapping(value = "/api/assignments", method = RequestMethod.POST)
-	public List<AssignmentImpl> assignment(@RequestBody ProviderOptions options)
+	@RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/assignments", method = RequestMethod.GET)
+	public List<AssignmentImpl> assignment(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("contextMappingId") final String contextMappingId)
 			throws Exception {
 
-		if (log.isDebugEnabled()) {
-			log.debug("options " + options);
-		}
-		
-    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider();
-		
-		return assignmentsProvider.getAssignments(options);
+    log.debug("tenantId: {}", tenantId);
+    log.debug("contextMappingId: {}", contextMappingId);
+
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
+    AssignmentsProvider assignmentsProvider = providerService.getAssignmentsProvider(tenant);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ASSIGNMENT);
+    
+    return assignmentsProvider.getAssignments(providerData,contextMapping.getContext());
 	}
 }

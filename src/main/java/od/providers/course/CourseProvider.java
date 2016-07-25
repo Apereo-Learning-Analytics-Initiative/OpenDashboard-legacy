@@ -19,18 +19,19 @@ package od.providers.course;
 
 import java.util.List;
 
+import od.framework.model.Tenant;
 import od.providers.Provider;
+import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 
 import org.apereo.lai.Course;
-import org.apereo.lai.impl.CourseImpl;
 
 /**
  * @author ggilbert
  *
  */
 public interface CourseProvider extends Provider {
-  Course getContext(ProviderOptions options) throws ProviderException;
-  List<CourseImpl> getContexts(ProviderOptions options) throws ProviderException;
+  Course getContext(ProviderData providerData, String contextId) throws ProviderException;
+  List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException;
+  List<String> getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException;
 }

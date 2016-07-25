@@ -49,11 +49,11 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class OpenDashboard {
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboard.class);
-
+  
   public static void main(String[] args) {
     SpringApplication.run(OpenDashboard.class, args);
   }
-
+  
   @Bean
   public LocaleResolver localeResolver() {
     SessionLocaleResolver slr = new SessionLocaleResolver();
@@ -69,7 +69,7 @@ public class OpenDashboard {
       return "index";
     }
     
-    @RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/", "/login", "/err/**" }, method = RequestMethod.GET)
     public String openRoutes() {
       return "index";
     }

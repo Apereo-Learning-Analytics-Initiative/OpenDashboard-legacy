@@ -34,70 +34,72 @@ angular
 //	$translatePartialLoader.addPart('roster-card');
 //    $translate.refresh();
 
-$scope.labels = [];
-$scope.data = [[]];
-$scope.events = [];
-for (var i = 0; i < 1000; i++) {
-	
-    var ts = "2016-02-" + Math.floor(Math.random()*(18-12+1)+12) + "T11:05:01.000Z";
+   $scope.error = null;
+   $scope.labels = [];
+   $scope.data = [[]];
+   $scope.events = [];
 
-    var obj = {
-        "sourceId":i,
-        "actor":"actor" + Math.floor(Math.random() * 6) + 1 ,
-        "verb":"verb" + Math.floor(Math.random() * 6) + 1 ,
-        "object":"object" + Math.floor(Math.random() * 6) + 1 ,
-        "objectType":"objectType1",
-        "context":"13",
-        "organization":"org1",
-        "timestamp": moment(ts, moment.ISO_8601).toDate()
-    };
-    
-    $scope.events.push(obj);
-}
+   if (!$scope.contextMapping) {
+     $log.debug($stateParams);
+     $state.go('index.courselist');
+   }
 
-var countByActor = function(event) { return event.actor; };
-var countByVerb = function(event) { return event.verb; };
+   $scope.activeCourse = SessionService.getCourse();
+   $scope.activeCourse['id'] = $scope.contextMapping.context;
 
-$scope.eventsByActor = _.chain($scope.events)
-                        .countBy(countByActor)
-                        .pairs().sortBy(1).reverse()
-                        .value();
-$scope.eventsByVerb = _.chain($scope.events)
-						.countBy(countByVerb)
-						.pairs().sortBy(1).reverse()
-						.value();
+   var options = {};
+   options.contextMappingId = $scope.contextMapping.id;
+   options.dashboardId = $scope.activeDashboard.id;
+   options.cardId = $scope.card.id;
+   options.courseId = $scope.contextMapping.context;
+   options.tenantId = $scope.contextMapping.tenantId;
+   options.isLti = SessionService.isLTISession();
    
-   var occurrenceDay = function(occurrence){
-    return moment(occurrence.timestamp).startOf('day').format();
-   };
+   EventService
+     .getEventsForCourse(options,$scope.activeCourse.id,0,1000)
+     .then(function (data) {
+       $scope.events = data;
 
-	var groupToDay = function(group, day){
-	    return {
-	        dt: {day:moment(day).format('MMM D'),d:moment(day)},
-	        count: group.length
-	    }
-	};
-	
-	
+       var countByActor = function(event) { return event.actor; };
+       var countByVerb = function(event) { return event.verb; };
 
-	var result = _.chain($scope.events)
-	    .groupBy(occurrenceDay)
-	    .map(groupToDay)
-	    .sortBy('dt.d')
-	    .value();
-	
-	$scope.series = ['Events over time'];
-	_.forEach(result,function(o){
-	  $scope.labels.push(o.dt.day);
-	  $scope.data[0].push(o.count);
-	});
-	   
-	   $scope.refreshActivityStream = function() {
-		   
-	   };
-	   
-	   
-	   
-	});
+       $scope.eventsByActor = 
+           _.chain($scope.events)
+            .countBy(countByActor)
+            .pairs().sortBy(1).reverse()
+            .value();
 
+       $scope.eventsByVerb = 
+    	   _.chain($scope.events)
+			.countBy(countByVerb)
+			.pairs().sortBy(1).reverse()
+			.value();
+
+       var occurrenceDay = function(occurrence){
+         return moment(occurrence.timestamp).startOf('day').format();
+       };
+
+       var groupToDay = function(group, day){
+         return {
+           dt: {day:moment(day).format('MMM D'),d:moment(day)},
+           count: group.length
+         }
+       };
+
+       var result = _.chain($scope.events)
+        .groupBy(occurrenceDay)
+        .map(groupToDay)
+        .sortBy('dt.d')
+        .value();
+
+       $scope.series = ['Events over time'];
+        _.forEach(result,function(o){
+          $scope.labels.push(o.dt.day);
+          $scope.data[0].push(o.count);
+        });
+   
+        $scope.refreshActivityStream = function() {};
+   
+     });
+ });
 })(angular, Math, moment);
