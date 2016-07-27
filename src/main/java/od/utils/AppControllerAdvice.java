@@ -20,8 +20,6 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import od.providers.NoVLEModuleMapException;
-import od.providers.ProviderException;
 import od.providers.config.ProviderDataConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -69,13 +67,6 @@ public class AppControllerAdvice {
       }
     }
     
-    @ExceptionHandler(NoVLEModuleMapException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public void noVLEModuleMap(HttpServletResponse response, NoVLEModuleMapException noVLEModuleMapException) throws IOException {
-      logger.debug("sending redirect to /err");
-      response.sendRedirect("/err/"+ProviderException.NO_VLE_MODULE_MAPS_ERROR_CODE);
-    }
-
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody Object handleAppException(HttpServletRequest request, Exception ex) throws IOException {

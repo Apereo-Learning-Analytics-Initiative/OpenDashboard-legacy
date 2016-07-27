@@ -50,11 +50,17 @@
 			    key : 'LABEL_ROSTER_PROVIDERS_KEY',
 			    desc : 'LABEL_ROSTER_PROVIDERS_DESC'
 			  };
+			  var forumProviders = {
+ 			    type : 'FORUM',
+ 			    key : 'LABEL_FORUM_PROVIDERS_KEY',
+ 			    desc : 'LABEL_FORUM_PROVIDERS_DESC'
+ 			  };
 			  
 			  providers.push(courseProviders);
 			  providers.push(eventProviders);
 			  providers.push(modelOutputProviders);
 			  providers.push(rosterProviders);
+			  providers.push(forumProviders);
 			  
 			  return providers;
 		    },
