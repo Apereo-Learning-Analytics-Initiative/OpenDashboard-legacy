@@ -101,6 +101,10 @@ public class LTIController {
         }
         contextMapping.setDashboards(dashboardSet);
       }
+      else {
+        //TODO make better
+        throw new RuntimeException("no dashboards");
+      }
 
       contextMapping = contextMappingRepository.save(contextMapping);
     }

@@ -90,10 +90,12 @@ public class BasicLISRosterProvider implements RosterProvider {
   public void init() {
     ProviderConfigurationOption key = new TranslatableKeyValueConfigurationOptions("oauth_consumer_key", null, ProviderConfigurationOption.TEXT_TYPE, true, "OAuth Consumer Key", "LABEL_OAUTH_CONSUMER_KEY",  true);
     ProviderConfigurationOption secret = new TranslatableKeyValueConfigurationOptions("secret", null, ProviderConfigurationOption.PASSWORD_TYPE, true, "Secret", "LABEL_SECRET", true);
+    ProviderConfigurationOption baseUrl = new TranslatableKeyValueConfigurationOptions("base_url", null, ProviderConfigurationOption.URL_TYPE, true, "Sakai LTI Service URL", "LABEL_SAKAI_BASE_URL", false);
     
     LinkedList<ProviderConfigurationOption> options = new LinkedList<>();
     options.add(key);
     options.add(secret);
+    options.add(baseUrl);
     
     providerConfiguration = new DefaultProviderConfiguration(options);
   }
@@ -125,6 +127,7 @@ public class BasicLISRosterProvider implements RosterProvider {
     
     log.debug("url: {}", url);
     log.debug("rosterIdentifier: {}", contextId);
+    log.debug("{}",providerData.findValueForKey("secret"));
 
     Set<Member> memberSet = null;
 

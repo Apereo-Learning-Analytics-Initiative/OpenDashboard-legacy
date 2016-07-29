@@ -137,6 +137,38 @@ angular
 		}
 	}
 });
+  
+angular
+  .module('OpenDashboard')
+    .service('ForumDataService', function($log, $http, OpenDashboard_API) {
+      return {
+    	getAllMessages: function(tenantId,contextMappingId) {
+		  var url = '/api/tenants/'+tenantId+'/contexts/'+contextMappingId+'/forums/messages';
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {			    			
+		      return response.data;		    			
+			}
+			$log.debug('No messages found');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		}
+	}
+});
 
 angular
   .module('OpenDashboard')
@@ -400,9 +432,9 @@ angular
     		
       var url = '/api/tenants/'+tenantId+'/contexts/'+contextMappingId+'/roster';
       var promise = $http({
-        		method  : 'GET',
-        		url		: url,
-        		headers : { 'Content-Type': 'application/json'}
+    	method  : 'GET',
+    	url		: url,
+    	headers : { 'Content-Type': 'application/json'}
       })
       .then(
         function (response) {
@@ -428,6 +460,38 @@ angular
         }
       );
       return promise;
+    },
+    getRosterBasicLIS: function(tenantId,contextMappingId,id) {
+        var url = '/api/tenants/'+tenantId+'/contexts/'+contextMappingId+'/roster/basiclis/'+id;
+        var promise = $http({
+      	method  : 'GET',
+      	url		: url,
+      	headers : { 'Content-Type': 'application/json'}
+        })
+        .then(
+          function (response) {
+            if (response && response.data) {
+              var members = [];
+              angular.forEach(response.data, function(value,key) {
+                var member = OpenDashboard_API.createMemberInstance();
+                member.fromService(value);
+                members.push(member);
+              });
+          			
+          	return members;		    			
+            }
+            $log.debug('No members found for getRoster');
+            return null;
+          },
+          function (error) {
+            var errorObj = {};
+            errorObj['isError'] = true;
+            errorObj['errorCode'] = error.data.errors[0];
+          	
+            return errorObj;
+          }
+        );
+        return promise;
     }
   }
 });

@@ -65,4 +65,21 @@ public class RosterController {
     
 		return rosterProvider.getRoster(providerData,contextMapping.getContext());
 	}
+	
+	 @Secured("ROLE_INSTRUCTOR")
+    @RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/roster/basiclis/{id}", method = RequestMethod.GET)
+    public Set<Member> rosterBasicLis(@PathVariable("tenantId") final String tenantId,
+        @PathVariable("contextMappingId") final String contextMappingId, @PathVariable("id") final String id)
+        throws Exception {
+      log.debug("tenantId: {}", tenantId);
+      log.debug("contextMappingId: {}", contextMappingId);
+      log.debug("id: {}", id);
+  
+      Tenant tenant = mongoTenantRepository.findOne(tenantId);
+      RosterProvider rosterProvider = providerService.getRosterProvider(tenant);
+      ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
+      
+      return rosterProvider.getRoster(providerData,id);
+    }
+
 }

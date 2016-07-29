@@ -152,10 +152,10 @@ angular
 	  		        	   edge.to = _.result(_.findWhere($scope.messages,{id:ids[1]}), 'author');
 	  		        	   edge.value = value.length;
 	  		               edge.smooth = {
-	  		                                type: "discrete",
-	  		                                forceDirection : "none",
-	  		                                roundness: 0
-	  		                             },
+                            type: "discrete",
+                            forceDirection : "none",
+                            roundness: 0
+	  		               };
 	  		               edge.length = 300; // one hundred is too small
 	  		               edgeData.push(edge);
 
@@ -222,6 +222,8 @@ angular
 	  				  }; 
 	  				  
 	  				  $scope.graphOptions = {
+	  				    width: '100%',
+	  				    height: '100%',
 	  				    nodes: {
 	  					  shape: 'dot',
 	  					  scaling: {

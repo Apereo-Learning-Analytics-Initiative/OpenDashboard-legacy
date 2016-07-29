@@ -91,7 +91,7 @@ angular
         .map(groupToDay)
         .sortBy('dt.d')
         .value();
-
+       
        $scope.series = ['Events over time'];
         _.forEach(result,function(o){
           $scope.labels.push(o.dt.day);

@@ -139,9 +139,18 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
         EventImpl event = new EventImpl();
         event.setActor(v2Event.getActor().getId());
         event.setVerb(v2Event.getAction());
-        event.setObject(v2Event.getObject().getId());
+        if (v2Event.getObject() != null) {
+          event.setObject(v2Event.getObject().getId());
+        }
+        
         if (v2Event.getEventTime() != null) {
           event.setTimestamp(fmt.print(v2Event.getEventTime()));
+        }
+        else if (v2Event.getStoredTime() != null) {
+          event.setTimestamp(fmt.print(v2Event.getStoredTime()));
+        }
+        else {
+          continue;
         }
         event.setId(v2Event.getId());
         output.add(event);
