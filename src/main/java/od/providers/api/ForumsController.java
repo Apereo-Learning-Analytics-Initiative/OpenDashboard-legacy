@@ -17,6 +17,7 @@
  */
 package od.providers.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import od.framework.model.ContextMapping;
@@ -29,6 +30,7 @@ import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.impl.ForumImpl;
 import org.apereo.lai.impl.MessageImpl;
+import org.apereo.lai.impl.TopicImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +67,40 @@ public class ForumsController {
   }
   
   @Secured("ROLE_INSTRUCTOR")
+  @RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/forums/messages", method = RequestMethod.GET)
+  public List<MessageImpl> allMessages(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("contextMappingId") final String contextMappingId) throws Exception {
+
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
+    ForumsProvider forumsProvider = providerService.getForumsProvider(tenant);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.FORUM);
+System.out.println(providerData);    
+    List<MessageImpl> allMessages = null;
+    List<ForumImpl> allForums = forumsProvider.getForums(providerData, contextMapping.getContext());
+System.out.println(allForums);
+    if (allForums != null && !allForums.isEmpty()) {
+      allMessages = new ArrayList<>();
+      for (ForumImpl fi: allForums) {
+        List<TopicImpl> topics = fi.getTopics();
+        if (topics != null && !topics.isEmpty()) {
+          for (TopicImpl ti : topics) {
+            List<MessageImpl> messages = forumsProvider.getMessages(providerData, ti.getId());
+            allMessages.addAll(messages);
+          }
+        }
+      }
+    }
+    
+    return allMessages;
+  }
+  
+  @Secured("ROLE_INSTRUCTOR")
   @RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/forums/{id}/messages", method = RequestMethod.GET)
   public List<MessageImpl> messages(@PathVariable("tenantId") final String tenantId,
       @PathVariable("contextMappingId") final String contextMappingId, @PathVariable("id") final String id) throws Exception {
 
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
-    ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
     ForumsProvider forumsProvider = providerService.getForumsProvider(tenant);
     ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.FORUM);
     
