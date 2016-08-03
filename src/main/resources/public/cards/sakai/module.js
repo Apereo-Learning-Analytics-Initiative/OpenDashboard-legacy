@@ -14,7 +14,7 @@
  *******************************************************************************/
 (function(angular, Math, moment) {
 'use strict';
-    
+
 angular
 .module('od.cards.sakai', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
  .config(function(registryProvider){
@@ -64,24 +64,40 @@ angular
 	     .getEventsForCourse($scope.options,$scope.contextMapping.context,0,10000)
        ]).then(function(responses){
     	 // roster
-         $scope.rosterData = responses[0];
-         $log.debug($scope.rosterData);
-         // end roster
+         $scope.data = _.groupBy(responses[0], function (member) { return member.person_sourcedid;});
+                 
+         _.forEach($scope.data, function(value,key){
+        	 var t = '(' + key + ')';
+        	 var userMessages = _.filter(responses[1], function (message) { 
+        		 if (message.author.includes(t)) {
+        			 return true;
+        		 } else {
+        			 return false;
+        		 }
+        	 });
+        	 
+        	 value.forumData = userMessages;
+        	 
+        	 //add color
+        	 value.color = randomColorGenerator();
+         });
          
-         // forum
-         $scope.forumMessageData = responses[1];
-         $log.debug($scope.forumMessageData);
-         
+
+         //get the graph data from the uber object
          var nodeData = [];
-         var messagesByAuthor = _.groupBy($scope.forumMessageData, function (message) { return message.author;});
-         $log.debug(messagesByAuthor);
-         _.forEach(messagesByAuthor, function(value,key){
+         _.forEach($scope.data, function(value,key){
+       	 
     		  var data = {};
-    		  data.id = key;
-    		  data.value = value.length;
-    		  data.label = key;
-    		  nodeData.push(data);
+    		  data.id = value[0].person.name_full;
+    		  data.value = value.forumData.length;
+    		  data.label = value[0].person.name_full;
+    		  data.color = value.color;
+    		  
+    		  if (data.value >= 1) {
+    			  nodeData.push(data);
+    		  }
     	  });
+        
          var nodes = new vis.DataSet(nodeData);
          var messagesById = _.groupBy($scope.messages, function (message) {		   
            var replyTo = '0';
@@ -143,7 +159,8 @@ angular
 	  	// create a network
 	  	$scope.graphOptions = {
 	  	  nodes: {
-		    shape: 'dot',
+	  		
+		    shape: 'dot',	  		
 		    scaling: {
               customScalingFunction: function (min,max,total,value) {
                 return value/total;
@@ -206,3 +223,9 @@ angular
 });
 
 })(angular, Math, moment);
+
+
+function randomColorGenerator() {
+    return '#'	+ (Math.random()
+   		 .toString(16) + '0000000').slice(2, 8);
+}

@@ -86,7 +86,10 @@ System.out.println(allForums);
         if (topics != null && !topics.isEmpty()) {
           for (TopicImpl ti : topics) {
             List<MessageImpl> messages = forumsProvider.getMessages(providerData, ti.getId());
-            allMessages.addAll(messages);
+            
+            if (messages != null) {
+            	allMessages.addAll(messages);
+            }
           }
         }
       }

@@ -129,7 +129,10 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>> responseType = new ParameterizedTypeReference<PageWrapper<org.apereo.openlrs.model.event.v2.Event>>() {};
     PageWrapper<org.apereo.openlrs.model.event.v2.Event> pageWrapper = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.GET, headers, responseType).getBody();
     
-    log.debug(pageWrapper.toString());
+    if(pageWrapper!=null) {
+    	log.debug(pageWrapper.toString());
+    }
+    
     List<Event> output;
     if (pageWrapper != null && pageWrapper.getContent() != null && !pageWrapper.getContent().isEmpty()) {
       List<org.apereo.openlrs.model.event.v2.Event> page = pageWrapper.getContent();

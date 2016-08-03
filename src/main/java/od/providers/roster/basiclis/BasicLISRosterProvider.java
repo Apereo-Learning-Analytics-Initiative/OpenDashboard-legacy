@@ -188,6 +188,7 @@ public class BasicLISRosterProvider implements RosterProvider {
             person.setName_full(nestedMap.get(PERSON_NAME_FULL));
             person.setName_given(nestedMap.get(PERSON_NAME_GIVEN));
             member.setPerson(person);
+            member.setPerson_sourcedid(nestedMap.get(PERSON_SOURCEDID));
 
             memberSet.add(member);
           }

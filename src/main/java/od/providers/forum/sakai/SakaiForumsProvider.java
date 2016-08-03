@@ -27,6 +27,7 @@ import od.providers.ProviderException;
 import od.providers.config.ProviderConfiguration;
 import od.providers.forum.ForumsProvider;
 import od.providers.sakai.BaseSakaiProvider;
+import od.utils.LoggingRequestInterceptor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.impl.ForumImpl;
@@ -34,6 +35,7 @@ import org.apereo.lai.impl.MessageImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -80,10 +82,14 @@ public class SakaiForumsProvider extends BaseSakaiProvider implements ForumsProv
 
   @Override
   public List<MessageImpl> getMessages(ProviderData providerData, final String topicId) throws ProviderException {
-
+	  
     List<MessageImpl> m = null;
 
     String url = fullUrl(providerData, StringUtils.replace(MESSAGES_URI, "{ID}", topicId));
+    
+    String ss = restTemplate.getForObject(url + "?_sessionId=" + getSakaiSession(providerData), String.class);
+    log.debug("---- response: " + ss);
+    
     ResponseEntity<SakaiTopicMessageCollection> messageResponse = restTemplate.getForEntity(url + "?_sessionId=" + getSakaiSession(providerData), SakaiTopicMessageCollection.class);
     List<SakaiTopicMessage> messages = messageResponse.getBody().getForum_message_collection();
     

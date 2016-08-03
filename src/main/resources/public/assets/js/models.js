@@ -158,6 +158,9 @@ var Constants = (function(window,undefined) {
 		this.relative_activity_level = null;
 		this.risk = null;
 		this.last_activity = null;
+		
+		//added
+		this.person_sourcedid = null;
 	    
 	    if (options) {
 	    	this.tenant_id = options.tenant_id;
@@ -197,6 +200,9 @@ var Constants = (function(window,undefined) {
 			this.user_image = member.user_image;
 			this.role = member.role;
 			this.roles = member.roles;
+			
+			//added
+			this.person_sourcedid = member.person_sourcedid;
 			
 			if (!member.roles) {
 				this.roles = member.role;

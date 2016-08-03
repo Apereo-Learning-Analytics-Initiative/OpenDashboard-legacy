@@ -32,7 +32,14 @@ public class Member extends OpenDashboardModel {
 	private String role = null;
 	private String roles = null;
 	private Person person = null;
+	private String person_sourcedid = null;
 	
+	public String getPerson_sourcedid() {
+		return person_sourcedid;
+	}
+	public void setPerson_sourcedid(String person_sourcedid) {
+		this.person_sourcedid = person_sourcedid;
+	}
 	public String getUser_id() {
 		return user_id;
 	}
@@ -66,7 +73,7 @@ public class Member extends OpenDashboardModel {
 	@Override
 	public String toString() {
 		return "Member [user_id=" + user_id + ", user_image=" + user_image
-				+ ", role=" + role + ", roles=" + roles + ", person=" + person
+				+ ", role=" + role + ", roles=" + roles + ", person=" + person + ", person_sourcedid=" + person_sourcedid
 				+ "]";
 	}
 

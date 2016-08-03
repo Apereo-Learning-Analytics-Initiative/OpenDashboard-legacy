@@ -19,10 +19,11 @@
       </div>
     
       <div class="list-group box-shadow--6dp">
-        <a class="list-group-item" href ng-repeat="learner in rosterData | filter:learnerFilter | orderBy : 'person.name_family'">
-          <span class="label label-danger">&nbsp;</span>
+        <a class="list-group-item" href ng-repeat="learner in data | filter:learnerFilter | orderBy : 'person.name_family'">
+          
+          <span class="label " style="background-color:{{learner.color}}">&nbsp;</span>
           &nbsp;
-          <strong>{{learner.person.name_full}}</strong>
+          <strong>{{learner[0].person.name_full}}</strong>
         </a>
       </div> 
       
