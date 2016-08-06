@@ -32,6 +32,7 @@ angular
  .controller('SakaiDashboardController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
      OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ForumDataService, CourseDataService) {
 	 
+   $scope.graphData = {};	 
    $scope.rosterData = null;
    $scope.forumMessageData = null;
    $scope.activityData = null;
@@ -50,6 +51,213 @@ angular
    $scope.learnerFilter = function(member) {
 	 return	member.roles && member.roles.indexOf("Learner") >= 0;
    };
+   
+   
+   //highlight the student that has been selected
+   $scope.focusOnStudent = function(learner) {	   
+	  	$scope.network.focus(learner, {locked: false, 
+			animation: true });	  	
+	  	$scope.network.selectNodes([learner]);	  	
+   };
+   
+   
+   $scope.chooseGraph = function() {
+	   if ($scope.currentGraph == 'messageView') {
+		   $scope.messageViewGraph();
+	   }
+	   if ($scope.currentGraph == 'studentView') {
+		   $scope.studentViewGraph();
+	   }
+   }
+   
+   //show Messages View
+   $scope.messageViewGraph = function() {
+	   $log.debug("$scope.data");
+	   $log.debug($scope.data);
+	   
+	         //get the graph data from the uber object
+	         var nodeData = [];
+	         _.forEach($scope.data, function(value,key){
+	        	 _.forEach(value.forumData, function(value2,key2) {
+	        		 
+	        		 $log.debug(value2);
+		    		  var data = {};
+		    		  data.id = value2.id;
+		    		  //data.value = 5;//value.forumData.length;
+		    		  data.label = value[0].person.name_full;
+		    		  data.color = value.color;
+		    		  data.author = value2.author;
+		    		  //data.shadow = true;
+		    		  
+		    		  
+		    		  $log.debug("&&&&&&");
+		    		  $log.debug(value2.replyTo);
+		    		  $log.debug(value2.author);
+		    		  var t = _.findLastIndex(nodeData, {
+		    			  replyTo: value2.replyTo,
+		    			  //author: value2.author
+		    			});
+		    		  
+		    		  
+		    		  //var t = _.find(nodeData, data); 
+	
+		    		  if (t <=0) {
+		    			  nodeData.push(data);
+		    		  }
+		    		  
+		    		  
+		    	  });
+	        	 
+	         });
+	         
+	         $log.debug(nodeData);
+	         
+	         
+	         var edgeData = [];
+	       //create edges 
+	         _.forEach($scope.data, function (value,key) {        	 
+	        	 var edge = {};
+	        	 //var i=1;
+	        	 _.forEach(value.forumData, function (internalValue,internalKey) {  
+	        		 var edge = {};
+	        		 $log.debug("blah");
+	        		 $log.debug(internalValue);
+	            	 if (!(typeof internalValue.replyTo === "undefined")) {
+	            		 edge.from = internalValue.id;
+	            		 edge.to = internalValue.replyTo;
+	            		 edge.numLabels = 1;
+	                     //edge.value = i++;
+	                     edge.smooth = {
+	                         type: "discrete",
+	                         //forceDirection : "none",
+	                         //roundness: 0                         
+	                     };
+	                     edge.shadow=true;
+	                     edge.length = 150; // one hundred is too small
+	                     var t = _.find(edgeData, edge);                     
+	                     if (t == null) {
+	                    	 edgeData.push(edge);
+	                     }
+	                     else {
+	                    	 edge.numLabels++;
+	                         edge.label=edge.numLabels;                    	 
+	                     }
+	                     //$log.debug(edgeData);
+	            	 }            	 
+	        	 });
+	        	 
+	         });  
+	         
+	         var graphOptions = {
+	         edges: {
+		    	  
+		    	  arrows: {
+		    	      to:     {enabled: true, scaleFactor:1},
+		    	      middle: {enabled: false, scaleFactor:1},
+		    	      from:   {enabled: false, scaleFactor:1}
+		    	    }
+	         }};
+	         
+	         var nodes = new vis.DataSet(nodeData);
+	         var edges = new vis.DataSet(edgeData);
+	         $scope.graphData.nodes = nodes;
+	         $scope.graphData.edges = edges;
+	         
+	        
+	    	 var container = document.getElementById('mynetwork');
+
+	    	 // initialize your network!
+	    	 var network = new vis.Network(container, $scope.graphData, graphOptions);	
+	    	 
+
+	    	  // create a network
+	    	  var container = document.getElementById('mynetwork');
+	    	  //var data = {
+	    	  //  nodes: nodes,
+	    	  //  edges: edges
+	    	  //};
+	    	  var options = {};
+	    	  var network = new vis.Network(container, data, options);
+	    	  $scope.network = network;
+	    	 
+	    	 
+	    	 
+   };
+   
+   	$scope.studentViewGraph = function() {
+	   
+        //get the graph data from the uber object
+        var nodeData = [];
+        _.forEach($scope.data, function(value,key){
+      	 
+   		  var data = {};
+   		  data.id = value[0].person_sourcedid;
+   		  data.value = value.forumData.length;
+   		  data.label = value[0].person.name_full;
+   		  data.color = value.color;
+   		  data.shadow = true;
+
+  	      nodeData.push(data);
+   	  });
+        
+        var edgeData = [];
+        var messageSent = [];
+        var repliesSent = [];
+        var intializedThread = [];
+        
+        //create edges 
+        _.forEach($scope.data, function (value,key) {        	 
+       	 var edge = {};
+       	 var i=1;
+       	 _.forEach(value.forumData, function (internalValue,internalKey) {        		 
+           	 if (!(typeof internalValue.replyTo === "undefined")) {
+           		 edge.from = key;
+           		 edge.to = $scope.messageIdMap[internalValue.replyTo];
+        		 edge.numLabels = 1;
+                 //edge.value = i++;
+                 edge.smooth = {
+                     type: "discrete",
+                     //forceDirection : "none",
+                     roundness: .6                         
+                 };
+                 edge.shadow=true;
+                 edge.length = 150; // one hundred is too small
+                    var t = _.find(edgeData, edge);                     
+                    if (t == null) {
+                   	 edgeData.push(edge);
+                    }
+                    else {
+                   	 edge.numLabels++;
+                   	 edge.label=edge.numLabels;                    	 
+                    }
+                    $log.debug(edgeData);
+           	 }            	 
+       	 });
+       	 
+        });  
+      
+       var nodes = new vis.DataSet(nodeData);
+       var edges = new vis.DataSet(edgeData);
+       $scope.graphData.nodes = nodes;
+       $scope.graphData.edges = edges;
+       
+       var graphOptions = {
+  	         edges: {
+  		    	  
+  		    	  arrows: {
+  		    	      to:     {enabled: true, scaleFactor:1},
+  		    	      middle: {enabled: false, scaleFactor:1},
+  		    	      from:   {enabled: false, scaleFactor:1}
+  		    	    }
+  	         }};
+
+  	    var container = document.getElementById('mynetwork');
+
+  	    // initialize your network!
+  	    var network = new vis.Network(container, $scope.graphData,graphOptions);// $scope.graphOptions);  
+  	  $scope.network = network;
+   };
+
 
    $translatePartialLoader.addPart('sakai');
    $translate
@@ -81,116 +289,26 @@ angular
         	 //add color
         	 value.color = randomColorGenerator();
          });
-         
 
-         //get the graph data from the uber object
-         var nodeData = [];
+            
+         //build messageIdMap
+         var messageIdMap = {};
          _.forEach($scope.data, function(value,key){
-       	 
-    		  var data = {};
-    		  data.id = value[0].person.name_full;
-    		  data.value = value.forumData.length;
-    		  data.label = value[0].person.name_full;
-    		  data.color = value.color;
-    		  
-    		  if (data.value >= 1) {
-    			  nodeData.push(data);
-    		  }
-    	  });
-        
-         var nodes = new vis.DataSet(nodeData);
-         var messagesById = _.groupBy($scope.messages, function (message) {		   
-           var replyTo = '0';
-           if (message.replyTo) {
-             replyTo = message.replyTo;
-           }
+        	        	 
+        	 var messageIds = [];
+        	 _.forEach(value.forumData, function(t,y){
+        		 messageIdMap[t.id] = key;
+        	 });
+          });
+         $scope.messageIdMap = messageIdMap;
+         //end build messageIdMap
 
-           return message.id + "::" + replyTo;
-         });
-         
-         var edgeData = [];
-         var messageSent = [];
-         var repliesSent = [];
-         var intializedThread = [];
-         _.forEach(messagesById, function (value,key) {
-           var ids = key.split("::");	  		        	   
-           var edge = {};
-           edge.from = _.result(_.findWhere($scope.messages,{id:ids[0]}), 'author');
-           edge.to = _.result(_.findWhere($scope.messages,{id:ids[1]}), 'author');
-           edge.value = value.length;
-           edge.smooth = {
-               type: "discrete",
-               forceDirection : "none",
-               roundness: 0
-           };
-           edge.length = 300; // one hundred is too small
-           edgeData.push(edge);
+         //Create the Student View of the Forum Data
+         $scope.studentViewGraph();
 
-           // determine the number of total number of messages sent 
-           if (isNaN(messageSent[edge.from])) {
-             messageSent[edge.from] = 1;
-           }
-           else{
-             messageSent[edge.from]++;
-           }
-
-           // if edge to is undefined then will be the initial message for the thread
-           if (!_.isUndefined(edge.to)){
-             if (isNaN(repliesSent[edge.from])) {
-               repliesSent[edge.from] = 1;
-             }
-             else {
-               repliesSent[edge.from]++;
-             }
-           }
-           else {
-             // only one will be undefined and will have init the thread
-             intializedThread[edge.from] = 'true';
-           }
-
-           // will only be undefined if not initialized yet or has been set to true
-           if(_.isUndefined(intializedThread[edge.from])){
-                intializedThread[edge.from] = 'false';
-           }
-         });
-
-	  	var edges = new vis.DataSet(edgeData);
-
-	  	// create a network
-	  	$scope.graphOptions = {
-	  	  nodes: {
-	  		
-		    shape: 'dot',	  		
-		    scaling: {
-              customScalingFunction: function (min,max,total,value) {
-                return value/total;
-              },
-              min:10,
-              max:100
-            }		    
-	      },
-	      edges: {
-	        scaling: {
-              min:0,
-              max:10,
-              customScalingFunction: function (min,max,total,value) {
-	            var width = .5;
-                return value * width;
-              }
-	        }
-	      }
-        };
-
-	  	$scope.graphData = {
-	  	  nodes: nodes,
-	  	  edges: edges
-	  	}; 
-         // end forum
 	  	
          // activity
-
          $scope.activityData = responses[2];
-         $log.debug($scope.activityData);
          
          var occurrenceDay = function(occurrence){
              $log.debug(occurrence);
@@ -226,6 +344,12 @@ angular
 
 
 function randomColorGenerator() {
-    return '#'	+ (Math.random()
-   		 .toString(16) + '0000000').slice(2, 8);
+	
+	var new_light_color = 'rgb(' + (Math.floor((256-229)*Math.random()) + 230) + ',' + 
+    (Math.floor((256-229)*Math.random()) + 230) + ',' + 
+    (Math.floor((256-229)*Math.random()) + 230) + ')';
+	return new_light_color;
+	
+    //return '#'	+ (Math.random()
+   //		 .toString(16) + '0000000').slice(2, 8);
 }

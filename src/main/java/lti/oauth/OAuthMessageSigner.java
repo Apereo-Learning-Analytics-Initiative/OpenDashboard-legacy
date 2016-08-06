@@ -78,6 +78,11 @@ public class OAuthMessageSigner {
         if (logger.isDebugEnabled()) {
             logger.debug(signatureBase.toString());
         }
+        
+		//if (log.isDebugEnabled()) {
+        logger.debug("*****************************" + signatureBase.toString());
+	//}
+		System.out.println("*****************************" + signatureBase.toString());
 
         byte[] bytes = mac.doFinal(signatureBase.toString().getBytes());
         byte[] encodedMacBytes = Base64.encodeBase64(bytes);
