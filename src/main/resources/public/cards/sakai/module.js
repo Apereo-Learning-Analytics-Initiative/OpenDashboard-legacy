@@ -83,31 +83,14 @@ angular
 	        		 $log.debug(value2);
 		    		  var data = {};
 		    		  data.id = value2.id;
-		    		  //data.value = 5;//value.forumData.length;
+		    		  data.value = value.forumData.length;
 		    		  data.label = value[0].person.name_full;
 		    		  data.color = value.color;
 		    		  data.author = value2.author;
 		    		  //data.shadow = true;
-		    		  
-		    		  
-		    		  $log.debug("&&&&&&");
-		    		  $log.debug(value2.replyTo);
-		    		  $log.debug(value2.author);
-		    		  var t = _.findLastIndex(nodeData, {
-		    			  replyTo: value2.replyTo,
-		    			  //author: value2.author
-		    			});
-		    		  
-		    		  
-		    		  //var t = _.find(nodeData, data); 
-	
-		    		  if (t <=0) {
-		    			  nodeData.push(data);
-		    		  }
-		    		  
-		    		  
-		    	  });
-	        	 
+		    		  data.title=value2.title;		  
+		    		  nodeData.push(data);
+		    	  });	        	 
 	         });
 	         
 	         $log.debug(nodeData);
@@ -196,6 +179,7 @@ angular
    		  data.label = value[0].person.name_full;
    		  data.color = value.color;
    		  data.shadow = true;
+   		  data.title = value.forumData.length + " forum contributions";
 
   	      nodeData.push(data);
    	  });
