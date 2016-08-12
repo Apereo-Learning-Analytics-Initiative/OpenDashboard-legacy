@@ -27,6 +27,7 @@ import od.utils.LoggingRequestInterceptor;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
+import org.apereo.openlrs.model.event.v2.EventStats;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -210,5 +212,45 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 	    ResponseEntity<JsonNode> res = restTemplate.exchange(buildUri(caliperUrl, null), HttpMethod.POST, entity, JsonNode.class);
 
 	    return res.getBody();	
+	}
+
+	@Override
+	public EventStats getEventStatsForCourse(ProviderOptions options) {
+		RestTemplate restTemplate = new RestTemplate();
+		
+		
+		//set interceptors/requestFactory
+		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+		ris.add(ri);
+		restTemplate.setInterceptors(ris);
+		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		
+		
+	    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+	    converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+	        MediaType.valueOf("text/javascript")));
+	    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
+	    
+	    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+	    
+	    ProviderData providerData = tenant.findByKey(KEY);
+	    String baseUrl = providerData.findValueForKey("base_url");
+	    String caliperUrl = buildUrl(baseUrl, "/v1/caliper/stats");
+	    
+	    HttpHeaders headers = createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
+
+	    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(caliperUrl)
+	            .queryParam("groupId", "http://localhost:8080/portal/site/de5db688-b7ec-449a-94d3-deb9af208f2b");
+
+	    HttpEntity<?> entity = new HttpEntity<>(headers);
+
+	    HttpEntity<EventStats> response = restTemplate.exchange(
+	            builder.build().encode().toUri(), 
+	            HttpMethod.GET, 
+	            entity, 
+	            EventStats.class);
+
+	    return response.getBody();	
 	}
 }

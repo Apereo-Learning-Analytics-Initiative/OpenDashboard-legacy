@@ -22,6 +22,7 @@ import od.providers.Provider;
 import od.providers.ProviderException;
 import od.providers.ProviderOptions;
 
+import org.apereo.openlrs.model.event.v2.EventStats;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,4 +38,5 @@ public interface EventProvider extends Provider {
   Page<org.apereo.lai.Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException;
   Page<org.apereo.lai.Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException;
   JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException, MethodNotImplementedException;
+  EventStats getEventStatsForCourse(ProviderOptions options);
 }

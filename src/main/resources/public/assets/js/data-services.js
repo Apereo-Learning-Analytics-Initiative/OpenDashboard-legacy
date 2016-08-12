@@ -332,6 +332,35 @@ angular
 			    	}, genericHandleError);
 					return promise;
 				},
+				getCourseEventsStatsForCourse : function (options, courseId, userId, page, size) {
+					$log.debug("inside get eventsstats for coure");
+					$log.debug(options);
+					$log.debug(courseId);
+					$log.debug(userId);
+					$log.debug(page);
+					$log.debug(size);
+					var p = page || 0;
+		            var s = size || 10;
+		
+				    //http://localhost:8080/portal/site/de5db688-b7ec-449a-94d3-deb9af208f2b
+					var url = '/api/event/course/{courseid}/stats';
+			    	var promise = $http({
+			    		method  : 'POST',
+			    		url		: url,
+			    		data    : JSON.stringify(options),
+			    		headers : { 'Content-Type': 'application/json'}
+			    	})
+			    	.then(function (response) {
+			    		if (response && response.data) {
+			    			//alert(response);
+			    			//alert(response.data);
+			    			//alert(response.data.content);
+			    		  return response.data;	    	
+			    		}
+			    		return;
+			    	}, genericHandleError);
+					return promise;
+				},
 				groupByAndMap: function(events,groupByFunction,mapFunction) {
 				
 					if (!groupByFunction) {

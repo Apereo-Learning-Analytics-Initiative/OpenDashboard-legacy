@@ -24,6 +24,7 @@ import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Event;
+import org.apereo.openlrs.model.event.v2.EventStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,19 @@ public class EventController {
 	  	  
 	  EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));	 	 
       return eventProvider.postEvent(object.get("caliperEvent"), options);
+  }  
+  
+  
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})
+  @RequestMapping(value = "/api/event/course/{courseId}/stats", method = RequestMethod.POST)
+  public EventStats getEventStatsForCourse(@RequestBody ProviderOptions options)
+      throws Exception {
+
+    if (log.isDebugEnabled()) {
+      log.debug("options " + options);
+    }
+    
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));    
+    return eventProvider.getEventStatsForCourse(options);
   }  
 }

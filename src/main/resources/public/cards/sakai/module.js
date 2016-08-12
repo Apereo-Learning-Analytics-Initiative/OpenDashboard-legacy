@@ -38,7 +38,7 @@ angular
    $scope.activityData = null;
    $scope.series = ['Events over time'];
    $scope.labels = [];
-   $scope.data =[[]];
+   $scope.chartData =[[]];
    
    $scope.options = {};
    $scope.options.contextMappingId = $scope.contextMapping.id;
@@ -54,10 +54,15 @@ angular
    
    
    //highlight the student that has been selected
-   $scope.focusOnStudent = function(learner) {	   
+   $scope.focusOnStudent = function(learner) {	 	   
 	  	$scope.network.focus(learner, {locked: false, 
 			animation: true });	  	
-	  	$scope.network.selectNodes([learner]);	  	
+	  	$scope.network.selectNodes([learner]);	 
+	  	
+	  	var userGuid = $scope.data[learner][0].user_id;
+	  	var userName = $scope.data[learner][0].person.name_full;
+	  	var color = $scope.data[learner].color;
+	  	$scope.showLineGraphGroup(userGuid, userName, color);
    };
    
    
@@ -69,18 +74,15 @@ angular
 		   $scope.studentViewGraph();
 	   }
    }
-   
+   //test
    //show Messages View
    $scope.messageViewGraph = function() {
-	   $log.debug("$scope.data");
-	   $log.debug($scope.data);
-	   
+	      
 	         //get the graph data from the uber object
 	         var nodeData = [];
 	         _.forEach($scope.data, function(value,key){
 	        	 _.forEach(value.forumData, function(value2,key2) {
 	        		 
-	        		 $log.debug(value2);
 		    		  var data = {};
 		    		  data.id = value2.id;
 		    		  data.value = value.forumData.length;
@@ -88,12 +90,12 @@ angular
 		    		  data.color = value.color;
 		    		  data.author = value2.author;
 		    		  //data.shadow = true;
-		    		  data.title=value2.title;		  
+		    		  data.title=value2.title + " " + value.color;		  
 		    		  nodeData.push(data);
 		    	  });	        	 
 	         });
 	         
-	         $log.debug(nodeData);
+	        
 	         
 	         
 	         var edgeData = [];
@@ -103,19 +105,16 @@ angular
 	        	 //var i=1;
 	        	 _.forEach(value.forumData, function (internalValue,internalKey) {  
 	        		 var edge = {};
-	        		 $log.debug("blah");
-	        		 $log.debug(internalValue);
+	        		 
 	            	 if (!(typeof internalValue.replyTo === "undefined")) {
 	            		 edge.from = internalValue.id;
 	            		 edge.to = internalValue.replyTo;
 	            		 edge.numLabels = 1;
 	                     //edge.value = i++;
 	                     edge.smooth = {
-	                         type: "discrete",
-	                         //forceDirection : "none",
-	                         //roundness: 0                         
+	                         type: "discrete",                   
 	                     };
-	                     edge.shadow=true;
+	                     //edge.shadow=true;
 	                     edge.length = 150; // one hundred is too small
 	                     var t = _.find(edgeData, edge);                     
 	                     if (t == null) {
@@ -125,10 +124,8 @@ angular
 	                    	 edge.numLabels++;
 	                         edge.label=edge.numLabels;                    	 
 	                     }
-	                     //$log.debug(edgeData);
 	            	 }            	 
-	        	 });
-	        	 
+	        	 });	        	 
 	         });  
 	         
 	         var graphOptions = {
@@ -155,20 +152,12 @@ angular
 
 	    	  // create a network
 	    	  var container = document.getElementById('mynetwork');
-	    	  //var data = {
-	    	  //  nodes: nodes,
-	    	  //  edges: edges
-	    	  //};
 	    	  var options = {};
 	    	  var network = new vis.Network(container, data, options);
 	    	  $scope.network = network;
-	    	 
-	    	 
-	    	 
    };
    
-   	$scope.studentViewGraph = function() {
-	   
+   	$scope.studentViewGraph = function() {	   
         //get the graph data from the uber object
         var nodeData = [];
         _.forEach($scope.data, function(value,key){
@@ -178,7 +167,6 @@ angular
    		  data.value = value.forumData.length;
    		  data.label = value[0].person.name_full;
    		  data.color = value.color;
-   		  data.shadow = true;
    		  data.title = value.forumData.length + " forum contributions";
 
   	      nodeData.push(data);
@@ -204,7 +192,7 @@ angular
                      //forceDirection : "none",
                      roundness: .6                         
                  };
-                 edge.shadow=true;
+                 //edge.shadow=true;
                  edge.length = 150; // one hundred is too small
                     var t = _.find(edgeData, edge);                     
                     if (t == null) {
@@ -213,11 +201,9 @@ angular
                     else {
                    	 edge.numLabels++;
                    	 edge.label=edge.numLabels;                    	 
-                    }
-                    $log.debug(edgeData);
+                    }                    
            	 }            	 
-       	 });
-       	 
+       	 });       	 
         });  
       
        var nodes = new vis.DataSet(nodeData);
@@ -241,7 +227,92 @@ angular
   	    var network = new vis.Network(container, $scope.graphData,graphOptions);// $scope.graphOptions);  
   	  $scope.network = network;
    };
+   
+   
+   $scope.showLineGraphGroup = function(userId, userName, color) {
+	   
+	   $scope.activityGraphGroups = new vis.DataSet();   
+	   $scope.activityGraphDataset = new vis.DataSet();
+	   $scope.activityGraphOptions = {
+		    drawPoints: true,
+		    legend: true,
+		    
+		};
+	   
+	  // $scope.activityGraphOptions.dataAxis.left.range.max = 20;
+	   	   
+	   var container = document.getElementById('studentActivityChart');		   
+	   
 
+	   //Add Groups, Average and Student Group
+	   $scope.activityGraphGroups.add({
+		   id: 'average',
+		   content: 'course activity average',
+	   });
+
+	   var fullUserId = 'mailto:' + userId + '@tincanapi.dev.sakaiproject.org';
+
+	   if($scope.activityGraphGroups.get(fullUserId) == null){
+		   $scope.activityGraphGroups.add({
+			   id: fullUserId,
+			   content: userName,
+			   //color: color
+		   });
+	   }
+		   
+	   // add average items
+	   var numStudents = Object.keys($scope.data).length;	         	        
+	   Object.keys($scope.activityData.totalByWeekNumber).forEach(function (key) {	        	 
+		   $scope.activityGraphDataset.add( [	       	 	            
+		                                     {x: "week of: " + key, y: $scope.activityData.totalByWeekNumber[key]/numStudents, group: 'average'}
+		                                     ]);   
+	   }); 
+		   
+		   
+		   
+	   //experimental way
+	   Object.keys($scope.activityData.totalByWeekNumber).forEach(function (key) {
+		   //if the user isn't here all together, add 0
+		   if($scope.activityData.studentActivityStats[fullUserId]==null) {
+			   $scope.activityGraphDataset.add( [	       	 	            
+			                                     {x: "week of: " + key, y: 0, group: fullUserId}
+			                                     ]);   
+		   } else if ($scope.activityData.studentActivityStats[fullUserId].totalByWeekNumber[key] == null) {
+			   $scope.activityGraphDataset.add( [	       	 	            
+			                                     {x: "week of: " + key, y: 0, group: fullUserId}
+			                                     ]); 
+		   } else {			   
+			   var value=0;
+			   value = $scope.activityData.studentActivityStats[fullUserId].totalByWeekNumber[key];				   
+			   $scope.activityGraphDataset.add( [	       	 	            
+			                                     {x: "week of: " + key, y: value, group: fullUserId}
+			                                     ]);   
+		   }
+	   });
+
+		   
+		   
+	       
+		var newOptions = {		    
+		    dataAxis: {
+		    	left: {
+		    		range: {
+		    			max:$scope.activityData.max
+		    		}
+		    	}
+		  	}
+		};
+		
+		
+		if($scope.graph2d != null) {
+			$scope.graph2d.destroy();	
+		}
+		
+		$scope.graph2d = new vis.Graph2d(container, $scope.activityGraphDataset, $scope.activityGraphGroups, $scope.activityGraphOptions);
+		$scope.graph2d.setOptions(newOptions);
+
+   }
+   
 
    $translatePartialLoader.addPart('sakai');
    $translate
@@ -252,9 +323,9 @@ angular
 		.getRosterBasicLIS($scope.contextMapping.tenantId, $scope.contextMapping.id, SessionService.getInbound_LTI_Launch().ext.ext_ims_lis_memberships_id),
 		ForumDataService
 		.getAllMessages($scope.contextMapping.tenantId, $scope.contextMapping.id),
-		EventService
-	     .getEventsForCourse($scope.options,$scope.contextMapping.context,0,10000)
+		EventService.getCourseEventsStatsForCourse($scope.options,$scope.contextMapping.context,0,10000)		
        ]).then(function(responses){
+    	   
     	 // roster
          $scope.data = _.groupBy(responses[0], function (member) { return member.person_sourcedid;});
                  
@@ -292,32 +363,7 @@ angular
 
 	  	
          // activity
-         $scope.activityData = responses[2];
-         
-         var occurrenceDay = function(occurrence){
-             $log.debug(occurrence);
-
-           return moment(occurrence.timestamp).startOf('day').format();
-         };
-    
-         var groupToDay = function(group, day){
-           return {
-             dt: {day:moment(day).format('MMM D'),d:moment(day)},
-             count: group.length
-           }
-         };
-    
-         var result = _.chain($scope.activityData)
-          .groupBy(occurrenceDay)
-          .map(groupToDay)
-          .sortBy('dt.d')
-          .value();
-         $log.debug(result);
-         
-         _.forEach(result,function(o){
-           $scope.labels.push(o.dt.day);
-           $scope.data[0].push(o.count);
-         });
+         $scope.activityData = responses[2];         
          // end activity
        });
 
@@ -327,13 +373,9 @@ angular
 })(angular, Math, moment);
 
 
-function randomColorGenerator() {
-	
-	var new_light_color = 'rgb(' + (Math.floor((256-229)*Math.random()) + 230) + ',' + 
-    (Math.floor((256-229)*Math.random()) + 230) + ',' + 
-    (Math.floor((256-229)*Math.random()) + 230) + ')';
+function randomColorGenerator() {	
+	var new_light_color = 'rgb(' + (Math.floor((255-228)*Math.random()) + 229) + ',' + 
+    (Math.floor((255-228)*Math.random()) + 229) + ',' + 
+    (Math.floor((255-228)*Math.random()) + 229) + ')';
 	return new_light_color;
-	
-    //return '#'	+ (Math.random()
-   //		 .toString(16) + '0000000').slice(2, 8);
 }
