@@ -39,4 +39,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost/od
+
+
+lrs_options:
+  ## Prepend string for the Group Id... likely it's the Server URL configured for Sakai
+  group_id_prependString: http://localhost:8080/portal/site/
+
   

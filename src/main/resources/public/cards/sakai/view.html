@@ -34,11 +34,25 @@
     
       <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
         <div class="nav navbar-nav"><p class="navbar-text"><strong >FORUM ACTIVITY</strong></p></div>
-        <div align="right">    <select class="navbar-text" name="singleSelect" ng-model="currentGraph" ng-change="chooseGraph()">
+    
+    <div class="navbar-collapse collapse nav navbar-nav navbar-right">
+        <ul ng-show="contextMapping && contextMapping.dashboards" class="nav navbar-nav navbar-left">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{viewType}}<span class="caret"></span></a>
+            <ul class="dropdown-menu" ng-model="currentGraph"><a ui-sref="index.dashboard({cmid:contextMapping.id,dbid:dashboard.id})" id="LINK_INDEX_DASHBOARD_SELECT">
+              <li ng-click="chooseGraph('Message View')"><a>&nbsp;&nbsp;Message View</a></li>
+              <li ng-click="chooseGraph('Student View')"><a>&nbsp;&nbsp;Student View</a></li>
+            </ul>
+            
+          </li>
+        </ul>
+    </div>
+        
+        <!-- div align="right">    <select class="navbar-text" name="singleSelect" ng-model="currentGraph" ng-change="chooseGraph()">
 		      <option value="messageView">Messages View</option>
 		      <option value="studentView">Students View</option>
 		    </select>
-		    </div>
+		    </div -->
       </div>
       
       <div class="box-shadow--6dp od-background-color-white" style="height: 400px;">

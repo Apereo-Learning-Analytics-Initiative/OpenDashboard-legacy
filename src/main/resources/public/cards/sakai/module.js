@@ -66,13 +66,16 @@ angular
    };
    
    
-   $scope.chooseGraph = function() {
-	   if ($scope.currentGraph == 'messageView') {
+   $scope.chooseGraph = function(view) {
+	   
+	   $scope.viewType=view;
+	   if (view == 'Message View') {
 		   $scope.messageViewGraph();
 	   }
-	   if ($scope.currentGraph == 'studentView') {
+	   if (view == 'Student View') {
 		   $scope.studentViewGraph();
 	   }
+	   
    }
    //test
    //show Messages View
@@ -153,7 +156,7 @@ angular
 	    	  // create a network
 	    	  var container = document.getElementById('mynetwork');
 	    	  var options = {};
-	    	  var network = new vis.Network(container, data, options);
+	    	  var network = new vis.Network(container, $scope.graphData, options);
 	    	  $scope.network = network;
    };
    
@@ -165,7 +168,7 @@ angular
    		  var data = {};
    		  data.id = value[0].person_sourcedid;
    		  data.value = value.forumData.length;
-   		  data.label = value[0].person.name_full;
+   		  data.label = value[0].person.name_full + ' (' + value.forumData.length + ')';
    		  data.color = value.color;
    		  data.title = value.forumData.length + " forum contributions";
 
@@ -231,6 +234,7 @@ angular
    
    $scope.showLineGraphGroup = function(userId, userName, color) {
 	   
+	   
 	   $scope.activityGraphGroups = new vis.DataSet();   
 	   $scope.activityGraphDataset = new vis.DataSet();
 	   $scope.activityGraphOptions = {
@@ -249,6 +253,18 @@ angular
 		   id: 'average',
 		   content: 'course activity average',
 	   });
+	   
+	   // add average items
+	   var numStudents = Object.keys($scope.data).length;	         	        
+	   Object.keys($scope.activityData.totalByWeekNumber).forEach(function (key) {	        	 
+		   $scope.activityGraphDataset.add( [	       	 	            
+		                                     {x: "week of: " + key, y: $scope.activityData.totalByWeekNumber[key]/numStudents, group: 'average'}
+		                                     ]);   
+	   }); 
+	   
+	   
+	   
+	   if(userId!=null) {
 
 	   var fullUserId = 'mailto:' + userId + '@tincanapi.dev.sakaiproject.org';
 
@@ -260,13 +276,7 @@ angular
 		   });
 	   }
 		   
-	   // add average items
-	   var numStudents = Object.keys($scope.data).length;	         	        
-	   Object.keys($scope.activityData.totalByWeekNumber).forEach(function (key) {	        	 
-		   $scope.activityGraphDataset.add( [	       	 	            
-		                                     {x: "week of: " + key, y: $scope.activityData.totalByWeekNumber[key]/numStudents, group: 'average'}
-		                                     ]);   
-	   }); 
+	  
 		   
 		   
 		   
@@ -290,7 +300,7 @@ angular
 		   }
 	   });
 
-		   
+	   }	   
 		   
 	       
 		var newOptions = {		    
@@ -360,10 +370,10 @@ angular
 
          //Create the Student View of the Forum Data
          $scope.studentViewGraph();
-
 	  	
          // activity
-         $scope.activityData = responses[2];         
+         $scope.activityData = responses[2]; 
+         $scope.showLineGraphGroup();
          // end activity
        });
 

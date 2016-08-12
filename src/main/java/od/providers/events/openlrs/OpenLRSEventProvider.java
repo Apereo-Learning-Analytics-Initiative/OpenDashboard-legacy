@@ -23,8 +23,10 @@ import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
+import od.utils.LRS_Options;
 import od.utils.LoggingRequestInterceptor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
 import org.apereo.openlrs.model.event.v2.EventStats;
@@ -33,6 +35,10 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,6 +64,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  */
 @Component("events_openlrs")
+@Configuration
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix="lrs_options")
 public class OpenLRSEventProvider extends BaseProvider implements EventProvider {
 
   private static final Logger log = LoggerFactory.getLogger(OpenLRSEventProvider.class);
@@ -66,6 +75,12 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final String BASE = "OPENLRS_EVENT";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
+  
+  @Autowired 
+  private LRS_Options lrs_Options; 
+  
+  //@Value("${optional}")
+  //private String emptyValue;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   private ProviderConfiguration providerConfiguration;
@@ -216,8 +231,13 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 
 	@Override
 	public EventStats getEventStatsForCourse(ProviderOptions options) {
+				
 		RestTemplate restTemplate = new RestTemplate();
-		
+
+		String fullCourseId = options.getCourseId();
+		if (StringUtils.isNotEmpty(lrs_Options.getGroup_id_prependString())) {
+			fullCourseId = lrs_Options.getGroup_id_prependString() + fullCourseId;
+		}
 		
 		//set interceptors/requestFactory
 		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
@@ -241,7 +261,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 	    HttpHeaders headers = createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
 
 	    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(caliperUrl)
-	            .queryParam("groupId", "http://localhost:8080/portal/site/de5db688-b7ec-449a-94d3-deb9af208f2b");
+	            .queryParam("groupId", fullCourseId);
 
 	    HttpEntity<?> entity = new HttpEntity<>(headers);
 
