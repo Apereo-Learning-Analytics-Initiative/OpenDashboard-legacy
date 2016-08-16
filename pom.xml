@@ -86,7 +86,13 @@
 			<artifactId>spring-security-saml2-core</artifactId>
 			<version>1.0.1.RELEASE</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hdiv/spring-boot-starter-hdiv-commons -->
 		<dependency>
+		    <groupId>org.hdiv</groupId>
+		    <artifactId>spring-boot-starter-hdiv-commons</artifactId>
+		    <version>1.0.1</version>
+		</dependency>
+	 <dependency>
 			<groupId>org.springframework.ws</groupId>
 			<artifactId>spring-ws-core</artifactId>
 		</dependency>
