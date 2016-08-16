@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+
 //import org.imsglobal.caliper.events.Event;
 import javax.annotation.PostConstruct;
 
@@ -64,9 +65,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  */
 @Component("events_openlrs")
-@Configuration
-@EnableConfigurationProperties
-@ConfigurationProperties(prefix="lrs_options")
 public class OpenLRSEventProvider extends BaseProvider implements EventProvider {
 
   private static final Logger log = LoggerFactory.getLogger(OpenLRSEventProvider.class);
@@ -76,11 +74,8 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   
-  @Autowired 
-  private LRS_Options lrs_Options; 
-  
-  //@Value("${optional}")
-  //private String emptyValue;
+  @Value("${lrs_options.group_id_prependString}")
+  private String prepend;
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   private ProviderConfiguration providerConfiguration;
@@ -235,9 +230,9 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 		RestTemplate restTemplate = new RestTemplate();
 
 		String fullCourseId = options.getCourseId();
-		if (StringUtils.isNotEmpty(lrs_Options.getGroup_id_prependString())) {
-			log.debug("lrs_options group_id_prependString = " + lrs_Options.getGroup_id_prependString());
-			fullCourseId = lrs_Options.getGroup_id_prependString() + fullCourseId;
+		if (StringUtils.isNotEmpty(prepend)) {
+			log.debug("lrs_options group_id_prependString = " + prepend);
+			fullCourseId = prepend + fullCourseId;
 		} else {
 			log.debug("lrs_options group_id_prependString is empty, Sakai users should set this value");
 		}
