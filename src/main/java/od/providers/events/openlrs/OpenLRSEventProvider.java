@@ -231,12 +231,15 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 
 	@Override
 	public EventStats getEventStatsForCourse(ProviderOptions options) {
-				
+		
 		RestTemplate restTemplate = new RestTemplate();
 
 		String fullCourseId = options.getCourseId();
 		if (StringUtils.isNotEmpty(lrs_Options.getGroup_id_prependString())) {
+			log.debug("lrs_options group_id_prependString = " + lrs_Options.getGroup_id_prependString());
 			fullCourseId = lrs_Options.getGroup_id_prependString() + fullCourseId;
+		} else {
+			log.debug("lrs_options group_id_prependString is empty, Sakai users should set this value");
 		}
 		
 		//set interceptors/requestFactory

@@ -4,13 +4,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+//import org.springframework.test.context.ContextConfiguration;
 
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix="lrs_options")
 //@PropertySource(value = "classpath:application.yml")
-@ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
+//@ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
 public class LRS_Options {
 	
 	private String group_id_prependString;
