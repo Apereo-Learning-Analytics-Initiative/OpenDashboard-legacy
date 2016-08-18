@@ -93,7 +93,7 @@ angular
 		    		  data.color = value.color;
 		    		  data.author = value2.author;
 		    		  //data.shadow = true;
-		    		  data.title=value2.title + " " + value.color;		  
+		    		  data.title=value2.title;		  
 		    		  nodeData.push(data);
 		    	  });	        	 
 	         });
@@ -336,6 +336,7 @@ angular
 		EventService.getCourseEventsStatsForCourse($scope.options,$scope.contextMapping.context,0,10000)		
        ]).then(function(responses){
     	   
+    	 $scope.viewType="Student View"; 
     	 // roster
          $scope.data = _.groupBy(responses[0], function (member) { return member.person_sourcedid;});
                  
