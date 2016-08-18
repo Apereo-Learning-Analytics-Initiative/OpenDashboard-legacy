@@ -336,7 +336,7 @@ angular
 		EventService.getCourseEventsStatsForCourse($scope.options,$scope.contextMapping.context,0,10000)		
        ]).then(function(responses){
     	   
-    	 $scope.viewType="Student View"; 
+    	 $scope.viewType="Student View";
     	 // roster
          $scope.data = _.groupBy(responses[0], function (member) { return member.person_sourcedid;});
                  
