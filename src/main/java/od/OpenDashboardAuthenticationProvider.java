@@ -102,7 +102,7 @@ public class OpenDashboardAuthenticationProvider extends AbstractUserDetailsAuth
       log.info("data: {}", claims.getBody().get("data"));
       Map<String, String> data = (Map<String, String>)claims.getBody().get("data");
       log.info("data map: {}", data);
-      String pid = data.get("pid");
+      String pid = data.get("eppn");
       log.info("pid: {}", pid);
       String affiliation = data.get("affiliation");
       log.info("affiliation: {}",affiliation);

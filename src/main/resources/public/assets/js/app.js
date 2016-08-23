@@ -375,7 +375,7 @@ angular
 	        controller: 'RemoveDashboardController'
 	    })
 	    .state('index.dashboard', {
-	        url: 'cm/:cmid/dashboard/:dbid',
+	        url: 'cm/:cmid/dashboard/:dbid?data',
 	        templateUrl: '/assets/templates/dashboard/view.html',
 		    resolve:{
 		      contextMapping: function(DashboardService, $stateParams) {

@@ -144,7 +144,7 @@
         <div class="list-group" >
         
           <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;" ng-show="learner">
-            <span class="glyphicon-transparent" style="background-color: {{learner.color}};"></span>
+            <span class="glyphicon-transparent" style="background-color: {{radarColors[$index]}};"></span>
             &nbsp;
             <strong>{{learner.person.name_full}}</strong>
             <span class="od-text-black label pull-right" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',

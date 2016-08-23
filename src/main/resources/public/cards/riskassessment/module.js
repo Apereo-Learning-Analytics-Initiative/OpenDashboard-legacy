@@ -30,8 +30,7 @@ angular
     });
  })
  .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
-     OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
-	 
+    OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
    $scope.loaded = false;
    $translatePartialLoader.addPart('risk-assessment');
    $translate
@@ -82,15 +81,38 @@ angular
          $scope.listView = 0;
          $scope.radarView = 1;
          $scope.views = [$scope.listView, $scope.radarView];
-         $scope.view = $scope.listView;
+         
+         var dataJson = $state.params.data;
+         var dataObj = null;
+         if (dataJson) {
+           dataObj = JSON.parse(dataJson);
+           $scope.view = dataObj['view'];
+         }
+         else {
+           $scope.view = $scope.listView;
+         }
+         
          $scope.loaded = true;
          $scope.filtered = null;
          
          var benchmarkData = [100,150,"70",100,100,100];
-
-         $scope.radarData = [benchmarkData];
-         $scope.radarColors = ["#D3D3D3"];
-         $scope.compareGroup = ['benchmark'];
+         
+         if (dataObj) {
+           $scope.compareGroup = dataObj['compareGroup'];
+           $scope.radarColors = dataObj['radarColors'];
+           $scope.radarData = dataObj['radarData'];
+           
+           if (_.indexOf($scope.compareGroup,'benchmark') == -1) {
+             $scope.compareGroup.splice(0, 0, 'benchmark');
+             $scope.radarColors.splice(0, 0, "#D3D3D3");
+             $scope.radarData.splice(0, 0, benchmarkData);
+           }
+         }
+         else {
+           $scope.radarData = [benchmarkData];
+           $scope.radarColors = ["#D3D3D3"];
+           $scope.compareGroup = ['benchmark'];
+         }
          
     	 if ($scope.roster.isError) {
        	  $scope.errorData = {};
@@ -217,7 +239,18 @@ angular
 	   $scope.grouping = $scope.groupings[0];
 
        $scope.changeToView = function(view) {
-         $scope.view = view;
+    	 console.log(view)
+         if (view == 0) {
+           $state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id,data:null},{reload:true});
+         }
+         else {
+           var data = {};
+           data['view'] = view;
+           data['compareGroup'] = $scope.compareGroup;
+           data['radarColors'] = $scope.radarColors;
+           data['radarData'] = $scope.radarData;
+           $state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id,data:JSON.stringify(data)});
+         }
        }
 
        $scope.toggleCompare = function(userId) {
@@ -233,7 +266,7 @@ angular
            
            var learner = $scope.findInRoster(userId);
            var color = randomColorGenerator();
-           learner['color'] = color
+           learner['color'] = color;
            var data = [];
            data[0] = ((learner.output.R_CONTENT_READ * 100) >= 200) ? 200 : learner.output.R_CONTENT_READ * 100;
            data[1] = (learner.output.GPA_CUMULATIVE  >= 4) ? 200 : learner.output.GPA_CUMULATIVE * 50;

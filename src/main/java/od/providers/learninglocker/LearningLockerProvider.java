@@ -40,12 +40,12 @@ import org.springframework.web.client.RestTemplate;
 public abstract class LearningLockerProvider extends BaseProvider {
   
   protected static final String LL_OAUTH_TOKEN_URI = "/oauth/token";
-  protected static final String STAFF_URI = "/api/jisc/v1.2.3/staff";
-  protected static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/staffmoduleinstance";
-  protected static final String MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/moduleinstance";
-  protected static final String MODULE_VLE_MAP_URI = "/api/jisc/v1.2.3/modulevlemap";
-  protected static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1.2.3/studentmoduleinstance";
-  protected static final String STUDENT_URI = "/api/jisc/v1.2.3/student";
+  protected static final String STAFF_URI = "/api/jisc/v1.2.5/staff";
+  protected static final String STAFF_MODULE_INSTANCE_URI = "/api/jisc/v1.2.5/staffmoduleinstance";
+  protected static final String MODULE_INSTANCE_URI = "/api/jisc/v1.2.5/moduleinstance";
+  protected static final String MODULE_VLE_MAP_URI = "/api/jisc/v1.2.5/modulevlemap";
+  protected static final String STUDENT_MODULE_INSTANCE_URI = "/api/jisc/v1.2.5/studentmoduleinstance";
+  protected static final String STUDENT_URI = "/api/jisc/v1.2.5/student";
 
   
   @Value("${ll.use.oauth:false}")
