@@ -1,68 +1,63 @@
-    <div class="row">
-      <div class="col-xs-12">
-      <h3><a ui-sref="index.admin.tenants">Tenants</a> > <a ui-sref="index.admin.editTenant({tenantId:tenant.id})">{{tenant.name}}</a></h3>
-      </div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
     </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{tenant.name}} <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="index.admin.editTenant({tenantId:tenant.id})">Edit</a></li>
+            <li><a ui-sref="index.admin.tenants">All Tenants</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="row">
+  <div class="col-xs-12 col-md-3">
+    <h4>Data Provider Types</h4>
+    <ul class="list-group">
+      <a class="list-group-item" ng-repeat="(key, providerType) in providerTypes" ng-click="selectProviderType(providerType.type);"><span translate="{{providerType.key}}"></span></a>
+    </ul>
     <hr></hr>
-    <div class="ui-view">
-      <div class="row">
-        <div class="col-xs-12"><h3>Data Provider Types</h3></div>
-        <div class="col-xs-12">
-          
-          <table class="table table-hover table-responsive od-background-color-white m-t">
-            <thead>
-              <th class="col-sm-4">NAME</th>
-              <th class="col-sm-5">DESCRIPTION</th>
-              <th class="col-sm-3">&nbsp;</th>
-            </thead>
-            <tbody>
-              <tr ng-repeat="(key, providerType) in providerTypes" ng-click="selectProviderType(providerType.type);">
-                <td translate="{{providerType.key}}"></td>
-                <td translate="{{providerType.desc}}"></td>
-                <td><span class="pull-right glyphicon glyphicon-chevron-right"></span></td>
-              </tr>
-            </tbody>
-          </table>
-          
-        </div>
-      </div>
-      <hr></hr>
-      <div class="row">
-        <div class="col-xs-12"><h3>Preconfigured Dashboards</h3></div>
-        <div class="col-xs-12">
-        <div class="btn-toolbar m-t m-r" role="toolbar" aria-label="">
-          <div class="btn-group pull-right" role="group" aria-label="">
-            <a ui-sref="index.admin.tenants.tenant.addDashboard"><button type="button" class="btn btn-primary">Add Dashboard</button></a>
-          </div>
-        </div>
-        <table class="table table-hover table-responsive od-background-color-white m-t">
-          <thead>
-            <th class="col-sm-4">NAME</th>
-            <th class="col-sm-5">DESCRIPTION</th>
-            <th class="col-sm-3">&nbsp;</th>
-          </thead>
-          <tbody>
-            <tr ng-repeat="pcd in preconfiguredDashboards">
-              <td translate="{{pcd.title}}"></td>
-              <td>
-                <ul>
-                  <li ng-repeat="card in pcd.cards">{{card.title}}</li>
-                </ul>                    
-              </td>
-              <td>
-                <a ui-sref="index.admin.tenants.tenant.editDashboard({dashboardId:pcd.id})"><button class="btn btn-link" translate="BUTTON_EDIT" id="BUTTON_PRECONFIGURED_DASHBOARD_EDIT"></button></a>
-                <a ui-sref="index.admin.tenants.tenant.removeDashboard({dashboardId:pcd.id})"><button class="btn btn-link" translate="LABEL_REMOVE" id="BUTTON_PRECONFIGURED_DASHBOARD_DELETE"></button></a>
-              </td>
-            </tr>
-          </tbody>
-         </table>
-        </div>
-      </div>
-      <hr></hr>
-      <div class="row">
-        <div class="col-xs-12"><h3>Consumers</h3></div>
-        <div class="col-xs-12">
-          <form class="form-inline" novalidate="novalidate" name="consumerForm">
+    <h4>Preconfigured Dashboards</h4>
+     <ul class="list-group">
+      <li class="list-group-item" ng-repeat="pcd in preconfiguredDashboards">
+        <span>{{pcd.title}}</span>
+        <span class="pull-right">                
+          <a ui-sref="index.admin.tenants.tenant.editDashboard({dashboardId:pcd.id})"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+          <a ui-sref="index.admin.tenants.tenant.removeDashboard({dashboardId:pcd.id})"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+        </span>
+      </li>
+      <li class="list-group-item"><a class="btn btn-primary" ui-sref="index.admin.tenants.tenant.addDashboard">Add Dashboard</a></li>
+    </ul>
+    <h4>Consumers</h4>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="consumer in tenant.consumers">
+        <span>{{consumer.name}}</span>
+        <span class="pull-right">                
+          <a ui-sref="index.admin.tenants.tenant.editDashboard({dashboardId:pcd.id})"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+          <a ui-sref="index.admin.tenants.tenant.removeDashboard({dashboardId:pcd.id})"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+        </span>
+        <ul>
+          <li>Key: {{consumer.oauthConsumerKey}}</li>
+          <li>Secret: {{consumer.oauthConsumerSecret}}</li>
+        </ul>
+      </li>
+      <li class="list-group-item">
+          <form class="" novalidate="novalidate" name="consumerForm">
             <div class="form-group">
               <div ng-class="{ 'has-error' : (consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.required)
               || (consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.maxlength) }">
@@ -77,20 +72,9 @@
             <button class="btn btn-primary" type="button"
               ng-disabled="!consumerForm.$valid || submitted" ng-click="addConsumer();">Save</button>
           </form>    
-          <table class="table table-hover table-responsive od-background-color-white m-t">
-            <thead>
-              <th class="col-sm-4">NAME</th>
-              <th class="col-sm-4">KEY</th>
-              <th class="col-sm-4">SECRET</th>
-            </thead>
-            <tbody>
-              <tr ng-repeat="consumer in tenant.consumers">
-                <td translate="{{consumer.name}}"></td>
-                <td translate="{{consumer.oauthConsumerKey}}"></td>
-                <td translate="{{consumer.oauthConsumerSecret}}"></td>
-              </tr>
-            </tbody>
-           </table>
-        </div>
-      </div>
-    </div>
+      </li>
+    </ul>
+  </div>
+  <div class="col-xs-12 col-md-9 ui-view">
+  </div>
+</div>
