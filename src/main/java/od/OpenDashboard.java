@@ -14,7 +14,6 @@
  *******************************************************************************/
 package od;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
@@ -36,8 +35,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.ExpiringUsernameAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -98,16 +95,6 @@ public class OpenDashboard {
       log.debug(user.toString());
       log.debug(user.getClass().getName());
       
-      if (user instanceof ExpiringUsernameAuthenticationToken) {
-        
-        log.debug("SAML based login");
-        log.debug("Converting Principal response to usernamepassauthtoken from expiringusernameauthtoken due to xml parsing issues");
-        
-        ExpiringUsernameAuthenticationToken expiringUsernameAuthenticationToken = (ExpiringUsernameAuthenticationToken)user;
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(expiringUsernameAuthenticationToken.getPrincipal(), null, expiringUsernameAuthenticationToken.getAuthorities());
-        token.setDetails(expiringUsernameAuthenticationToken.getDetails());
-        return token;
-      }
       return user;
     }
   }

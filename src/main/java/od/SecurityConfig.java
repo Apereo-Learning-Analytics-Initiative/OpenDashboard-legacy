@@ -91,6 +91,7 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.POST, "/lti").permitAll()
       .and()
         .headers().frameOptions().disable() 
+      .and()
         .csrf().disable();
     }
     
@@ -132,8 +133,9 @@ public class SecurityConfig {
         .invalidateHttpSession(true)
         .deleteCookies("ODSESSIONID", "X-OD-TENANT")
       .and()
-      .headers().frameOptions().disable()
-      .csrf().csrfTokenRepository(csrfTokenRepository())
+        .headers().frameOptions().disable()
+      .and()
+        .csrf().csrfTokenRepository(csrfTokenRepository())
       /**
        * 
        * TODO revisit after updating to Spring Security 4.1 

@@ -9,6 +9,9 @@
       <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
       <maxHistory>5</maxHistory>
     </rollingPolicy>
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
   </appender>    
   <root level="INFO">
     <appender-ref ref="ROLLIN" />

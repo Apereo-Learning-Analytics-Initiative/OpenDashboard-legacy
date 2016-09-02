@@ -18,3 +18,4 @@ phantomjsdriver.log
 /bin/
 /target/
 src/main/java/od/lti/LTIController.java
+LOG_FILE_IS_UNDEFINED
