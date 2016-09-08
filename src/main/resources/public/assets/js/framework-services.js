@@ -120,7 +120,7 @@
 
 			.service(
 					'SessionService',
-					function($log, $http, OpenDashboard_API, _) {
+					function($log, $http, $window, OpenDashboard_API, _) {
 
 						var ROLE_ADMIN = 'ROLE_ADMIN';
 						var ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR';
@@ -243,6 +243,12 @@
 									authenticated = false;
 									ltiSession = false;
 									authorities = null;
+									
+									if ($window.sessionStorage) {
+									  $window.sessionStorage.removeItem('od_current_user');
+									  $window.sessionStorage.removeItem('od_current_course');
+									}
+
 									return response.data;
 								}, function(error) {
 									return false;
