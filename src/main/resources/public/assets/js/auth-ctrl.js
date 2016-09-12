@@ -22,6 +22,13 @@ function AuthCtrl($scope, $state, $location, SessionService) {
   $scope.isLogin = function () {
     return $state.is('login');
   }
+  
+  if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position) {
+      position = position || 0;
+      return this.indexOf(searchString, position) === position;
+    };
+  }
 
   if (!$location.path().startsWith("/err")
 		  && !SessionService.isAuthenticated()) {

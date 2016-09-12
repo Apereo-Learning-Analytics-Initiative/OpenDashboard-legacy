@@ -23,14 +23,18 @@
       $scope.courses = null;
       $scope.tenant = null;
       var currentUser = SessionService.getCurrentUser();
+      $log.debug('current user');
+      $log.debug(currentUser);
       if (currentUser) {
         TenantService.getTenant(currentUser.tenant_id)
         .then(function (tenantData){
+          $log.debug('tenant');
           $log.debug(tenantData);
           $scope.tenant = tenantData;
           
           CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
           .then(function(courseData){
+        	$log.debug('courseData');
         	$log.debug(courseData);
         	if (courseData.isError) {
         	  $scope.errorData = {};
