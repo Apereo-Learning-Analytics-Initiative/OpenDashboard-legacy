@@ -22,6 +22,7 @@ import java.util.Collection;
 import lti.LaunchRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -30,7 +31,9 @@ import org.springframework.security.core.GrantedAuthority;
  *
  */
 public class LTIAuthenticationToken extends UsernamePasswordAuthenticationToken {
-  private Logger log = Logger.getLogger(LTIAuthenticationToken.class);
+  @Transient
+  private static final Logger log = Logger.getLogger(LTIAuthenticationToken.class);
+  
   private static final long serialVersionUID = 1L;
   
   private LaunchRequest launchRequest;

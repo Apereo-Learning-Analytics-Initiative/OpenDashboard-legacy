@@ -17,6 +17,7 @@
  */
 package lti;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +37,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author ggilbert
  *
  */
-public class LaunchRequest extends LtiMessage {
+public class LaunchRequest extends LtiMessage implements Serializable {
+  
   @Transient
-  private static Logger log = Logger.getLogger(LaunchRequest.class);
+  private static final Logger log = Logger.getLogger(LaunchRequest.class);
   private String resource_link_id;
 
   /* Recommended Parameters */
