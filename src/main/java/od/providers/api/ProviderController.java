@@ -23,6 +23,7 @@ import od.providers.Provider;
 import od.providers.ProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,11 +37,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProviderController {
   @Autowired private ProviderService providerService;
   
+  @Secured({"ROLE_ADMIN"})
   @RequestMapping(value = {"/api/providers/{type}"}, method = RequestMethod.GET, produces="application/json;charset=utf-8")
   public List<Provider> providersByType(@PathVariable("type") final String type) {
     return providerService.getProvidersByType(type);
   }
   
+  @Secured({"ROLE_ADMIN"})
   @RequestMapping(value = {"/api/providers/{type}/{key}"}, method = RequestMethod.GET, produces="application/json;charset=utf-8")
   public Provider providerByTypeAndKey(@PathVariable("type") final String type, @PathVariable("key") final String key) {
     return providerService.getProviderByTypeAndKey(type,key);

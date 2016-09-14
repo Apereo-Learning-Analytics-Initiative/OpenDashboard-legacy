@@ -20,7 +20,6 @@ package od.providers.api;
 import od.TenantService;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
-import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.repository.mongo.MongoTenantRepository;
@@ -33,7 +32,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,16 +48,18 @@ public class ModelOutputController {
   @Autowired private TenantService tenantService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
-  @Secured("ROLE_INSTRUCTOR")
-  @RequestMapping(value = "/api/modeloutput/course/{courseId}", method = RequestMethod.POST)
-  public Page<ModelOutput> modelOutputForCourse(@RequestBody ProviderOptions options, @PathVariable("courseId") final String courseId, @RequestParam(value="page", required=false) int page,
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/modeloutput/course/{courseId}", method = RequestMethod.GET)
+  public Page<ModelOutput> modelOutputForCourse(@PathVariable("tenantId") final String tenantId, @PathVariable("courseId") final String courseId, @RequestParam(value="page", required=false) int page,
       @RequestParam(value="size", required=false) int size)
       throws Exception {
-
+    
     if (log.isDebugEnabled()) {
-      log.debug("options " + options);
+      log.debug("tenantId: {}", tenantId);
+      log.debug("courseId: {}", courseId);
     }
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
     ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
     ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
     

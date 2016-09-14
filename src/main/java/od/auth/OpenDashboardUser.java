@@ -15,7 +15,7 @@
 /**
  * 
  */
-package od;
+package od.auth;
 
 import java.util.Collection;
 

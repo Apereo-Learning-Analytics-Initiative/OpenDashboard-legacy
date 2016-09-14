@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;

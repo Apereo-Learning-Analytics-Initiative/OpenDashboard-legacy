@@ -4,13 +4,10 @@
 package od.providers.modeloutput.learninglocker;
 
 import gov.adlnet.xapi.model.Agent;
-import gov.adlnet.xapi.model.Result;
-import gov.adlnet.xapi.model.Statement;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +17,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
-import od.providers.course.learninglocker.LearningLockerModuleInstance;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.repository.mongo.MongoTenantRepository;
@@ -47,7 +42,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 
 /**
  * @author ggilbert

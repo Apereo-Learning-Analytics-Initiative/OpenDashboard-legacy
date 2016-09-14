@@ -38,5 +38,5 @@ spring:
   # Mongo settings
   data:
     mongodb:
-      uri: mongodb://localhost/od
+      uri: mongodb://localhost/jisc_od
   

@@ -46,17 +46,9 @@ angular
 
    $scope.activeCourse = SessionService.getCourse();
    $scope.activeCourse['id'] = $scope.contextMapping.context;
-
-   var options = {};
-   options.contextMappingId = $scope.contextMapping.id;
-   options.dashboardId = $scope.activeDashboard.id;
-   options.cardId = $scope.card.id;
-   options.courseId = $scope.contextMapping.context;
-   options.tenantId = $scope.contextMapping.tenantId;
-   options.isLti = SessionService.isLTISession();
-   
+  
    EventService
-     .getEventsForCourse(options,$scope.activeCourse.id,0,1000)
+     .getEventsForCourse($scope.contextMapping.tenantId,$scope.activeCourse.id,0,1000)
      .then(function (data) {
        $scope.events = data;
 

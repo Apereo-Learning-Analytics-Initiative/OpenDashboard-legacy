@@ -15,7 +15,7 @@
 /**
  * 
  */
-package od.lti;
+package od.auth;
 
 import java.util.Collection;
 
@@ -30,18 +30,20 @@ import org.springframework.security.core.GrantedAuthority;
  * @author ggilbert
  *
  */
-public class LTIAuthenticationToken extends UsernamePasswordAuthenticationToken {
+public class OpenDashboardAuthenticationToken extends UsernamePasswordAuthenticationToken {
   @Transient
-  private static final Logger log = Logger.getLogger(LTIAuthenticationToken.class);
+  private static final Logger log = Logger.getLogger(OpenDashboardAuthenticationToken.class);
   
   private static final long serialVersionUID = 1L;
   
   private LaunchRequest launchRequest;
+  private String jwtToken;
   private String tenantId;
 
-  public LTIAuthenticationToken(LaunchRequest launchRequest, String tenantId, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+  public OpenDashboardAuthenticationToken(LaunchRequest launchRequest, String jwtToken, String tenantId, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
     super(principal, credentials, authorities);
     this.launchRequest = launchRequest;
+    this.jwtToken = jwtToken;
     this.tenantId = tenantId;
   }
 
@@ -51,6 +53,10 @@ public class LTIAuthenticationToken extends UsernamePasswordAuthenticationToken 
 
   public String getTenantId() {
     return tenantId;
+  }
+
+  public String getJwtToken() {
+    return jwtToken;
   }
 
 }

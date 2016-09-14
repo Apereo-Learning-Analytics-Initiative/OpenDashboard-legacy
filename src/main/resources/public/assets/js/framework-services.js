@@ -426,19 +426,6 @@
 						});
 						return promise;
 					},
-					getTenantWithConsumerKey : function(key) {
-						var promise = $http({
-							method : 'GET',
-							url : '/tenant/key/' + key
-						}).then(function(response) {
-							if (response.data) {
-								return response.data;
-							} else {
-								return null;
-							}
-						});
-						return promise;
-					},
 					removeTenant : function(id) {
 						var promise = $http({
 							method : 'DELETE',

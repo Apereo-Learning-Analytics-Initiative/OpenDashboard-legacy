@@ -21,21 +21,11 @@
 <link rel="stylesheet" th:href="@{/assets/css/od.css}"></link>
 <!-- END CSS -->
 
-<!-- ANY JS NEEDED TO HANDLE INLINE SCRIPT BELOW -->
 <!-- TODO: upgrade string -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash-compat/3.10.1/lodash.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/string.js/3.0.0/string.min.js" charset="UTF-8"></script>
 <script th:src="@{/assets/js/api.js}"></script>
 <script th:src="@{/assets/js/models.js}"></script>
-
-<script th:inline="javascript">
-  /*<![CDATA[*/
-  var od_token = /*[[${token}]]*/null;
-  if (od_token && typeof (sessionStorage) !== "undefined") {
-    sessionStorage.setItem('token', od_token);
-  }
-  /*]]>*/
-</script>
 
 </head>
 

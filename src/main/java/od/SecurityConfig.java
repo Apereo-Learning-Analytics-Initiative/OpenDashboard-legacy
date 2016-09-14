@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.oauth.OAuthFilter;
-import od.lti.LTIAuthenticationProvider;
-import od.lti.LTIUserDetailsService;
+import od.auth.OpenDashboardAuthenticationProvider;
+import od.auth.OpenDashboardUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -45,6 +45,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -64,14 +65,13 @@ import org.springframework.web.util.WebUtils;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled=true)
 public class SecurityConfig {
   
   @Configuration
   @Order(1)
   public static class LTIWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     @Autowired private OAuthFilter oAuthFilter;
-    @Autowired private LTIUserDetailsService userDetailsService;
-    @Autowired private LTIAuthenticationProvider authenticationProvider;
    
     @Bean
     public FilterRegistrationBean oAuthFilterBean() {
@@ -94,18 +94,6 @@ public class SecurityConfig {
       .and()
         .csrf().disable();
     }
-    
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {    
-      auth
-        .authenticationProvider(authenticationProvider)
-        .userDetailsService(userDetailsService);
-    }
-    
-    @Bean(name="LTIAuthenticationManager")
-    public AuthenticationManager authManager() throws Exception {
-      return super.authenticationManagerBean();
-    }
   }
   
   @Configuration
@@ -127,6 +115,7 @@ public class SecurityConfig {
       .and()
       .authorizeRequests()
         .antMatchers("/features/**", "/", "/login", "/err/**").permitAll()
+        .antMatchers("/api/tenants/{tenantId}/**").access("@methodSecurity.checkTenant(authentication,#tenantId)")
         .anyRequest().authenticated()
       .and()
         .logout()
