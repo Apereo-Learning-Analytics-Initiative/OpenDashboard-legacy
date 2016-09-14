@@ -90,7 +90,10 @@ public class SecurityConfig {
           .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/lti").permitAll()
       .and()
-        .headers().frameOptions().disable() 
+        .headers()
+          .contentSecurityPolicy("script-src 'self' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://maxcdn.bootstrapcdn.com https://www.google.com")
+          .and()
+          .frameOptions().disable() 
       .and()
         .csrf().disable();
     }
@@ -119,10 +122,13 @@ public class SecurityConfig {
         .anyRequest().authenticated()
       .and()
         .logout()
-        .invalidateHttpSession(true)
-        .deleteCookies("ODSESSIONID", "X-OD-TENANT")
+          .invalidateHttpSession(true)
+          .deleteCookies("ODSESSIONID", "X-OD-TENANT")
       .and()
-        .headers().frameOptions().disable()
+        .headers()
+          .contentSecurityPolicy("script-src 'self' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://maxcdn.bootstrapcdn.com https://www.google.com")
+          .and()
+          .frameOptions().disable()
       .and()
         .csrf().csrfTokenRepository(csrfTokenRepository())
       /**

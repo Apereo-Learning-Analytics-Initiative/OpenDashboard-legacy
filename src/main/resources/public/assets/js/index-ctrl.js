@@ -122,8 +122,10 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
     	  else {
     		$log.debug('IndexCtrl - authenticate true, redirecting to dashboard');
     		// TODO - not sure why we're doing this here instead of SessionService'
+    		$scope.isAuthenticated = SessionService.isAuthenticated();
     		$scope.isStudent = SessionService.hasStudentRole();
-    		
+    	    $scope.isLtiSession = SessionService.isLTISession();
+    	    $scope.isAdmin = SessionService.hasAdminRole();
     		if (!$scope.contextMapping) {
     		  getContextMapping(SessionService.isLTISession());
     		}

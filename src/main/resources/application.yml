@@ -15,6 +15,7 @@
 
 server:
   port: 8081
+  use-forward-headers: true
   
 features:
   saml: false
