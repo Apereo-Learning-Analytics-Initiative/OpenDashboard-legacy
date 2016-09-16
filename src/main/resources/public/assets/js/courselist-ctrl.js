@@ -34,15 +34,20 @@
         	  $scope.errorData['userId'] = currentUser.user_id;
         	  $scope.errorData['errorCode'] = courseData.errorCode;
         	  $scope.error = courseData.errorCode;
-        	}
-        	else {
+        	} else {
         	  $scope.courses = courseData;
+            TenantService.getTenant(currentUser.tenant_id)
+              .then(function (tenant) {
+                $scope.tenant = tenant;
+              });
         	}
         });
       }
       
       $scope.goToDashboard = function(tenant,course) {
     	var currentUser = SessionService.getCurrentUser();
+
+      console.log('tenant', tenant);
     	
     	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,course.id)
     	.then(function(data){
