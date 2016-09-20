@@ -18,7 +18,6 @@
 package od.providers.api;
 
 
-import od.providers.ProviderOptions;
 import od.providers.ProviderService;
 import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
@@ -30,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
@@ -52,56 +51,44 @@ public class EventController {
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
-  @Secured("ROLE_INSTRUCTOR")
-  @RequestMapping(value = "/api/event/course/{id}", method = RequestMethod.POST)
-  public Page<Event> getEventsForCourse(@RequestBody ProviderOptions options, @RequestParam(value="page", required=false) int page,
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/event/course/{courseId}", method = RequestMethod.GET)
+  public Page<Event> getEventsForCourse(@PathVariable("tenantId") final String tenantId, @PathVariable("courseId") final String courseId, @RequestParam(value="page", required=false) int page,
       @RequestParam(value="size", required=false) int size)
       throws Exception {
 
-    if (log.isDebugEnabled()) {
-      log.debug("options " + options);
-    }
-    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
 
-    return eventProvider.getEventsForCourse(options, new PageRequest(page, size));
+    return eventProvider.getEventsForCourse(tenantId, courseId, new PageRequest(page, size));
   }
 
-  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})
-  @RequestMapping(value = "/api/event/user/{id}", method = RequestMethod.POST)
-  public Page<Event> getEventsForUser(@RequestBody ProviderOptions options, @RequestParam(value="page", required=false) int page,
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/event/user/{userId}", method = RequestMethod.GET)
+  public Page<Event> getEventsForUser(@PathVariable("tenantId") final String tenantId, @PathVariable("userId") final String userId, @RequestParam(value="page", required=false) int page,
       @RequestParam(value="size", required=false) int size)
       throws Exception {
 
-    if (log.isDebugEnabled()) {
-      log.debug("options " + options);
-    }
-    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
 
-    return eventProvider.getEventsForUser(options, new PageRequest(page, size));
+    return eventProvider.getEventsForUser(tenantId, userId, new PageRequest(page, size));
   }
   
-  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})
-  @RequestMapping(value = "/api/event/course/{courseId}/user/{userId}", method = RequestMethod.POST)
-  public Page<Event> getEventsForCourseAndUser(@RequestBody ProviderOptions options, @RequestParam(value="page", required=false) int page,
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/event/course/{courseId}/user/{userId}", method = RequestMethod.GET)
+  public Page<Event> getEventsForCourseAndUser(@PathVariable("tenantId") final String tenantId, @PathVariable("courseId") final String courseId, @PathVariable("userId") final String userId, @RequestParam(value="page", required=false) int page,
       @RequestParam(value="size", required=false) int size)
       throws Exception {
 
-    if (log.isDebugEnabled()) {
-      log.debug("options " + options);
-    }
-    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
 
-    return eventProvider.getEventsForCourseAndUser(options, new PageRequest(page, size));
+    return eventProvider.getEventsForCourseAndUser(tenantId, courseId, userId, new PageRequest(page, size));
   }
  
-  
-  @RequestMapping(value = "/api/proxy/event", method = RequestMethod.POST)  
-  public JsonNode postEvent(@RequestBody ObjectNode object)
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/event", method = RequestMethod.POST)  
+  public JsonNode postEvent(@RequestBody ObjectNode object, @PathVariable("tenantId") final String tenantId)
       throws Exception {	  
-	  ObjectMapper mapper = new ObjectMapper();	  
-	  ProviderOptions options = mapper.convertValue(object.get("options"), ProviderOptions.class);
-	  	  
-	  EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(options.getTenantId()));	 	 
-      return eventProvider.postEvent(object.get("caliperEvent"), options);
+	  EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));	 	 
+    return eventProvider.postEvent(object.get("caliperEvent"), tenantId);
   }  
 }

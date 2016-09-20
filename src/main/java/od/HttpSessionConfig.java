@@ -12,41 +12,20 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-'use strict';
+/**
+ * 
+ */
+package od;
 
-angular
-.module('OpenDashboard')
-.controller('AuthCtrl',
+import org.springframework.context.annotation.Bean;
+import org.springframework.session.data.mongo.JdkMongoSessionConverter;
+import org.springframework.session.data.mongo.config.annotation.web.http.EnableMongoHttpSession;
 
-function AuthCtrl($scope, $state, $location, SessionService) {
-  $scope.isLogin = function () {
-    return $state.is('login');
-  }
-  
-  if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(searchString, position) {
-      position = position || 0;
-      return this.indexOf(searchString, position) === position;
-    };
-  }
+@EnableMongoHttpSession 
+public class HttpSessionConfig {
 
-  if (!$location.path().startsWith("/err")
-		  && !SessionService.isAuthenticated()) {
-	  SessionService
-	  .authenticate()
-	  .then(
-		function (data) {
-		  if (!data) {
-		    $state.go('login');
-		    return;
-		  }
-		  return;
-		},
-		function (error) {
-			$state.go('login');
-			return;
-		}
-	  );
-  }
-  
-});
+        @Bean
+        public JdkMongoSessionConverter jdkMongoSessionConverter() {
+                return new JdkMongoSessionConverter(); 
+        }
+}

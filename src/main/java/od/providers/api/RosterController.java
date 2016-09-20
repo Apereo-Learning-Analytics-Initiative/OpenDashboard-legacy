@@ -50,7 +50,7 @@ public class RosterController {
   @Autowired private MongoTenantRepository mongoTenantRepository;
   @Autowired private ContextMappingRepository contextMappingRepository;
   
-	@Secured("ROLE_INSTRUCTOR")
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
 	@RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/roster", method = RequestMethod.GET)
 	public Set<Member> roster(@PathVariable("tenantId") final String tenantId,
       @PathVariable("contextMappingId") final String contextMappingId)

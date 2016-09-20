@@ -48,15 +48,7 @@ angular
        $scope.activeCourse = SessionService.getCourse();
        $scope.activeCourse['id'] = $scope.contextMapping.context;
 		
-       var options = {};
-       options.contextMappingId = $scope.contextMapping.id;
-       options.dashboardId = $scope.activeDashboard.id;
-       options.cardId = $scope.card.id;
-       options.courseId = $scope.contextMapping.context;
-       options.tenantId = $scope.contextMapping.tenantId;
-       options.isLti = SessionService.isLTISession();
-       
-       if (!options.isLti) {
+       if (!SessionService.isLTISession().isLti) {
     	 var currentUser = SessionService.getCurrentUser();
          CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
          .then(function(courseData){
@@ -69,7 +61,7 @@ angular
        .all(
     	[
     	 ModelOutputDataService
-         .getModelOutputForCourse(options,$scope.contextMapping.context,0,1000),
+         .getModelOutputForCourse($scope.contextMapping.tenantId,$scope.contextMapping.context,0,1000),
          RosterService
          .getRoster($scope.contextMapping.tenantId, $scope.contextMapping.id)
     	]   

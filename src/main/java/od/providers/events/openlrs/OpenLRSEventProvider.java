@@ -7,11 +7,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 //import org.imsglobal.caliper.events.Event;
-
 import javax.annotation.PostConstruct;
+
+import od.framework.model.Tenant;
+import od.providers.BaseProvider;
+import od.providers.ProviderData;
+import od.providers.ProviderException;
+import od.providers.api.PageWrapper;
+import od.providers.config.DefaultProviderConfiguration;
+import od.providers.config.ProviderConfiguration;
+import od.providers.config.ProviderConfigurationOption;
+import od.providers.config.TranslatableKeyValueConfigurationOptions;
+import od.providers.events.EventProvider;
+import od.repository.mongo.MongoTenantRepository;
+import od.utils.LoggingRequestInterceptor;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
@@ -34,29 +45,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import od.framework.model.Tenant;
-import od.providers.BaseProvider;
-import od.providers.ProviderData;
-import od.providers.ProviderException;
-import od.providers.ProviderOptions;
-import od.providers.api.PageWrapper;
-import od.providers.config.DefaultProviderConfiguration;
-import od.providers.config.ProviderConfiguration;
-import od.providers.config.ProviderConfigurationOption;
-import od.providers.config.TranslatableKeyValueConfigurationOptions;
-import od.providers.course.learninglocker.LearningLockerModuleInstance;
-import od.providers.events.EventProvider;
-import od.providers.events.learninglocker.LearningLockerXApiEventProvider;
-import od.repository.mongo.MongoTenantRepository;
-import od.utils.LoggingRequestInterceptor;
 
 /**
  * @author ggilbert
@@ -112,20 +104,20 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
    * @see od.providers.events.EventProvider#getEventsForUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
    */
   @Override
-  public Page<org.apereo.lai.Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<org.apereo.lai.Event> getEventsForUser(String tenantId, String userId, Pageable pageable) throws ProviderException {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Page<org.apereo.lai.Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<org.apereo.lai.Event> getEventsForCourse(String tenantId, String courseId, Pageable pageable) throws ProviderException {
     RestTemplate restTemplate = new RestTemplate();
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
         MediaType.valueOf("text/javascript")));
     restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
     
-    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
     
     ProviderData providerData = tenant.findByKey(KEY);
     
@@ -161,23 +153,15 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
     return new PageImpl<Event>(output, pageable, output.size());
   }
 
-  /* (non-Javadoc)
-   * @see od.providers.events.EventProvider#getEventsForCourseAndUser(od.providers.ProviderOptions, org.springframework.data.domain.Pageable)
-   */
   @Override
-  public Page<org.apereo.lai.Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<org.apereo.lai.Event> getEventsForCourseAndUser(String tenantId, String courseId, String userId, Pageable pageable) throws ProviderException {
     // TODO Auto-generated method stub
     return null;
   }
 
 
 	@Override
-	/*
-	 * Returns ID of the created event
-	 * (non-Javadoc)
-	 * @see od.providers.events.EventProvider#postEvent(com.fasterxml.jackson.databind.JsonNode, od.providers.ProviderOptions)
-	 */
-	public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options) throws ProviderException {
+	public JsonNode postEvent(JsonNode marshallableObject, String tenantId) throws ProviderException {
 		RestTemplate restTemplate = new RestTemplate();
 		
 		//set interceptors/requestFactory
@@ -193,7 +177,7 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 	        MediaType.valueOf("text/javascript")));
 	    restTemplate.setMessageConverters(Arrays.<HttpMessageConverter<?>> asList(converter));
 	    
-	    Tenant tenant = mongoTenantRepository.findOne(options.getTenantId());
+	    Tenant tenant = mongoTenantRepository.findOne(tenantId);
 	    
 	    ProviderData providerData = tenant.findByKey(KEY);
 	    String baseUrl = providerData.findValueForKey("base_url");

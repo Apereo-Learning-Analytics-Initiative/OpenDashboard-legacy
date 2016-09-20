@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import lti.LaunchRequest;
+import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.Card;
 import od.framework.model.ContextMapping;
 import od.framework.model.Dashboard;
@@ -42,7 +43,6 @@ import od.repository.mongo.MongoTenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -68,7 +68,7 @@ public class LTIController {
   @Autowired private ProviderService providerService;
   
   @Autowired
-  @Qualifier(value="LTIAuthenticationManager")
+  //@Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
   
   @RequestMapping(value = { "/lti" }, method = RequestMethod.POST)
@@ -132,7 +132,11 @@ public class LTIController {
       //role = "ROLE_STUDENT";
     }
 
-    LTIAuthenticationToken token = new LTIAuthenticationToken(launchRequest, launchRequest.getOauth_consumer_key(), launchRequest.toJSON(), uuid,
+    OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 
+        null,
+        tenant.getId(), 
+        null, 
+        null,
         AuthorityUtils.commaSeparatedStringToAuthorityList(role));
 
     // generate session if one doesn't exist

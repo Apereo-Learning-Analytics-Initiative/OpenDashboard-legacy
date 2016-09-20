@@ -120,7 +120,7 @@
 
 			.service(
 					'SessionService',
-					function($log, $http, OpenDashboard_API, _) {
+					function($log, $http, $window, OpenDashboard_API, _) {
 
 						var ROLE_ADMIN = 'ROLE_ADMIN';
 						var ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR';
@@ -243,6 +243,12 @@
 									authenticated = false;
 									ltiSession = false;
 									authorities = null;
+									
+									if ($window.sessionStorage) {
+									  $window.sessionStorage.removeItem('od_current_user');
+									  $window.sessionStorage.removeItem('od_current_course');
+									}
+
 									return response.data;
 								}, function(error) {
 									return false;
@@ -411,19 +417,6 @@
 						var promise = $http({
 							method : 'GET',
 							url : '/api/tenant/' + id
-						}).then(function(response) {
-							if (response.data) {
-								return response.data;
-							} else {
-								return null;
-							}
-						});
-						return promise;
-					},
-					getTenantWithConsumerKey : function(key) {
-						var promise = $http({
-							method : 'GET',
-							url : '/tenant/key/' + key
 						}).then(function(response) {
 							if (response.data) {
 								return response.data;

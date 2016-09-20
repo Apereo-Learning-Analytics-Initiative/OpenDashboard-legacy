@@ -50,7 +50,7 @@ public class TenantController {
     return mongoTenantRepository.findAll();
   }
   
-  //@Secured("ROLE_ADMIN")
+  @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR"})
   @RequestMapping(value = "/api/tenant/{id}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public Tenant getOne(@PathVariable("id") final String id) {
@@ -76,60 +76,10 @@ public class TenantController {
     return metadata;
   }
   
-//  @RequestMapping(value = "/tenant/{id}", method = RequestMethod.GET, 
-//      produces = "application/json;charset=utf-8")
-//  public Tenant getOneTentantMetadata(@PathVariable("id") final String id) {
-//    Tenant tenant = mongoTenantRepository.findOne(id);
-//    Tenant metadata = new Tenant();
-//    metadata.setId(tenant.getId());
-//    metadata.setName(tenant.getName());
-//    metadata.setDescription(tenant.getDescription());
-//    metadata.setIdpEndpoint(tenant.getIdpEndpoint());
-//    
-//    return metadata;
-//  }
-  
-  @RequestMapping(value = "/api/tenant/key/{key}", method = RequestMethod.GET, 
-      produces = "application/json;charset=utf-8")
-  public Tenant getOneWithConsumerKey(@PathVariable("key") final String key) {
-    return mongoTenantRepository.findByConsumersOauthConsumerKey(key);
-  }
-  
   @Secured("ROLE_ADMIN")
   @RequestMapping(value = "/api/tenant/{id}", method = RequestMethod.DELETE, 
       produces = "application/json;charset=utf-8")
   public void delete(@PathVariable("id") final String id) {
     mongoTenantRepository.delete(id);
   }
-  
-//  @RequestMapping(value = "/api/providerdata/{type}/{key}", method = RequestMethod.PUT, 
-//      produces = "application/json;charset=utf-8", consumes = "application/json")
-//  public ProviderData update(@RequestBody ProviderData providerData) {
-//     return providerDataRepositoryInterface.save(providerData);
-//  }
-//  
-//  @RequestMapping(value = "/api/providerdata/{type}/{key}", method = RequestMethod.DELETE, 
-//      produces = "application/json;charset=utf-8", consumes = "application/json")
-//  public boolean delete(@RequestBody ProviderData providerData) {
-//     providerDataRepositoryInterface.delete(providerData);
-//     return true;
-//  }
-//
-//  @RequestMapping(value = "/api/providerdata", method = RequestMethod.POST, 
-//      produces = "application/json;charset=utf-8", consumes = "application/json")
-//  public ProviderData create(@RequestBody ProviderData providerData) {
-//     return providerDataRepositoryInterface.save(providerData);
-//  }
-//
-//  @RequestMapping(value = {"/api/providerdata/{type}"}, method = RequestMethod.GET, produces="application/json;charset=utf-8")
-//  public List<ProviderData> providerDataByType(@PathVariable("type") final String type) {
-//    return providerDataRepositoryInterface.findByProviderType(type);
-//  }
-//  
-//  @RequestMapping(value = {"/api/providerdata/{type}/{key}"}, method = RequestMethod.GET, produces="application/json;charset=utf-8")
-//  public ProviderData provideDataByTypeAndKey(@PathVariable("type") final String type, @PathVariable("key") final String key) {
-//    return providerDataRepositoryInterface.findByProviderKey(key);
-//  }
-
-
 }

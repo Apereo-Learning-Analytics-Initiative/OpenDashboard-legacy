@@ -15,45 +15,48 @@
 /**
  * 
  */
-package od;
+package od.auth;
 
 import java.util.Collection;
 
 import lti.LaunchRequest;
 
+import org.apache.log4j.Logger;
+import org.springframework.data.annotation.Transient;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 /**
  * @author ggilbert
  *
  */
-public class OpenDashboardUser extends User {
-
+public class OpenDashboardAuthenticationToken extends UsernamePasswordAuthenticationToken {
+  @Transient
+  private static final Logger log = Logger.getLogger(OpenDashboardAuthenticationToken.class);
+  
   private static final long serialVersionUID = 1L;
   
-  private String tenantId;
   private LaunchRequest launchRequest;
+  private String jwtToken;
+  private String tenantId;
 
-  public OpenDashboardUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
-      boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-    super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-  }
-  
-  public OpenDashboardUser(String username, String password, Collection<? extends GrantedAuthority> authorities, String tenantId, LaunchRequest launchRequest) {
-    this(username, password, true, true, true, true, authorities);
-    
-    this.tenantId = tenantId;
+  public OpenDashboardAuthenticationToken(LaunchRequest launchRequest, String jwtToken, String tenantId, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    super(principal, credentials, authorities);
     this.launchRequest = launchRequest;
-  }
-
-  public String getTenantId() {
-    return tenantId;
+    this.jwtToken = jwtToken;
+    this.tenantId = tenantId;
   }
 
   public LaunchRequest getLaunchRequest() {
     return launchRequest;
   }
 
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public String getJwtToken() {
+    return jwtToken;
+  }
 
 }

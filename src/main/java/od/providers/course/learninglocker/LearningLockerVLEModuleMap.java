@@ -5,11 +5,11 @@ package od.providers.course.learninglocker;
 
 import java.io.Serializable;
 
+import od.providers.learninglocker.LearningLockerEntity;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import od.providers.learninglocker.LearningLockerEntity;
 
 /**
  * @author ggilbert

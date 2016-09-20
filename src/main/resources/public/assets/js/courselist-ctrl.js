@@ -21,16 +21,13 @@
       $log.debug('CourseList Controller');
       $scope.error = null;
       $scope.courses = null;
-      $scope.tenant = null;
       var currentUser = SessionService.getCurrentUser();
+      $log.debug('current user');
+      $log.debug(currentUser);
       if (currentUser) {
-        TenantService.getTenant(currentUser.tenant_id)
-        .then(function (tenantData){
-          $log.debug(tenantData);
-          $scope.tenant = tenantData;
-          
-          CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
+        CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
           .then(function(courseData){
+        	$log.debug('courseData');
         	$log.debug(courseData);
         	if (courseData.isError) {
         	  $scope.errorData = {};
@@ -41,14 +38,13 @@
         	else {
         	  $scope.courses = courseData;
         	}
-          });
-
-        })
+        });
       }
       
       $scope.goToDashboard = function(tenant,course) {
+    	var currentUser = SessionService.getCurrentUser();
     	
-    	ContextMappingService.getWithTenantAndCourse(tenant.id,course.id)
+    	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,course.id)
     	.then(function(data){
     	  $log.log(data);
     	  if (!data) {

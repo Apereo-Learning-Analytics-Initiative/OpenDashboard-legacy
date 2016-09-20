@@ -26,11 +26,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import od.framework.model.Tenant;
 import od.providers.BaseProvider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.api.PageWrapper;
 import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;

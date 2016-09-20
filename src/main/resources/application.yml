@@ -15,6 +15,7 @@
 
 server:
   port: 8081
+  use-forward-headers: true
   
 features:
   saml: false
@@ -30,6 +31,7 @@ logging:
   level:
     od: DEBUG
     org.apache.velocity: OFF
+  file: od.log
 
 # Spring settings
 spring:
@@ -38,5 +40,5 @@ spring:
   # Mongo settings
   data:
     mongodb:
-      uri: mongodb://localhost/od
+      uri: mongodb://localhost/jisc_od
   

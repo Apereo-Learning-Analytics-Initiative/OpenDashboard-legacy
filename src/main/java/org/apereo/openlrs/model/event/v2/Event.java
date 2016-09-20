@@ -33,7 +33,7 @@ import com.google.gson.annotations.SerializedName;
 public class Event implements Serializable {
 
   private static final long serialVersionUID = 76908698006094727L;
-  @Transient private Logger log = Logger.getLogger(Event.class);
+  @Transient private static final Logger log = Logger.getLogger(Event.class);
   
   @Id private String id;
   

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.Tenant;
 import od.providers.ProviderException;
 import od.repository.mongo.MongoTenantRepository;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -101,7 +101,7 @@ public class JWTController {
     
     // Create a token using spring provided class :
     // org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-    UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken("TENANTID:"+tenantId,token);
+    OpenDashboardAuthenticationToken authToken = new OpenDashboardAuthenticationToken(null, token, tenantId, null, null, null);
 
     // generate session if one doesn't exist
     request.getSession();
@@ -109,13 +109,13 @@ public class JWTController {
     // save details as WebAuthenticationDetails records the remote address and
     // will also set the session Id if a session already exists (it won't
     // create one).
-    usernamePasswordAuthToken.setDetails(new WebAuthenticationDetails(request));
+    authToken.setDetails(new WebAuthenticationDetails(request));
 
     // authenticationManager injected as spring bean, you can use custom or
     // spring provided authentication manager
     Authentication authentication = null;
     try {
-      authentication = authenticationManager.authenticate(usernamePasswordAuthToken);
+      authentication = authenticationManager.authenticate(authToken);
     } 
     catch (AuthenticationException e) {
       LOG.error(e.getMessage(),e);

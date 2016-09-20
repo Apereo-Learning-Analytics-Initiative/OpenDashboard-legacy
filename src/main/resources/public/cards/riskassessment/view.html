@@ -83,7 +83,7 @@
         <tbody>
         
           <tr ng-repeat="learner in roster | filter:filterExpression | orderBy : 'person.name_family'" class="od-background-color-white">
-            <td><h5>{{learner.person.name_full}}</h5></td>
+            <td>{{learner.person.name_full}}</td>
             <td ng-class="{'od-info-color':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
             'od-danger-color':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
             <td class="center-block">

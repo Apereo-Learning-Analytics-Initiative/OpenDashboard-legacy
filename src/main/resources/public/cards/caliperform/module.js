@@ -21,25 +21,12 @@
 							SessionService, EventService, RosterService,
 							ModelOutputDataService, CourseDataService) {
 
-						$scope.getOptions = function() {
-
-							var options = {};
-							options.contextMappingId = $scope.contextMapping.id;
-							options.dashboardId = $scope.activeDashboard.id;
-							options.cardId = $scope.card.id;
-							options.courseId = $scope.contextMapping.context;
-							options.tenantId = $scope.contextMapping.tenantId;
-							options.isLti = SessionService.isLTISession();
-
-							return options;
-						}
-
 						$scope.go = function() {
 							$scope.postAway();
 						}
 
 						$scope.postAway = function() {
-							EventService.postCaliperEvent($scope.getOptions(),
+							EventService.postCaliperEvent($scope.contextMapping.tenantId,
 									$scope.getCaliperEnvelope()).then(
 									function(data) {
 										if ($scope.caliperId == null) {

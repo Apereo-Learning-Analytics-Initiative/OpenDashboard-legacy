@@ -15,29 +15,20 @@
 package od.providers.events.learninglocker;
 
 import gov.adlnet.xapi.client.StatementClient;
-import gov.adlnet.xapi.model.Account;
 import gov.adlnet.xapi.model.Activity;
-import gov.adlnet.xapi.model.ActivityDefinition;
 import gov.adlnet.xapi.model.Actor;
-import gov.adlnet.xapi.model.Agent;
 import gov.adlnet.xapi.model.Context;
 import gov.adlnet.xapi.model.ContextActivities;
 import gov.adlnet.xapi.model.IStatementObject;
-import gov.adlnet.xapi.model.Result;
 import gov.adlnet.xapi.model.Statement;
 import gov.adlnet.xapi.model.StatementResult;
 import gov.adlnet.xapi.model.Verb;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.PostConstruct;
 
@@ -45,10 +36,8 @@ import od.exception.MethodNotImplementedException;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.ProviderOptions;
 import od.providers.events.EventProvider;
 import od.providers.learninglocker.LearningLockerProvider;
-import od.providers.learninglocker.LearningLockerStudentModuleInstance;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,17 +49,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 /**
  * @author ggilbert
@@ -241,13 +222,13 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   }
 
   @Override
-  public Page<Event> getEventsForUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<Event> getEventsForUser(String tenantId, String userId, Pageable pageable) throws ProviderException {
     Page<Event> events = null;
     
     String more = null;
     
     try {
-      events = fetch(options.getTenantId(), more);
+      events = fetch(tenantId, more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
@@ -256,13 +237,13 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   }
 
   @Override
-  public Page<Event> getEventsForCourse(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<Event> getEventsForCourse(String tenantId, String courseId, Pageable pageable) throws ProviderException {
     Page<Event> events = null;
     
     String more = null;
     
     try {
-      events = fetch(options.getTenantId(), more);
+      events = fetch(tenantId, more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
@@ -271,13 +252,13 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   }
 
   @Override
-  public Page<Event> getEventsForCourseAndUser(ProviderOptions options, Pageable pageable) throws ProviderException {
+  public Page<Event> getEventsForCourseAndUser(String tenantId, String courseId, String userId, Pageable pageable) throws ProviderException {
     Page<Event> events = null;
     
     String more = null;
     
     try {
-      events = fetch(options.getTenantId(), more);
+      events = fetch(tenantId, more);
     } catch (IOException e) {
       log.error(e.getMessage(),e);
     }
@@ -379,7 +360,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   }
 
 	@Override
-	public JsonNode postEvent(JsonNode marshallableObject, ProviderOptions options)
+	public JsonNode postEvent(JsonNode marshallableObject, String tenantId)
 			throws ProviderException, MethodNotImplementedException {
 		
 			throw new MethodNotImplementedException();
