@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -32,7 +33,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component("authenticator_jisc")
+@ConditionalOnProperty(name={"opendashboard.authenticator"}, havingValue="JiscAuthenticator")
+@Component("JiscAuthenticator")
 public class JiscAuthenticator implements Authenticator {
   
   final static Logger log = LoggerFactory.getLogger(JiscAuthenticator.class);
