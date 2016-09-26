@@ -19,15 +19,13 @@ package od.providers.api;
 
 import java.util.Set;
 
-import od.framework.model.ContextMapping;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderService;
-import od.providers.roster.RosterProvider;
+import od.providers.enrollment.EnrollmentProvider;
 import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
-import org.apereo.lai.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,32 +35,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import unicon.oneroster.Enrollment;
+
 /**
  * @author ggilbert
  *
  */
 @RestController
-public class RosterController {
+public class EnrollmentController {
 	
-	private static final Logger log = LoggerFactory.getLogger(RosterController.class);
+	private static final Logger log = LoggerFactory.getLogger(EnrollmentController.class);
 	
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   @Autowired private ContextMappingRepository contextMappingRepository;
   
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
-	@RequestMapping(value = "/api/tenants/{tenantId}/contexts/{contextMappingId}/roster", method = RequestMethod.GET)
-	public Set<Member> roster(@PathVariable("tenantId") final String tenantId,
-      @PathVariable("contextMappingId") final String contextMappingId)
+	@RequestMapping(value = "/api/tenants/{tenantId}/users/{userId}/enrollments", method = RequestMethod.GET)
+	public Set<Enrollment> getEnrollmentsForUser(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("userId") final String userId)
 			throws Exception {
 	  log.debug("tenantId: {}", tenantId);
-	  log.debug("contextMappingId: {}", contextMappingId);
+	  log.debug("userId: {}", userId);
 
 	  Tenant tenant = mongoTenantRepository.findOne(tenantId);
-	  ContextMapping contextMapping = contextMappingRepository.findOne(contextMappingId);
-    RosterProvider rosterProvider = providerService.getRosterProvider(tenant);
+    EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
     ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
-		return rosterProvider.getRoster(providerData,contextMapping.getContext());
+		return enrollmentProvider.getEnrollmentsForUser(providerData, userId, true);
 	}
+  
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/classes/{classId}/enrollments", method = RequestMethod.GET)
+  public Set<Enrollment> getEnrollmentsForClass(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("classId") final String classId)
+      throws Exception {
+    log.debug("tenantId: {}", tenantId);
+    log.debug("classId: {}", classId);
+
+    Tenant tenant = mongoTenantRepository.findOne(tenantId);
+    EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
+    ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
+    
+    return enrollmentProvider.getEnrollmentsForClass(providerData, classId, true);
+  }
+
 }

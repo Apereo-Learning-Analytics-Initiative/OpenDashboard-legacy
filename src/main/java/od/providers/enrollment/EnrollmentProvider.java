@@ -15,20 +15,22 @@
 /**
  * 
  */
-package od.providers.roster;
+package od.providers.enrollment;
 
 import java.util.Set;
 
 import od.providers.Provider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-
-import org.apereo.lai.Member;
+import unicon.oneroster.Enrollment;
 
 /**
  * @author ggilbert
  *
  */
-public interface RosterProvider extends Provider {
-	Set<Member> getRoster(ProviderData providerData, String contextId) throws ProviderException;
+public interface EnrollmentProvider extends Provider {
+	Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String classSourcedId, 
+	    boolean activeOnly) throws ProviderException;
+	Set<Enrollment> getEnrollmentsForUser(ProviderData providerData, String userSourcedId,
+	    boolean activeOnly) throws ProviderException;
 }

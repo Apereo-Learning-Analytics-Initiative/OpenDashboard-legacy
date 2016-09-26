@@ -19,8 +19,8 @@ permissions and limitations under the License.
         <h3 translate="CL_HEADER"></h3>
         <p translate="CL_INSTRUCTIONS"></p>
         <div class="list-group">
-          <a href class="list-group-item" ng-repeat="course in courses" ng-click="goToDashboard(tenant,course)">
-            <h4 class="list-group-item-heading p-t p-b">{{course.title}} <span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
+          <a href class="list-group-item" ng-repeat="enrollment in enrollments" ng-click="goToDashboard(tenant,enrollment.class)">
+            <h4 class="list-group-item-heading p-t p-b">{{enrollment.class.title}} <span class="pull-right glyphicon glyphicon-chevron-right"></span></h4>
           </a>
         </div>
       </div>

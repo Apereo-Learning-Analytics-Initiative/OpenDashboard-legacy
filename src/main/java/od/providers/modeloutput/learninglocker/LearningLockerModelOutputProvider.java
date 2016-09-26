@@ -123,10 +123,10 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
     JsonNode results = node.get("result");
     for (JsonNode result : results) {
       String userId = result.get("_id").textValue();
-      log.debug("Found result for userId {}",userId);
+      //log.debug("Found result for userId {}",userId);
       JsonNode statementJson = result.get("statement");
       try {
-        log.debug(statementJson.toString());
+        //log.debug(statementJson.toString());
         objectMapper.registerSubtypes(Agent.class);
         JsonNode resultNode = statementJson.findValue("result");
         Map<String,Object> resultExtensions = objectMapper.convertValue(resultNode.findValue("extensions"), Map.class);
@@ -168,7 +168,7 @@ public class LearningLockerModelOutputProvider extends LearningLockerProvider im
         
         ModelOutputImpl output = new ModelOutputImpl(outputParams,
             DatatypeConverter.parseDateTime(statementJson.get("timestamp").textValue()).getTime());
-        log.debug("{}",output);
+        //log.debug("{}",output);
         
         modelOutput.add(output);
       } 

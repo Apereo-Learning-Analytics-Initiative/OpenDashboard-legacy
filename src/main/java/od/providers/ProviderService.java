@@ -24,9 +24,9 @@ import java.util.Map;
 import od.framework.model.Tenant;
 import od.providers.config.ProviderDataConfigurationException;
 import od.providers.course.CourseProvider;
+import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
 import od.providers.modeloutput.ModelOutputProvider;
-import od.providers.roster.RosterProvider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class ProviderService {
   @Autowired private Map<String, CourseProvider> courseProviders;
   @Autowired private Map<String, EventProvider> eventProviders;
   @Autowired private Map<String, ModelOutputProvider> modelOutputProviders;
-  @Autowired private Map<String, RosterProvider> rosterProviders;
+  @Autowired private Map<String, EnrollmentProvider> rosterProviders;
     
   public List<Provider> getProvidersByType(final String type) {
     if (StringUtils.isBlank(type)) {
@@ -130,7 +130,7 @@ public class ProviderService {
     return modelOutputProviders.get(pd.getProviderKey());
   }
   
-  public RosterProvider getRosterProvider(Tenant tenant) throws ProviderDataConfigurationException {
+  public EnrollmentProvider getRosterProvider(Tenant tenant) throws ProviderDataConfigurationException {
     ProviderData pd = getConfiguredProviderDataByType(tenant, ROSTER);
     return rosterProviders.get(pd.getProviderKey());
   }
@@ -147,7 +147,7 @@ public class ProviderService {
     return modelOutputProviders;
   }
 
-  public Map<String, RosterProvider> getRosterProviders() {
+  public Map<String, EnrollmentProvider> getRosterProviders() {
     return rosterProviders;
   }
   

@@ -25,19 +25,19 @@ angular
         cardType: 'riskassessment',
         styleClasses: 'od-card col-xs-12',
 	    config: [],
-	    requires: ['ROSTER', 'MODELOUTPUT'],
+	    requires: ['ENROLLMENTS', 'MODELOUTPUT'],
 	    uses: []
     });
  })
  .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
-    OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
+    OpenDashboard_API, ContextMappingService, SessionService, EventService, ModelOutputDataService, EnrollmentDataService) {
    $scope.loaded = false;
    $translatePartialLoader.addPart('risk-assessment');
    $translate
    .refresh()
      .then(function() {
     
-       $scope.courses = null;
+       $scope.enrollments = null;
        $scope.error = null;
        
        if (!$scope.contextMapping) {
@@ -50,10 +50,10 @@ angular
 		
        if (!SessionService.isLTISession().isLti) {
     	 var currentUser = SessionService.getCurrentUser();
-         CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
-         .then(function(courseData){
-             $log.debug(courseData);
-             $scope.courses = courseData;
+    	 EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+         .then(function(enrollments){
+             $log.debug(enrollments);
+             $scope.enrollments = enrollments;
            });
        }
        
@@ -62,13 +62,12 @@ angular
     	[
     	 ModelOutputDataService
          .getModelOutputForCourse($scope.contextMapping.tenantId,$scope.contextMapping.context,0,1000),
-         RosterService
-         .getRoster($scope.contextMapping.tenantId, $scope.contextMapping.id)
+         EnrollmentDataService.getEnrollmentsForClass($scope.contextMapping.tenantId, $scope.contextMapping.context)
     	]   
        )
        .then(function(responses) {
          $scope.model_output = responses[0];
-         $scope.roster = responses[1];
+         $scope.enrollments = responses[1];
          
          $scope.listView = 0;
          $scope.radarView = 1;
@@ -106,18 +105,16 @@ angular
            $scope.compareGroup = ['benchmark'];
          }
          
-    	 if ($scope.roster.isError) {
+    	 if ($scope.enrollments.isError) {
        	  $scope.errorData = {};
-    	  $scope.errorData['errorCode'] = rosterData.errorCode;
-    	  $scope.error = rosterData.errorCode;
+    	  $scope.errorData['errorCode'] = enrollments.errorCode;
+    	  $scope.error = enrollments.errorCode;
     	  return;
     	 }
     	     	 
-    	_.remove($scope.roster,function(member){return member.role == 'Instructor'});
-       
-        _.forEach($scope.roster, function(obj){
+        _.forEach($scope.enrollments, function(obj){
     		var match = _.find($scope.model_output, function(o) {
-    		  return o.output['ALTERNATIVE_ID'].toString() == obj.user_id;
+    		  return o.output['ALTERNATIVE_ID'].toString() == obj.user.userId;
     		});
     		
     		if (match)
@@ -133,8 +130,8 @@ angular
          return Math.floor((count/total)*100);
        }
 
-	   $scope.findInRoster = function(id) {
-	     return _.find($scope.roster,{'user_id':id});
+	   $scope.findInEnrollments = function(userId) {
+	     return _.find($scope.enrollments,function(enrollment){return enrollment.user.userId == userId;});
 	   } 
 
 	   $scope.ALL_STUDENTS = {'id':0, 'label':'ALL STUDENTS', 'translationValue':$translate.instant('RA_LABEL_ALL_STUDENTS')};
@@ -152,7 +149,7 @@ angular
         var noCount = model_output_counts[$scope.NO_RISK.label] ? model_output_counts[$scope.NO_RISK.label] : 0;
         
         $scope.counts = {};
-        $scope.counts[$scope.ALL_STUDENTS.label] = $scope.roster.length;
+        $scope.counts[$scope.ALL_STUDENTS.label] = $scope.enrollments.length;
         $scope.counts[$scope.HIGH_RISK.label] = highCount;
         $scope.counts[$scope.MEDIUM_RISK.label] = mediumCount;
         $scope.counts[$scope.LOW_RISK.label] = lowCount;
@@ -162,19 +159,19 @@ angular
 
        // LEFT NAV
 
-      $scope.switchCourse = function(courseId) {
-         if ($scope.courses) {
-           var course = _.find($scope.courses,{'id':courseId});
-           if (course) {
-           	ContextMappingService.getWithTenantAndCourse($scope.contextMapping.tenantId,course.id)
+      $scope.switchClass = function(classId) {
+         if ($scope.enrollments) {
+           var enrollment = _.find($scope.enrollments,{'class.sourcedId':classId});
+           if (enrollment) {
+           	ContextMappingService.getWithTenantAndCourse($scope.contextMapping.tenantId,enrollment.class.sourcedId)
         	.then(function(data){
         	  $log.log(data);
         	  if (!data) {
-        		ContextMappingService.createWithTenantAndCourse(tenant.id,course.id)
+        		ContextMappingService.createWithTenantAndCourse(tenant.id,enrollment.class.sourcedId)
         		.then(function(data) {
         		  var options = {};
         		  options['id'] = data.context;
-        		  options['title'] = course.title;
+        		  options['title'] = enrollment.class.title;
         		  OpenDashboard_API.setCourse(options);
         		  $scope.contextMapping = data;
         	      $scope.activeDashboard = $scope.contextMapping.dashboards[0];
@@ -185,7 +182,7 @@ angular
         	  else {
         	    var options = {};
         	    options['id'] = data.context;
-        	    options['title'] = course.title;
+        	    options['title'] = enrollment.class.title;
         	    OpenDashboard_API.setCourse(options);
           		$scope.contextMapping = data;
         	    $scope.activeDashboard = $scope.contextMapping.dashboards[0];
@@ -256,17 +253,17 @@ angular
          else {
            $scope.compareGroup.push(userId);
            
-           var learner = $scope.findInRoster(userId);
+           var enrollment = $scope.findInEnrollments(userId);
            var color = randomColorGenerator();
-           learner['color'] = color;
+           enrollment['color'] = color;
            var data = [];
-           data[0] = ((learner.output.R_CONTENT_READ * 100) >= 200) ? 200 : learner.output.R_CONTENT_READ * 100;
-           data[1] = (learner.output.GPA_CUMULATIVE  >= 4) ? 200 : learner.output.GPA_CUMULATIVE * 50;
-           data[2] = (learner.output.RMN_SCORE >= 100) ? 200 : (learner.output.RMN_SCORE * 1) + 100
-           data[3] = ((learner.output.R_FORUM_POST * 100) >= 200) ? 200 : learner.output.R_FORUM_POST * 100;
-           data[4] = ((learner.output.R_ASN_SUB * 100) >= 200) ? 200 : learner.output.R_ASN_SUB * 100;
-           data[5] = ((learner.output.R_SESSIONS * 100) >= 200) ? 200 : learner.output.R_SESSIONS * 100;
-           $scope.radarColors.push(learner.color);
+           data[0] = ((enrollment.output.R_CONTENT_READ * 100) >= 200) ? 200 : enrollment.output.R_CONTENT_READ * 100;
+           data[1] = (enrollment.output.GPA_CUMULATIVE  >= 4) ? 200 : enrollment.output.GPA_CUMULATIVE * 50;
+           data[2] = (enrollment.output.RMN_SCORE >= 100) ? 200 : (enrollment.output.RMN_SCORE * 1) + 100
+           data[3] = ((enrollment.output.R_FORUM_POST * 100) >= 200) ? 200 : enrollment.output.R_FORUM_POST * 100;
+           data[4] = ((enrollment.output.R_ASN_SUB * 100) >= 200) ? 200 : enrollment.output.R_ASN_SUB * 100;
+           data[5] = ((enrollment.output.R_SESSIONS * 100) >= 200) ? 200 : enrollment.output.R_SESSIONS * 100;
+           $scope.radarColors.push(enrollment.color);
 
            $scope.radarData.push(data);
          }
@@ -324,14 +321,14 @@ angular
          return klass;
        }
        
-	   $scope.getIndicators = function(learner) {
-		 if (learner) {
+	   $scope.getIndicators = function(enrollment) {
+		 if (enrollment) {
     	     var indicators = [];
     	     
             var contentRead = {};
             contentRead['translationKey'] = 'RA_LABEL_CONTENT_READ';
             contentRead['name'] = 'CONTENT READ';
-            var contentReadValue = learner.output.R_CONTENT_READ;
+            var contentReadValue = enrollment.output.R_CONTENT_READ;
             if (!contentReadValue) {
             	 contentReadValue = 0;
             }
@@ -343,7 +340,7 @@ angular
             var cumulativeGPA = {};
             cumulativeGPA['translationKey'] = 'RA_LABEL_CUMMULATIVE_GPA';
             cumulativeGPA['name'] = 'CUMMULATIVE GPA';
-            var cumulativeGPAValue = learner.output.GPA_CUMULATIVE;
+            var cumulativeGPAValue = enrollment.output.GPA_CUMULATIVE;
             if (!cumulativeGPAValue) {
             	 cumulativeGPAValue = 0;
             }
@@ -354,7 +351,7 @@ angular
             var score = {};
             score['translationKey'] = 'RA_LABEL_GRADEBOOK_SCORE';
             score['name'] = 'GRADEBOOK SCORE';
-            var scoreValue = learner.output.RMN_SCORE;
+            var scoreValue = enrollment.output.RMN_SCORE;
             if (!scoreValue) {
             	 scoreValue = 0;
             }
@@ -365,7 +362,7 @@ angular
             var forumPost = {};
             forumPost['translationKey'] = 'RA_LABEL_FORUM_ACTIVITY';
             forumPost['name'] = 'FORUM ACTIVITY';
-            var forumPostValue = learner.output.R_FORUM_POST;
+            var forumPostValue = enrollment.output.R_FORUM_POST;
             if (!forumPostValue) {
             	 forumPostValue = 0;
             }
@@ -377,7 +374,7 @@ angular
             var assignments = {};
             assignments['translationKey'] = 'RA_LABEL_ASSIGNMENT_ACTIVITY';
             assignments['name'] = 'ASSIGNMENT ACTIVITY';
-            var assignmentsValue = learner.output.R_ASN_SUB;
+            var assignmentsValue = enrollment.output.R_ASN_SUB;
             if (!assignmentsValue) {
             	 assignmentsValue = 0;
             }
@@ -388,7 +385,7 @@ angular
             var sessions = {};
             sessions['translationKey'] = 'RA_LABEL_SESSION_ACTIVITY';
             sessions['name'] = 'SESSION ACTIVITY';
-            var sessionsValue = learner.output.R_SESSIONS;
+            var sessionsValue = enrollment.output.R_SESSIONS;
             if (!sessionsValue) {
             	 sessionsValue = 0;
             }

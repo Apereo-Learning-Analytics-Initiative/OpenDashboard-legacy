@@ -214,7 +214,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   }
 
   @Override
-  public LearningLockerStaff getStaffWithPid(Tenant tenant, String pid) throws ProviderException {
+  public String getStaffIdWithPid(Tenant tenant, String pid) throws ProviderException {
     
     ProviderData providerData = tenant.findByKey(KEY);
     
@@ -240,7 +240,13 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
       throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
     }
     
-    return responseEntity.getBody()[0];
+    LearningLockerStaff staff = responseEntity.getBody()[0];
+    String staffId = null;
+    if (staff != null) {
+      staffId = staff.getStaffId();
+    }
+    
+    return staffId;
   }
 
 }

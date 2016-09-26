@@ -25,7 +25,7 @@ import com.openpojo.validation.affirm.Affirm;
 
 public class OpenDashModelTests extends ModelTests {
     // Configured for expectation, so we know when a class gets added or removed.
-    private static final int EXPECTED_CLASS_COUNT = 16;
+    private static final int EXPECTED_CLASS_COUNT = 15;
 
     // The package to test
     private static final String MODEL_PACKAGE = "org.apereo.lai";

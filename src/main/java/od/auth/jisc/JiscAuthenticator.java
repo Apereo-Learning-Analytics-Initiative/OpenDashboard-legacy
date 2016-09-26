@@ -116,11 +116,11 @@ public class JiscAuthenticator implements Authenticator {
         }
         
         try {
-          LearningLockerStaff staff = courseProvider.getStaffWithPid(mongoTenantRepository.findOne(odToken.getTenantId()), eppn);
+          String staffId = courseProvider.getStaffIdWithPid(mongoTenantRepository.findOne(odToken.getTenantId()), eppn);
           authToken = new OpenDashboardAuthenticationToken(null, 
               null,
               odToken.getTenantId(), 
-              new OpenDashboardUser(staff.getStaffId(), 
+              new OpenDashboardUser(staffId, 
                   uuid, 
                   AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"), 
                   odToken.getTenantId(), 

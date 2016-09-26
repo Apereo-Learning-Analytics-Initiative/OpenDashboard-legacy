@@ -100,10 +100,10 @@ angular
 // Course Service
 angular
   .module('OpenDashboard')
-    .service('CourseDataService', function($log, $http, OpenDashboard_API) {
+    .service('EnrollmentDataService', function($log, $http, OpenDashboard_API) {
       return {
-    	getMemberships: function(tenantId,userId) {
-		  var url = '/api/tenants/'+tenantId+'/user/'+userId+'/memberships';
+        getEnrollmentsForUser: function(tenantId,userId) {
+		  var url = '/api/tenants/'+tenantId+'/users/'+userId+'/enrollments';
 		  var promise = $http({
 		    method  : 'GET',
 			url		: url,
@@ -119,7 +119,37 @@ angular
 			    			
 		      return contexts;		    			
 			}
-			$log.debug('No contexts found for user');
+			$log.debug('No enrollments found for user');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		},
+        getEnrollmentsForClass: function(tenantId,classId) {
+		  var url = '/api/tenants/'+tenantId+'/classes/'+classId+'/enrollments';
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {
+			  var contexts = [];
+			  angular.forEach(response.data, function(value,key) {
+			    contexts.push(value);
+			  });
+			    			
+		      return contexts;		    			
+			}
+			$log.debug('No enrollments found for class');
 			return null;
 	      }, 
 	      function (error) {

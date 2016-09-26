@@ -17,44 +17,43 @@
     
     angular
     .module('OpenDashboard')
-    .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
+    .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, EnrollmentDataService, ContextMappingService) {
       $log.debug('CourseList Controller');
       $scope.error = null;
-      $scope.courses = null;
+      $scope.enrollments = null;
       var currentUser = SessionService.getCurrentUser();
       $log.debug('current user');
       $log.debug(currentUser);
       if (currentUser) {
-        CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
-          .then(function(courseData){
-        	$log.debug('courseData');
-        	$log.debug(courseData);
-        	if (courseData.isError) {
+        EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+          .then(function(enrollments){
+        	$log.debug('enrollments');
+        	$log.debug(enrollments);
+        	if (enrollments.isError) {
         	  $scope.errorData = {};
         	  $scope.errorData['userId'] = currentUser.user_id;
-        	  $scope.errorData['errorCode'] = courseData.errorCode;
-        	  $scope.error = courseData.errorCode;
+        	  $scope.errorData['errorCode'] = enrollments.errorCode;
+        	  $scope.error = enrollments.errorCode;
         	}
         	else {
-        	  $scope.courses = courseData;
+        	  $scope.enrollments = enrollments;
         	}
         });
       }
       
-      $scope.goToDashboard = function(tenant,course) {
+      $scope.goToDashboard = function(tenant,klass) {
     	var currentUser = SessionService.getCurrentUser();
     	
-    	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,course.id)
+    	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
     	.then(function(data){
     	  $log.log(data);
     	  if (!data) {
-    		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,course.id)
+    		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
     		.then(function(data) {
     		  var options = {};
     		  options['id'] = data.context;
-    		  options['title'] = course.title;
+    		  options['title'] = klass.title;
     		  OpenDashboard_API.setCourse(options);
-    		  //$state.go('index',{"tenantId":tenant.id,"courseId":course.id});
     		  $scope.contextMapping = data;
     	      $scope.activeDashboard = $scope.contextMapping.dashboards[0];
     	      $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
@@ -64,10 +63,9 @@
     	  else {
     	    var options = {};
     	    options['id'] = data.context;
-    	    options['title'] = course.title;
+    	    options['title'] = klass.title;
     	    OpenDashboard_API.setCourse(options);
-    		//$state.go('index',{"tenantId":tenant.id,"courseId":course.id});
-      		$scope.contextMapping = data;
+       		$scope.contextMapping = data;
     	    $scope.activeDashboard = $scope.contextMapping.dashboards[0];
     	    $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
     	  }

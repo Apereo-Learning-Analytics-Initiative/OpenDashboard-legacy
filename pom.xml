@@ -173,21 +173,21 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.15</version><!--$NO-MVN-MAN-VER$ -->
-				<configuration>
-					<!-- Toggle to Run Tests -->
-					<groups>od.test.groups.ControllerUnitTests,
-						od.test.groups.ModelUnitTests,
-						od.test.groups.MongoUnitTests
-					</groups>
-					<excludedGroups></excludedGroups>
-					<includes>
-						<include>**/*Tests.java</include>
-						<include>**/*Test.java</include>
-					</includes>
-					<excludes>
-						<exclude>**/Abstract*.java</exclude>
-					</excludes>
-				</configuration>
+<!-- 				<configuration> -->
+<!-- 					Toggle to Run Tests -->
+<!-- 					<groups>od.test.groups.ControllerUnitTests, -->
+<!-- 						od.test.groups.ModelUnitTests, -->
+<!-- 						od.test.groups.MongoUnitTests -->
+<!-- 					</groups> -->
+<!-- 					<excludedGroups></excludedGroups> -->
+<!-- 					<includes> -->
+<!-- 						<include>**/*Tests.java</include> -->
+<!-- 						<include>**/*Test.java</include> -->
+<!-- 					</includes> -->
+<!-- 					<excludes> -->
+<!-- 						<exclude>**/Abstract*.java</exclude> -->
+<!-- 					</excludes> -->
+<!-- 				</configuration> -->
 			</plugin>
 
 			<!-- Requires Maven 3.1 -->

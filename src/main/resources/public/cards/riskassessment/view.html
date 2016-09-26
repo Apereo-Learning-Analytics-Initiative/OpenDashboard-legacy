@@ -17,7 +17,7 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_ACTIVITY_COURSE_LIST"><strong class="od-text-black">{{activeCourse.title}}</strong> <span class="od-text-black" class="caret" ng-show="courses"></span></a>
             <ul class="dropdown-menu" ng-show="courses">
-              <li ng-repeat="course in courses"><a href ng-click="switchCourse(course.id)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{course.title}}</a></li>
+              <li ng-repeat="enrollment in enrollments"><a href ng-click="switchClass(enrollment.class.sourcedId)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{enrollment.class.title}}</a></li>
               <li class="divider"></li>
               <li ><a href ng-click="switchCourse(null)" translate="CL_HEADER">My Courses</a></li>
             </ul>
@@ -82,12 +82,12 @@
         </thead>
         <tbody>
         
-          <tr ng-repeat="learner in roster | filter:filterExpression | orderBy : 'person.name_family'" class="od-background-color-white">
-            <td>{{learner.person.name_full}}</td>
-            <td ng-class="{'od-info-color':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'od-danger-color':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
+          <tr ng-repeat="enrollment in enrollments | filter:filterExpression | orderBy : 'user.familyName'" class="od-background-color-white">
+            <td>{{enrollment.user.givenName}}&nbsp;{{enrollment.user.familyName}}</td>
+            <td ng-class="{'od-info-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
+            'od-danger-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
             <td class="center-block">
-              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(learner.user_id) > -1" ng-click="toggleCompare(learner.user_id)">
+              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(enrollment.user.userId) > -1" ng-click="toggleCompare(enrollment.user.userId)">
             </td>
           </tr>
         
@@ -143,13 +143,13 @@
       <div class="box-shadow--6dp od-background-color-white">
         <div class="list-group" >
         
-          <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="learner = findInRoster(id);expand = false;" ng-click="expand = !expand;" ng-show="learner">
+          <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="enrollment = findInEnrollments(id);expand = false;" ng-click="expand = !expand;" ng-show="enrollment">
             <span class="glyphicon-transparent" style="background-color: {{radarColors[$index]}};"></span>
             &nbsp;
-            <strong>{{learner.person.name_full}}</strong>
-            <span class="od-text-black label pull-right" ng-class="{'label-info':learner.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':learner.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'label-danger':learner.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':learner.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{translateRiskLevel(learner.output.MODEL_RISK_CONFIDENCE)}}</span>
-            <div class="row m-t" ng-show="expand" ng-init="indicators = getIndicators(learner)">
+            <strong>{{enrollment.user.givenName}}&nbsp;{{enrollment.user.familyName}}</strong>
+            <span class="od-text-black label pull-right" ng-class="{'label-info':enrollment.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':enrollment.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
+            'label-danger':enrollment.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'label-warning':enrollment.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}">{{translateRiskLevel(enrollment.output.MODEL_RISK_CONFIDENCE)}}</span>
+            <div class="row m-t" ng-show="expand" ng-init="indicators = getIndicators(enrollment)">
               <div class="col-xs-12">
                 <div class="list-group">
                   <div class="list-group-item" ng-repeat="indicator in indicators">

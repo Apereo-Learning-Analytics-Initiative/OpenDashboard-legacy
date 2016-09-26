@@ -9,6 +9,6 @@ spring:
   # Mongo settings
   data:
     mongodb:
-      uri: mongodb://localhost/od
+      uri: mongodb://localhost/demo_od
 
   
