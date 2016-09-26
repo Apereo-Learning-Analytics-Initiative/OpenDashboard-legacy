@@ -19,7 +19,6 @@ angular
 .controller('IndexCtrl',
 
 function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
-  $log.debug('IndexCtrl');
   $scope.contextMapping = null;
   $scope.activeDashboard = null;  
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
@@ -29,14 +28,12 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
   function doRouting() {
 	if ($scope.contextMapping) {
 	  if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
-  	    $log.debug('Context Mapping exists with dashboards configured');
   			
       	// TODO - check for current dashboard
       	$scope.activeDashboard = $scope.contextMapping.dashboards[0];
       	$state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
       }
       else {
-        $log.debug('Context Mapping exists but no dashboards');
         $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
       }
 	}	
@@ -46,13 +43,10 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
       if (isLti) {
         $log.debug('IndexCtrl - lti session');
         var ltiLaunch = SessionService.getInbound_LTI_Launch();
-        $log.debug(ltiLaunch);
         ContextMappingService
         .getWithKeyAndContext(ltiLaunch.oauth_consumer_key, ltiLaunch.context_id)
         .then(
           function(contextMapping) {
-        	$log.debug('IndexCtrl - contextMapping (lti): ');
-        	$log.debug(contextMapping);
         	if (!$scope.contextMapping && contextMapping) {
         	  $scope.contextMapping = contextMapping;
         	}
@@ -66,19 +60,13 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
         );
       }
       else {
-    	$log.debug('IndexCtrl - non lti session');
     	var tenantId = $stateParams.tenantId;
     	var courseId = $stateParams.courseId;
-    	$log.debug($stateParams);
-    	$log.debug('IndexCtrl - tenantId: '+tenantId);
-    	$log.debug('IndexCtrl - courseId: '+courseId);
     	if (tenantId && courseId) {
         	ContextMappingService
         	.getWithTenantAndCourse(tenantId, courseId)
             .then(
               function(contextMapping) {
-            	$log.debug('IndexCtrl - contextMapping (non-lti): ');
-            	$log.debug(contextMapping);
             	if (!$scope.contextMapping && contextMapping) {
               	  $scope.contextMapping = contextMapping;
               	}
@@ -95,32 +83,24 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
   };
 
   if (SessionService.isAuthenticated()) {
-	$log.debug('IndexCtrl - user is authenticated'); 
     $scope.isAuthenticated = SessionService.isAuthenticated();
     $scope.isStudent = SessionService.hasStudentRole();
     $scope.isLtiSession = SessionService.isLTISession();
     $scope.isAdmin = SessionService.hasAdminRole();
-	if (!$scope.contextMapping) {
-	  getContextMapping(SessionService.isLTISession());
-	}
-	else {
-	  doRouting();
-	}
-  }
-  else {
-	$log.debug('IndexCtrl - user is not authenticated');
+    if (!$scope.contextMapping) {
+      getContextMapping(SessionService.isLTISession());
+    } else {
+      doRouting();
+    }  
+  } else {
 	SessionService
 	.authenticate()
 	.then(
 		function (data) {
-    	  $log.debug('IndexCtrl - authenticate success:');
-    	  $log.debug(data);
     	  if (!data) {
-    		$log.debug('IndexCtrl - authenticate false, redirecting to login');
     	    $state.go('login');
     	  }
     	  else {
-    		$log.debug('IndexCtrl - authenticate true, redirecting to dashboard');
     		// TODO - not sure why we're doing this here instead of SessionService'
     		$scope.isAuthenticated = SessionService.isAuthenticated();
     		$scope.isStudent = SessionService.hasStudentRole();
@@ -144,8 +124,6 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
   
 // App-wide functions
   $scope.changeLanguage = function (locale) {
-    $log.debug('change to ');
-    $log.debug(locale);
     LocaleService.setLocaleByDisplayName(locale);
     $state.reload();
   };

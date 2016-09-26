@@ -22,7 +22,6 @@
         $scope.dashboard = {};
         
         $scope.save = function () {
-            $log.log($scope.contextMapping);
             ContextMappingService
             .addDashboard($scope.$parent.contextMapping, $scope.dashboard)
             .then(
@@ -50,7 +49,6 @@
         $scope.dashboardId = dashboardId;
         
         $scope.save = function () {
-            $log.log($scope.contextMapping);
             ContextMappingService
             .removeDashboard($scope.$parent.contextMapping, $scope.dashboardId)
             .then(
@@ -73,7 +71,6 @@
     angular
     .module('OpenDashboard')
     .controller('DashboardController', function($log, $scope, $state, _, registry, contextMapping, dashboardId) {
-    	$log.debug('DashboardController');
     	$scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;

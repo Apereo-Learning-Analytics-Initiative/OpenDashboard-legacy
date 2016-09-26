@@ -79,7 +79,6 @@ function SelectTenantCtrl($log, $scope, $state, Notification, TenantService, ten
 
   $scope.addConsumer = function () {
 	
-	$log.debug($scope.consumer.name);	  
     if ($scope.consumer.name) {
         
       var consumer = {};
@@ -88,13 +87,11 @@ function SelectTenantCtrl($log, $scope, $state, Notification, TenantService, ten
       consumer['oauthConsumerKey'] = createGuid();
       consumer['oauthConsumerSecret'] = createGuid();
       
-      $log.debug(consumer);
       
       if (!$scope.tenant.consumers) {
     	 $scope.tenant.consumers = [];
       }
       $scope.tenant.consumers.push(consumer);
-      $log.debug($scope.tenant);
       
       TenantService.updateTenant($scope.tenant)
         .then(

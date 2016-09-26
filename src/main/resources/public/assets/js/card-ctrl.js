@@ -25,10 +25,8 @@
         var activeDashboard = $scope.$parent.activeDashboard;
         
         $scope.addCard = function(cardType) {
-          $log.log('add card type: '+cardType);
           
           var card = angular.copy($scope.cards[cardType]);
-          $log.debug(card);
           
           var cardConfig = card.config;
           if (cardConfig && cardConfig.length > 0) {

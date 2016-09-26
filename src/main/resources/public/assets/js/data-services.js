@@ -153,10 +153,6 @@ angular
 		              }),
         	headers : { 'Content-Type': 'application/json'}
           }).then(function (response) {
-              $log.debug(response);
-              $log.debug(response.data[0]);
-              
-              
               if (response && response.data) {
                 return response.data[0];	    	
               }
@@ -184,7 +180,6 @@ angular
         	headers : { 'Content-Type': 'application/json'}
           })
           .then(function (response) {
-              $log.debug(response);
               if (response && response.data) {
                 return response.data.content;	    	
               }

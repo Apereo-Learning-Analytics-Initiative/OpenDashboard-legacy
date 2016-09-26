@@ -34,11 +34,7 @@ function AddPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, U
 	  }
 	
 	$scope.addCard = function(card) {
-		$log.debug($scope.cards);
-	    $log.debug(card);
-	    $log.debug(card.cardType);
         var newCard = angular.copy($scope.cards[card.cardType]);
-        $log.debug(newCard);
         
         var cardConfig = newCard.config;
         if (cardConfig && cardConfig.length > 0) {
@@ -106,11 +102,7 @@ function EditPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, 
 	  }
 	
 	$scope.addCard = function(card) {
-		$log.debug($scope.cards);
-	    $log.debug(card);
-	    $log.debug(card.cardType);
         var newCard = angular.copy($scope.cards[card.cardType]);
-        $log.debug(newCard);
         
         var cardConfig = newCard.config;
         if (cardConfig && cardConfig.length > 0) {

@@ -134,14 +134,11 @@
 						var checkRole = function(role) {
 							var hasRole = false;
 							if (authorities) {
-								$log.debug(authorities);
 								var values = _.map(authorities, function(
 										authority) {
 									return authority['authority'];
 								});
-								$log.debug(values);
 								var indexOf = _.indexOf(values, role);
-								$log.debug(indexOf);
 								if (indexOf >= 0) {
 									hasRole = true;
 								}
@@ -194,7 +191,6 @@
 															&& response.data
 															&& response.data.authenticated
 															&& response.data.name) {
-														$log.debug(response);
 														loggedOut = false;
 														authenticated = response.data.authenticated;
 														authorities = response.data.authorities;
@@ -273,11 +269,9 @@
 								})
 										.then(
 												function(response) {
-													$log.debug(response);
 													if (response
 															&& response.data) {
 														var val = response.data[featureKey];
-														$log.log(val)
 														// some weird handling
 														// of booleans vs
 														// strings
