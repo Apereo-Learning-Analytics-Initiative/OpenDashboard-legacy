@@ -17,36 +17,35 @@
     
     angular
     .module('OpenDashboard')
-    .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
-      $log.debug('CourseList Controller');
+    .controller('CourseListController', function($scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
       $scope.error = null;
       $scope.courses = null;
       var currentUser = SessionService.getCurrentUser();
-      $log.debug('current user');
-      $log.debug(currentUser);
       if (currentUser) {
         CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
           .then(function(courseData){
-        	$log.debug('courseData');
-        	$log.debug(courseData);
         	if (courseData.isError) {
         	  $scope.errorData = {};
         	  $scope.errorData['userId'] = currentUser.user_id;
         	  $scope.errorData['errorCode'] = courseData.errorCode;
         	  $scope.error = courseData.errorCode;
-        	}
-        	else {
+        	} else {
         	  $scope.courses = courseData;
+            TenantService.getTenant(currentUser.tenant_id)
+              .then(function (tenant) {
+                $scope.tenant = tenant;
+              });
         	}
         });
       }
       
       $scope.goToDashboard = function(tenant,course) {
     	var currentUser = SessionService.getCurrentUser();
+
+      console.log('tenant', tenant);
     	
     	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,course.id)
     	.then(function(data){
-    	  $log.log(data);
     	  if (!data) {
     		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,course.id)
     		.then(function(data) {

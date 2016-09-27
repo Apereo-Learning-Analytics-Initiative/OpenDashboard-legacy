@@ -18,7 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('AddPreconfiguredDashboardCtrl',
 
-function AddPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, UUIDService, Notification, registry) {
+function AddPreconfiguredDashboardCtrl($scope, $state, _, TenantService, UUIDService, Notification, registry) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = {};
 	
@@ -34,11 +34,7 @@ function AddPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, U
 	  }
 	
 	$scope.addCard = function(card) {
-		$log.debug($scope.cards);
-	    $log.debug(card);
-	    $log.debug(card.cardType);
         var newCard = angular.copy($scope.cards[card.cardType]);
-        $log.debug(newCard);
         
         var cardConfig = newCard.config;
         if (cardConfig && cardConfig.length > 0) {
@@ -90,7 +86,7 @@ angular
 .module('OpenDashboard')
 .controller('EditPreconfiguredDashboardCtrl',
 
-function EditPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, Notification, registry, preconfiguredDashboard) {
+function EditPreconfiguredDashboardCtrl($scope, $state, _, TenantService, Notification, registry, preconfiguredDashboard) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = preconfiguredDashboard;
 	
@@ -106,11 +102,7 @@ function EditPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, 
 	  }
 	
 	$scope.addCard = function(card) {
-		$log.debug($scope.cards);
-	    $log.debug(card);
-	    $log.debug(card.cardType);
         var newCard = angular.copy($scope.cards[card.cardType]);
-        $log.debug(newCard);
         
         var cardConfig = newCard.config;
         if (cardConfig && cardConfig.length > 0) {

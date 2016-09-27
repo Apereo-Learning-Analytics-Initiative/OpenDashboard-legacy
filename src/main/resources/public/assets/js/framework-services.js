@@ -120,7 +120,7 @@
 
 			.service(
 					'SessionService',
-					function($log, $http, $window, OpenDashboard_API, _) {
+					function($http, $window, OpenDashboard_API, _) {
 
 						var ROLE_ADMIN = 'ROLE_ADMIN';
 						var ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR';
@@ -134,14 +134,11 @@
 						var checkRole = function(role) {
 							var hasRole = false;
 							if (authorities) {
-								$log.debug(authorities);
 								var values = _.map(authorities, function(
 										authority) {
 									return authority['authority'];
 								});
-								$log.debug(values);
 								var indexOf = _.indexOf(values, role);
-								$log.debug(indexOf);
 								if (indexOf >= 0) {
 									hasRole = true;
 								}
@@ -194,7 +191,6 @@
 															&& response.data
 															&& response.data.authenticated
 															&& response.data.name) {
-														$log.debug(response);
 														loggedOut = false;
 														authenticated = response.data.authenticated;
 														authorities = response.data.authorities;
@@ -217,7 +213,6 @@
 													}
 													return false;
 												}, function(error) {
-													$log.error(error);
 													return false;
 												});
 								return promise;
@@ -259,7 +254,7 @@
 					})
 			.service(
 					'FeatureFlagService',
-					function($log, $http) {
+					function($http) {
 						return {
 							isFeatureActive : function(featureKey) {
 								var headers = {
@@ -273,11 +268,9 @@
 								})
 										.then(
 												function(response) {
-													$log.debug(response);
 													if (response
 															&& response.data) {
 														var val = response.data[featureKey];
-														$log.log(val)
 														// some weird handling
 														// of booleans vs
 														// strings
@@ -295,7 +288,6 @@
 
 													return false;
 												}, function(error) {
-													$log.error(error);
 													return false;
 												});
 								return promise;

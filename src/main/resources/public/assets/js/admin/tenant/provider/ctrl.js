@@ -71,7 +71,7 @@ function ConfigureProviderCtrl($scope, $state, _, TenantService, Notification, p
 	  var configOptions = $scope.provider.providerConfiguration.options;
 	  
 	  providerData.options = _.map($scope.config,function(value,key){
-			var configOption = _.find(configOptions, function (obj) {
+		  var configOption = _.find(configOptions, function (obj) {
 		  	return obj.key === 'key';
 		  });
 		  var option = {};
