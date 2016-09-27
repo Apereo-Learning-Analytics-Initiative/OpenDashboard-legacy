@@ -25,7 +25,7 @@
 // Provider Service  
 angular
   .module('OpenDashboard')
-  .service('ProviderService', function($log, $http, OpenDashboard_API) {
+  .service('ProviderService', function($http, OpenDashboard_API) {
 
     return {
       getProviderTypes : function() {
@@ -71,7 +71,6 @@ angular
 		  if (response && response.data) {
 		    return response.data;		    			
 		  }
-		  $log.debug('No providers found for '+type);
 		  return null;
 		}, genericHandleError);
 		return promise;
@@ -88,7 +87,6 @@ angular
           if (response && response.data) {
             return response.data;		    			
           }
-          $log.debug('No provider found for '+type+' '+key);
           return null;
 		}, genericHandleError);
 		return promise;
@@ -100,7 +98,7 @@ angular
 // Course Service
 angular
   .module('OpenDashboard')
-    .service('CourseDataService', function($log, $http, OpenDashboard_API) {
+    .service('CourseDataService', function($http, OpenDashboard_API) {
       return {
     	getMemberships: function(tenantId,userId) {
 		  var url = '/api/tenants/'+tenantId+'/user/'+userId+'/memberships';
@@ -119,11 +117,9 @@ angular
 			    			
 		      return contexts;		    			
 			}
-			$log.debug('No contexts found for user');
 			return null;
 	      }, 
 	      function (error) {
-	    	$log.debug(error);
 	    	var errorObj = {};
 	    	errorObj['isError'] = true;
 	    	errorObj['errorCode'] = error.data.errors[0];
@@ -139,7 +135,7 @@ angular
 // Event Service
 angular
   .module('OpenDashboard')
-    .service('EventService',function($log, $http, _) {
+    .service('EventService',function($http, _) {
       return {
     	
         postCaliperEvent : function (tenantId, caliperEvent) {
@@ -158,7 +154,6 @@ angular
               }
         	  return null;
         	}, function (error) {
-    	    	$log.debug(error);
     	    	var errorObj = {};
     	    	errorObj['isError'] = true;
     	    	errorObj['errorCode'] = error.data.errors[0];
@@ -185,7 +180,6 @@ angular
               }
         	  return null;
         	}, function (error) {
-    	    	$log.debug(error);
     	    	var errorObj = {};
     	    	errorObj['isError'] = true;
     	    	errorObj['errorCode'] = error.data.errors[0];
@@ -199,7 +193,6 @@ angular
 		
 			if (!groupByFunction) {
 				groupByFunction = function (event) {
-					$log.debug(event);
 					//by default groupBy stored date
 					var timestamp = event.timestamp;
 		    		return timestamp.slice(0, timestamp.indexOf("T"));
@@ -230,15 +223,11 @@ angular
 });
 angular
 .module('OpenDashboard')
-.service('ModelOutputDataService', function($log, $http, OpenDashboard_API) {
+.service('ModelOutputDataService', function($http, OpenDashboard_API) {
 
 	return {
 		getModelOutputForCourse: function(tenantId,courseId,page,size) {
 			
-			$log.debug(tenantId);
-			$log.debug(courseId);
-			$log.debug(page);
-			$log.debug(size);
 			var p = page || 0;
             var s = size || 10;
 
@@ -253,7 +242,6 @@ angular
 	    		if (response && response.data) {
 	    			return response.data.content;		    	
 	    		}
-	    		$log.debug('No model output');
 	    		return null;
 	    	}, genericHandleError);
 			return promise;
@@ -262,7 +250,7 @@ angular
 });
 angular
 .module('OpenDashboard')
-.service('RosterService', function($log, $http, OpenDashboard_API) {
+.service('RosterService', function($http, OpenDashboard_API) {
   return {
     getRoster: function(tenantId,contextMappingId) {
     		
@@ -284,7 +272,6 @@ angular
         			
         	return members;		    			
           }
-          $log.debug('No members found for getRoster');
           return null;
         },
         function (error) {
@@ -301,7 +288,7 @@ angular
 });
 angular.
 module('OpenDashboard')
-.service('dataService', function ($log) {
+.service('dataService', function () {
     return {
         checkUniqueValue: function (dashboards, field, value) {
             if(value == undefined)

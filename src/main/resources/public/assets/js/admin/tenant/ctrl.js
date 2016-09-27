@@ -17,7 +17,7 @@ angular
 .module('OpenDashboard')
 .controller('TenantCtrl',
 
-function TenantCtrl($log, $scope, $state, Notification, TenantService, tenants) {
+function TenantCtrl($scope, $state, Notification, TenantService, tenants) {
   $scope.tenants = tenants;
   $scope.tenant = {};
   
@@ -30,7 +30,6 @@ function TenantCtrl($log, $scope, $state, Notification, TenantService, tenants) 
         $state.go('index.admin.tenants',{}, {reload: true});                    
       },
       function (error) {
-        $log.error(error);
         Notification.error('Unable to add tenant.');
       });
     };
@@ -39,7 +38,7 @@ function TenantCtrl($log, $scope, $state, Notification, TenantService, tenants) 
 })
 .controller('EditTenantCtrl',
 
-function EditTenantCtrl($log, $scope, $state, Notification, TenantService, tenant) {
+function EditTenantCtrl($scope, $state, Notification, TenantService, tenant) {
   $scope.tenant = tenant;
   
   $scope.save = function () {
@@ -51,7 +50,6 @@ function EditTenantCtrl($log, $scope, $state, Notification, TenantService, tenan
         $state.go('index.admin.tenants.tenant',{id:tenant.id}, {reload: true});                    
       },
       function (error) {
-        $log.error(error);
         Notification.error('Unable to update tenant.');
       });
     };
@@ -60,7 +58,7 @@ function EditTenantCtrl($log, $scope, $state, Notification, TenantService, tenan
 })
 .controller('SelectTenantCtrl',
 
-function SelectTenantCtrl($log, $scope, $state, Notification, TenantService, tenant, providerTypes) {
+function SelectTenantCtrl($scope, $state, Notification, TenantService, tenant, providerTypes) {
   $scope.tenant = tenant;
   $scope.providerTypes = providerTypes;
   $scope.preconfiguredDashboards = $scope.tenant.dashboards;
@@ -101,7 +99,6 @@ function SelectTenantCtrl($log, $scope, $state, Notification, TenantService, ten
             $state.go('index.admin.tenants.tenant',{id:tenant.id}, {reload: true});                    
           },
           function (error) {
-            $log.error(error);
             Notification.error('Unable to add consumer.');
           });
      }

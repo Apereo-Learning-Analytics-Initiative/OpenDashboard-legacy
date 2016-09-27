@@ -17,7 +17,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
+    .controller('CourseListController', function($scope, $state, OpenDashboard_API, SessionService, TenantService, CourseDataService, ContextMappingService) {
       $scope.error = null;
       $scope.courses = null;
       var currentUser = SessionService.getCurrentUser();

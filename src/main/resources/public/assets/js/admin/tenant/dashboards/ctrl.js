@@ -18,7 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('AddPreconfiguredDashboardCtrl',
 
-function AddPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, UUIDService, Notification, registry) {
+function AddPreconfiguredDashboardCtrl($scope, $state, _, TenantService, UUIDService, Notification, registry) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = {};
 	
@@ -86,7 +86,7 @@ angular
 .module('OpenDashboard')
 .controller('EditPreconfiguredDashboardCtrl',
 
-function EditPreconfiguredDashboardCtrl($log, $scope, $state, _, TenantService, Notification, registry, preconfiguredDashboard) {
+function EditPreconfiguredDashboardCtrl($scope, $state, _, TenantService, Notification, registry, preconfiguredDashboard) {
 	$scope.cards = registry.registry;
 	$scope.dashboard = preconfiguredDashboard;
 	

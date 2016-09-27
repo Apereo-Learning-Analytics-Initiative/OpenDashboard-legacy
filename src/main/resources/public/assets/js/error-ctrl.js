@@ -18,7 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('ErrorCtrl',
 
-function ErrorCtrl($log, $scope, $state, $stateParams, $translate, Notification, LocaleService) {
+function ErrorCtrl($scope, $state, $stateParams, $translate, Notification, LocaleService) {
   var errorObj = {};
   errorObj['errorCode'] = $stateParams.errorCode;
   $scope.errorData = errorObj;

@@ -120,7 +120,7 @@
 
 			.service(
 					'SessionService',
-					function($log, $http, $window, OpenDashboard_API, _) {
+					function($http, $window, OpenDashboard_API, _) {
 
 						var ROLE_ADMIN = 'ROLE_ADMIN';
 						var ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR';
@@ -213,7 +213,6 @@
 													}
 													return false;
 												}, function(error) {
-													$log.error(error);
 													return false;
 												});
 								return promise;
@@ -255,7 +254,7 @@
 					})
 			.service(
 					'FeatureFlagService',
-					function($log, $http) {
+					function($http) {
 						return {
 							isFeatureActive : function(featureKey) {
 								var headers = {
@@ -289,7 +288,6 @@
 
 													return false;
 												}, function(error) {
-													$log.error(error);
 													return false;
 												});
 								return promise;

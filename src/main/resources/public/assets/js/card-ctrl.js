@@ -17,7 +17,7 @@
         
     angular
     .module('OpenDashboard')
-    .controller('SelectCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId) {
+    .controller('SelectCardController', function($scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;
@@ -41,7 +41,6 @@
                       $state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
                   },
                   function (error) {
-                      $log.error(error);
                       Notification.error('Unable to add card.');
                   });
           }
@@ -70,7 +69,7 @@
 
     angular
     .module('OpenDashboard')
-    .controller('AddCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, card) {
+    .controller('AddCardController', function($scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, card) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.newConfig = {};
@@ -89,7 +88,6 @@
                     $state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
                 },
                 function (error) {
-                    $log.error(error);
                     Notification.error('Unable to add card.');
                 });
         };
@@ -98,7 +96,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('EditCardController', function($log, $scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, cardId) {
+    .controller('EditCardController', function($scope, $state, Notification, _, registry, ContextMappingService, contextMapping, dashboardId, cardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.card = _.find($scope.$parent.activeDashboard.cards,{'id':cardId});
@@ -117,7 +115,6 @@
                 	$state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
                 },
                 function (error) {
-                    $log.error(error);
                     Notification.error('Unable to configure card.');
                 });
         };
@@ -127,7 +124,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('RemoveCardController', function($log, $scope, $state, Notification, _, ContextMappingService, contextMapping, dashboardId, cardId) {
+    .controller('RemoveCardController', function($scope, $state, Notification, _, ContextMappingService, contextMapping, dashboardId, cardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.card = _.find($scope.$parent.activeDashboard.cards,{'id':cardId});
@@ -143,7 +140,6 @@
                 	$state.go('index.dashboard',{cmid:$scope.$parent.contextMapping.id,dbid:$scope.$parent.activeDashboard.id});
                 },
                 function (error) {
-                    $log.error(error);
                     Notification.error('Unable to remove card.');
                 }
             );

@@ -17,7 +17,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('AddDashboardController', function($log, $scope, $state, Notification, ContextMappingService, contextMapping, dataService) {
+    .controller('AddDashboardController', function($scope, $state, Notification, ContextMappingService, contextMapping, dataService) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.dashboard = {};
         
@@ -29,7 +29,6 @@
                     $state.go('index.dashboard', {cmid:$scope.$parent.contextMapping.id, dbid:$scope.dashboard.id});                    
                 },
                 function (error) {
-                    $log.error(error);
                     Notification.error('Unable to add dashboard.');
                 });
         };
@@ -44,7 +43,7 @@
         	
         };
     })
-    .controller('RemoveDashboardController', function($log, $scope, $state, Notification, ContextMappingService, contextMapping, dashboardId) {
+    .controller('RemoveDashboardController', function($scope, $state, Notification, ContextMappingService, contextMapping, dashboardId) {
         $scope.$parent.contextMapping = contextMapping;
         $scope.dashboardId = dashboardId;
         
@@ -62,7 +61,6 @@
                 	}
                 },
                 function (error) {
-                    $log.error(error);
                     Notification.error('Unable to remove dashboard.');
                 });
         };
@@ -70,7 +68,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('DashboardController', function($log, $scope, $state, _, registry, contextMapping, dashboardId) {
+    .controller('DashboardController', function($scope, $state, _, registry, contextMapping, dashboardId) {
     	$scope.$parent.contextMapping = contextMapping;
         $scope.$parent.activeDashboard = _.find($scope.$parent.contextMapping.dashboards,{'id':dashboardId});
         $scope.cards = registry.registry;
@@ -98,7 +96,7 @@
     
     angular
     .module('OpenDashboard')
-    .controller('ErrorController', function($log, $scope, $location, errorCode) {
+    .controller('ErrorController', function($scope, $location, errorCode) {
         $scope.errorCode = errorCode;
     });
 

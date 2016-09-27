@@ -29,7 +29,7 @@ angular
 	    uses: []
     });
  })
- .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
+ .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $q, _, 
     OpenDashboard_API, ContextMappingService, SessionService, EventService, RosterService, ModelOutputDataService, CourseDataService) {
    $scope.loaded = false;
    $translatePartialLoader.addPart('risk-assessment');
@@ -41,7 +41,6 @@ angular
        $scope.error = null;
        
        if (!$scope.contextMapping) {
-         $log.debug($stateParams);
          $state.go('index.courselist');
        }
 
@@ -52,7 +51,6 @@ angular
     	 var currentUser = SessionService.getCurrentUser();
          CourseDataService.getMemberships(currentUser.tenant_id, currentUser.user_id)
          .then(function(courseData){
-             $log.debug(courseData);
              $scope.courses = courseData;
            });
        }
@@ -168,7 +166,6 @@ angular
            if (course) {
            	ContextMappingService.getWithTenantAndCourse($scope.contextMapping.tenantId,course.id)
         	.then(function(data){
-        	  $log.log(data);
         	  if (!data) {
         		ContextMappingService.createWithTenantAndCourse(tenant.id,course.id)
         		.then(function(data) {

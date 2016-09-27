@@ -18,7 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
+function IndexCtrl($scope, $state, $stateParams, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
   $scope.contextMapping = null;
   $scope.activeDashboard = null;  
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
@@ -41,7 +41,6 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
   
   function getContextMapping(isLti) {
       if (isLti) {
-        $log.debug('IndexCtrl - lti session');
         var ltiLaunch = SessionService.getInbound_LTI_Launch();
         ContextMappingService
         .getWithKeyAndContext(ltiLaunch.oauth_consumer_key, ltiLaunch.context_id)
@@ -54,7 +53,6 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
             doRouting();
           },
           function(error) {
-        	$log.error(error);
         	// TODO
           }
         );
@@ -74,7 +72,6 @@ function IndexCtrl($scope, $state, $stateParams, $log, $translate, Notification,
                 doRouting();
               },
               function(error) {
-            	$log.error(error);
             	// TODO
               }
             );

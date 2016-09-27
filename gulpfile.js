@@ -4,7 +4,7 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var pump = require('pump');
 
-gulp.task('default', ['minify-app', 'minify-libraries']);
+gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards']);
 
 gulp.task('minify-libraries', function (callback) {
   pump([
@@ -50,6 +50,26 @@ gulp.task('minify-app', function (callback) {
             'src/main/resources/public/assets/js/*.js',
         ]),
         concat('opendashboard.min.js'),
+        gulp.dest('target/classes/public/assets/js/min'),
+        uglify({
+            preserveComments: false,
+            mangle: false,
+            compress: {
+                drop_console: true
+            }
+        }),
+        gulp.dest('target/classes/public/assets/js/min')
+    ],
+    callback
+  );
+});
+
+gulp.task('minify-cards', function (callback) {
+  pump([
+        gulp.src([
+            'src/main/resources/public/cards/**/*.js',
+        ]),
+        concat('cards.min.js'),
         gulp.dest('target/classes/public/assets/js/min'),
         uglify({
             preserveComments: false,

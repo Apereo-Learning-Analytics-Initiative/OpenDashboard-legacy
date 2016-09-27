@@ -45,7 +45,7 @@ angular
 
 angular
 .module('OpenDashboardAPI', ['underscore'])
-.factory('OpenDashboard_API', function ($log, $window, _) {
+.factory('OpenDashboard_API', function ($window, _) {
     return $window.OpenDashboardApi;
 });
 
