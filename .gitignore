@@ -21,3 +21,4 @@ src/main/java/od/lti/LTIController.java
 LOG_FILE_IS_UNDEFINED
 LOG_FILE_IS_UNDEFINED*
 /node_modules
+/node
