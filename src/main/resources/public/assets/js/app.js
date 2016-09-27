@@ -45,7 +45,7 @@ angular
 
 angular
 .module('OpenDashboardAPI', ['underscore'])
-.factory('OpenDashboard_API', function ($log, $window, _) {
+.factory('OpenDashboard_API', function ($window, _) {
     return $window.OpenDashboardApi;
 });
 
@@ -56,7 +56,7 @@ angular
 
 angular
 .module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification', 'chart.js',
-                              'od.cards.riskassessment', 'od.cards.activity','od.cards.caliperform']);
+                              'od.cards.riskassessment', 'od.cards.activity','od.cards.caliperform', 'od.cards.pulse']);
 
 angular
 .module('OpenDashboard')

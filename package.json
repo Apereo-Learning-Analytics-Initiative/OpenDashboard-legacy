@@ -1,0 +1,63 @@
+{
+  "name": "OpenDashboard",
+  "description": "This is a OpenDashboard application",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+      "build": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/unicon/pearson-newman-dcs-client"
+  },
+  "content": {
+    "type": "git",
+    "url": "git@bitbucket.org:unicon/pearson-newman-dcs-content.git"
+  },
+  "proxy": "http://dev-dcs.pearsoncmg.com/newman/api/",
+  "dependencies": {
+    "angular": "1.5.8",
+    "angular-animate": "^1.5.8",
+    "angular-cache": "^4.6.0",
+    "angular-chart.js": "^1.0.3",
+    "angular-cookies": "^1.5.8",
+    "angular-messages": "^1.5.8",
+    "angular-resource": "^1.5.8",
+    "angular-sanitize": "^1.5.8",
+    "angular-translate": "^2.12.1",
+    "angular-translate-loader-partial": "^2.12.1",
+    "angular-translate-storage-cookie": "^2.12.1",
+    "angular-translate-storage-local": "^2.12.1",
+    "angular-ui-bootstrap": "^1.1.0",
+    "angular-ui-notification": "^0.2.0",
+    "angular-ui-router": "^0.2.15",
+    "angular-ui-sortable": "^0.14.3",
+    "angular-visjs": "^4.16.0",
+    "bootstrap": "^3.3.7",
+    "chart.js": "^2.3.0",
+    "d3": "^4.2.6",
+    "font-awesome": "^4.6.3",
+    "jquery": "^2.2.4",
+    "jquery-ui": "https://github.com/jquery/jquery-ui.git#1-11-stable",
+    "caliper": "https://github.com/IMSGlobal/caliper-js-public#public",
+    "jsonlint": "^1.6.2",
+    "lodash": "^4.16.1",
+    "moment": "^2.15.1",
+    "node-uuid": "^1.4.7",
+    "string": "^3.3.1",
+    "tv4": "^1.2.7",
+    "vis": "^4.16.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-concat-css": "^2.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "pump": "^1.0.1"
+  },
+  "engines": {
+    "node": "^4.2.7",
+    "npm": "^2.15.9"
+  }
+}

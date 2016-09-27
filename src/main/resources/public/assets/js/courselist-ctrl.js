@@ -22,8 +22,6 @@
       $scope.error = null;
       $scope.enrollments = null;
       var currentUser = SessionService.getCurrentUser();
-      $log.debug('current user');
-      $log.debug(currentUser);
       if (currentUser) {
         EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
           .then(function(enrollments){
@@ -43,10 +41,8 @@
       
       $scope.goToDashboard = function(tenant,klass) {
     	var currentUser = SessionService.getCurrentUser();
-    	
     	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
     	.then(function(data){
-    	  $log.log(data);
     	  if (!data) {
     		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
     		.then(function(data) {

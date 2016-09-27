@@ -29,7 +29,7 @@ angular
 	    uses: ['EVENT','MODELOUTPUT']
     });
  })
- .controller('ActivityController', function($scope, $translate, $translatePartialLoader, $log, _, SessionService, EventService, RosterService) {
+ .controller('ActivityController', function($scope, $translate, $translatePartialLoader, _, SessionService, EventService, RosterService) {
 	 
 //	$translatePartialLoader.addPart('roster-card');
 //    $translate.refresh();
@@ -40,7 +40,6 @@ angular
    $scope.events = [];
 
    if (!$scope.contextMapping) {
-     $log.debug($stateParams);
      $state.go('index.courselist');
    }
 

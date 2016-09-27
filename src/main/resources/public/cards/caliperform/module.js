@@ -223,4 +223,4 @@
 							return envelope;							
 						}
 					})
-})(angular)
+})(angular);

@@ -41,7 +41,6 @@ angular
        $scope.error = null;
        
        if (!$scope.contextMapping) {
-         $log.debug($stateParams);
          $state.go('index.courselist');
        }
 
@@ -165,7 +164,6 @@ angular
            if (enrollment) {
            	ContextMappingService.getWithTenantAndCourse($scope.contextMapping.tenantId,enrollment.class.sourcedId)
         	.then(function(data){
-        	  $log.log(data);
         	  if (!data) {
         		ContextMappingService.createWithTenantAndCourse(tenant.id,enrollment.class.sourcedId)
         		.then(function(data) {
