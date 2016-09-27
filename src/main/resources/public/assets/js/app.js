@@ -56,7 +56,7 @@ angular
 
 angular
 .module('OpenDashboard', ['OpenDashboardFramework', 'ui.bootstrap', 'ui.router', 'ngSanitize', 'ngCookies', 'ngVis', 'pascalprecht.translate', 'ui-notification', 'chart.js',
-                              'od.cards.riskassessment', 'od.cards.activity','od.cards.caliperform']);
+                              'od.cards.riskassessment', 'od.cards.activity','od.cards.caliperform', 'od.cards.pulse']);
 
 angular
 .module('OpenDashboard')

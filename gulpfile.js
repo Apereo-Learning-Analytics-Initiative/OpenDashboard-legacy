@@ -47,7 +47,7 @@ gulp.task('minify-libraries', function (callback) {
 gulp.task('minify-app', function (callback) {
   pump([
         gulp.src([
-            'src/main/resources/public/assets/js/*.js',
+            'src/main/resources/public/assets/js/**/*.js',
         ]),
         concat('opendashboard.min.js'),
         gulp.dest('target/classes/public/assets/js/min'),
