@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import lti.LaunchRequest;
-import od.lti.LTIController;
+import od.entrypoints.LTIEntryPointController;
 import od.utils.Response;
 
 import org.junit.Before;
@@ -46,7 +46,7 @@ public class LTIControllerTests extends ControllerTests {
     private AuthenticationManager authenticationManager;
 
     @InjectMocks
-    private LTIController ltiController;
+    private LTIEntryPointController ltiController;
 
     private MockMvc mockMvc;
     private Response serviceFailureExpectedResponse;

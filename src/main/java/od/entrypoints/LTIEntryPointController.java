@@ -15,7 +15,7 @@
 /**
  *
  */
-package od.lti;
+package od.entrypoints;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,8 +60,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Controller
-public class LTIController {
-  private static final Logger logger = LoggerFactory.getLogger(LTIController.class);
+public class LTIEntryPointController {
+  private static final Logger logger = LoggerFactory.getLogger(LTIEntryPointController.class);
   
   @Autowired private MongoTenantRepository mongoTenantRepository;
   @Autowired private ContextMappingRepository contextMappingRepository;
@@ -72,7 +72,7 @@ public class LTIController {
   private AuthenticationManager authenticationManager;
   
   @RequestMapping(value = { "/lti" }, method = RequestMethod.POST)
-  public String lti(HttpServletRequest request, Model model) throws ProviderException, ProviderDataConfigurationException {
+  public String lti(HttpServletRequest request) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
     
     String consumerKey = launchRequest.getOauth_consumer_key();
@@ -125,7 +125,7 @@ public class LTIController {
 
     // Create a token using spring provided class : LTIAuthenticationToken
     String role;
-    if (LTIController.hasInstructorRole(null, launchRequest.getRoles())) {
+    if (LTIEntryPointController.hasInstructorRole(null, launchRequest.getRoles())) {
       role = "ROLE_INSTRUCTOR";
     } else {
       throw new UnauthorizedUserException("Does not have the instructor role");

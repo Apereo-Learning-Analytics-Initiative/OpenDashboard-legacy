@@ -47,7 +47,7 @@
     	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,course.id)
     	.then(function(data){
     	  if (!data) {
-    		ContextMappingService.createWithTenantAndCourse(tenant.id,course.id)
+    		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,course.id)
     		.then(function(data) {
     		  var options = {};
     		  options['id'] = data.context;

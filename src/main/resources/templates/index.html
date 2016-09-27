@@ -19,7 +19,9 @@
 <link rel="stylesheet" th:href="@{/assets/css/lib/keen-dashboards.css}"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.css"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.css"></link>
+<link rel="stylesheet" th:href="@{/assets/css/ux.jisc-1.0.0.style.css}" media="all"></link>
 <link rel="stylesheet" th:href="@{/assets/css/od.css}"></link>
+<link rel="stylesheet" th:href="@{/assets/css/jisc-overrides.css}"></link>
 <!-- END CSS -->
 
 
@@ -28,6 +30,21 @@
 <body id="ng-app" ng-class="{application:!isLogin(), none:isLogin()}">
   <div loading-widget="" class="spinner"></div>
   <div class="ui-view"></div>
+
+  
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.0/uk/">
+          <img src="/assets/img/cc_BY-NC-SA.png" alt="License" width="140" height="49" data-pin-nopin="true" />
+        </a>
+      </div>
+      <div class="footer-copyright">
+        <span class="print-only">&copy;2016 Jisc.</span> This work is licensed under the <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.0/uk/">CC BY-NC-SA 4.0</a>
+      </div>
+    </div>
+  </footer>
 
   <script type="text/javascript" src="/assets/js/min/lib.min.js"></script>
   <script type="text/javascript" src="/assets/js/min/opendashboard.min.js"></script>

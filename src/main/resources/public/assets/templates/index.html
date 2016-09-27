@@ -22,6 +22,7 @@ permissions and limitations under the License.
           <span class="icon-bar"></span> 
           <span class="icon-bar"></span>
         </button>
+        <a class="navbar-brand" href="#"><img class="logo" src="/assets/img/logo.png" alt="Jisc" /></a>
       </div>
       <div class="navbar-collapse collapse">
         <ul ng-show="contextMapping && contextMapping.dashboards" class="nav navbar-nav navbar-left">
@@ -43,11 +44,12 @@ permissions and limitations under the License.
               <li ng-repeat="ldn in localesDisplayNames | orderBy"><a ng-click="changeLanguage(ldn)" id="LINK_INDEX_LANGUAGE_SELECT" class=""><img ng-src="{{getLocaleImgPath(ldn)}}"></img> {{ldn}}</a></li>
             </ul>
           </li>
-          <li class="dropdown" ng-show="!isLtiSession && isAuthenticated">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_INDEX_MENU_DROPDOWN">
-              <i class="glyphicon glyphicon-option-vertical"></i>
-            </a>
-            <ul class="dropdown-menu">
+          <li ng-show="!isLtiSession && isAuthenticated">
+            <a href="" class="btn btn--rounded btn--outline" role="button" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT"></a>
+<!--           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_INDEX_MENU_DROPDOWN"> -->
+<!--              <i class="glyphicon glyphicon-option-vertical"></i> -->
+<!--            </a> -->
+<!--             <ul class="dropdown-menu"> -->
 <!--               <li ng-show="!isStudent && contextMapping"> -->
 <!--                 <a ui-sref="index.addDashboard({ cmid: contextMapping.id })" id="LINK_INDEX_DASHBOARD_ADD" translate="LABEL_ADD_DASHBOARD"> -->
 <!--                 </a> -->
@@ -60,11 +62,11 @@ permissions and limitations under the License.
 <!--                 <a ui-sref="index.selectCard({ cmid: contextMapping.id, dbid: activeDashboard.id })" id="LINK_INDEX_DASHBOARD_SELECTCARD" translate="LABEL_ADD_CARD"> -->
 <!--                 </a> -->
 <!--               </li> -->
-               <li ng-show="!isLtiSession && isAuthenticated">
-                <a href="" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT">
-                </a>
-              </li>
-            </ul>
+<!--               <li ng-show="!isLtiSession && isAuthenticated"> -->
+<!--               <a href="" class="btn btn--rounded btn--outline" role="button" ng-click="logout()" id="LINK_ADMIN_DASHBOARD_LOGOUT" translate="LABEL_LOGOUT"> -->
+<!--                </a> -->
+<!--              </li> -->
+<!--            </ul> -->
           </li>
         </ul>
       </div>

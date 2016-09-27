@@ -31,6 +31,7 @@ logging:
   level:
     od: DEBUG
     org.apache.velocity: OFF
+  file: od.log
 
 # Spring settings
 spring:
@@ -40,4 +41,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost/jisc_od
+      
+# OpenDashboard Configuration
+opendashboard:
+  # possible values - JiscEntryPointProcessor, DemoEntryPointProcessor
+  entrypoint: JiscEntryPointProcessor
+  # posssible values - JiscAuthenticator, DemoAuthenticator
+  authenticator: JiscAuthenticator
   

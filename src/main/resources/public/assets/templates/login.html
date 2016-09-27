@@ -24,7 +24,7 @@ permissions and limitations under the License.
           <span class="icon-bar"></span> 
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#" translate="APP_TITLE">Jisc Staff Dashboard</a>
+        <a class="navbar-brand" href="#"><img class="logo" src="/assets/img/logo.png" alt="Jisc" /><span translate="APP_TITLE">Jisc Staff Dashboard</span></a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -38,7 +38,7 @@ permissions and limitations under the License.
       </div>
     </div>
   </div>
-<div class="container-fluid">
+<div class="container-fluid main-content">
   <div class="row">
     <div class="col-xs-12 col-md-4 col-md-offset-7">
       <div class="panel panel-default login-panel-default login-margins">
@@ -67,7 +67,7 @@ permissions and limitations under the License.
                 class="help-block" translate="ERROR_PASSWORD_REQUIRED"></p>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-lg"
+              <button type="submit" class="btn btn--3d btn--primary"
                 translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN"
                 ng-disabled="loginForm.$invalid"></button>
               <a href class="btn btn-link" translate="BUTTON_CANCEL" ng-click="toggleLoginForm()">Cancel</a>
@@ -91,7 +91,7 @@ permissions and limitations under the License.
                       value="{{tenant.id}}">{{tenant.name}}</option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg"
+                <button type="submit" class="btn btn--3d btn--primary"
                   translate="BUTTON_SIGN_IN" id="BUTTON_LOGIN_SIGN_IN"
                   ng-disabled="!localTenantId"></button>
               </div>
