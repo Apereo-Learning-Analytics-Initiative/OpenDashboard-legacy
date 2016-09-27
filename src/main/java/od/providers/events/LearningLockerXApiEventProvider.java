@@ -12,7 +12,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *******************************************************************************/
-package od.providers.events.learninglocker;
+package od.providers.events;
 
 import gov.adlnet.xapi.client.StatementClient;
 import gov.adlnet.xapi.model.Activity;
@@ -36,13 +36,13 @@ import od.exception.MethodNotImplementedException;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.events.EventProvider;
 import od.providers.learninglocker.LearningLockerProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
+import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,6 +266,12 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
     return events;
   }
   
+  @Override
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
   private Event toEvent(gov.adlnet.xapi.model.Statement statement) {
     EventImpl event = null;
     if (statement != null) {

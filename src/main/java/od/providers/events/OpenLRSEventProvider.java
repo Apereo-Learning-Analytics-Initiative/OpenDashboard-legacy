@@ -1,12 +1,14 @@
 /**
  * 
  */
-package od.providers.events.openlrs;
+package od.providers.events;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+
 
 //import org.imsglobal.caliper.events.Event;
 import javax.annotation.PostConstruct;
@@ -20,12 +22,12 @@ import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
-import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
 import od.utils.LoggingRequestInterceptor;
 
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
+import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -161,6 +163,12 @@ public class OpenLRSEventProvider extends BaseProvider implements EventProvider 
 
 
 	@Override
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
 	public JsonNode postEvent(JsonNode marshallableObject, String tenantId) throws ProviderException {
 		RestTemplate restTemplate = new RestTemplate();
 		

@@ -23,6 +23,7 @@ import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apereo.lai.Event;
+import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,18 @@ public class EventController {
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/classes/{classId}/events/stats", method = RequestMethod.GET)
+  public ClassEventStatistics getEventStatisticsForClass(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("classId") final String classId)
+      throws Exception {
+    log.debug("tenantId: {}", tenantId);
+    log.debug("classId: {}", classId);
+
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
+    return eventProvider.getStatisticsForClass(tenantId, classId);
+  }
+
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
   @RequestMapping(value = "/api/tenants/{tenantId}/event/course/{courseId}", method = RequestMethod.GET)
   public Page<Event> getEventsForCourse(@PathVariable("tenantId") final String tenantId, @PathVariable("courseId") final String courseId, @RequestParam(value="page", required=false) int page,

@@ -21,6 +21,7 @@ import od.exception.MethodNotImplementedException;
 import od.providers.Provider;
 import od.providers.ProviderException;
 
+import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,6 +32,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  */
 public interface EventProvider extends Provider {
+  
+  ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException;
   
   Page<org.apereo.lai.Event> getEventsForUser(String tenantId, String userId, Pageable pageable) throws ProviderException;
   Page<org.apereo.lai.Event> getEventsForCourse(String tenantId, String courseId, Pageable pageable) throws ProviderException;

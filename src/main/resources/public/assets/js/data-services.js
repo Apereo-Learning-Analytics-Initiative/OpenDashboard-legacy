@@ -202,6 +202,27 @@ angular
           );
     		return promise;
         },  
+        
+        getEventStatisticsForClass : function (tenantId, classId) {
+          var url = '/api/tenants/'+tenantId+'/classes/'+classId+'/events/stats';
+          var promise = $http({
+            method  : 'GET',
+            url		: url,
+            headers : { 'Content-Type': 'application/json'}
+          })
+          .then(function (response) {
+            $log.debug(response);
+            return response.data;
+          }, function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+          });
+          return promise;
+        },
     	  
         getEventsForCourse : function (tenantId, courseId, page, size) {
           var p = page || 0;
