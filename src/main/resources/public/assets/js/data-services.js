@@ -203,7 +203,7 @@ angular
             headers : { 'Content-Type': 'application/json'}
           })
           .then(function (response) {
-            $log.debug(response);
+            console.log(response);
             return response.data;
           }, function (error) {
 	    	$log.debug(error);

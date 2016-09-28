@@ -17,56 +17,77 @@
     
     angular
     .module('OpenDashboard')
-    .controller('CourseListController', function($log, $scope, $state, OpenDashboard_API, SessionService, TenantService, EnrollmentDataService, ContextMappingService) {
+    .controller('CourseListController', function(
+        $log,
+        $scope,
+        $state,
+        OpenDashboard_API,
+        SessionService,
+        TenantService,
+        EnrollmentDataService,
+        ContextMappingService,
+        EventService) {
+      var currentUser;
+
       $log.debug('CourseList Controller');
+
       $scope.error = null;
       $scope.enrollments = null;
-      var currentUser = SessionService.getCurrentUser();
+
+      currentUser = SessionService.getCurrentUser();
+
       if (currentUser) {
         EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
           .then(function(enrollments){
-        	$log.debug('enrollments');
-        	$log.debug(enrollments);
-        	if (enrollments.isError) {
-        	  $scope.errorData = {};
-        	  $scope.errorData['userId'] = currentUser.user_id;
-        	  $scope.errorData['errorCode'] = enrollments.errorCode;
-        	  $scope.error = enrollments.errorCode;
-        	}
-        	else {
-        	  $scope.enrollments = enrollments;
-        	}
+            if (enrollments.isError) {
+              $scope.errorData = {};
+              $scope.errorData['userId'] = currentUser.user_id;
+              $scope.errorData['errorCode'] = enrollments.errorCode;
+              $scope.error = enrollments.errorCode;
+            } else {
+              $scope.enrollments = enrollments;
+
+              _.each($scope.enrollments, function (enrollment) {
+                EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                    .then(function (statistics) {
+                        enrollment.class.statistics = statistics;
+                    });
+              });
+
+              console.log($scope.enrollments);
+              
+            }   
         });
       }
       
       $scope.goToDashboard = function(tenant,klass) {
-    	var currentUser = SessionService.getCurrentUser();
-    	ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
-    	.then(function(data){
-    	  if (!data) {
-    		ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
-    		.then(function(data) {
-    		  var options = {};
-    		  options['id'] = data.context;
-    		  options['title'] = klass.title;
-    		  OpenDashboard_API.setCourse(options);
-    		  $scope.contextMapping = data;
-    	      $scope.activeDashboard = $scope.contextMapping.dashboards[0];
-    	      $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+        var currentUser = SessionService.getCurrentUser();
+        ContextMappingService.getWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
+        .then(function(data){
+          if (!data) {
+            ContextMappingService.createWithTenantAndCourse(currentUser.tenant_id,klass.sourcedId)
+            .then(function(data) {
+              var options = {};
+              options['id'] = data.context;
+              options['title'] = klass.title;
+              OpenDashboard_API.setCourse(options);
+              $scope.contextMapping = data;
+              $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+              $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
 
-    		});
-    	  }
-    	  else {
-    	    var options = {};
-    	    options['id'] = data.context;
-    	    options['title'] = klass.title;
-    	    OpenDashboard_API.setCourse(options);
-       		$scope.contextMapping = data;
-    	    $scope.activeDashboard = $scope.contextMapping.dashboards[0];
-    	    $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
-    	  }
-    	});
-    	  
+            });
+          }
+          else {
+            var options = {};
+            options['id'] = data.context;
+            options['title'] = klass.title;
+            OpenDashboard_API.setCourse(options);
+            $scope.contextMapping = data;
+            $scope.activeDashboard = $scope.contextMapping.dashboards[0];
+            $state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
+          }
+        });
+          
         
       }
       

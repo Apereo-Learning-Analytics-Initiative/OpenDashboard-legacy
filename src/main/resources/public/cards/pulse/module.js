@@ -42,8 +42,24 @@ angular.module('od.cards.pulse', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
     EventService,
     RosterService,
     ModelOutputDataService,
-    CourseDataService) {
+    EnrollmentDataService) {
       $scope.loaded = true;
+      $scope.enrollments = null;
+      $scope.classData = null;
+
+      var currentUser = SessionService.getCurrentUser();
+      console.log(currentUser);
+
+      EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+        .then(function(enrollments) {
+          console.log(enrollments);
+          $scope.enrollments = enrollments;
+
+          EventService.getEventStatisticsForClass(currentUser.tenant_id, 'demo-class-1')
+          .then(function (statistics) {
+            console.log(statistics);
+          });
+        });
     });
   })
 (angular, Math, moment);

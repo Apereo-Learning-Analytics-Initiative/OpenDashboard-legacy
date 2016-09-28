@@ -55,7 +55,7 @@ gulp.task('minify-app', function (callback) {
             preserveComments: false,
             mangle: false,
             compress: {
-                drop_console: true
+                drop_console: false
             }
         }),
         gulp.dest('target/classes/public/assets/js/min')
@@ -75,7 +75,7 @@ gulp.task('minify-cards', function (callback) {
             preserveComments: false,
             mangle: false,
             compress: {
-                drop_console: true
+                drop_console: false
             }
         }),
         gulp.dest('target/classes/public/assets/js/min')
