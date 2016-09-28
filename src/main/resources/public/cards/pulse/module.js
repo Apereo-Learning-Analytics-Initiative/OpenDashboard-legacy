@@ -43,7 +43,7 @@ angular.module('od.cards.pulse', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
     RosterService,
     ModelOutputDataService,
     CourseDataService) {
-      $scope.loaded = false;
+      $scope.loaded = true;
     });
   })
 (angular, Math, moment);
