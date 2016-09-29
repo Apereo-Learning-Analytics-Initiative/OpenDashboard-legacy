@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.PostConstruct;
 
@@ -169,12 +170,78 @@ public class DemoEnrollmentProvider implements EnrollmentProvider {
         .build();
   
     staffEnrollments.add(teacherEnrollment3);
+    
+    studentEnrollments = new HashMap<>();
+    Set<Enrollment> class1Enrollments = new HashSet<>();
+    Set<Enrollment> class2Enrollments = new HashSet<>();
+    Set<Enrollment> class3Enrollments = new HashSet<>();
+    studentEnrollments.put("demo-class-1", class1Enrollments);
+    studentEnrollments.put("demo-class-2", class2Enrollments);
+    studentEnrollments.put("demo-class-3", class3Enrollments);
+    
+    String [] fn = {"Mark", "Kate", "Gary", "Steve", "Lucas", "Wyatt", "Ali", "Jessica", "Catherine",
+        "Philip", "Pedro", "P.J.", "Nicole", "Eliza", "James", "Kristen", "Xander", "Mookie", "Eddie", "Kara", "Ella", "Ruth",
+        "Josh", "Emma", "Matthew", "David", "Jean", "Tom", "Raymond"};
 
+    String [] ln = {"Gilbert", "Ficus", "Smith", "Wesson", "Johnstone", "Ortiz", "Jones", "LaMarche",
+        "Gauvin", "Betts", "Brady", "Ciruso", "Elliot", "Bird", "Garciaparra", "Thomas", "Donnelly", "Donovan"};
+
+    
+    for (int s = 0; s < 60; s++) {
+      String studentSourcedId = "demo-student-".concat(String.valueOf(s));
+      
+      User student 
+      = new User.Builder()
+        .withSourcedId(studentSourcedId)
+        .withRole(Role.student)
+        .withFamilyName(ln[ThreadLocalRandom.current().nextInt(0, ln.length)])
+        .withGivenName(fn[ThreadLocalRandom.current().nextInt(0, fn.length)])
+        .withUserId(studentSourcedId)
+        .withStatus(Status.active)
+        .build();
+      
+      Enrollment studentEnrollment1
+      = new Enrollment.Builder()
+          .withKlass(class1)
+          .withUser(student)
+          .withPrimary(false)
+          .withSourcedId("student-enrollment-c1-"+s)
+          .withRole(Role.student)
+          .withStatus(Status.active)
+          .build();
+      
+      class1Enrollments.add(studentEnrollment1);
+      
+    
+      Enrollment studentEnrollment2
+      = new Enrollment.Builder()
+          .withKlass(class2)
+          .withUser(student)
+          .withPrimary(false)
+          .withSourcedId("student-enrollment-c2-"+s)
+          .withRole(Role.student)
+          .withStatus(Status.active)
+          .build();
+    
+      class2Enrollments.add(studentEnrollment2);
+  
+      Enrollment studentEnrollment3
+      = new Enrollment.Builder()
+          .withKlass(class3)
+          .withUser(student)
+          .withPrimary(false)
+          .withSourcedId("student-enrollment-c3-"+s)
+          .withRole(Role.student)
+          .withStatus(Status.active)
+          .build();
+
+      class3Enrollments.add(studentEnrollment3);
+    }
   }
 
   @Override
   public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String classSourcedId, boolean activeOnly) throws ProviderException {
-     return staffEnrollments;
+     return studentEnrollments.get(classSourcedId);
   }
 
   @Override
