@@ -5,7 +5,10 @@
   .controller('pulseController',[
     '$scope',
     '$http',
-    function($scope, $http){
+    'SessionService',
+    'EnrollmentDataService',
+    'EventService',
+    function($scope, $http, SessionService, EnrollmentDataService, EventService){
       "use strict";
 
     // $scope._ = _;
@@ -18,9 +21,39 @@
       end: '2016-12-13'
     };
 
-    var processedClasses = [];
 
-    var classes, labels;
+    var processedClasses = [];
+    var classes = [];
+    var labels = [];
+    var currentUser = null;
+
+    currentUser = SessionService.getCurrentUser();
+
+    if (currentUser) {
+      EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+        .then(function(enrollments){
+          if (enrollments.isError) {
+            $scope.errorData = {};
+            $scope.errorData['userId'] = currentUser.user_id;
+            $scope.errorData['errorCode'] = enrollments.errorCode;
+            $scope.error = enrollments.errorCode;
+          } else {
+            labels = enrollments;
+
+            _.each(labels, function (enrollment) {
+              classes.push(enrollment.class);
+              console.log(enrollment);
+              EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                  .then(function (statistics) {
+                      enrollment.class.statistics = statistics;
+                  });
+            });
+
+            processData();
+            
+          }   
+      });
+    }
 
     function processData() {
       var maxEvents = 0;
@@ -28,12 +61,12 @@
       _.each(classes, function(c){
         // filter class label
         var l = _.filter(labels, function(label) { 
-          return label.class.sourcedId === c.classSourcedId;
+          return label.class.sourcedId === c.sourcedId;
         })[0];
-        
+
         // build course object
         var course = {
-          id: c.classSourcedId,
+          id: c.sourcedId,
           label: l.class.title,
           studentEventMax: 0,
           events: [],
@@ -123,7 +156,7 @@
     }
 
     function init() {
-      getClassData();
+      //getClassData();
       $scope.$on('chart-change', handleChartChange);
     }
 

@@ -2,9 +2,10 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
+var sass = require('gulp-sass');
 var pump = require('pump');
 
-gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards']);
+gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass']);
 
 gulp.task('minify-libraries', function (callback) {
   pump([
@@ -86,5 +87,11 @@ gulp.task('minify-cards', function (callback) {
     ],
     callback
   );
+});
+
+gulp.task('sass', function () {
+  return gulp.src('src/main/resources/public/assets/app.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('target/classes/public/assets/css/'));
 });
 
