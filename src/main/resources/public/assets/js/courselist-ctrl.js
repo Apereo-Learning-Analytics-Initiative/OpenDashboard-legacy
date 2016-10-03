@@ -34,7 +34,7 @@
       $scope.error = null;
       $scope.enrollments = null;
 
-      currentUser = SessionService.getCurrentUser();
+      /*currentUser = SessionService.getCurrentUser();
 
       if (currentUser) {
         EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
@@ -58,7 +58,7 @@
               
             }   
         });
-      }
+      }*/
       
       $scope.goToDashboard = function(tenant,klass) {
         var currentUser = SessionService.getCurrentUser();

@@ -1,0 +1,76 @@
+&.courselist {
+  // timeline
+  .timeline {
+    position: relative;
+    padding: 10px;
+    background: #555;
+    color: #fff;
+    .week {
+      float: left;
+      padding-top: 5px;
+      // width: 20%;
+      // border-left: 1px solid #fff;
+    }
+  }
+
+  #pulse-chart {
+    width: 100%;
+    .odd {
+      fill: #dedede;
+    }
+    .even {
+      fill: #efefef;
+    }
+    .listlabel {
+      fill: #0087a7;
+      &:hover {
+        fill: darken(#0087a7, 20%);
+        cursor: pointer;
+      }
+    }
+    .dot {
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .chart-container {
+    position: relative;
+    .tool-tip-info {
+      position: absolute;
+      // background: #0087a7;
+      color: #0087a7;
+    }
+    .info-label {
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #999;
+      font-size: 11px;
+    }
+    .info-value {
+      font-weight: bold;
+      font-size: 13px;
+    }
+  }
+  // classes
+  .class-list {
+    .class {
+      position: relative;
+      padding: 10px;
+      border-bottom: 1px solid #999;
+    }
+  }
+  .class-plot, .dates {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 90%;
+  }
+
+  .plot-day {
+    background: blue;
+  }
+}

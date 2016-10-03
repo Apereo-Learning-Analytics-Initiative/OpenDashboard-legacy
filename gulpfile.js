@@ -2,9 +2,10 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
+var sass = require('gulp-sass');
 var pump = require('pump');
 
-gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards']);
+gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass']);
 
 gulp.task('minify-libraries', function (callback) {
   pump([
@@ -23,9 +24,13 @@ gulp.task('minify-libraries', function (callback) {
             'node_modules/angular-ui-router/release/angular-ui-router.js',
             'node_modules/angular-ui-notification/dist/angular-ui-notification.js',
             'node_modules/moment/moment.js',
+            'node_modules/angular-moment/angular-moment.js',
             'node_modules/chart.js/dist/Chart.js',
             'node_modules/angular-chart.js/dist/angular-chart.js',
             'node_modules/d3/build/d3.js',
+            'node_modules/d3-scale/build/d3-scale.js',
+            'node_modules/d3-time/build/d3-time.js',
+            'node_modules/d3-time-format/build/d3-time-format.js',
             'node_modules/vis/dist/vis.js',
             'node_modules/angular-visjs/angular-vis.js',
         ]),
@@ -82,5 +87,11 @@ gulp.task('minify-cards', function (callback) {
     ],
     callback
   );
+});
+
+gulp.task('sass', function () {
+  return gulp.src('src/main/resources/public/assets/app.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('target/classes/public/assets/css/'));
 });
 
