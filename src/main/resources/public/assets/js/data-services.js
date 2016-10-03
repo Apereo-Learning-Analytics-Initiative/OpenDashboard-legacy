@@ -244,7 +244,6 @@ angular
             headers : { 'Content-Type': 'application/json'}
           })
           .then(function (response) {
-            console.log(response);
             return response.data;
           }, function (error) {
 	    	$log.debug(error);
@@ -256,7 +255,30 @@ angular
           });
           return promise;
         },
-    	  
+
+        getEventStatisticsForClassAndUser : function (tenantId, classId, userId, page, size) {
+          var p = page || 0;
+          var s = size || 1000;
+
+          var url = '/api/tenants/'+tenantId+'/classes/'+classId+'/events/'+userId+'?page='+p+'&size='+s;
+          var promise = $http({
+            method  : 'GET',
+            url		: url,
+            headers : { 'Content-Type': 'application/json'}
+          })
+          .then(function (response) {
+            return response.data;
+          }, function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+          });
+          return promise;
+        },
+
         getEventsForCourse : function (tenantId, courseId, page, size) {
           var p = page || 0;
           var s = size || 10;
