@@ -21,12 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import od.framework.model.Tenant;
 import od.providers.config.ProviderDataConfigurationException;
 import od.providers.course.CourseProvider;
 import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
 import od.providers.modeloutput.ModelOutputProvider;
+import od.providers.user.UserProvider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +49,28 @@ public class ProviderService {
   public static final String MODELOUTPUT = "MODELOUTPUT";
   public static final String OUTCOMES = "OUTCOME";
   public static final String ROSTER = "ROSTER";
+  public static final String USER = "USER";
   
   @Autowired private Map<String, CourseProvider> courseProviders;
   @Autowired private Map<String, EventProvider> eventProviders;
   @Autowired private Map<String, ModelOutputProvider> modelOutputProviders;
   @Autowired private Map<String, EnrollmentProvider> rosterProviders;
+  @Autowired private Map<String, UserProvider> userProviders; 
+  
+  private List<String> listOfProviderTypes;
+  
+  @PostConstruct
+  public void init() {
+    listOfProviderTypes = new ArrayList<>();
+    listOfProviderTypes.add(ASSIGNMENT);
+    listOfProviderTypes.add(COURSE);
+    listOfProviderTypes.add(EVENT);
+    listOfProviderTypes.add(FORUM);
+    listOfProviderTypes.add(MODELOUTPUT);
+    listOfProviderTypes.add(OUTCOMES);
+    listOfProviderTypes.add(ROSTER);
+    listOfProviderTypes.add(USER);
+  }
     
   public List<Provider> getProvidersByType(final String type) {
     if (StringUtils.isBlank(type)) {
@@ -71,6 +91,9 @@ public class ProviderService {
     }
     else if (ROSTER.equalsIgnoreCase(type)) {
       providers = new ArrayList<Provider>(rosterProviders.values());
+    }
+    else if (USER.equalsIgnoreCase(type)) {
+      providers = new ArrayList<Provider>(userProviders.values());
     }
     
     return providers;
@@ -95,6 +118,9 @@ public class ProviderService {
     }
     else if (ROSTER.equalsIgnoreCase(type)) {
       provider = rosterProviders.get(key);
+    }
+    else if (USER.equalsIgnoreCase(type)) {
+      provider = userProviders.get(key);
     }
     
     return provider;
@@ -134,6 +160,11 @@ public class ProviderService {
     ProviderData pd = getConfiguredProviderDataByType(tenant, ROSTER);
     return rosterProviders.get(pd.getProviderKey());
   }
+  
+  public UserProvider getUserProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, USER);
+    return userProviders.get(pd.getProviderKey());
+  }
 
   public Map<String, CourseProvider> getCourseProviders() {
     return courseProviders;
@@ -151,5 +182,7 @@ public class ProviderService {
     return rosterProviders;
   }
   
-
+  public Map<String, UserProvider> getUserProviders() {
+    return userProviders;
+  }
 }

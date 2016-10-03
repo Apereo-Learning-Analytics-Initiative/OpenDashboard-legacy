@@ -51,11 +51,17 @@ angular
             key : 'LABEL_ROSTER_PROVIDERS_KEY',
             desc : 'LABEL_ROSTER_PROVIDERS_DESC'
         };
+        var userProviders = {
+           type : 'USER',
+           key : 'LABEL_USER_PROVIDERS_KEY',
+           desc : 'LABEL_USER_PROVIDERS_DESC'
+       };
 			  
         providers.push(courseProviders);
         providers.push(eventProviders);
         providers.push(modelOutputProviders);
         providers.push(rosterProviders);
+        providers.push(userProviders);
 			  
         return providers;
       },
@@ -94,6 +100,41 @@ angular
     }
 });
 // END Provider Service
+  
+// User Service
+angular
+  .module('OpenDashboard')
+    .service('UserDataService', function($log, $http) {
+      return {
+        getUser: function(tenantId,userId) {
+		  var url = '/api/tenants/'+tenantId+'/users/'+userId;
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {			    			
+		      return response.data;		    			
+			}
+			$log.debug('User not found');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		}
+	}
+});
+// END User Service
+
 
 // Course Service
 angular

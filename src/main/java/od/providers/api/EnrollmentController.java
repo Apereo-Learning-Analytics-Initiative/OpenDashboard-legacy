@@ -23,7 +23,6 @@ import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderService;
 import od.providers.enrollment.EnrollmentProvider;
-import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.slf4j.Logger;
@@ -48,7 +47,6 @@ public class EnrollmentController {
 	
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
-  @Autowired private ContextMappingRepository contextMappingRepository;
   
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
 	@RequestMapping(value = "/api/tenants/{tenantId}/users/{userId}/enrollments", method = RequestMethod.GET)
