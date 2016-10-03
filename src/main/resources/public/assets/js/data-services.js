@@ -256,7 +256,7 @@ angular
           return promise;
         },
 
-        getEventStatisticsForClassAndUser : function (tenantId, classId, userId, page, size) {
+        getEventForClassAndUser : function (tenantId, classId, userId, page, size) {
           var p = page || 0;
           var s = size || 1000;
 
