@@ -39,42 +39,44 @@
             $scope.error = enrollments.errorCode;
           } else {
             labels = enrollments;
+            var statCount = 0;
 
             _.each(labels, function (enrollment) {
               classes.push(enrollment.class);
-              console.log(enrollment);
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
+                      statCount++;
+                      if (statCount === labels.length) {
+                        processData();
+                      }
                   });
             });
-
-            processData();
-            
           }   
       });
     }
 
     function processData() {
       var maxEvents = 0;
-
       _.each(classes, function(c){
         // filter class label
-        var l = _.filter(labels, function(label) { 
-          return label.class.sourcedId === c.sourcedId;
-        })[0];
+        // var l = _.filter(labels, function(label) { 
+        //   return label.class.sourcedId === c.sourcedId;
+        // })[0];
 
-        // build course object
+        // // build course object
         var course = {
           id: c.sourcedId,
-          label: l.class.title,
+          label: c.title,
           studentEventMax: 0,
           events: [],
           students: []
         };
 
-        // process events object for the class
-        _.each(c.eventCountGroupedByDate, function(event, index){
+        console.log(c);
+
+        // // process events object for the class
+        _.each(c.statistics.eventCountGroupedByDate, function(event, index){
           if (maxEvents < event) {
             maxEvents = event;
           }
@@ -85,7 +87,7 @@
           });
         });
 
-        var students = c.eventCountGroupedByDateAndStudent;
+        var students = c.statistics.eventCountGroupedByDateAndStudent;
 
         _.each(students, function(s, i) {
           // build student object
@@ -110,10 +112,11 @@
 
         });
 
-        // add course object to classes array
+        // // add course object to classes array
         processedClasses.push(course);
       });
 
+      console.log('processedClasses', processedClasses);
       $scope.coursesMaxEvents = maxEvents;
       $scope.maxEvents = $scope.coursesMaxEvents;
       $scope.datalist = processedClasses;

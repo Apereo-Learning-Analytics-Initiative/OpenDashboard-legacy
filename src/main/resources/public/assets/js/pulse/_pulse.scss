@@ -1,4 +1,4 @@
-&.courselist {
+// &.courselist {
   // timeline
   .timeline {
     position: relative;
@@ -23,6 +23,8 @@
     }
     .listlabel {
       fill: #0087a7;
+      font-size: 12px;
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
       &:hover {
         fill: darken(#0087a7, 20%);
         cursor: pointer;
@@ -73,4 +75,4 @@
   .plot-day {
     background: blue;
   }
-}
+// }
