@@ -31,6 +31,7 @@ import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -289,13 +290,16 @@ public class DemoEventProvider implements EventProvider {
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see od.providers.events.EventProvider#getEventsForCourseAndUser(java.lang.String, java.lang.String, java.lang.String, org.springframework.data.domain.Pageable)
-   */
-  @Override
-  public Page<Event> getEventsForCourseAndUser(String tenantId, String courseId, String userId, Pageable pageable) throws ProviderException {
-    // TODO Auto-generated method stub
-    return null;
+ @Override
+ public Page<Event> getEventsForCourseAndUser(String tenantId, String courseId, String userId, Pageable pageable) throws ProviderException {
+   Set<Event> classEvents = classEventsMap.get(courseId);
+   
+   List<Event> userEvents 
+   = classEvents.stream()
+     .filter(event -> event.getActor().equals(userId))
+     .collect(Collectors.toList());
+   
+   return new PageImpl<>(userEvents);
   }
 
   /* (non-Javadoc)

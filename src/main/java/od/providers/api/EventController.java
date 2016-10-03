@@ -63,6 +63,23 @@ public class EventController {
     EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
     return eventProvider.getStatisticsForClass(tenantId, classId);
   }
+  
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/classes/{classId}/events/{userId}", method = RequestMethod.GET)
+  public Page<Event> getEventsForClassAndUser(@PathVariable("tenantId") final String tenantId,
+      @PathVariable("classId") final String classId,
+      @PathVariable("userId") final String userId,
+      @RequestParam(value="page", required=false) int page,
+      @RequestParam(value="size", required=false) int size)
+      throws Exception {
+    log.debug("tenantId: {}", tenantId);
+    log.debug("classId: {}", classId);
+    log.debug("userId: {}", userId);
+
+    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
+    return eventProvider.getEventsForCourseAndUser(tenantId, classId, userId, new PageRequest(page, size));
+  }
+
 
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
   @RequestMapping(value = "/api/tenants/{tenantId}/event/course/{courseId}", method = RequestMethod.GET)
@@ -86,17 +103,6 @@ public class EventController {
     return eventProvider.getEventsForUser(tenantId, userId, new PageRequest(page, size));
   }
   
-  @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT", "ROLE_ADMIN"})
-  @RequestMapping(value = "/api/tenants/{tenantId}/event/course/{courseId}/user/{userId}", method = RequestMethod.GET)
-  public Page<Event> getEventsForCourseAndUser(@PathVariable("tenantId") final String tenantId, @PathVariable("courseId") final String courseId, @PathVariable("userId") final String userId, @RequestParam(value="page", required=false) int page,
-      @RequestParam(value="size", required=false) int size)
-      throws Exception {
-
-    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
-
-    return eventProvider.getEventsForCourseAndUser(tenantId, courseId, userId, new PageRequest(page, size));
-  }
- 
   @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT", "ROLE_ADMIN"})
   @RequestMapping(value = "/api/tenants/{tenantId}/event", method = RequestMethod.POST)  
   public JsonNode postEvent(@RequestBody ObjectNode object, @PathVariable("tenantId") final String tenantId)
