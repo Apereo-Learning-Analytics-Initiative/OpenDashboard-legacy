@@ -74,6 +74,8 @@
 "LABEL_OUTCOMES_PROVIDERS_DESC":"Access line item and result data.",
 "LABEL_ROSTER_PROVIDERS_KEY":"Roster Data Providers",
 "LABEL_ROSTER_PROVIDERS_DESC":"Access the roster of a course or section.",
+"LABEL_USER_PROVIDERS_KEY":"User Data Providers",
+"LABEL_USER_PROVIDERS_DESC":"",
 "LABEL_OPENLRS_BASE_URL":"OpenLRS Base URL",
 "LABEL_LAP_BASE_URL":"LAP Base URL",
 "LABEL_OAUTH_CONSUMER_KEY":"OAuth Consumer Key",
