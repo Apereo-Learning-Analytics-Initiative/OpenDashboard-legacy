@@ -1,0 +1,23 @@
+<section>
+    <div class="breadcrumb">
+        <a href="">Classes Pulse</a>
+    </div>
+
+    <div class="chart-container">
+        <div id="pulse-chart">
+
+        </div>
+
+        <div class="tool-tip-info" ng-show="chartInfo">
+            <i class="fa fa-info-circle"></i>
+            <span>
+                <span class="info-label">Date:</span>
+                <span class="info-value">{{chartInfo.date | amDateFormat:'M-D'}}</span>
+            </span>
+            <span>
+                <span class="info-label">Events:</span>
+                <span class="info-value">{{chartInfo.events}}</span>
+            </span>
+        </div>
+    </div>
+</section>
