@@ -6,10 +6,11 @@
     '$scope',
     '$http',
     '$timeout',
+    '$state',
     'SessionService',
     'EnrollmentDataService',
     'EventService',
-    function($scope, $http, $timeout, SessionService, EnrollmentDataService, EventService){
+    function($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService){
       "use strict";
 
     // $scope._ = _;
@@ -119,7 +120,34 @@
       $scope.coursesMaxEvents = maxEvents;
       $scope.maxEvents = $scope.coursesMaxEvents;
       $scope.datalist = processedClasses;
-      $scope.$broadcast('draw-chart');
+      //$scope.$broadcast('draw-chart');
+
+      if ($state.params.groupId) {
+        $scope.listType = 'students';
+        buildStudentList($state.params.groupId);
+      } else {
+        $scope.maxEvents = $scope.coursesMaxEvents;
+        $scope.datalist = processedClasses;
+        $scope.listType = 'classes';  
+        $scope.$broadcast('draw-chart');
+      }
+
+      /*if ($scope.listType === 'classes') {
+        // clicked a class name on the left of the chart
+        // set the type to students
+        
+        $scope.listType = 'students';
+        buildStudentList($state.params.groupId);
+
+      } else if ($scope.listType === 'students') {
+        // clicked a class name on the left of the chart
+        // set the type to students
+        
+        $scope.maxEvents = $scope.coursesMaxEvents;
+        $scope.datalist = processedClasses;
+        $scope.listType = 'classes';  
+        $scope.$broadcast('draw-chart');
+      }*/
     }
 
     function buildStudentList(id) {
@@ -144,22 +172,12 @@
     }
 
     function handleChartChange(event, data) {
-      if ($scope.listType === 'classes') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
-        $scope.listType = 'students';
-        buildStudentList(data.id);
-
-      } else if ($scope.listType === 'students') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
-        $scope.maxEvents = $scope.coursesMaxEvents;
-        $scope.datalist = processedClasses;
-        $scope.listType = 'classes';  
-        $scope.$broadcast('draw-chart');
-      }
+      // Go to course list 
+      //$state.go('index.courselist', { groupId: null } );
+      // Go to specific course with list of students
+      $state.go('index.courselist', { groupId: data.id });
+      // Go to specific student
+      //$state.go('index.courselist.student', { studentId: data.id } );
     }
 
     function init() {
