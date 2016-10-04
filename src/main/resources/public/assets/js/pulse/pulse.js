@@ -5,10 +5,11 @@
   .controller('pulseController',[
     '$scope',
     '$http',
+    '$timeout',
     'SessionService',
     'EnrollmentDataService',
     'EventService',
-    function($scope, $http, SessionService, EnrollmentDataService, EventService){
+    function($scope, $http, $timeout, SessionService, EnrollmentDataService, EventService){
       "use strict";
 
     // $scope._ = _;
@@ -73,8 +74,6 @@
           students: []
         };
 
-        console.log(c);
-
         // // process events object for the class
         _.each(c.statistics.eventCountGroupedByDate, function(event, index){
           if (maxEvents < event) {
@@ -124,14 +123,22 @@
     }
 
     function buildStudentList(id) {
-      var maxEvents = 0;
-
       var course = _.filter(processedClasses, function(c){
         return c.id === id;
       })[0];
       
+      console.log(course);
+
       $scope.maxEvents = course.studentEventMax;
       $scope.datalist = course.students;
+      if (!$scope.datalist[0].isClass) {
+        $scope.datalist.unshift({
+          isClass: true,
+          id: course.id,
+          label: course.label,
+          events: course.events
+        });        
+      }
 
       $scope.$broadcast('draw-chart');
     }
@@ -140,26 +147,22 @@
       if ($scope.listType === 'classes') {
         // clicked a class name on the left of the chart
         // set the type to students
+        
         $scope.listType = 'students';
         buildStudentList(data.id);
+
+      } else if ($scope.listType === 'students') {
+        // clicked a class name on the left of the chart
+        // set the type to students
+        
+        $scope.maxEvents = $scope.coursesMaxEvents;
+        $scope.datalist = processedClasses;
+        $scope.listType = 'classes';  
+        $scope.$broadcast('draw-chart');
       }
     }
 
-    function getClassData() {
-      var classdatauri = './data/classdata.json';
-      var classlabeluri = './data/classtitles.json';
-
-      $http.get(classdatauri).then(function(cdata){
-        $http.get(classlabeluri).then(function(clabels){
-          classes = cdata.data;
-          labels = clabels.data;
-          processData();
-        });
-      });
-    }
-
     function init() {
-      //getClassData();
       $scope.$on('chart-change', handleChartChange);
     }
 
@@ -168,19 +171,14 @@
   ])
   .directive('pulse', function() {
     return {
-      replace: true,
-      scope: {
-        dateRange: '=',
-        list: '=',
-        chartInfo: '=',
-        // maxEvents: '=maxEvents'
-      },
       controller: 'pulseController',
       templateUrl: 'assets/js/pulse/pulse.html',
       link: function (scope, element, attrs) {
         var maxEvents = 0;
 
-        function drawChart() {
+        function drawChart(obj) {
+          console.log(obj);
+          console.log(scope.listType);
           // var maxEvents = obj.maxEvents;
           var plots = {};
           // var weeks = moment.duration(moment(scope.dateRange.start) + moment(scope.dateRange.end)).asWeeks();
@@ -202,36 +200,11 @@
           var weekCount = 100/weeks.length;
           var weekWidth = (width - padding.left - padding.right) / weeks;
           var chartOffset = $('#pulse-chart').offset();
-
-          $('#pulse-chart svg').remove();
-
-          var svg = d3.select('#pulse-chart').append('svg');
           var timeScale;
           var xAxis;
           var oddEven = 'odd';
+          var inited = $('#pulse-chart svg').length;
 
-          $('.tool-tip-info').css({
-            'top': padding.top - 20,
-            'left': padding.left,
-          });
-
-          // set tooltip position based on cursor
-          function setToolTipPosition (pos) {
-            var posOffset = {
-              y: pos.y - chartOffset.top - 20,
-              x: pos.x - chartOffset.left + 20,
-            };
-
-            $('.tool-tip-info').css({
-              'top': posOffset.y,
-              'left': posOffset.x,
-            });
-          }
-
-          // set width n height
-          svg
-          .attr("height", height)
-          .attr("width", width);
 
           // time scale
           timeScale = d3
@@ -242,18 +215,45 @@
             ])
             .range([padding.left, plotContainer.width() - padding.right]);
 
-          // generate x axis
-          xAxis = d3.axisBottom()
-            .scale(timeScale)
-            .tickSize(7, 0)
-            .tickFormat(d3.timeFormat('%m-%d'));
 
-          // list text
-          var yLabel = svg
-            .append('g')
-            .attr('class', 'axis')
-            .attr('transform', 'translate(0, 10)')
-            .call(xAxis);
+          if (inited) {
+            // already have a chart. Let's work with it.
+            var svg = d3.select('#pulse-chart svg');
+            $('#pulse-chart svg .yaxis .list').remove();
+          } else {
+            // No chart yet, let's make one.
+            var svg = d3.select('#pulse-chart').append('svg');
+
+            svg
+            .attr("height", height)
+            .attr("width", width);
+
+            $('.tool-tip-info').css({
+              'top': padding.top - 20,
+              'left': padding.left,
+            });
+
+
+            // generate x axis
+            xAxis = d3.axisBottom()
+              .scale(timeScale)
+              .tickSize(7, 0)
+              .tickFormat(d3.timeFormat('%m-%d'));
+
+            // list text
+            var yLabel = svg
+              .append('g')
+              .attr('class', 'axis')
+              .attr('transform', 'translate(0, 10)')
+              .call(xAxis);
+
+
+          }
+
+          svg
+          .attr("height", height)
+          .attr("width", width);
+
 
           // list group
           var list = svg
@@ -261,10 +261,26 @@
             .attr('class', 'yaxis')
             .attr('transform', 'translate(0, 0)');
 
+
+          // set tooltip position based on cursor
+          // function setToolTipPosition (pos) {
+          //   var posOffset = {
+          //     y: pos.y - chartOffset.top - 20,
+          //     x: pos.x - chartOffset.left + 20,
+          //   };
+
+          //   $('.tool-tip-info').css({
+          //     'top': posOffset.y,
+          //     'left': posOffset.x,
+          //   });
+          // }
+
+
+
+          // set width n height
           _.each(scope.datalist, function(o, i){
             // position of the row
             var linePosition = (i * lineHeight) + padding.top;
-            
             // row group
             var row = list
               .append('g')
@@ -284,7 +300,13 @@
               .attr('alignment-baseline', 'central')
               .attr('y', lineHeight/2)
               .attr('x', 10)
-              .attr('class', 'listlabel')
+              .attr('class', function(){
+                if (scope.listType === "students") {
+                  return 'listlabel student-list-item';
+                } else {
+                  return 'listlabel course-list-item';
+                }
+              })
               // .attr('id', function(d) {
               //   console.log(o);
               //   return o.id;
@@ -308,16 +330,25 @@
               .enter()
               .append('circle')
               // .attr('r', 2)
-              .attr('r', function (d, i) {
-                console.log(scope.maxEvents);
-                return d.eventCount*100/scope.maxEvents/10+1;
+              .attr('r', function (d) {
+                var count;
+                if (scope.listType === "students" && i==0) {
+                  count = d.eventCount*100/scope.coursesMaxEvents/10+1;
+                } else {
+                  count = d.eventCount*100/scope.maxEvents/10+1;
+                }
+                return count;
               })
-              .attr('cx', function (d, i) {
+              .attr('cx', function (d) {
                 return timeScale(moment(d.date));
               })
               .attr('class', 'dot')
               .style('fill', function (d) {
-                return '#0087a7';
+                if (scope.listType === "students" && i > 0) {
+                  return '#00a9a7';  
+                } else {
+                  return '#0087a7';  
+                }
               })
               .on('mouseover', function (d, index, node) {
 

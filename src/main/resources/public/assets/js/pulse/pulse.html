@@ -1,6 +1,10 @@
 <section>
     <div class="breadcrumb">
-        <a href="">Classes Pulse</a>
+        <a href="" ng-click="$emit('chart-change')">Classes Pulse</a>
+        <span ng-if="listType == 'students'"> 
+            <!-- <i class="fa fa-fw fa-arrow-right"></i> -->
+            &gt; Students
+        </span>
     </div>
 
     <div class="chart-container">

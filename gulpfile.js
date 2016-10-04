@@ -92,6 +92,14 @@ gulp.task('minify-cards', function (callback) {
   );
 });
 
+gulp.task('copy-html', function (callback) {
+    return gulp.src([
+        'src/main/resources/public/assets/**/*.html',
+    ])
+    .pipe(gulp.dest('target/classes/public/assets/'));
+});
+
+
 gulp.task('sass', function () {
   return gulp.src('src/main/resources/public/assets/app.scss')
     .pipe(sass().on('error', sass.logError))
@@ -101,5 +109,6 @@ gulp.task('sass', function () {
 gulp.task('watch', function () {
     gulp.watch('src/main/resources/public/assets/**/*.scss', ['sass']);
     gulp.watch('src/main/resources/public/assets/**/*.js', ['minify-app']);
+    gulp.watch('src/main/resources/public/assets/**/*.html', ['copy-html']);
 });
 
