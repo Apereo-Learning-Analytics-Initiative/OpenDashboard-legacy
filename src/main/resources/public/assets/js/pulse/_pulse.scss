@@ -22,12 +22,14 @@
       fill: #efefef;
     }
     .listlabel {
-      fill: #0087a7;
       font-size: 12px;
       font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-      &:hover {
-        fill: darken(#0087a7, 20%);
-        cursor: pointer;
+      &.course-list-item {
+        fill: #0087a7;
+        &:hover {
+          fill: darken(#0087a7, 20%);
+          cursor: pointer;
+        }
       }
     }
     .dot {
