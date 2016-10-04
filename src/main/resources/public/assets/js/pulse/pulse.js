@@ -219,7 +219,7 @@
           if (inited) {
             // already have a chart. Let's work with it.
             var svg = d3.select('#pulse-chart svg');
-            $('#pulse-chart svg .yaxis .list').remove();
+            $('#pulse-chart svg .yaxis .pulse-list-item').remove();
           } else {
             // No chart yet, let's make one.
             var svg = d3.select('#pulse-chart').append('svg');
@@ -284,7 +284,21 @@
             // row group
             var row = list
               .append('g')
-              .attr('class', 'list')
+              .attr('id', function(d){
+                if (scope.listType === "students" && i > 0) {
+                  var id = "student-" + o.id;
+                } else {
+                  var id = "course-" + o.id;
+                }
+                return id;
+              })
+              .attr('class', function(d){
+                if (scope.listType === "students" && i > 0) {
+                  return 'pulse-list-item student';
+                } else {
+                  return 'pulse-list-item course';
+                }
+              })
               // .attr('y' (linePosition + padding.line));
               .attr('transform', 'translate(0, ' + (linePosition + (padding.line * i)) + ')');
             
@@ -312,9 +326,25 @@
               //   return o.id;
               // })
               .text(o.label)
-              .on('click', function () {
-                scope.$emit('chart-change', {
-                  id: o.id
+              .on('click', function (d) {
+                var clickTarget = $(this).parents(".pulse-list-item");
+                $('.pulse-list-item:not(#'+clickTarget.attr('id')+')').fadeOut(300, function() { 
+                  $(this).remove(); 
+                  
+                  var top = padding.top;
+                  d3.select('#'+clickTarget.attr('id'))
+                    .transition()
+                      .duration(750)
+                      .attr("transform", "translate(0,"+ top +")")
+                      .on("end", function(){
+                        d3.select('#'+clickTarget.attr('id')+' rect')
+                        .attr('class', 'odd');
+
+                        scope.$emit('chart-change', {
+                          id: o.id
+                        });
+
+                      });
                 });
               });
 
