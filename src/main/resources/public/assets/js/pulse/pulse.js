@@ -177,28 +177,29 @@
         var maxEvents = 0;
 
         function drawChart(obj) {
-          console.log(obj);
-          console.log(scope.listType);
           // var maxEvents = obj.maxEvents;
           var plots = {};
           // var weeks = moment.duration(moment(scope.dateRange.start) + moment(scope.dateRange.end)).asWeeks();
-          var weeks = Math.ceil(moment.duration(moment(scope.coursesStartEnd.end) - moment(scope.coursesStartEnd.start)).asWeeks());
+          var weeks = Math.round(moment.duration(moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week')) - moment(scope.coursesStartEnd.start).startOf('week')).asWeeks());
 
           var plotContainer = $('#pulse-chart');
           var padding = {
             top: 50,
-            right: 50,
+            right: 30,
             bottom: 10,
             left: 250,
             line: 2,
           };
+          var plotWidth = 950;
           var lineHeight = 30;
+          var weekWidth = 75;
 
           var height = scope.datalist.length * (lineHeight + padding.line) + (padding.top + padding.bottom);
-          var width = plotContainer.width();
+          // var width = plotContainer.width();
+          var width = padding.left + padding.right + plotWidth;
+
           plotContainer.height(height);
-          var weekCount = 100/weeks.length;
-          var weekWidth = (width - padding.left - padding.right) / weeks;
+          // var weekWidth = (width - padding.left - padding.right) / weeks;
           var chartOffset = $('#pulse-chart').offset();
           var timeScale;
           var xAxis;
@@ -209,12 +210,12 @@
           // time scale
           timeScale = d3
             .scaleTime()
-            .domain([
+            .range([padding.left, plotWidth + padding.left]);
+
+          timeScale.domain([
               moment(scope.coursesStartEnd.start).startOf('week'), 
               moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'))
-            ])
-            .range([padding.left, plotContainer.width() - padding.right]);
-
+            ]);
 
           if (inited) {
             // already have a chart. Let's work with it.
@@ -237,13 +238,14 @@
             // generate x axis
             xAxis = d3.axisBottom()
               .scale(timeScale)
-              .tickSize(7, 0)
+              // .tickSize(3)
+              .ticks(weeks)
               .tickFormat(d3.timeFormat('%m-%d'));
 
             // list text
-            var yLabel = svg
+            var xLabel = svg
               .append('g')
-              .attr('class', 'axis')
+              .attr('class', 'xaxis')
               .attr('transform', 'translate(0, 10)')
               .call(xAxis);
 
@@ -397,6 +399,26 @@
                 scope.$apply(function () {
                     scope.chartInfo = undefined;
                 });
+              })
+              .on('click', function(d){
+                var t0 = svg.transition().duration(750);
+                var t1 = t0.transition();
+
+                var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(3, 'week'));
+                var weeksForward = moment(d.date).startOf('week').add(moment.duration(2, 'week'));
+                
+                timeScale.domain([
+                    weeksBack, 
+                    weeksForward
+                  ]);
+                xAxis.ticks(5);
+                t1.selectAll(".xaxis").call(xAxis);
+
+                t0.selectAll('.dot').attr('cx', function (d) {
+                  console.log(d);
+                  return timeScale(moment(d.date));
+                });
+
               });
 
             oddEven = oddEven == 'odd' ? 'even' : 'odd';
