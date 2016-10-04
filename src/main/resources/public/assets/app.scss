@@ -6,4 +6,9 @@ html {
   box-sizing: inherit;
 }
 
+.logo {
+	padding-top: 10px;
+	box-shadow: none !important;
+}
+
 @import "js/pulse/pulse";
