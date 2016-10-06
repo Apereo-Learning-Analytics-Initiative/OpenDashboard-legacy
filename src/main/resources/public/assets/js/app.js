@@ -69,15 +69,15 @@ angular
     'preferredLocale': 'en_US'
   })
 .config(function(NotificationProvider) {
-	NotificationProvider.setOptions({
-	    delay: 10000,
-	    startTop: 20,
-	    startRight: 10,
-	    verticalSpacing: 20,
-	    horizontalSpacing: 20,
-	    positionX: 'left',
-	    positionY: 'bottom'
-	});
+    NotificationProvider.setOptions({
+        delay: 10000,
+        startTop: 20,
+        startRight: 10,
+        verticalSpacing: 20,
+        horizontalSpacing: 20,
+        positionX: 'left',
+        positionY: 'bottom'
+    });
  })
 .config(function($translateProvider, $translatePartialLoaderProvider, LOCALES) {
     $translateProvider.useLoader('$translatePartialLoader', {
@@ -173,21 +173,21 @@ angular
     };
 })
 .config(['$httpProvider',function($httpProvider) {
-	if (!$httpProvider.defaults.headers.get) {
-		$httpProvider.defaults.headers.get = {};
-	}
-	$httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-	$httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-	$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+    if (!$httpProvider.defaults.headers.get) {
+        $httpProvider.defaults.headers.get = {};
+    }
+    $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+    $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 }])
 .config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 
-	// For unmatched routes
-	$urlRouterProvider.otherwise('/');
-	
-	// Application routes
-	$stateProvider
-	    .state('login', {
+    // For unmatched routes
+    $urlRouterProvider.otherwise('/');
+    
+    // Application routes
+    $stateProvider
+        .state('login', {
           url: '/login',
           templateUrl: '/assets/templates/login.html',
           params: { loggedOutMessage : null },
@@ -203,254 +203,264 @@ angular
           templateUrl: '/assets/templates/error.html',
           controller: 'ErrorCtrl'
         })
-	    .state('index', {
-	        url: '/',
-	        params: {
-	    	  tenantId : null,
-	    	  courseId : null
-	        },
-	        templateUrl: '/assets/templates/index.html',
-		    resolve:{
-	     	},
-	        controller: 'IndexCtrl'
-	    })
-	    .state('index.admin', {
-	      abstract: true,
+        .state('index', {
+            url: '/',
+            params: {
+              tenantId : null,
+              courseId : null
+            },
+            templateUrl: '/assets/templates/index.html',
+            resolve:{
+            },
+            controller: 'IndexCtrl'
+        })
+        .state('index.admin', {
+          abstract: true,
           url: 'direct/admin',
           templateUrl: '/assets/templates/admin/index.html',
-    	  resolve:{
+          resolve:{
             tenants : function(TenantService) {
-        	  return TenantService.getTenants();
+              return TenantService.getTenants();
             }
           }
-	    })
-	    .state('index.admin.tenants', {
+        })
+        .state('index.admin.tenants', {
           url: '/tenants',
           templateUrl: '/assets/templates/admin/tenant/index.html',
           controller: 'TenantCtrl'
-	    })	    
-	    .state('index.admin.addTenant', {
-	        url: '/addTenant',
-	        templateUrl: '/assets/templates/admin/tenant/add.html',
-		    resolve:{
-	     	},
-	        controller: 'TenantCtrl'
-	    })
-	    .state('index.admin.editTenant', {
-	        url: '/editTenant/:tenantId',
-	        templateUrl: '/assets/templates/admin/tenant/edit.html',
-		    resolve:{
-	    	  tenant: function($stateParams, TenantService) {
-    	        return TenantService.getTenant($stateParams.tenantId);
+        })      
+        .state('index.admin.addTenant', {
+            url: '/addTenant',
+            templateUrl: '/assets/templates/admin/tenant/add.html',
+            resolve:{
+            },
+            controller: 'TenantCtrl'
+        })
+        .state('index.admin.editTenant', {
+            url: '/editTenant/:tenantId',
+            templateUrl: '/assets/templates/admin/tenant/edit.html',
+            resolve:{
+              tenant: function($stateParams, TenantService) {
+                return TenantService.getTenant($stateParams.tenantId);
               }
-	     	},
-	        controller: 'EditTenantCtrl'
-	    })
-	    .state('index.admin.tenants.tenant', {
-	      url: '/:id',
-	      templateUrl: '/assets/templates/admin/tenant/tenant.html',
-		    resolve:{
-	    	  tenant: function($stateParams, TenantService) {
-	    	    return TenantService.getTenant($stateParams.id);
-	          },
-	    	  providerTypes : function(ProviderService) {
-	            return ProviderService.getProviderTypes();
-	          }
-	     	},
-	     	controller: 'SelectTenantCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.provider', {
-	        url: '/:providerType',
-	        templateUrl: '/assets/templates/admin/tenant/provider/index.html',
-		    resolve:{
-	    	  providerType : function($stateParams) {
-	    	    return $stateParams.providerType;
-	          },
-	    	  providers : function(ProviderService, $stateParams) {
-	    	    return ProviderService.getProviders($stateParams.providerType);
-	    	  }
-	     	},
-	        controller: 'ProviderListCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.provider.configure', {
-	        url: '/:providerKey/configure',
-	        templateUrl: '/assets/templates/admin/tenant/provider/configure.html',
-		    resolve:{
-	    	  providerType : function($stateParams) {
-	    	    return $stateParams.providerType;
-	          },
-	    	  provider : function(ProviderService, $stateParams) {
-	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
-	    	  }
-	     	},
-	        controller: 'ConfigureProviderCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.provider.edit', {
-	        url: '/:providerKey/edit',
-	        templateUrl: '/assets/templates/admin/tenant/provider/edit.html',
-		    resolve:{
-	    	  providerType : function($stateParams) {
-	    	    return $stateParams.providerType;
-	          },
-	    	  provider : function(ProviderService, $stateParams) {
-	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
-	    	  },
-	    	  providerData : function(TenantService,$stateParams) {
-	    	    return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
-	    	  }
-	     	},
-	        controller: 'EditConfigureProviderCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.provider.delete', {
-	        url: '/:providerType/:providerKey/delete',
-	        templateUrl: '/assets/templates/admin/tenant/provider/delete.html',
-		    resolve:{
-	    	  providerType : function($stateParams) {
-	    	    return $stateParams.providerType;
-	          },
-	    	  provider : function(ProviderService, $stateParams) {
-	    	    return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
-	    	  },
-	    	  providerData : function(TenantService,$stateParams) {
-	    	    return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
-	    	  }
-	     	},
-	        controller: 'DeleteConfigureProviderCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.addDashboard', {
-	        url: '/dashboards/add',
-	        templateUrl: '/assets/templates/admin/tenant/dashboards/add.html',
-		    resolve:{
-	     	},
-	        controller: 'AddPreconfiguredDashboardCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.editDashboard', {
-	        url: '/dashboards/edit/:dashboardId',
-	        templateUrl: '/assets/templates/admin/tenant/dashboards/edit.html',
-		    resolve:{
-	    	  preconfiguredDashboard : function($stateParams, TenantService) {
-    	        return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
+            },
+            controller: 'EditTenantCtrl'
+        })
+        .state('index.admin.tenants.tenant', {
+          url: '/:id',
+          templateUrl: '/assets/templates/admin/tenant/tenant.html',
+            resolve:{
+              tenant: function($stateParams, TenantService) {
+                return TenantService.getTenant($stateParams.id);
+              },
+              providerTypes : function(ProviderService) {
+                return ProviderService.getProviderTypes();
               }
-	     	},
-	        controller: 'EditPreconfiguredDashboardCtrl'
-	    })
-	    .state('index.admin.tenants.tenant.removeDashboard', {
-	        url: '/dashboards/remove/:dashboardId',
-	        templateUrl: '/assets/templates/admin/tenant/dashboards/remove.html',
-		    resolve:{
-	    	  preconfiguredDashboard : function($stateParams, TenantService) {
-    	        return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
+            },
+            controller: 'SelectTenantCtrl'
+        })
+        .state('index.admin.tenants.tenant.provider', {
+            url: '/:providerType',
+            templateUrl: '/assets/templates/admin/tenant/provider/index.html',
+            resolve:{
+              providerType : function($stateParams) {
+                return $stateParams.providerType;
+              },
+              providers : function(ProviderService, $stateParams) {
+                return ProviderService.getProviders($stateParams.providerType);
               }
-	     	},
-	        controller: 'RemovePreconfiguredDashboardCtrl'
-	    })
-	    .state('index.courselist', {
-	        url: 'direct/courselist',
-	        templateUrl: '/assets/templates/courselist.html',
-		    resolve:{
-	     	},
-	        controller: 'CourseListController'
-	    })
-	    .state('index.addDashboard', {
-	        url: 'cm/:cmid/addDashboard',
-	        templateUrl: '/assets/templates/dashboard/add.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
-	            return DashboardService.getContextMappingById($stateParams.cmid);
-	          }
-	     	},
-	        controller: 'AddDashboardController'
-	    })
-	    .state('index.removeDashboard', {
-	        url: 'cm/:cmid/removeDashboard/:dbid',
-	        templateUrl: '/assets/templates/dashboard/remove.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
-	            return DashboardService.getContextMappingById($stateParams.cmid);
-	          },
-              dashboardId: function($stateParams) {
-	            return $stateParams.dbid;
-	          }
-	     	},
-	        controller: 'RemoveDashboardController'
-	    })
-	    .state('index.dashboard', {
-	        url: 'cm/:cmid/dashboard/:dbid?data',
-	        templateUrl: '/assets/templates/dashboard/view.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
+            },
+            controller: 'ProviderListCtrl'
+        })
+        .state('index.admin.tenants.tenant.provider.configure', {
+            url: '/:providerKey/configure',
+            templateUrl: '/assets/templates/admin/tenant/provider/configure.html',
+            resolve:{
+              providerType : function($stateParams) {
+                return $stateParams.providerType;
+              },
+              provider : function(ProviderService, $stateParams) {
+                return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+              }
+            },
+            controller: 'ConfigureProviderCtrl'
+        })
+        .state('index.admin.tenants.tenant.provider.edit', {
+            url: '/:providerKey/edit',
+            templateUrl: '/assets/templates/admin/tenant/provider/edit.html',
+            resolve:{
+              providerType : function($stateParams) {
+                return $stateParams.providerType;
+              },
+              provider : function(ProviderService, $stateParams) {
+                return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+              },
+              providerData : function(TenantService,$stateParams) {
+                return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
+              }
+            },
+            controller: 'EditConfigureProviderCtrl'
+        })
+        .state('index.admin.tenants.tenant.provider.delete', {
+            url: '/:providerType/:providerKey/delete',
+            templateUrl: '/assets/templates/admin/tenant/provider/delete.html',
+            resolve:{
+              providerType : function($stateParams) {
+                return $stateParams.providerType;
+              },
+              provider : function(ProviderService, $stateParams) {
+                return ProviderService.getProvider($stateParams.providerType,$stateParams.providerKey);
+              },
+              providerData : function(TenantService,$stateParams) {
+                return TenantService.getProviderDataByTypeAndKey($stateParams.id,$stateParams.providerType,$stateParams.providerKey);  
+              }
+            },
+            controller: 'DeleteConfigureProviderCtrl'
+        })
+        .state('index.admin.tenants.tenant.addDashboard', {
+            url: '/dashboards/add',
+            templateUrl: '/assets/templates/admin/tenant/dashboards/add.html',
+            resolve:{
+            },
+            controller: 'AddPreconfiguredDashboardCtrl'
+        })
+        .state('index.admin.tenants.tenant.editDashboard', {
+            url: '/dashboards/edit/:dashboardId',
+            templateUrl: '/assets/templates/admin/tenant/dashboards/edit.html',
+            resolve:{
+              preconfiguredDashboard : function($stateParams, TenantService) {
+                return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
+              }
+            },
+            controller: 'EditPreconfiguredDashboardCtrl'
+        })
+        .state('index.admin.tenants.tenant.removeDashboard', {
+            url: '/dashboards/remove/:dashboardId',
+            templateUrl: '/assets/templates/admin/tenant/dashboards/remove.html',
+            resolve:{
+              preconfiguredDashboard : function($stateParams, TenantService) {
+                return TenantService.getPreconfiguredDashboardById($stateParams.id, $stateParams.dashboardId);
+              }
+            },
+            controller: 'RemovePreconfiguredDashboardCtrl'
+        })
+        .state('index.courselist', {
+            url: 'direct/courselist/:groupId',
+            templateUrl: '/assets/templates/courselist.html',
+            params: {
+                groupId: { value: null, squash: true }
+            },
+            controller: 'CourseListController'
+        })
+        .state('index.studentView', {
+            url: 'direct/studentView/:groupId/:studentId',
+            templateUrl: '/assets/templates/studentView.html',
+            params: {
+                groupId: { value: null, squash: true },
+                studentId: { value: null, squash: true }
+            },
+            controller: 'StudentViewController'
+        })
+        .state('index.addDashboard', {
+            url: 'cm/:cmid/addDashboard',
+            templateUrl: '/assets/templates/dashboard/add.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
+                return DashboardService.getContextMappingById($stateParams.cmid);
+              }
+            },
+            controller: 'AddDashboardController'
+        })
+        .state('index.removeDashboard', {
+            url: 'cm/:cmid/removeDashboard/:dbid',
+            templateUrl: '/assets/templates/dashboard/remove.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
               dashboardId: function($stateParams) {
                 return $stateParams.dbid;
               }
-	     	},
-	        controller: 'DashboardController'
-	    })
-	    .state('index.selectCard', {
-	        url: 'cm/:cmid/dashboard/:dbid/selectCard',
-	        templateUrl: '/assets/templates/card/select.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
+            },
+            controller: 'RemoveDashboardController'
+        })
+        .state('index.dashboard', {
+            url: 'cm/:cmid/dashboard/:dbid?data',
+            templateUrl: '/assets/templates/dashboard/view.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
               dashboardId: function($stateParams) {
                 return $stateParams.dbid;
               }
-	     	},
-	        controller: 'SelectCardController'
-	    })
-	    .state('index.addCard', {
-	        url: 'cm/:cmid/dashboard/:dbid/addCard/:cardType',
-	        templateUrl: '/assets/templates/card/add.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
+            },
+            controller: 'DashboardController'
+        })
+        .state('index.selectCard', {
+            url: 'cm/:cmid/dashboard/:dbid/selectCard',
+            templateUrl: '/assets/templates/card/select.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
+                return DashboardService.getContextMappingById($stateParams.cmid);
+              },
+              dashboardId: function($stateParams) {
+                return $stateParams.dbid;
+              }
+            },
+            controller: 'SelectCardController'
+        })
+        .state('index.addCard', {
+            url: 'cm/:cmid/dashboard/:dbid/addCard/:cardType',
+            templateUrl: '/assets/templates/card/add.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
               dashboardId: function($stateParams) {
                 return $stateParams.dbid;
               },
-	          card: function($stateParams, registry) {
-            	return angular.copy(registry.registry[$stateParams.cardType]);
+              card: function($stateParams, registry) {
+                return angular.copy(registry.registry[$stateParams.cardType]);
               }
               
-	     	},
-	        controller: 'AddCardController'
-	    })
-	    .state('index.editCard', {
-	        url: 'cm/:cmid/dashboard/:dbid/editCard/:cid',
-	        templateUrl: '/assets/templates/card/edit.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
+            },
+            controller: 'AddCardController'
+        })
+        .state('index.editCard', {
+            url: 'cm/:cmid/dashboard/:dbid/editCard/:cid',
+            templateUrl: '/assets/templates/card/edit.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
               dashboardId: function($stateParams) {
                 return $stateParams.dbid;
               },
-	          cardId: function($stateParams) {
-            	return $stateParams.cid;
+              cardId: function($stateParams) {
+                return $stateParams.cid;
               }
               
-	     	},
-	        controller: 'EditCardController'
-	    })
-	    .state('index.removeCard', {
-	        url: 'cm/:cmid/dashboard/:dbid/removeCard/:cid',
-	        templateUrl: '/assets/templates/card/remove.html',
-		    resolve:{
-		      contextMapping: function(DashboardService, $stateParams) {
+            },
+            controller: 'EditCardController'
+        })
+        .state('index.removeCard', {
+            url: 'cm/:cmid/dashboard/:dbid/removeCard/:cid',
+            templateUrl: '/assets/templates/card/remove.html',
+            resolve:{
+              contextMapping: function(DashboardService, $stateParams) {
                 return DashboardService.getContextMappingById($stateParams.cmid);
               },
               dashboardId: function($stateParams) {
                 return $stateParams.dbid;
               },
-	          cardId: function($stateParams) {
-            	return $stateParams.cid;
+              cardId: function($stateParams) {
+                return $stateParams.cid;
               }
               
-	     	},
-	        controller: 'RemoveCardController'
-	    })
-	    ;
-	$locationProvider.html5Mode(true);
+            },
+            controller: 'RemoveCardController'
+        })
+        ;
+    $locationProvider.html5Mode(true);
 });

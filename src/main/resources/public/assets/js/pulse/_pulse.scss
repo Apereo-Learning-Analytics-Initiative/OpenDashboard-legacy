@@ -13,6 +13,10 @@
     }
   }
 
+  .od-breadcrumb {
+    padding: 10px 0;
+  }
+
   #pulse-chart {
     width: 100%;
     .odd {
@@ -21,19 +25,32 @@
     .even {
       fill: #efefef;
     }
+    .zoom-icon {
+      fill: #aaa;
+      circle {
+        opacity: 0;
+      }
+
+      &.active {
+        fill: #0087a7;
+        cursor: pointer;
+        &:hover {
+          fill: darken(#0087a7, 5%);
+        }
+      }
+    }
     .listlabel {
       font-size: 12px;
       font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-      &.course-list-item {
-        fill: #0087a7;
-        &:hover {
-          fill: darken(#0087a7, 20%);
-          cursor: pointer;
-        }
+      fill: #0087a7;
+      &:hover {
+        fill: darken(#0087a7, 20%);
+        cursor: pointer;
       }
     }
     .dot {
       // opacity: 0.5;
+      cursor: pointer;
       &:hover {
         // opacity: 1;
       }
@@ -44,8 +61,12 @@
     position: relative;
     .tool-tip-info {
       position: absolute;
-      // background: #0087a7;
-      color: #0087a7;
+      background: #fff;
+      padding: 0px 10px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+      border: 1px solid #999;
+      color: #005695;
     }
     .info-label {
       text-transform: uppercase;

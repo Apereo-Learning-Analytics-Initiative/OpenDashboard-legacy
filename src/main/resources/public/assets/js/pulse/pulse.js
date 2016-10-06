@@ -6,10 +6,11 @@
     '$scope',
     '$http',
     '$timeout',
+    '$state',
     'SessionService',
     'EnrollmentDataService',
     'EventService',
-    function($scope, $http, $timeout, SessionService, EnrollmentDataService, EventService){
+    function($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService){
       "use strict";
 
     // $scope._ = _;
@@ -26,7 +27,9 @@
     var processedClasses = [];
     var classes = [];
     var labels = [];
+    var currentCourse = null;
     var currentUser = null;
+    var currentStudent = null;
 
     currentUser = SessionService.getCurrentUser();
 
@@ -44,6 +47,7 @@
 
             _.each(labels, function (enrollment) {
               classes.push(enrollment.class);
+              
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
@@ -119,7 +123,34 @@
       $scope.coursesMaxEvents = maxEvents;
       $scope.maxEvents = $scope.coursesMaxEvents;
       $scope.datalist = processedClasses;
-      $scope.$broadcast('draw-chart');
+      //$scope.$broadcast('draw-chart');
+
+      if ($state.params.groupId) {
+        $scope.listType = 'students';
+        buildStudentList($state.params.groupId);
+      } else {
+        $scope.maxEvents = $scope.coursesMaxEvents;
+        $scope.datalist = processedClasses;
+        $scope.listType = 'classes';  
+        $scope.$broadcast('draw-chart');
+      }
+
+      /*if ($scope.listType === 'classes') {
+        // clicked a class name on the left of the chart
+        // set the type to students
+        
+        $scope.listType = 'students';
+        buildStudentList($state.params.groupId);
+
+      } else if ($scope.listType === 'students') {
+        // clicked a class name on the left of the chart
+        // set the type to students
+        
+        $scope.maxEvents = $scope.coursesMaxEvents;
+        $scope.datalist = processedClasses;
+        $scope.listType = 'classes';  
+        $scope.$broadcast('draw-chart');
+      }*/
     }
 
     function buildStudentList(id) {
@@ -127,7 +158,8 @@
         return c.id === id;
       })[0];
       
-      console.log(course);
+      $scope.classes = processedClasses;
+      $scope.currentCourse = course;
 
       $scope.maxEvents = course.studentEventMax;
       $scope.datalist = course.students;
@@ -144,21 +176,27 @@
     }
 
     function handleChartChange(event, data) {
-      if ($scope.listType === 'classes') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
+      console.log(data);
+      console.log($state.params.groupId);
+      // Go to course list 
+      //$state.go('index.courselist', { groupId: null } );
+      if (data.type === 'course') {
+        // Go to specific course with list of students
+        $state.go('index.courselist', { groupId: data.id }, {notify: false});
         $scope.listType = 'students';
         buildStudentList(data.id);
 
-      } else if ($scope.listType === 'students') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
+      } else if (data.type === 'courselist') {
+        // Go to specific student
+        $state.go('index.studentView', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.maxEvents = $scope.coursesMaxEvents;
         $scope.datalist = processedClasses;
         $scope.listType = 'classes';  
         $scope.$broadcast('draw-chart');
+
+      } else if (data.type === 'student') {
+        // Go to specific student
+        $state.go('index.studentView', { groupId: $state.params.groupId, studentId: data.id });
       }
     }
 
@@ -169,6 +207,13 @@
     init();
   }
   ])
+
+
+
+
+
+
+
   .directive('pulse', function() {
     return {
       controller: 'pulseController',
@@ -180,6 +225,7 @@
         function drawChart(obj) {
           // var maxEvents = obj.maxEvents;
           var plots = {};
+          var zoomed = false;
           var courseStart = moment(scope.coursesStartEnd.start).startOf('week');
           var courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
           // moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week')) - moment(scope.coursesStartEnd.start).startOf('week')
@@ -243,13 +289,16 @@
 
             t0.selectAll('.dot')
             .attr('cx', function (d, index) {
-              console.log(d);
               var placement = timeScale(moment(d.date));
               return placement;
             })
             .attr('opacity', function (d, index) {
               return 0.5;
             });
+
+            zoomgroup
+            .attr('class', 'zoom-icon')
+            .on('click', null);
           }
 
           if (inited) {
@@ -282,19 +331,27 @@
               .attr('transform', 'translate(0, 10)')
               .call(xAxis);
 
+
+            // zoom icon
             var zoomgroup = svg.append('g')
+              .attr('class', 'zoom-icon')
               .attr('transform', 'translate(200, 10) scale(.03)')
-              .on('click', resetZoom);
+              
+
+            var circle = zoomgroup
+              .append('circle')
+              
+              .attr('opacity', '1')
+              .attr('r', 400)
+              .attr('cx', 240)
+              .attr('cy', 240)
 
             var mag = zoomgroup
               .append('path')
-              .attr('fill', '#555')
               .attr('d', 'M464.524,412.846l-97.929-97.925c23.6-34.068,35.406-72.04,35.406-113.917c0-27.218-5.284-53.249-15.852-78.087c-10.561-24.842-24.838-46.254-42.825-64.241c-17.987-17.987-39.396-32.264-64.233-42.826C254.246,5.285,228.217,0.003,200.999,0.003c-27.216,0-53.247,5.282-78.085,15.847C98.072,26.412,76.66,40.689,58.673,58.676c-17.989,17.987-32.264,39.403-42.827,64.241C5.282,147.758,0,173.786,0,201.004c0,27.216,5.282,53.238,15.846,78.083c10.562,24.838,24.838,46.247,42.827,64.241c17.987,17.986,39.403,32.257,64.241,42.825c24.841,10.563,50.869,15.844,78.085,15.844c41.879,0,79.852-11.807,113.922-35.405l97.929,97.641c6.852,7.231,15.406,10.849,25.693,10.849c10.089,0,18.699-3.566,25.838-10.705c7.139-7.138,10.704-15.748,10.704-25.837S471.567,419.889,464.524,412.846z M291.363,291.358c-25.029,25.033-55.148,37.549-90.364,37.549c-35.21,0-65.329-12.519-90.36-37.549c-25.031-25.029-37.546-55.144-37.546-90.36c0-35.21,12.518-65.334,37.546-90.36c25.026-25.032,55.15-37.546,90.36-37.546c35.212,0,65.331,12.519,90.364,37.546c25.033,25.026,37.548,55.15,37.548,90.36C328.911,236.214,316.392,266.329,291.363,291.358z')
-
 
             var minus = zoomgroup
               .append('path')
-              .attr('fill', '#555')
               .attr('d', 'M283.228,182.728h-164.45c-2.474,0-4.615,0.905-6.423,2.712c-1.809,1.809-2.712,3.949-2.712,6.424v18.271c0,2.475,0.903,4.617,2.712,6.424c1.809,1.809,3.946,2.713,6.423,2.713h164.454c2.478,0,4.612-0.905,6.427-2.713c1.804-1.807,2.703-3.949,2.703-6.424v-18.271c0-2.475-0.903-4.615-2.707-6.424C287.851,183.633,285.706,182.728,283.228,182.728z')
 
           }
@@ -312,17 +369,17 @@
 
 
           // set tooltip position based on cursor
-          // function setToolTipPosition (pos) {
-          //   var posOffset = {
-          //     y: pos.y - chartOffset.top - 20,
-          //     x: pos.x - chartOffset.left + 20,
-          //   };
+          function setToolTipPosition (pos) {
+            var posOffset = {
+              y: pos.y - chartOffset.top - 20,
+              x: pos.x - chartOffset.left + 20,
+            };
 
-          //   $('.tool-tip-info').css({
-          //     'top': posOffset.y,
-          //     'left': posOffset.x,
-          //   });
-          // }
+            $('.tool-tip-info').css({
+              'top': posOffset.y,
+              'left': posOffset.x,
+            });
+          }
 
 
 
@@ -345,8 +402,10 @@
               })
               .attr('class', function(d){
                 if (scope.listType === "students" && i > 0) {
+                  o.lineType = 'student';
                   return 'pulse-list-item student';
                 } else {
+                  o.lineType = 'course';
                   return 'pulse-list-item course';
                 }
               })
@@ -395,10 +454,13 @@
               })
               .on('mouseover', function (d, index, node) {
                 d3.select(this).attr('opacity','1');
-                // setToolTipPosition({
-                //   x: d3.event.clientX,
-                //   y: d3.event.clientY
-                // });
+                console.log(d3.event);
+                setToolTipPosition({
+                  x: d3.event.pageX,
+                  y: d3.event.pageY
+                  // x: d3.event.clientX,
+                  // y: d3.event.clientY
+                });
                 scope.$apply(function () {
                     scope.chartInfo = {
                       date: moment(d.date),
@@ -413,6 +475,8 @@
                 });
               })
               .on('click', function(d){
+                zoomed = true;
+                // zoom
                 var t0 = svg.transition().duration(750);
                 var t1 = svg.transition().duration(750);
 
@@ -423,7 +487,9 @@
                     weeksBack, 
                     weeksForward
                   ]);
+
                 xAxis.ticks(5);
+
                 t1.selectAll(".xaxis").call(xAxis);
 
                 t0.selectAll('.dot')
@@ -450,6 +516,10 @@
                   
                   return optacity;
                 });
+
+                zoomgroup
+                .attr('class', 'zoom-icon active')
+                .on('click', resetZoom);
 
               });
 
@@ -492,9 +562,9 @@
                           .attr('class', 'odd');
 
                           scope.$emit('chart-change', {
-                            id: o.id
+                            id: o.id,
+                            type: o.lineType
                           });
-
                         });
                   });
                 });

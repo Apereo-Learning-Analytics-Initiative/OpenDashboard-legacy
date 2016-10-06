@@ -32,7 +32,7 @@ var paths = [
     'node_modules/angular-visjs/angular-vis.js',
 ];
 
-gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass']);
+gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass', 'copy-html']);
 
 gulp.task('minify-libraries', function (callback) {
   pump([
