@@ -24,7 +24,8 @@
             console.log('StudentViewController');
 
             $scope.error = null;
-            $scope.enrollments = null;
+            $scope.actions = null;
+            $scope.state = $state;
 
             currentUser = SessionService.getCurrentUser();
 
@@ -38,12 +39,24 @@
                         $scope.error = enrollments.errorCode;
                     } else {
                         EventService.getEventForClassAndUser(currentUser.tenant_id, $state.params.groupId, $state.params.studentId, 0, 1000)
-                        .then(function (statistics) {
-                            console.log(statistics);
+                        .then(function (actions) {
+                            console.log(actions);
+                            $scope.actions = actions.content;
+                            activityByDateChart(actions.content);
                         });
                     }   
                 });
             }
+
+            function activityByDateChart (actions) {
+                var chartData;
+                var colors;
+                var options;
+                var activityByDateChart;
+
+            }
+
+            
         } 
     );
 })(angular);

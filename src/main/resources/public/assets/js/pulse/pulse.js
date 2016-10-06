@@ -188,7 +188,7 @@
 
       } else if (data.type === 'courselist') {
         // Go to specific student
-        $state.go('index.studentView', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.maxEvents = $scope.coursesMaxEvents;
         $scope.datalist = processedClasses;
         $scope.listType = 'classes';  
@@ -196,7 +196,7 @@
 
       } else if (data.type === 'student') {
         // Go to specific student
-        $state.go('index.studentView', { groupId: $state.params.groupId, studentId: data.id });
+        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
       }
     }
 

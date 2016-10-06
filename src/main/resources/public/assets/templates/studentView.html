@@ -12,4 +12,25 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
-{{currentStudent}}
+<section>
+    <h3>Activity by date</h3>
+    <!-- Toggle between chart and table -->
+    <!-- Chart -->
+    <div class="activityByDateChart">
+    </div>
+    <!-- Table -->
+    <table id="activityByDateTable">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Verb</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="action in actions">
+                <th>{{action.timestamp}}</th>
+                <th>{{action.verb}}</th>
+            </tr>
+        </tbody>
+    </table>
+</section>
