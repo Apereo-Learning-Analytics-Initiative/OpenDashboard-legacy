@@ -28,6 +28,7 @@
     var classes = [];
     var labels = [];
     var currentUser = null;
+    var currentStudent = null;
 
     currentUser = SessionService.getCurrentUser();
 
@@ -45,6 +46,7 @@
 
             _.each(labels, function (enrollment) {
               classes.push(enrollment.class);
+              
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
@@ -172,12 +174,17 @@
     }
 
     function handleChartChange(event, data) {
+      console.log(data);
+      console.log($state.params.groupId);
       // Go to course list 
       //$state.go('index.courselist', { groupId: null } );
-      // Go to specific course with list of students
-      $state.go('index.courselist', { groupId: data.id });
-      // Go to specific student
-      //$state.go('index.courselist.student', { studentId: data.id } );
+      if (data.type === 'course') {
+        // Go to specific course with list of students
+        $state.go('index.courselist', { groupId: data.id });
+      } else if (data.type === 'student') {
+        // Go to specific student
+        $state.go('index.studentView', { groupId: $state.params.groupId, studentId: data.id } );
+      }
     }
 
     function init() {
@@ -314,8 +321,10 @@
               })
               .attr('class', function(d){
                 if (scope.listType === "students" && i > 0) {
+                  o.lineType = 'student';
                   return 'pulse-list-item student';
                 } else {
+                  o.lineType = 'course';
                   return 'pulse-list-item course';
                 }
               })
@@ -347,7 +356,7 @@
               // })
               .text(o.label)
               .on('click', function (d) {
-                var clickTarget = $(this).parents(".pulse-list-item");
+                /*var clickTarget = $(this).parents(".pulse-list-item");
                 $('.pulse-list-item:not(#'+clickTarget.attr('id')+')').fadeOut(300, function() { 
                   $(this).remove(); 
                   
@@ -361,11 +370,17 @@
                         .attr('class', 'odd');
 
                         scope.$emit('chart-change', {
-                          id: o.id
+                          id: o.id,
+                          type: scope.listType
                         });
 
                       });
-                });
+                    });*/
+                  scope.$emit('chart-change', {
+                    id: o.id,
+                    type: o.lineType
+                  });
+                
               });
 
             // row plot group

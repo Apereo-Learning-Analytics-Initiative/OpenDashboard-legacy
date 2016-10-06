@@ -348,23 +348,18 @@ angular
             url: 'direct/courselist/:groupId',
             templateUrl: '/assets/templates/courselist.html',
             params: {
-                groupId: {
-                    value: null,
-                    squash: true
-                }
+                groupId: { value: null, squash: true }
             },
             controller: 'CourseListController'
         })
-        .state('index.courselist.student', {
-            url: 'students/:studentId',
-            templateUrl: '/assets/templates/courselist.html',
+        .state('index.studentView', {
+            url: 'direct/studentView/:groupId/:studentId',
+            templateUrl: '/assets/templates/studentView.html',
             params: {
-                studentId: {
-                    value: null,
-                    squash: true
-                }
+                groupId: { value: null, squash: true },
+                studentId: { value: null, squash: true }
             },
-            controller: 'CourseListController'
+            controller: 'StudentViewController'
         })
         .state('index.addDashboard', {
             url: 'cm/:cmid/addDashboard',
