@@ -8,7 +8,7 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li ng-repeat="course in classes">
-                    <a href="#" ng-click="$emit('chart-change', {id: course.id, type: 'course'})">{{course.label}}</a>
+                    <a href="#" ng-click="$emit('chart-change', {id: course.id, type: 'course', notify: true})">{{course.label}}</a>
                 </li>
               </ul>
             </span>
@@ -20,7 +20,7 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li ng-repeat="student in currentCourse.students">
-                    <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student'})">{{student.label}}</a>
+                    <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student', notify: true})">{{student.label}}</a>
                 </li>
               </ul>
             </span>
@@ -45,4 +45,4 @@
         </div>
     </div>
 </section>
-<div class="ui-view"></div>
+<div class="ui-view" ng-if="listType == 'student'"></div>

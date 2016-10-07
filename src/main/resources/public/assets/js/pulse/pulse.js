@@ -190,12 +190,14 @@
       if (data.type === 'course') {
         // Go to specific course with list of students
         $state.go('index.courselist', { groupId: data.id }, {notify: false});
+        // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.listType = 'students';
         buildStudentList(data.id);
 
       } else if (data.type === 'courselist') {
         // Go to specific student
-        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+        $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+        // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.maxEvents = $scope.coursesMaxEvents;
         $scope.datalist = processedClasses;
         $scope.listType = 'classes';  
@@ -283,7 +285,7 @@
             .ticks(weeks)
             .tickFormat(d3.timeFormat('%m-%d'));
 
-          function resetZoom(d) {
+          function resetZoom() {
             var t0 = svg.transition().duration(750);
             var t1 = svg.transition().duration(750);
             
@@ -317,7 +319,9 @@
 
             var t1 = svg.transition().duration(750);
             t1.selectAll(".xaxis").call(xAxis);
+            var zoomgroup = svg.select('.zoom-icon');
 
+            resetZoom();
 
           } else {
             // No chart yet, let's make one.
