@@ -352,15 +352,6 @@ angular
             },
             controller: 'CourseListController'
         })
-        /*.state('index.studentView', {
-            url: 'direct/studentView/:groupId/:studentId',
-            templateUrl: '/assets/templates/studentView.html',
-            params: {
-                groupId: { value: null, squash: true },
-                studentId: { value: null, squash: true }
-            },
-            controller: 'StudentViewController'
-        })*/
         .state('index.courselist.studentView', {
             url: '/student/:studentId',
             templateUrl: '/assets/templates/studentView.html',
