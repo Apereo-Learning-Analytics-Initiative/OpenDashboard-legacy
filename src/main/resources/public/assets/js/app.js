@@ -360,6 +360,15 @@ angular
             },
             controller: 'StudentViewController'
         })
+        // .state('index.courselist.empty', {
+        //     url: '/',
+        //     // templateUrl: '/assets/templates/studentView.html',
+        //     template: ''
+        //     // params: {
+        //     //     studentId: { value: null, squash: true }
+        //     // },
+        //     // controller: 'StudentViewController'
+        // })
         .state('index.addDashboard', {
             url: 'cm/:cmid/addDashboard',
             templateUrl: '/assets/templates/dashboard/add.html',

@@ -39,6 +39,10 @@
         }
       }
     }
+    .email-link {
+      transform: scale(0.03) translate(350px, 250px);
+      cursor: pointer;
+    }
     .listlabel {
       font-size: 12px;
       font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -46,6 +50,9 @@
       &:hover {
         fill: darken(#0087a7, 20%);
         cursor: pointer;
+      }
+      &.student-list-item {
+        transform: translate(25px, 0);
       }
     }
     .dot {
