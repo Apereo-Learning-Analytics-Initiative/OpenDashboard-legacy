@@ -125,7 +125,10 @@
       $scope.datalist = processedClasses;
       //$scope.$broadcast('draw-chart');
 
-      if ($state.params.groupId) {
+      if ($state.params.studentId && $state.params.groupId) {
+        $scope.listType = 'student';
+        buildStudent($state.params.groupId, $state.params.studentId);
+      } else if ($state.params.groupId) {
         $scope.listType = 'students';
         buildStudentList($state.params.groupId);
       } else {
@@ -134,23 +137,27 @@
         $scope.listType = 'classes';  
         $scope.$broadcast('draw-chart');
       }
+    }
 
-      /*if ($scope.listType === 'classes') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
-        $scope.listType = 'students';
-        buildStudentList($state.params.groupId);
+    function buildStudent(cid, sid) {
+      var course = _.filter(processedClasses, function(c){
+        return c.id === cid;
+      })[0];
+      
+      $scope.classes = processedClasses;
+      $scope.currentCourse = course;
 
-      } else if ($scope.listType === 'students') {
-        // clicked a class name on the left of the chart
-        // set the type to students
-        
-        $scope.maxEvents = $scope.coursesMaxEvents;
-        $scope.datalist = processedClasses;
-        $scope.listType = 'classes';  
-        $scope.$broadcast('draw-chart');
-      }*/
+      $scope.maxEvents = course.studentEventMax;
+
+      var student = _.filter(course.students, function(s){
+        return s.id === sid;
+      })[0];
+
+      $scope.currentStudent = student;
+      $scope.datalist = [student];
+
+
+      $scope.$broadcast('draw-chart');
     }
 
     function buildStudentList(id) {
@@ -196,7 +203,9 @@
 
       } else if (data.type === 'student') {
         // Go to specific student
-        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
+        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
+        $scope.listType = 'student';  
+        buildStudent($scope.currentCourse.id, data.id);
       }
     }
 

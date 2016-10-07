@@ -1,7 +1,7 @@
 <section>
     <div class="od-breadcrumb">
         <a href="" ui-sref="index.courselist({groupId: null})">Class List</a>
-        <span ng-if="listType == 'students'"> 
+        <span ng-if="listType == 'students' || listType == 'student'"> 
     
             <span class="dropdown">
               &gt; <a href="" data-toggle="dropdown">{{currentCourse.label}}
@@ -14,6 +14,16 @@
             </span>
 
             <span>&gt; Students</span>
+
+            <span class="dropdown" ng-if="listType == 'student'">
+              &gt; <a href="" data-toggle="dropdown">{{currentStudent.label}}
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="student in currentCourse.students">
+                    <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student'})">{{student.label}}</a>
+                </li>
+              </ul>
+            </span>
         </span>
     </div>
 
@@ -35,4 +45,4 @@
         </div>
     </div>
 </section>
-<!-- <div class="ui-view"></div> -->
+<div class="ui-view"></div>
