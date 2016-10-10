@@ -13,23 +13,65 @@ or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
 <section>
-    <h3>Activity by date</h3>
+    <h3>Activity by Verb</h3>
     <!-- Toggle between chart and table -->
+    <div class="buttons pull-right">
+        <button class="btn btn-primary" type="button" ng-click="activityByVerbDisplay='table'" ng-disabled="activityByVerbDisplay=='table'">
+            <i class="fa fa-table" aria-hidden="true"></i> Table
+        </button>
+        <button class="btn btn-primary" type="button" ng-click="activityByVerbDisplay='chart'" ng-disabled="activityByVerbDisplay=='chart'">
+            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+        </button>
+    </div>
     <!-- Chart -->
-    <div class="activityByDateChart">
+    <div class="activityByVerbChart" ng-show="activityByVerbDisplay=='chart'">
+        <canvas id="activityByVerbChart" width="400" height="300"></canvas>
     </div>
     <!-- Table -->
-    <table id="activityByDateTable">
+    <table id="activityByVerbTable" class="table table-condensed table-hover" ng-show="activityByVerbDisplay=='table'">
         <thead>
             <tr>
-                <th>Timestamp</th>
                 <th>Verb</th>
+                <th>Total</th>
+                <th>Average per Day</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="action in actions">
-                <th>{{action.timestamp}}</th>
-                <th>{{action.verb}}</th>
+            <tr ng-repeat="label in activityByVerbChartData.labels">
+                <th>{{label}}</th>
+                <td>{{activityByVerbChartData.datasets[0].data[$index]}}</td>
+                <td>{{activityByVerbChartData.datasets[1].data[$index]}}</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+<section>
+    <h3>Activity by Date</h3>
+    <!-- Toggle between chart and table -->
+    <div class="buttons pull-right">
+        <button class="btn btn-primary" type="button" ng-click="activityByDateDisplay='table'" ng-disabled="activityByDateDisplay=='table'">
+            <i class="fa fa-table" aria-hidden="true"></i> Table
+        </button>
+        <button class="btn btn-primary" type="button" ng-click="activityByDateDisplay='chart'" ng-disabled="activityByDateDisplay=='chart'">
+            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+        </button>
+    </div>
+    <!-- Chart -->
+    <div class="activityByDateChart" ng-show="activityByDateDisplay=='chart'">
+        <canvas id="activityByDateChart" width="400" height="300"></canvas>
+    </div>
+    <!-- Table -->
+    <table id="activityByDateTable" class="table table-condensed table-hover" ng-show="activityByDateDisplay=='table'">
+        <thead>
+            <tr>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="label in activityByDateChartData.labels">
+                <td>{{label}}</td>
             </tr>
         </tbody>
     </table>
