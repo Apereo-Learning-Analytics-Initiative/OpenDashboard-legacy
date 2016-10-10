@@ -62,9 +62,6 @@
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
                       statCount++;
-                      if (statCount === labels.length) {
-                        //processData();
-                      }
 
                       var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
                       var queue = [];
