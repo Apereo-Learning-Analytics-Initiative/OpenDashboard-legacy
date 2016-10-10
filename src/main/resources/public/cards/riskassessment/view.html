@@ -25,7 +25,7 @@
         </ul>
       </div>
     
-      <div class="list-group box-shadow--6dp">
+      <div class="list-group">
         <a class="list-group-item" ng-class="{'active': grouping.translationValue == ALL_STUDENTS.translationValue}" href ng-click="changeGrouping(ALL_STUDENTS);"><strong translate="RA_LABEL_ALL_STUDENTS">ALL STUDENTS</strong></a>
         <a class="list-group-item" ng-class="{'active': grouping.translationValue == HIGH_RISK.translationValue}" href ng-click="changeGrouping(HIGH_RISK);">
           <span class="label label-danger">&nbsp;</span>
@@ -52,7 +52,7 @@
           <strong class="pull-right" ng-show="noRiskPercentage">{{noRiskPercentage}}%</strong>
         </a>
       </div> 
-      <canvas id="doughnut" class="chart chart-doughnut box-shadow--6dp hidden-xs hidden-sm"
+      <canvas id="doughnut" class="chart chart-doughnut hidden-xs hidden-sm"
         chart-data="data" chart-labels="labels" chart-colours="colors" chart-click="donutClick">
       </canvas> 
       
@@ -66,33 +66,42 @@
         <p class="navbar-text"><strong translate="RA_LABEL_GROUPING">GROUPING</strong>:&nbsp;<strong>{{grouping.translationValue}}</strong></p>
         <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong ng-show="counts">{{counts[grouping.label]}}</strong></p>
         </div>
-        <ul class="nav navbar-nav navbar-right" ng-show="compareGroup.length > 1">
-              <li><a href ng-click="changeToView(radarView)"><strong class="od-text-black" translate="RA_LABEL_COMPARE_STUDENTS">COMPARE STUDENTS</strong></a></li>
+        <ul class="nav navbar-nav navbar-right">
+              <li>
+                <button class="btn btn--3d btn--primary hdr-btn" href ng-disabled="compareGroup.length < 3" ng-click="changeToView(radarView)">
+                  <span translate="RA_LABEL_COMPARE_STUDENTS">Compare Students</span>
+                </button>
+              </li>
         </ul>
       </div>
       
-    
-      <table class="table table-bordered box-shadow--6dp">
-        <thead class="od-subheader-background-color">
-          <tr>
-            <th class="col-md-7 col-lg-5"><strong translate="RA_LABEL_STUDENT">STUDENT</strong></th>
-            <th class="col-md-3 col-lg-5"><strong translate="RA_LABEL_RISK_CATEGORY">RISK CATEGORY</strong></th>
-            <th class="col-md-2">&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-        
-          <tr ng-repeat="enrollment in enrollments | filter:filterExpression | orderBy : 'user.familyName'" class="od-background-color-white">
-            <td>{{enrollment.user.givenName}}&nbsp;{{enrollment.user.familyName}}</td>
-            <td ng-class="{'od-info-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
-            'od-danger-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" ></td>
-            <td class="center-block">
-              <input type="checkbox" class="form-control" ng-checked="compareGroup.indexOf(enrollment.user.userId) > -1" ng-click="toggleCompare(enrollment.user.userId)">
-            </td>
-          </tr>
-        
-        </tbody>
-      </table>
+      <fieldset>
+        <legend class="sr-only">Compare Students</legend>
+        <table class="table table-bordered">
+          <thead class="od-subheader-background-color">
+            <tr>
+              <th class="col-md-7 col-lg-5"><strong translate="RA_LABEL_STUDENT">STUDENT</strong></th>
+              <th class="col-md-3 col-lg-5"><strong translate="RA_LABEL_RISK_CATEGORY">RISK CATEGORY</strong></th>
+              <th class="col-md-2"><strong translate="RA_LABEL_COMPARE">COMPARE</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+          
+            <tr ng-repeat="enrollment in enrollments | filter:filterExpression | orderBy : 'user.familyName'" class="od-background-color-white">
+              <td>
+                <student-info learner="enrollment" indicators="getIndicators(enrollment)" drilldown="singleUserDrillDown(enrollment.user.userId)"></student-info>
+              </td>
+              <td ng-class="{'od-info-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','od-success-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
+              'od-danger-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'HIGH RISK', 'od-warning-color':enrollment.output.MODEL_RISK_CONFIDENCE == 'MEDIUM RISK'}" >{{enrollment.output['http://unicon.net/analytics/vocabulary/v1/passProbability']}}</td>
+              <td class="center-block">
+                <label class="sr-only" for="compare-{{$index}}">Compare {{enrollment.user.givenName}}&nbsp;{{enrollment.user.familyName}}</label>
+                <input ng-keydown="checkBoxKeyDown($event)" id="compare-{{$index}}" aria-describedby="compare-{{$index}}" type="checkbox" ng-checked="compareGroup.indexOf(enrollment.user.userId) > -1" ng-click="toggleCompare(enrollment.user.userId)">
+              </td>
+            </tr>
+          
+          </tbody>
+        </table>
+      </fieldset>
     </div>
   </div>
   <div class="row" ng-show="!error && view == radarView">
@@ -140,11 +149,11 @@
           </div>
         </div>
       </div>
-      <div class="box-shadow--6dp od-background-color-white">
+      <div class="od-background-color-white">
         <div class="list-group" >
         
           <div class="list-group-item" ng-repeat="id in compareGroup" ng-init="enrollment = findInEnrollments(id);expand = false;" ng-click="expand = !expand;" ng-show="enrollment">
-            <span class="glyphicon-transparent" style="background-color: {{radarColors[$index]}};"></span>
+            <span ng-class="expand ? 'glyphicon glyphicon-triangle-bottom' : 'glyphicon glyphicon-triangle-right'"></span>
             &nbsp;
             <strong>{{enrollment.user.givenName}}&nbsp;{{enrollment.user.familyName}}</strong>
             <span class="od-text-black label pull-right" ng-class="{'label-info':enrollment.output.MODEL_RISK_CONFIDENCE == 'LOW RISK','label-success':enrollment.output.MODEL_RISK_CONFIDENCE == 'NO RISK',
@@ -170,7 +179,7 @@
           <p class="navbar-text"><strong translate="RA_LABEL_NUM_STUDENTS"># OF STUDENTS</strong>:&nbsp;<strong>{{compareGroup.length - 1}}</strong></p>
         </div>
       </div>
-      <canvas class="chart chart-radar box-shadow--6dp od-background-color-white p-t p-b" chart-colours="radarColors" chart-data="radarData" chart-labels="radarLabels" chart-options="radarOptions" ></canvas>
+      <canvas class="chart chart-radar od-background-color-white p-t p-b" chart-colours="radarColors" chart-data="radarData" chart-labels="radarLabels" chart-options="radarOptions" ></canvas>
     </div>
 
   </div>

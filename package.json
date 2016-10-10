@@ -21,6 +21,7 @@
     "angular-cache": "^4.6.0",
     "angular-chart.js": "^1.0.3",
     "angular-cookies": "^1.5.8",
+    "angular-hotkeys": "^1.7.0",
     "angular-messages": "^1.5.8",
     "angular-moment": "^1.0.0-beta.6",
     "angular-resource": "^1.5.8",

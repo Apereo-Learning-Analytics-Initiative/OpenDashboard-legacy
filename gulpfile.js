@@ -30,6 +30,7 @@ var paths = [
     'node_modules/d3-time-format/build/d3-time-format.js',
     'node_modules/vis/dist/vis.js',
     'node_modules/angular-visjs/angular-vis.js',
+    'node_modules/angular-hotkeys/build/hotkeys.js'
 ];
 
 gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass', 'copy-html']);

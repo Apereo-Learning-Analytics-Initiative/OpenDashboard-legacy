@@ -16,7 +16,7 @@
 'use strict';
     
 angular
-.module('od.cards.riskassessment', ['OpenDashboardRegistry', 'OpenDashboardAPI'])
+.module('od.cards.riskassessment', ['OpenDashboardRegistry', 'OpenDashboardAPI', 'cfp.hotkeys'])
  .config(function(registryProvider){
     registryProvider.register('riskassessment',{
         title: 'Risk Assessment',
@@ -30,7 +30,7 @@ angular
     });
  })
  .controller('RiskAssessmentController', function($scope, $state, $stateParams, $translate, $translatePartialLoader, $log, $q, _, 
-    OpenDashboard_API, ContextMappingService, SessionService, EventService, ModelOutputDataService, EnrollmentDataService) {
+    OpenDashboard_API, ContextMappingService, SessionService, EventService, ModelOutputDataService, EnrollmentDataService, hotkeys) {
    $scope.loaded = false;
    $translatePartialLoader.addPart('risk-assessment');
    $translate
@@ -224,6 +224,27 @@ angular
 	   $scope.categories = [$scope.ALL_STUDENTS, $scope.HIGH_RISK, $scope.MEDIUM_RISK, $scope.LOW_RISK, $scope.NO_RISK];
 	   $scope.groupings = [$scope.ALL_STUDENTS, $scope.HIGH_RISK, $scope.MEDIUM_RISK, $scope.LOW_RISK, $scope.NO_RISK];
 	   $scope.grouping = $scope.groupings[0];
+
+           // controller scoped key binding C to compare students button
+           hotkeys.bindTo($scope)
+               .add({
+                   combo: 'c',
+                   description: 'Compare Students',
+                   callback: function() {
+                       if($scope.compareGroup.length > 2) {
+                           $scope.changeToView($scope.radarView);
+                       }
+                   }
+               });
+
+           // checkbox keyDown event for when user has checkbox selected and wants to compare students
+           $scope.checkBoxKeyDown = function (event) {
+               if (event.keyCode === 67) { // keybinding: "c"
+                   if($scope.compareGroup.length > 2) {
+                       $scope.changeToView($scope.radarView);
+                   }
+               }
+           };
 
        $scope.changeToView = function(view) {
     	 console.log(view)
