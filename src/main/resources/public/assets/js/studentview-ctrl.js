@@ -35,6 +35,9 @@
 
             currentUser = SessionService.getCurrentUser();
 
+            /**
+             * TODO: Move data loading to payload resolver
+             */
             if (currentUser) {
                 EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
                 .then(function(enrollments){
