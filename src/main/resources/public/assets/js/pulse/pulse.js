@@ -5,12 +5,14 @@
   .controller('pulseController',[
     '$scope',
     '$http',
+    '$q',
     '$timeout',
     '$state',
     'SessionService',
     'EnrollmentDataService',
+    'UserDataService',
     'EventService',
-    function($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService){
+    function($scope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService){
       "use strict";
 
     // $scope._ = _;
@@ -28,11 +30,16 @@
     var processedClasses = [];
     var classes = [];
     var labels = [];
+    var students = [];
     var currentCourse = null;
     var currentUser = null;
     var currentStudent = null;
 
     currentUser = SessionService.getCurrentUser();
+
+    /**
+      * TODO: Move data loading to payload resolver
+    */
 
     if (currentUser) {
       EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
@@ -46,25 +53,48 @@
             labels = enrollments;
             var statCount = 0;
 
+            console.log(enrollments);
+
             _.each(labels, function (enrollment) {
-              classes.push(enrollment.class);
+              //classes.push(enrollment.class);
               
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
                       statCount++;
-                      if (statCount === labels.length) {
-                        processData();
-                      }
+
+                      var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
+                      var queue = [];
+
+                       _.each(keys, function (studentId) {
+                        queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
+                      });
+
+                      return $q
+                        .all(queue)
+                        .then(function (response) {
+                          console.log(response);
+                          students = response;
+                        })
+                        .finally(function () {
+                          processData(enrollment.class);
+                        });
                   });
             });
           }   
       });
     }
 
-    function processData() {
+    function getStudentBySourcedId (id) {
+      return _.find(students, function (student) {
+        return student.sourcedId === id;
+      });
+    }
+
+    function processData(c) {
       var maxEvents = 0;
-      _.each(classes, function(c){
+      console.log(classes);
+      //_.each(classes, function(c){
         // filter class label
         // var l = _.filter(labels, function(label) { 
         //   return label.class.sourcedId === c.sourcedId;
@@ -97,7 +127,7 @@
           // build student object
           var student = {
             id: i,
-            label: i,
+            label: getStudentBySourcedId(i).familyName + ', ' + getStudentBySourcedId(i).givenName + ' : ' + i,
             events: []
           };
 
@@ -116,9 +146,13 @@
 
         });
 
+        course.students = _.sortBy(course.students, function (student) {
+          return student.label;
+        });
+
         // // add course object to classes array
         processedClasses.push(course);
-      });
+      //});
 
       console.log('processedClasses', processedClasses);
       $scope.coursesMaxEvents = maxEvents;
