@@ -28,11 +28,16 @@
     </div>
 
     <div class="chart-container">
+        <div class="filters" ng-show="chartInitialized">
+            <label for="assignment-toggle" ng-click="$emit('draw-assignments')">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
+            </label>
+        </div>
         <div id="pulse-chart">
 
         </div>
-
-        <div class="tool-tip-info" ng-show="chartInfo">
+        
+        <div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
             <i class="fa fa-info-circle"></i>
             <span>
                 <span class="info-label">Date:</span>
@@ -41,6 +46,23 @@
             <span>
                 <span class="info-label">Events:</span>
                 <span class="info-value">{{chartInfo.events}}</span>
+            </span>
+        </div>
+
+
+        <div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
+            <i class="fa fa-info-circle"></i>
+            <span>
+                <span class="info-label">Title:</span>
+                <span class="info-value">{{assignmentInfo.label}}</span>
+            </span>
+            <span>
+                <span class="info-label">Date:</span>
+                <span class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
+            </span>
+            <span>
+                <span class="info-label">Type:</span>
+                <span class="info-value">{{assignmentInfo.events}}</span>
             </span>
         </div>
     </div>

@@ -16,6 +16,7 @@
       "use strict";
 
     // $scope._ = _;
+    $scope.chartInitialized = false;
     $scope.listType = 'classes';
     $scope.datalist = [];
     $scope.coursesMaxEvents = 0;
@@ -27,6 +28,100 @@
     };
 
 
+    $scope.assignments = [
+      {
+        id: '1',
+        label: 'Pop Quiz #1',
+        date: '2016-09-03',
+        type: 'quiz'
+      },
+      {
+        id: '2',
+        label: 'Test #1',
+        date: '2016-09-07',
+        type: 'quiz'
+      },
+      {
+        id: '3',
+        label: 'Assignment #1',
+        date: '2016-09-13',
+        type: 'assignment'
+      },
+      {
+        id: '4',
+        label: 'Assignment #2',
+        date: '2016-09-17',
+        type: 'assignment'
+      },
+      {
+        id: '5',
+        label: 'Assignment #3',
+        date: '2016-09-22',
+        type: 'assignment'
+      },
+      {
+        id: '6',
+        label: 'Quiz #2',
+        date: '2016-10-03',
+        type: 'quiz'
+      },
+      {
+        id: '7',
+        label: 'Quiz #3',
+        date: '2016-10-07',
+        type: 'quiz'
+      },
+      {
+        id: '8',
+        label: 'Assignment #4',
+        date: '2016-10-15',
+        type: 'quiz'
+      },
+      {
+        id: '9',
+        label: 'Midterm',
+        date: '2016-10-22',
+        type: 'quiz'
+      },
+      {
+        id: '10',
+        label: 'Pop Quiz #2',
+        date: '2016-11-01',
+        type: 'quiz'
+      },
+      {
+        id: '11',
+        label: 'Assignment #5',
+        date: '2016-11-07',
+        type: 'assignment'
+      },
+      {
+        id: '12',
+        label: 'Assigment #6',
+        date: '2016-11-14',
+        type: 'assignment'
+      },
+      {
+        id: '13',
+        label: 'Pop Quiz #3',
+        date: '2016-11-18',
+        type: 'quiz'
+      },
+      {
+        id: '14',
+        label: 'Quiz #4',
+        date: '2016-11-25',
+        type: 'quiz'
+      },
+      {
+        id: '15',
+        label: 'Final Exam',
+        date: '2016-12-10',
+        type: 'quiz'
+      },
+    ]
+
+
     var processedClasses = [];
     var classes = [];
     var labels = [];
@@ -34,6 +129,7 @@
     var currentCourse = null;
     var currentUser = null;
     var currentStudent = null;
+    var coursesProcessed = false;
 
     currentUser = SessionService.getCurrentUser();
 
@@ -51,9 +147,9 @@
             $scope.error = enrollments.errorCode;
           } else {
             labels = enrollments;
-            var statCount = 0;
+            var statCount = 1;
 
-            console.log(enrollments);
+            // console.log(enrollments);
 
             _.each(labels, function (enrollment) {
               //classes.push(enrollment.class);
@@ -61,7 +157,6 @@
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
                       enrollment.class.statistics = statistics;
-                      statCount++;
 
                       var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
                       var queue = [];
@@ -73,11 +168,15 @@
                       return $q
                         .all(queue)
                         .then(function (response) {
-                          console.log(response);
+                          // console.log(response);
                           students = response;
                         })
                         .finally(function () {
+                          if (statCount === labels.length) {
+                            coursesProcessed = true;
+                          }
                           processData(enrollment.class);
+                          statCount++;
                         });
                   });
             });
@@ -93,88 +192,87 @@
 
     function processData(c) {
       var maxEvents = 0;
-      console.log(classes);
-      //_.each(classes, function(c){
-        // filter class label
-        // var l = _.filter(labels, function(label) { 
-        //   return label.class.sourcedId === c.sourcedId;
-        // })[0];
 
-        // // build course object
-        var course = {
-          id: c.sourcedId,
-          label: c.title,
-          studentEventMax: 0,
-          events: [],
-          students: []
+      // // build course object
+      var course = {
+        id: c.sourcedId,
+        label: c.title,
+        studentEventMax: 0,
+        events: [],
+        students: []
+      };
+
+      // process events object for the class
+      _.each(c.statistics.eventCountGroupedByDate, function(event, index){
+        if (maxEvents < event) {
+          maxEvents = event;
+        }
+
+        course.events.push({
+          date: index,
+          eventCount: event
+        });
+      });
+
+      var students = c.statistics.eventCountGroupedByDateAndStudent;
+
+      _.each(students, function(s, i) {
+        // build student object
+        var student = {
+          id: i,
+          label: getStudentBySourcedId(i).familyName + ', ' + getStudentBySourcedId(i).givenName,
+          // label: getStudentBySourcedId(i).familyName + ', ' + getStudentBySourcedId(i).givenName + ' : ' + i,
+          events: []
         };
 
-        // // process events object for the class
-        _.each(c.statistics.eventCountGroupedByDate, function(event, index){
-          if (maxEvents < event) {
-            maxEvents = event;
+        _.each(s, function(e, j) {
+          if (course.studentEventMax < e) {
+            course.studentEventMax = e;
           }
 
-          course.events.push({
-            date: index,
-            eventCount: event
+          student.events.push({
+            date: j,
+            eventCount: e
           });
         });
 
-        var students = c.statistics.eventCountGroupedByDateAndStudent;
+        course.students.push(student);
 
-        _.each(students, function(s, i) {
-          // build student object
-          var student = {
-            id: i,
-            label: getStudentBySourcedId(i).familyName + ', ' + getStudentBySourcedId(i).givenName + ' : ' + i,
-            events: []
-          };
+      });
 
-          _.each(s, function(e, j) {
-            if (course.studentEventMax < e) {
-              course.studentEventMax = e;
-            }
+      course.students = _.sortBy(course.students, function (student) {
+        return student.label;
+      });
 
-            student.events.push({
-              date: j,
-              eventCount: e
-            });
-          });
+      // // add course object to classes array
+      processedClasses.push(course);
 
-          course.students.push(student);
 
-        });
-
-        course.students = _.sortBy(course.students, function (student) {
-          return student.label;
-        });
-
-        // // add course object to classes array
-        processedClasses.push(course);
-      //});
-
-      console.log('processedClasses', processedClasses);
+      // console.log('processedClasses', processedClasses);
       $scope.coursesMaxEvents = maxEvents;
       $scope.maxEvents = $scope.coursesMaxEvents;
       $scope.datalist = processedClasses;
       //$scope.$broadcast('draw-chart');
 
-      if ($state.params.studentId && $state.params.groupId) {
-        $scope.listType = 'student';
-        buildStudent($state.params.groupId, $state.params.studentId);
-      } else if ($state.params.groupId) {
-        $scope.listType = 'students';
-        buildStudentList($state.params.groupId);
-      } else {
-        $scope.maxEvents = $scope.coursesMaxEvents;
-        $scope.datalist = processedClasses;
-        $scope.listType = 'classes';  
-        $scope.$broadcast('draw-chart');
+
+      if (coursesProcessed) {
+        if ($state.params.studentId && $state.params.groupId) {
+          $scope.listType = 'student';
+          buildStudent($state.params.groupId, $state.params.studentId);
+        } else if ($state.params.groupId) {
+          $scope.listType = 'students';
+          buildStudentList($state.params.groupId);
+        } else {
+          $scope.maxEvents = $scope.coursesMaxEvents;
+          $scope.datalist = processedClasses;
+          $scope.listType = 'classes';  
+          $scope.$broadcast('draw-chart');
+        }
       }
     }
 
     function buildStudent(cid, sid) {
+      console.log('buildStudent');
       var course = _.filter(processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -196,6 +294,7 @@
     }
 
     function buildStudentList(id) {
+      console.log('buildStudentList');
       var course = _.filter(processedClasses, function(c){
         return c.id === id;
       })[0];
@@ -218,10 +317,7 @@
     }
 
     function handleChartChange(event, data) {
-      console.log(data);
-      console.log($state.params.groupId);
-      // Go to course list 
-      //$state.go('index.courselist', { groupId: null } );
+      console.log('handleChartChange');
       if (data.type === 'course') {
         // Go to specific course with list of students
         $state.go('index.courselist', { groupId: data.id }, {notify: false});
@@ -247,6 +343,7 @@
     }
 
     function init() {
+      console.log('init');
       $scope.$on('chart-change', handleChartChange);
     }
 
@@ -269,8 +366,72 @@
       link: function (scope, element, attrs) {
         var maxEvents = 0;
 
+        var plotWidth = 950;
+        var lineHeight = 30;
+        var weekWidth = 75;
+        var height = 100;
+        var chartOffset = 0;
+
+        var padding = {
+          top: 50,
+          right: 30,
+          bottom: 10,
+          left: 250,
+          line: 2,
+        };
+
+        var width = padding.left + padding.right + plotWidth;
+
+        $('.filters').width(width);
+
+        // time scale
+        var timeScale = d3.scaleTime()
+          .range([padding.left, plotWidth + padding.left]);
+
+        // set tooltip position based on cursor
+        function setAssignmentToolTipPosition (pos) {
+          var posOffset = {
+            y: pos.y - chartOffset.top - 20,
+            x: pos.x - chartOffset.left + 20,
+          };
+
+          $('.tool-tip-assignment-info').css({
+            'top': posOffset.y,
+            'left': posOffset.x,
+          });
+        }
+
+        function transitionMarkers () {
+          // var t0 = d3.select('#pulse-chart svg');
+          var t0 = d3.select('#pulse-chart svg').transition().duration(750);
+          t0.selectAll('.dot')
+          .attr('class', function (d, index) {
+            var placement = timeScale(moment(d.date));
+            var classname = "dot";
+
+            if (placement >= padding.left && placement <= padding.left + plotWidth) {
+              
+            } else {
+              classname = "dot hide";
+            }
+
+            return classname;
+          })
+          .attr('cx', function (d, index) {
+            var placement = timeScale(moment(d.date));
+
+            if (placement >= padding.left && placement <= padding.left + plotWidth) {
+              
+            } else {
+              // placement = -999;
+            }
+
+            return placement;
+          });
+        }
 
         function drawChart(obj) {
+          console.log('drawchart');
           // var maxEvents = obj.maxEvents;
           var plots = {};
           var zoomed = false;
@@ -281,34 +442,16 @@
           var weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
 
           var plotContainer = $('#pulse-chart');
-          var padding = {
-            top: 50,
-            right: 30,
-            bottom: 10,
-            left: 250,
-            line: 2,
-          };
-          var plotWidth = 950;
-          var lineHeight = 30;
-          var weekWidth = 75;
 
-          var height = scope.datalist.length * (lineHeight + padding.line) + (padding.top + padding.bottom);
+          height = scope.datalist.length * (lineHeight + padding.line) + (padding.top + padding.bottom);
           // var width = plotContainer.width();
-          var width = padding.left + padding.right + plotWidth;
 
           plotContainer.height(height);
           // var weekWidth = (width - padding.left - padding.right) / weeks;
-          var chartOffset = $('#pulse-chart').offset();
-          var timeScale;
+          chartOffset = $('#pulse-chart').offset();
           var xAxis;
           var oddEven = 'odd';
           var inited = $('#pulse-chart svg').length;
-
-
-          // time scale
-          timeScale = d3
-            .scaleTime()
-            .range([padding.left, plotWidth + padding.left]);
 
           timeScale.domain([
               courseStart, 
@@ -323,7 +466,6 @@
             .tickFormat(d3.timeFormat('%m-%d'));
 
           function resetZoom() {
-            var t0 = svg.transition().duration(750);
             var t1 = svg.transition().duration(750);
             
             timeScale.domain([
@@ -333,16 +475,8 @@
 
             xAxis.ticks(weeks);
 
-            t1.selectAll(".xaxis").call(xAxis);
-
-            t0.selectAll('.dot')
-            .attr('cx', function (d, index) {
-              var placement = timeScale(moment(d.date));
-              return placement;
-            })
-            .attr('opacity', function (d, index) {
-              return 0.5;
-            });
+            transitionMarkers();
+            drawAssignments();
 
             zoomgroup
             .attr('class', 'zoom-icon')
@@ -367,12 +501,6 @@
             svg
             .attr("height", height)
             .attr("width", width);
-
-            $('.tool-tip-info').css({
-              'top': padding.top - 20,
-              'left': padding.left,
-            });
-
 
             // list text
             var xLabel = svg
@@ -417,21 +545,20 @@
             .attr('class', 'yaxis')
             .attr('transform', 'translate(0, 0)');
 
-
           // set tooltip position based on cursor
-          function setToolTipPosition (pos) {
+          function setEventToolTipPosition (pos) {
             var posOffset = {
               y: pos.y - chartOffset.top - 20,
               x: pos.x - chartOffset.left + 20,
             };
 
-            $('.tool-tip-info').css({
+            $('.tool-tip-event-info').css({
               'top': posOffset.y,
               'left': posOffset.x,
             });
           }
 
-
+          drawAssignments();
 
           // set width n height
           _.each(scope.datalist, function(o, i){
@@ -504,8 +631,8 @@
               })
               .on('mouseover', function (d, index, node) {
                 d3.select(this).attr('opacity','1');
-                console.log(d3.event);
-                setToolTipPosition({
+                // console.log(d3.event);
+                setEventToolTipPosition({
                   x: d3.event.pageX,
                   y: d3.event.pageY
                   // x: d3.event.clientX,
@@ -525,9 +652,7 @@
                 });
               })
               .on('click', function(d){
-                zoomed = true;
                 // zoom
-                var t0 = svg.transition().duration(750);
                 var t1 = svg.transition().duration(750);
 
                 var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
@@ -542,42 +667,24 @@
 
                 t1.selectAll(".xaxis").call(xAxis);
 
-                t0.selectAll('.dot')
-                .attr('cx', function (d, index) {
-                  var placement = timeScale(moment(d.date));
+                transitionMarkers();
 
-                  if (placement >= padding.left && placement <= padding.left + plotWidth) {
-                    
-                  } else {
-                    // placement = -999;
-                  }
+                drawAssignments();
 
-                  return placement;
-                })
-                .attr('opacity', function (d, index) {
-                  var bounds = timeScale(moment(d.date));
-                  var optacity = 0.5;
-
-                  if (bounds >= padding.left && bounds <= padding.left + plotWidth) {
-                    
-                  } else {
-                    // optacity = 0;
-                  }
-                  
-                  return optacity;
-                });
-
+                // zoom icon active
                 zoomgroup
                 .attr('class', 'zoom-icon active')
                 .on('click', resetZoom);
 
               });
-
+              // END pulse markers
 
               // row stripe
               var textg = row.append('g');
 
               if ((i !== 0 && scope.listType === "students") || scope.listType === "student") {
+                
+                // email icon if student
                 var email = row.append('g')
                     .attr('class', 'email-link')
                     .on('click', function(){
@@ -599,12 +706,12 @@
 
               }
 
-              var rect = textg.append('rect')
-                  .attr('y', 0)
-                  .attr('fill', '#000')
-                  .attr('class', oddEven)
-                  .attr('width', padding.left)
-                  .attr('height',lineHeight);
+              // var rect = textg.append('rect')
+              //     .attr('y', 0)
+              //     .attr('fill', '#000')
+              //     .attr('class', oddEven)
+              //     .attr('width', padding.left)
+              //     .attr('height',lineHeight);
 
               // row label
               var text = textg.append('text')
@@ -643,9 +750,112 @@
 
             oddEven = oddEven == 'odd' ? 'even' : 'odd';
           });
+
+          // scope.$apply(function () {
+              scope.chartInitialized = true;
+          // });
+
+        }
+
+        function drawAssignments() {
+          // assignments overlay
+          // $('.assignments-overlay').remove();
+          if (scope.assignmentOverlay) {
+            var assignments;
+            if ($('.assignments-overlay').length) {
+              var t0 = d3.select('#pulse-chart svg').transition().duration(750);
+              t0.selectAll('.assignment-marker')
+              .attr('class', function (d, index) {
+                var placement = timeScale(moment(d.date));
+                var classname = "assignment-marker";
+
+                if (placement >= padding.left && placement <= padding.left + plotWidth) {
+                  
+                } else {
+                  classname = "assignment-marker hide";
+                }
+
+                return classname;
+              })
+              .attr('x1', function(d){
+                return timeScale(moment(d.date));
+              })
+              .attr('x2', function(d){
+                return timeScale(moment(d.date));
+              })
+
+
+            } else {
+              console.log('this');
+              assignments = d3.select('#pulse-chart svg').append('g')
+                .attr('class', 'assignments-overlay');
+
+              assignments
+                .selectAll('line')
+                .data(scope.assignments)
+                .enter()
+                .append('line')
+                .attr('class', function(d) {
+                  var placement = timeScale(moment(d.date));
+                  var classname = "assignment-marker";
+
+                  if (placement >= padding.left && placement <= padding.left + plotWidth) {
+                    
+                  } else {
+                    classname = "assignment-marker hide";
+                  }
+
+                  return classname;
+
+                })
+                .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+                .attr('x1', function(d){
+                  return timeScale(moment(d.date));
+                })
+                .attr('x2', function(d){
+                  return timeScale(moment(d.date));
+                })
+                .attr('y1', padding.top - 15)
+                .attr('y2', height)
+                .attr('opacity', 0.3)
+                .on('mouseover', function(d){
+                  d3.select(this)
+                  .attr('style', 'stroke:rgb(0,100,0);stroke-width:6;')
+                  .attr('opacity',1);
+
+                  setAssignmentToolTipPosition({
+                    x: d3.event.pageX,
+                    y: d3.event.pageY
+                    // x: d3.event.clientX,
+                    // y: d3.event.clientY
+                  });
+                  scope.$apply(function () {
+                      scope.assignmentInfo = {
+                        label: d.label,
+                        date: moment(d.date),
+                        events: d.type
+                      };
+                  });
+
+                })
+                .on('mouseout', function(d){
+                  d3.select(this)
+                  .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+                  .attr('opacity',0.3);
+
+                  scope.$apply(function () {
+                      scope.assignmentInfo = undefined;
+                  });
+
+                });  
+            }
+          } else {
+            $('.assignments-overlay').remove();
+          }
         }
 
         scope.$on('draw-chart', drawChart);
+        scope.$on('draw-assignments', drawAssignments);
       }
     };
   }]);
