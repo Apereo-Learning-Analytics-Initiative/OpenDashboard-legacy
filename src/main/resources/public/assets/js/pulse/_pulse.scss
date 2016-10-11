@@ -16,6 +16,13 @@
   .od-breadcrumb {
     padding: 10px 0;
   }
+  
+  .chart-container {
+    // display: inline-block;
+    .filters {
+      text-align: right;
+    }
+  }
 
   #pulse-chart {
     width: 100%;
@@ -61,6 +68,9 @@
       &:hover {
         // opacity: 1;
       }
+    }
+    .pulse-list-item:hover rect {
+      fill: #dedeff;
     }
   }
 
