@@ -19,8 +19,10 @@ package od.entrypoints;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,6 +42,7 @@ import od.providers.course.CourseProvider;
 import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,50 +81,12 @@ public class LTIEntryPointController {
     String consumerKey = launchRequest.getOauth_consumer_key();
     String contextId = launchRequest.getContext_id();
     
+    Map<String, String> demoData = new HashMap<>();
+    demoData.put("3976369fdc876c4c859ebf44ef05553ea37783b3", "demo-class-3");
+    
+    String classId = demoData.get(contextId);
+    
     Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
-    CourseProvider courseProvider = providerService.getCourseProvider(tenant);   
-    
-    List<String> courseIds = null;//"MODS101-1-2015S1-1"
-    try {
-      courseIds = courseProvider.getCourseIdByLTIContextId(tenant, contextId);
-    } 
-    catch (ProviderException e) {
-      throw new NoVLEModuleMapException(launchRequest.getContext_id());
-    }
-    
-    ContextMapping contextMapping = null;
-    
-    for (String courseId : courseIds) {
-      contextMapping = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
-      
-      if (contextMapping == null) {
-        contextMapping = new ContextMapping();
-        contextMapping.setContext(courseId);
-        contextMapping.setTenantId(tenant.getId());
-        contextMapping.setModified(new Date());
-        
-        Set<Dashboard> dashboards = tenant.getDashboards();
-        if (dashboards != null && !dashboards.isEmpty()) {
-          Set<Dashboard> dashboardSet = new HashSet<>();
-          for (Dashboard db : dashboards) {
-            db.setId(UUID.randomUUID().toString());
-            List<Card> cards = db.getCards();
-            if (cards != null && !cards.isEmpty()) {
-              for (Card c : cards) {
-                c.setId(UUID.randomUUID().toString());
-              }
-            }
-            dashboardSet.add(db);
-          }
-          contextMapping.setDashboards(dashboardSet);
-        }
-
-        contextMapping = contextMappingRepository.save(contextMapping);
-      }
-    }
-
-    String uuid = UUID.randomUUID().toString();
-//    model.addAttribute("token", uuid);
 
     // Create a token using spring provided class : LTIAuthenticationToken
     String role;
@@ -158,7 +123,14 @@ public class LTIEntryPointController {
     request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
     //return "index";
-    String cmUrl = String.format("/cm/%s/dashboard/%s",contextMapping.getId(),(new ArrayList<>(contextMapping.getDashboards())).get(0).getId());
+    String cmUrl = null;
+    if (StringUtils.isNotBlank(classId)) {
+      cmUrl = String.format("/direct/courselist/%s",classId);
+    }
+    else {
+      cmUrl = "/direct/courselist";
+    }
+    
     return "redirect:"+cmUrl;
   }
 
