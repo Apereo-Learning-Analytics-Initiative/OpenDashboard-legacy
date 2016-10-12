@@ -290,7 +290,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
        //TODO
        event.setOrganization(null);
        event.setRaw(statement.serialize().getAsString());
-       event.setSourceId(statement.getId());
+       event.setSourcedId(statement.getId());
        event.setTimestamp(statement.getTimestamp());
        event.setVerb(parseVerbXApi(statement));
      }
