@@ -14,6 +14,7 @@ html {
 .studentActivity {
 	min-height: 185px;
 	margin-bottom: 15px;
+	margin-top: 15px;
 
 	.activityCard {
 		background-color: #ffffff;
@@ -21,7 +22,6 @@ html {
 		padding-top: 5px;
 		border: 1px solid #cccccc;
 	    border-radius: 3px;
-	    height: 80px;
 
 		.heading {
 			text-align: center;
@@ -51,6 +51,15 @@ html {
 			background-color: #ffffff;
 			padding: 10px 2px;
 			color: #000000;
+		}
+	}
+
+	.dataTable {
+		margin: 5px;
+
+		.dateColumn {
+			width: 100px;
+			min-width: 100px;
 		}
 	}
 
