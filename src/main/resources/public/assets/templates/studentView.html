@@ -86,18 +86,20 @@ permissions and limitations under the License.
         </div>
         <!-- Table -->
         <div class="" ng-show="displayMode=='table'">
-            <table id="activityDayOfWeekTable" class="table">
+            <table id="activityDayOfWeekTable" class="table table-hover dataTable">
                 <thead>
                     <tr>
-                        <th ng-repeat="label in activityDayOfWeekChartData.labels">
+                        <th class="dateColumn">Activity</th>
+                        <th ng-repeat="label in activityDayOfWeekData.labels">
                             {{ label }}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td ng-repeat="label in activityDayOfWeekChartData.labels">
-                            {{ activityDayOfWeekChartData.datasets[0].data[$index] }}
+                    <tr ng-repeat="dataset in activityDayOfWeekData.datasets">
+                        <td>{{dataset.label}}</td>
+                        <td ng-repeat="label in activityDayOfWeekData.labels">
+                            {{ dataset.data[$index] }}
                         </td>
                     </tr>
                 </tbody>
