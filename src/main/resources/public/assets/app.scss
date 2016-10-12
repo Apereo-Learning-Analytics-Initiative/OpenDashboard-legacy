@@ -11,4 +11,53 @@ html {
 	box-shadow: none !important;
 }
 
+.studentActivity {
+	min-height: 185px;
+	margin-bottom: 15px;
+
+	.activityCard {
+		background-color: #ffffff;
+		margin-bottom: 10px;
+		padding-top: 5px;
+		border: 1px solid #cccccc;
+	    border-radius: 3px;
+	    height: 80px;
+
+		.heading {
+			text-align: center;
+		}
+
+		.body {
+			text-align: center;
+		}
+	}
+
+	.activityTable {
+		border: 0px;
+		width: 200px;
+		font-size: 12px;
+
+		th {
+			text-align: center;
+			border: 0px;
+			padding: 2px;
+			margin-bottom: 2px;
+		}
+
+		td {
+			text-align: center;
+			font-size: 2.2em;
+			border: 0px;
+			background-color: #ffffff;
+			padding: 10px 2px;
+			color: #000000;
+		}
+	}
+
+	.buttons {
+		margin-bottom: 5px;
+	}
+}
+
 @import "js/pulse/pulse";
+@import "../../../../../node_modules/font-awesome/scss/font-awesome"

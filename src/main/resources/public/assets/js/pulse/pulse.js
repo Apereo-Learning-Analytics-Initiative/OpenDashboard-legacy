@@ -53,8 +53,6 @@
             labels = enrollments;
             var statCount = 0;
 
-            console.log(enrollments);
-
             _.each(labels, function (enrollment) {
               //classes.push(enrollment.class);
               
@@ -73,7 +71,6 @@
                       return $q
                         .all(queue)
                         .then(function (response) {
-                          console.log(response);
                           students = response;
                         })
                         .finally(function () {
@@ -93,7 +90,6 @@
 
     function processData(c) {
       var maxEvents = 0;
-      console.log(classes);
       //_.each(classes, function(c){
         // filter class label
         // var l = _.filter(labels, function(label) { 

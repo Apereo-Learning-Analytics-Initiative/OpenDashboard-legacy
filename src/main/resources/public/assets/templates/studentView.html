@@ -12,67 +12,97 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
-<section>
-    <h3>Activity by Verb</h3>
-    <!-- Toggle between chart and table -->
-    <div class="buttons pull-right">
-        <button class="btn btn-primary" type="button" ng-click="activityByVerbDisplay='table'" ng-disabled="activityByVerbDisplay=='table'">
-            <i class="fa fa-table" aria-hidden="true"></i> Table
-        </button>
-        <button class="btn btn-primary" type="button" ng-click="activityByVerbDisplay='chart'" ng-disabled="activityByVerbDisplay=='chart'">
-            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
-        </button>
+<section class="col-md-12 studentActivity">
+    <h3>Activity By Type</h3>
+    <div class="col-md-2">
+        <div class="activityCard">
+            <div class="heading">Total Events</div>
+            <div class="body">
+                <h1>{{ actions.length }}</h1>
+            </div>
+        </div>
+        <!-- Toggle between chart and table -->
+        <div class="buttons">
+            <button class="btn btn-primary btn-block" type="button" ng-click="activityByVerbDisplay='table'" ng-disabled="activityByVerbDisplay=='table'">
+                <i class="fa fa-table" aria-hidden="true"></i> Table
+            </button>
+            <button class="btn btn-primary btn-block" type="button" ng-click="activityByVerbDisplay='chart'" ng-disabled="activityByVerbDisplay=='chart'">
+                <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+            </button>
+        </div>
     </div>
-    <!-- Chart -->
-    <div class="activityByVerbChart" ng-show="activityByVerbDisplay=='chart'">
-        <canvas id="activityByVerbChart" width="400" height="300"></canvas>
+    <div class="col-md-9">
+        <!-- Chart -->
+        <div class="activityByVerbChart" ng-show="activityByVerbDisplay=='chart'">
+            <canvas id="activityByVerbChart" width="400" height="150"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="activityCard" ng-show="activityByVerbDisplay=='table'">
+            <table id="activityByVerbTable" class="activityTable">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in activityByVerbChartData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in activityByVerbChartData.labels">
+                            {{ activityByVerbChartData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <!-- Table -->
-    <table id="activityByVerbTable" class="table table-condensed table-hover" ng-show="activityByVerbDisplay=='table'">
-        <thead>
-            <tr>
-                <th>Verb</th>
-                <th>Total</th>
-                <th>Average per Day</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="label in activityByVerbChartData.labels">
-                <th>{{label}}</th>
-                <td>{{activityByVerbChartData.datasets[0].data[$index]}}</td>
-                <td>{{activityByVerbChartData.datasets[1].data[$index]}}</td>
-            </tr>
-        </tbody>
-    </table>
 </section>
 
-
-<section>
-    <h3>Activity by Date</h3>
-    <!-- Toggle between chart and table -->
-    <div class="buttons pull-right">
-        <button class="btn btn-primary" type="button" ng-click="activityByDateDisplay='table'" ng-disabled="activityByDateDisplay=='table'">
-            <i class="fa fa-table" aria-hidden="true"></i> Table
-        </button>
-        <button class="btn btn-primary" type="button" ng-click="activityByDateDisplay='chart'" ng-disabled="activityByDateDisplay=='chart'">
-            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
-        </button>
+<section class="col-md-12 studentActivity">
+    <h3>Activity By Time</h3>
+    <div class="col-md-2">
+        <!-- Toggle between chart and table -->
+        <div class="buttons">
+            <button class="btn btn-primary btn-block" type="button" ng-click="activityOverTimeDisplay='table'" ng-disabled="activityOverTimeDisplay=='table'">
+                <i class="fa fa-table" aria-hidden="true"></i> Table
+            </button>
+            <button class="btn btn-primary btn-block" type="button" ng-click="activityOverTimeDisplay='chart'" ng-disabled="activityOverTimeDisplay=='chart'">
+                <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+            </button>
+        </div>
+        <div class="filters">
+            <form>
+            <div class="checkbox" ng-repeat="verb in verbList track by $index">
+                <label>
+                    <input type="checkbox" ng-model="verb.filter" ng-change="$emit('filterChange')"> {{verb.label}}
+                </label>
+            </div>
+            </form>
+        </div>
     </div>
-    <!-- Chart -->
-    <div class="activityByDateChart" ng-show="activityByDateDisplay=='chart'">
-        <canvas id="activityByDateChart" width="400" height="300"></canvas>
+    <div class="col-md-9">
+        <!-- Chart -->
+        <div class="activityOverTime" ng-show="activityOverTimeDisplay=='chart'">
+            <canvas id="activityOverTime" width="400" height="400"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="activityCard" ng-show="activityOverTimeDisplay=='table'">
+            <table id="activityOverTimeTable" class="activityTable">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in activityOverTimeData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in activityOverTimeData.labels">
+                            {{ activityOverTimeData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <!-- Table -->
-    <table id="activityByDateTable" class="table table-condensed table-hover" ng-show="activityByDateDisplay=='table'">
-        <thead>
-            <tr>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="label in activityByDateChartData.labels">
-                <td>{{label}}</td>
-            </tr>
-        </tbody>
-    </table>
 </section>
