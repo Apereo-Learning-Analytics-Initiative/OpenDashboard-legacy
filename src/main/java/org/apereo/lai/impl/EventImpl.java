@@ -27,7 +27,7 @@ import org.apereo.lai.Event;
  */
 public class EventImpl extends OpenDashboardModel implements Event  {
   private static final long serialVersionUID = 1L;
-  private String sourceId;
+  private String sourcedId;
   private String actor;
   private String verb;
   private String object;
@@ -38,11 +38,11 @@ public class EventImpl extends OpenDashboardModel implements Event  {
   private String eventFormatType;
   private String raw;
   
-  public String getSourceId() {
-    return sourceId;
+  public String getSourcedId() {
+    return sourcedId;
   }
-  public void setSourceId(String sourceId) {
-    this.sourceId = sourceId;
+  public void setSourcedId(String sourceId) {
+    this.sourcedId = sourceId;
   }
   public String getActor() {
     return actor;
