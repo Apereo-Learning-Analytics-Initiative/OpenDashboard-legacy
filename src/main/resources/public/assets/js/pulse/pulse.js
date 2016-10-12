@@ -149,8 +149,6 @@
             labels = enrollments;
             var statCount = 1;
 
-            // console.log(enrollments);
-
             _.each(labels, function (enrollment) {
               //classes.push(enrollment.class);
               
@@ -168,7 +166,6 @@
                       return $q
                         .all(queue)
                         .then(function (response) {
-                          // console.log(response);
                           students = response;
                         })
                         .finally(function () {
@@ -192,7 +189,6 @@
 
     function processData(c) {
       var maxEvents = 0;
-
       // // build course object
       var course = {
         id: c.sourcedId,

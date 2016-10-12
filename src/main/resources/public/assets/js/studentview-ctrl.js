@@ -20,18 +20,67 @@
     .controller('StudentViewController',
         function ($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService) {
             var currentUser;
+            var activityOverTimeChart;
+            var activityDayOfWeekChart;
 
             console.log('StudentViewController');
 
             $scope.error = null;
-            $scope.actions = null;
+            $scope.actions = [];
             $scope.state = $state;
 
             $scope.activityByVerbChartData = null;
-            $scope.activityByDateChartData = null;
+            $scope.activityOverTimeData = null;
 
-            $scope.activityByVerbDisplay = 'chart';
-            $scope.activityByDateDisplay = 'chart';
+            $scope.displayMode = 'chart';
+            $scope.detailView = '7days';
+
+            $scope.verbList = [
+                {
+                    label: 'Completed',
+                    color: 'rgba(6, 11, 178, 0.5)',
+                    filter: true
+                },{
+                    label: 'Submitted',
+                    color: 'rgba(84, 255, 0, 0.5)',
+                    filter: false
+                },{
+                    label: 'NavigatedTo',
+                    color: 'rgba(255, 132, 7, 0.5)',
+                    filter: false
+                },{
+                    label: 'Viewed',
+                    color: 'rgba(29, 178, 37, 0.5)',
+                    filter: false
+                },{
+                    label: 'LoggedIn',
+                    color: 'rgba(13, 191, 255, 0.5)',
+                    filter: false
+                },{
+                    label: 'LoggedOut',
+                    color: 'rgba(232, 6, 222, 0.5)',
+                    filter: false
+                },{
+                    label: 'Searched',
+                    color: 'rgba(232, 163, 12, 0.5)',
+                    filter: false
+                },{
+                    label: 'Shared',
+                    color: 'rgba(50, 12, 132, 0.5)',
+                    filter: false
+                },{
+                    label: 'Bookmarked',
+                    color: 'rgba(13, 175, 255, 0.5)',
+                    filter: false
+                },{
+                    label: 'Commented',
+                    color: 'rgba(248, 255, 0, 0.5)',
+                    filter: false
+                },{
+                    label: 'Recommended',
+                    color: 'rgba(232, 143, 12, 0.5)',
+                    filter: false
+                }];
 
             currentUser = SessionService.getCurrentUser();
 
@@ -49,16 +98,17 @@
                     } else {
                         EventService.getEventForClassAndUser(currentUser.tenant_id, $state.params.groupId, $state.params.studentId, 0, 1000)
                         .then(function (actions) {
-                            console.log(actions);
                             $scope.actions = actions.content;
-                            activityByVerbChart(actions.content);
-                            activityByDateChart(actions.content);
+                            activityByVerbChart();
+                            hourlyActivityChart();
+                            activityDayOfWeek();
+                            activityOverTime($scope.detailView);
                         });
                     }   
                 });
             }
 
-            function activityByVerbChart (actions) {
+            function activityByVerbChart () {
                 var chartData;
                 var colors;
                 var options;
@@ -71,50 +121,30 @@
                     datasets: [{
                         label: 'Total',
                         data: [],
-                        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                        borderColor: [],
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Average Per Day',
-                        data: [],
-                        backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+                        backgroundColor: [],
                         borderColor: [],
                         borderWidth: 1
                     }]
                 };
 
-                _.each(actions, function (action) {
+                _.each($scope.actions, function (action) {
                     //console.log(action);
-                    var day = _.first(action.timestamp.split(' '));
-                    var time = _.last(action.timestamp.split(' '));
                     var verb = _.last(action.verb.split('#'));
-
-                    console.log(day, time, verb);
-
-                    days.push(day);
 
                     if (!datasets[verb]) {
                         datasets[verb] = 0;
-                        chartData.labels.push(verb);
                     }
 
                     datasets[verb]++;
                 });
 
-                days = _.uniq(days);
-
-                _.each(chartData.labels, function (verb) {
-                    console.log(verb);
-                    chartData.datasets[0].data.push(datasets[verb]);
-
-                    chartData.datasets[1].data.push(days.length/datasets[verb]);
+                chartData.labels = [];
+                _.each($scope.verbList, function (verb) {
+                    chartData.labels.push(verb.label);
+                    chartData.datasets[0].data.push(datasets[verb.label]);
+                    chartData.datasets[0].backgroundColor.push(verb.color);
                 });
-
-
-                console.log(datasets);
-
-                //chartData.labels = _.uniq(chartData.labels);
 
                 options = {
                     maintainAspectRatio: false,
@@ -138,42 +168,40 @@
 
             }
 
-            function activityByDateChart (actions) {
+            function hourlyActivityChart () {
                 var chartData;
                 var colors;
                 var options;
-                var activityByDateChart;
-                var datasets = [];
-                var days = [];
-                var verbs = [];
+                var hourlyActivityChart;
+                var hours = [];
 
                 chartData = {
                     labels: [],
                     datasets: [{
-                        label: 'Bookmarked',
+                        label: 'Total',
                         data: [],
-                        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+                        backgroundColor: ['rgba(108, 178, 195, 0.5)'],
                         borderColor: [],
                         borderWidth: 1
                     }]
                 };
 
-                _.each(actions, function (action) {
+                _.each($scope.actions, function (action) {
                     //console.log(action);
-                    var day = _.first(action.timestamp.split(' '));
-                    var time = _.last(action.timestamp.split(' '));
-                    var verb = _.last(action.verb.split('#'));
+                    var hour = moment(action.timestamp).format('HH');
 
-                    console.log(day, time, verb);
-
-                    days.push(day);
-                    verbs.push(verb);
-
-                    chartData.labels.push(day);
+                    // build data based on 24 hour clock
+                    if (!hours[hour]) {
+                        hours[hour] = 0;
+                    }
+                    hours[hour]++;
                 });
 
-                chartData.labels = _.uniq(chartData.labels);
-
+                chartData.labels = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
+                _.each(chartData.labels, function (label) {
+                    chartData.datasets[0].data.push(hours[label]);
+                });
 
                 options = {
                     maintainAspectRatio: false,
@@ -187,15 +215,231 @@
                     }
                 };
 
-                activityByDateChart = new Chart(document.getElementById('activityByDateChart'), {
-                    type: 'bar',
+                hourlyActivityChart = new Chart(document.getElementById('hourlyActivityChart'), {
+                    type: 'line',
                     data: chartData,
                     options: options
                 });
 
-                $scope.activityByDateChartData = chartData;
+                $scope.hourlyActivityChartData = chartData;
 
             }
+
+            function activityDayOfWeek (event, detailView) {
+                var chartData;
+                var colors;
+                var options;
+                
+                var datasets = [];
+                var daysOfWeek = [];
+
+                chartData = {
+                    labels: [],
+                    datasets: []
+                };
+
+                _.each($scope.actions, function (action) {
+                    //console.log(action);
+                    var verb = _.last(action.verb.split('#'));
+                    var dayOfWeek = moment(action.timestamp).format('dddd');
+
+                    if (!daysOfWeek[dayOfWeek]) {
+                        daysOfWeek[dayOfWeek] = [];
+                    }
+                    if (!daysOfWeek[dayOfWeek][verb]) {
+                        daysOfWeek[dayOfWeek][verb] = 0;
+                    }
+                    daysOfWeek[dayOfWeek][verb]++;
+
+                });
+
+                // hard coding labels so they can be sorted by type easily
+                chartData.labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+                _.each($scope.verbList, function (verb, index) {
+                    var colors;
+                    var set;
+                    //if (verb.filter) {
+                        colors = [];
+                        _.each(chartData.labels, function () {
+                            colors.push(verb.color);
+                        });
+                        set = {
+                            label: verb.label,
+                            data: [],
+                            backgroundColor: colors,
+                            borderWidth: 1
+                        }
+                        chartData.datasets.push(set);
+                    //}
+                });
+
+                _.each(chartData.labels, function (label) {
+                    _.each(chartData.datasets, function (dataset) {
+                        dataset.data.push(daysOfWeek[label][dataset.label]);
+                    });
+                });
+
+                options = {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }],
+                        xAxes: [{
+                            stacked: true
+                        }]
+                    }
+                };
+
+
+                if (!$scope.activityDayOfWeekData) {
+                    activityDayOfWeekChart = new Chart(document.getElementById('activityDayOfWeekChart'), {
+                        type: 'line',
+                        data: chartData,
+                        options: options
+                    });
+                } else {
+                    activityDayOfWeekChart.data.datasets = chartData.datasets;
+                    activityDayOfWeekChart.config.data.labels = chartData.labels; 
+                    activityDayOfWeekChart.update();
+                }
+
+
+                $scope.activityDayOfWeekData = chartData;
+
+            }
+
+            function activityOverTime (detailView) {
+                var chartData;
+                var colors;
+                var options;
+                
+                var datasets = [];
+                var daysOfWeek = [];
+                var dates = [];
+
+                chartData = {
+                    labels: [],
+                    datasets: []
+                };
+
+
+                _.each($scope.actions, function (action) {
+                    //console.log(action);
+                    var verb = _.last(action.verb.split('#'));
+                    var date = moment(action.timestamp).format('MM-DD');
+                    var daysAgo = moment(action.timestamp).diff(moment(), 'days', true);
+
+
+                    // Build data based on days ago
+                    if (detailView === '7days') {
+                        if (daysAgo >= -7 && daysAgo <= 0) {
+                            if (!dates[date]) {
+                                dates[date] = [];
+                            }
+                            if (!dates[date][verb]) {
+                                dates[date][verb] = 0;
+                            }
+                            dates[date][verb]++;
+                            chartData.labels.push(date);
+                        }
+                    }
+
+                    if (detailView === '30days') {
+                        if (daysAgo >= -30 && daysAgo <= 0) {
+                            if (!dates[date]) {
+                                dates[date] = [];
+                            }
+                            if (!dates[date][verb]) {
+                                dates[date][verb] = 0;
+                            }
+                            dates[date][verb]++;
+                            chartData.labels.push(date);
+                        }
+                    }
+                });
+
+                // hard coding labels so they can be sorted by type easily
+                if (detailView === 'dayOfWeek') {
+                    chartData.labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                }
+
+                chartData.labels = _.uniq(chartData.labels);
+                chartData.labels = _.sortBy(chartData.labels, function (label) {
+                    return label;
+                });
+
+                _.each($scope.verbList, function (verb, index) {
+                    var colors;
+                    var set;
+                    if (verb.filter) {
+                        colors = [];
+                        _.each(chartData.labels, function () {
+                            colors.push(verb.color);
+                        });
+                        set = {
+                            label: verb.label,
+                            data: [],
+                            backgroundColor: colors,
+                            borderWidth: 1
+                        }
+                        chartData.datasets.push(set);
+                    }
+                });
+
+                _.each(chartData.labels, function (label) {
+                    _.each(chartData.datasets, function (dataset) {
+                        dataset.data.push(dates[label][dataset.label]);
+                    });
+                });
+
+                options = {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }],
+                        xAxes: [{
+                            stacked: true
+                        }]
+                    }
+                };
+
+                if (!$scope.activityOverTimeData) {
+                    activityOverTimeChart = new Chart(document.getElementById('activityOverTime'), {
+                        type: 'bar',
+                        data: chartData,
+                        options: options
+                    });
+                } else {
+                    activityOverTimeChart.data.datasets = chartData.datasets;
+                    activityOverTimeChart.config.data.labels = chartData.labels; 
+                    activityOverTimeChart.update();
+                }
+
+
+                $scope.activityOverTimeData = chartData;
+
+            }
+
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+
+            $scope.$on('updateTable', function (event, data) {
+                if (data) {
+                    $scope.detailView = data;
+                }
+                activityOverTime($scope.detailView);
+            });
 
             
         } 
