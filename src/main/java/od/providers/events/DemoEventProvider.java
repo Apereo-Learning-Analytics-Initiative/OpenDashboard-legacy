@@ -4,15 +4,19 @@
 package od.providers.events;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -95,6 +99,21 @@ public class DemoEventProvider implements EventProvider {
     return beginTime + (long) (Math.random() * diff);
   }
   
+  class Verb {
+    private String verb;
+    private double weight;
+    public Verb(double weight, String verb) {
+      this.weight = weight;
+      this.verb = verb;
+    }
+    public String getVerb() {
+      return verb;
+    }
+    public double getWeight() {
+      return weight;
+    }
+  }
+  
   @PostConstruct
   public void init() {
     
@@ -107,7 +126,9 @@ public class DemoEventProvider implements EventProvider {
     classEventsMap.put("demo-class-2", demoClass2Events);
     classEventsMap.put("demo-class-3", demoClass3Events);
     
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     
     String [] classSourcedIds = {"demo-class-1","demo-class-2","demo-class-3"};
     
@@ -118,20 +139,22 @@ public class DemoEventProvider implements EventProvider {
     long demoClass3StartTime = Timestamp.valueOf("2016-09-08 00:00:00").getTime();
     long demoClass3EndTime = Timestamp.valueOf("2016-12-13 00:00:00").getTime();
     
-    String [] verbs = {
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Bookmarked",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Commented",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Completed",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedIn",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedOut",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#NavigatedTo",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Recommended",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Searched",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Shared",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Submitted",
-        "http://purl.imsglobal.org/vocab/caliper/v1/action#Viewed"
-    };
+    List<Verb> verbs = new ArrayList<>();
+    verbs.add(new Verb(3.0,"http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedIn"));
+    verbs.add(new Verb(1.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedOut"));
+    verbs.add(new Verb(12.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#NavigatedTo"));
+    verbs.add(new Verb(12.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Viewed"));
+    verbs.add(new Verb(3.0,"http://purl.imsglobal.org/vocab/caliper/v1/action#Completed"));
+    verbs.add(new Verb(5.0,"http://purl.imsglobal.org/vocab/caliper/v1/action#Submitted"));
+    verbs.add(new Verb(11.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Searched"));
+    verbs.add(new Verb(4.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Recommended"));
+    verbs.add(new Verb(6.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Commented"));
+    verbs.add(new Verb(2.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Bookmarked"));
+    verbs.add(new Verb(7.5,"http://purl.imsglobal.org/vocab/caliper/v1/action#Shared"));
     
+    Verb [] verbArray = verbs.stream().toArray(Verb[]::new);
+    
+    double totalWeights = 70.0;
     
     List<String> studentSourcedIds = new LinkedList<>();
     for (int s = 0; s < 60; s++) {
@@ -146,7 +169,7 @@ public class DemoEventProvider implements EventProvider {
       eventImpl.setId(UUID.randomUUID().toString());
       eventImpl.setObject("http://edapp.com/object");
       eventImpl.setObjectType("SoftwareApplication");
-      eventImpl.setSourceId(UUID.randomUUID().toString());
+      eventImpl.setSourcedId(UUID.randomUUID().toString());
       
       String timestamp = null;
       
@@ -221,7 +244,20 @@ public class DemoEventProvider implements EventProvider {
       }
       
       eventImpl.setTimestamp(timestamp);
-      eventImpl.setVerb(verbs[ThreadLocalRandom.current().nextInt(0, 11)]);
+      
+      int randomIndex = -1;
+      double random = Math.random() * totalWeights;
+      for (int i = 0; i < verbArray.length; ++i)
+      {
+          random -= verbArray[i].getWeight();
+          if (random <= 0.0d)
+          {
+              randomIndex = i;
+              break;
+          }
+      }
+      
+      eventImpl.setVerb(verbArray[randomIndex].getVerb());
     }
   }
 
@@ -242,13 +278,13 @@ public class DemoEventProvider implements EventProvider {
       eventCountGroupedByDateAndStudent = new HashMap<>();
       for (String key : eventsByStudent.keySet()) {
         Map<String, Long> eventCountByDate = eventsByStudent.get(key).stream()
-            .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(((EventImpl)event).getTimestamp(), " "), Collectors.counting()));
+            .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(((EventImpl)event).getTimestamp(), "T"), Collectors.counting()));
         eventCountGroupedByDateAndStudent.put(key, eventCountByDate);
       }
     }
 
     Map<String, Long> eventCountByDate = classEvents.stream()
-        .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(((EventImpl)event).getTimestamp(), " "), Collectors.counting()));
+        .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(((EventImpl)event).getTimestamp(), "T"), Collectors.counting()));
 
     if (classEventsStatsMap == null) {
       classEventsStatsMap = new HashMap<>();
