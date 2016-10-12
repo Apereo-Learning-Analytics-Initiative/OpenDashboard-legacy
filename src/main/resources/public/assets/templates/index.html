@@ -12,7 +12,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-show="!isLtiSession">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle"
@@ -78,3 +78,17 @@ permissions and limitations under the License.
       <div class="col-xs-12 ui-view"></div>
     </div>
   </div>
+
+  <footer class="footer" ng-show="!isLtiSession">
+    <div class="footer-content">
+      <div class="footer-license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.0/uk/">
+          <img src="/assets/img/cc_BY-NC-SA.png" alt="License" width="140" height="49" data-pin-nopin="true" />
+        </a>
+      </div>
+      <div class="footer-copyright">
+        <span class="print-only">&copy;2016 Jisc.</span> This work is licensed under the <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.0/uk/">CC BY-NC-SA 4.0</a>
+      </div>
+    </div>
+  </footer>
+  
