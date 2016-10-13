@@ -339,9 +339,9 @@
                         if (daysAgo >= -7 && daysAgo <= 0) {
                             if (!dates[date]) {
                                 dates[date] = [];
-                            }
-                            if (!dates[date][verb]) {
-                                dates[date][verb] = 0;
+                                _.each($scope.verbList, function (verb) {
+                                    dates[date][verb.label] = 0;
+                                });
                             }
                             dates[date][verb]++;
                             chartData.labels.push(date);
@@ -352,9 +352,9 @@
                         if (daysAgo >= -30 && daysAgo <= 0) {
                             if (!dates[date]) {
                                 dates[date] = [];
-                            }
-                            if (!dates[date][verb]) {
-                                dates[date][verb] = 0;
+                                _.each($scope.verbList, function (verb) {
+                                    dates[date][verb.label] = 0;
+                                });
                             }
                             dates[date][verb]++;
                             chartData.labels.push(date);
