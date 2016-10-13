@@ -28,6 +28,7 @@ import od.providers.config.ProviderDataConfigurationException;
 import od.providers.course.CourseProvider;
 import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
+import od.providers.lineitem.LineItemProvider;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.user.UserProvider;
 
@@ -42,7 +43,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProviderService {
   
-  public static final String ASSIGNMENT = "ASSIGNMENT";
+  public static final String LINEITEM = "LINEITEM";
   public static final String COURSE = "COURSE";
   public static final String EVENT = "EVENT";
   public static final String FORUM = "FORUM";
@@ -56,13 +57,14 @@ public class ProviderService {
   @Autowired private Map<String, ModelOutputProvider> modelOutputProviders;
   @Autowired private Map<String, EnrollmentProvider> rosterProviders;
   @Autowired private Map<String, UserProvider> userProviders; 
+  @Autowired private Map<String, LineItemProvider> lineItemProviders; 
   
   private List<String> listOfProviderTypes;
   
   @PostConstruct
   public void init() {
     listOfProviderTypes = new ArrayList<>();
-    listOfProviderTypes.add(ASSIGNMENT);
+    listOfProviderTypes.add(LINEITEM);
     listOfProviderTypes.add(COURSE);
     listOfProviderTypes.add(EVENT);
     listOfProviderTypes.add(FORUM);
@@ -95,6 +97,9 @@ public class ProviderService {
     else if (USER.equalsIgnoreCase(type)) {
       providers = new ArrayList<Provider>(userProviders.values());
     }
+    else if (LINEITEM.equalsIgnoreCase(type)) {
+      providers = new ArrayList<Provider>(lineItemProviders.values());
+    }
     
     return providers;
   }
@@ -121,6 +126,9 @@ public class ProviderService {
     }
     else if (USER.equalsIgnoreCase(type)) {
       provider = userProviders.get(key);
+    }
+    else if (LINEITEM.equalsIgnoreCase(type)) {
+      provider = lineItemProviders.get(key);
     }
     
     return provider;
@@ -165,6 +173,11 @@ public class ProviderService {
     ProviderData pd = getConfiguredProviderDataByType(tenant, USER);
     return userProviders.get(pd.getProviderKey());
   }
+  
+  public LineItemProvider getLineItemProvider(Tenant tenant) throws ProviderDataConfigurationException {
+    ProviderData pd = getConfiguredProviderDataByType(tenant, LINEITEM);
+    return lineItemProviders.get(pd.getProviderKey());
+  }
 
   public Map<String, CourseProvider> getCourseProviders() {
     return courseProviders;
@@ -185,4 +198,9 @@ public class ProviderService {
   public Map<String, UserProvider> getUserProviders() {
     return userProviders;
   }
+  
+  public Map<String, LineItemProvider> getLineItemProviders() {
+    return lineItemProviders;
+  }
+
 }

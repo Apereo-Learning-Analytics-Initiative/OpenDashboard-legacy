@@ -55,13 +55,19 @@ angular
            type : 'USER',
            key : 'LABEL_USER_PROVIDERS_KEY',
            desc : 'LABEL_USER_PROVIDERS_DESC'
-       };
+        };
+        var lineItemProviders = {
+         type : 'LINEITEM',
+         key : 'LABEL_LINEITEM_PROVIDERS_KEY',
+         desc : 'LABEL_LINEITEM_PROVIDERS_DESC'
+        };
 			  
         providers.push(courseProviders);
         providers.push(eventProviders);
         providers.push(modelOutputProviders);
         providers.push(rosterProviders);
         providers.push(userProviders);
+        providers.push(lineItemProviders);
 			  
         return providers;
       },
@@ -134,6 +140,40 @@ angular
 	}
 });
 // END User Service
+
+// Line Item Service
+angular
+  .module('OpenDashboard')
+    .service('LineItemDataService', function($log, $http) {
+      return {
+        getLineItemsForClass: function(tenantId,classId) {
+		  var url = '/api/tenants/'+tenantId+'/classes/'+classId+'/lineitems';
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {			    			
+		      return response.data;		    			
+			}
+			$log.debug('No line items found');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		}
+	}
+});
+// END Line Item Service
 
 
 // Course Service
