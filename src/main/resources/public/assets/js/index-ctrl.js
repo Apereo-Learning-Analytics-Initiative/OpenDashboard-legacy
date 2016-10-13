@@ -18,78 +18,18 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $stateParams, $translate, Notification, SessionService, ContextMappingService, LocaleService) {
-  $scope.contextMapping = null;
-  $scope.activeDashboard = null;  
+function IndexCtrl($scope, $state, $stateParams, $translate, Notification, SessionService, LocaleService) {
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
   
 // Initial routing logic
-
-  function doRouting() {
-	if ($scope.contextMapping) {
-	  if ($scope.contextMapping.dashboards && $scope.contextMapping.dashboards.length > 0) {
-  			
-      	// TODO - check for current dashboard
-      	$scope.activeDashboard = $scope.contextMapping.dashboards[0];
-      	$state.go('index.dashboard', {cmid:$scope.contextMapping.id,dbid:$scope.activeDashboard.id});
-      }
-      else {
-        $state.go('index.addDashboard', {cmid:$scope.contextMapping.id}); 
-      }
-	}	
-  };
-  
-  function getContextMapping(isLti) {
-      if (isLti) {
-        var ltiLaunch = SessionService.getInbound_LTI_Launch();
-        ContextMappingService
-        .getWithKeyAndContext(ltiLaunch.oauth_consumer_key, ltiLaunch.context_id)
-        .then(
-          function(contextMapping) {
-        	if (!$scope.contextMapping && contextMapping) {
-        	  $scope.contextMapping = contextMapping;
-        	}
-            
-            doRouting();
-          },
-          function(error) {
-        	// TODO
-          }
-        );
-      }
-      else {
-    	var tenantId = $stateParams.tenantId;
-    	var courseId = $stateParams.courseId;
-    	if (tenantId && courseId) {
-        	ContextMappingService
-        	.getWithTenantAndCourse(tenantId, courseId)
-            .then(
-              function(contextMapping) {
-            	if (!$scope.contextMapping && contextMapping) {
-              	  $scope.contextMapping = contextMapping;
-              	}
-            	
-                doRouting();
-              },
-              function(error) {
-            	// TODO
-              }
-            );
-    	}    	
-      }
-  };
 
   if (SessionService.isAuthenticated()) {
     $scope.isAuthenticated = SessionService.isAuthenticated();
     $scope.isStudent = SessionService.hasStudentRole();
     $scope.isLtiSession = SessionService.isLTISession();
     $scope.isAdmin = SessionService.hasAdminRole();
-    if (!$scope.contextMapping) {
-      getContextMapping(SessionService.isLTISession());
-    } else {
-      doRouting();
-    }  
-  } else {
+  } 
+  else {
 	SessionService
 	.authenticate()
 	.then(
@@ -103,12 +43,6 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
     		$scope.isStudent = SessionService.hasStudentRole();
     	    $scope.isLtiSession = SessionService.isLTISession();
     	    $scope.isAdmin = SessionService.hasAdminRole();
-    		if (!$scope.contextMapping) {
-    		  getContextMapping(SessionService.isLTISession());
-    		}
-    		else {
-    		  doRouting();
-    		}
     	  }
     	  return;
     	},

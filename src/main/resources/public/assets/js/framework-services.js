@@ -194,9 +194,14 @@
 														loggedOut = false;
 														authenticated = response.data.authenticated;
 														authorities = response.data.authorities;
-
 														if (response.data.launchRequest) {
 															ltiSession = true;
+    														var options = {};
+    														options['roles'] = authorities;
+    														options['user_id'] = response.data.name;
+    														options['tenant_id'] = response.data.principal.tenantId;
+    														OpenDashboard_API.setCurrentUser(options);
+
 															OpenDashboard_API
 																	.setInbound_LTI_Launch(response.data.launchRequest);
 														}
