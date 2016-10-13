@@ -149,6 +149,8 @@
             labels = enrollments;
             var statCount = 1;
 
+            // console.log(enrollments);
+
             _.each(labels, function (enrollment) {
               //classes.push(enrollment.class);
               
@@ -166,6 +168,7 @@
                       return $q
                         .all(queue)
                         .then(function (response) {
+                          // console.log(response);
                           students = response;
                         })
                         .finally(function () {
@@ -189,6 +192,7 @@
 
     function processData(c) {
       var maxEvents = 0;
+
       // // build course object
       var course = {
         id: c.sourcedId,
@@ -482,6 +486,11 @@
           if (inited) {
             // already have a chart. Let's work with it.
             var svg = d3.select('#pulse-chart svg');
+
+            var list = svg
+              .select('g.yaxis');
+
+
             $('#pulse-chart svg .yaxis .pulse-list-item').remove();
 
             var t1 = svg.transition().duration(750);
@@ -528,6 +537,11 @@
               .append('path')
               .attr('d', 'M283.228,182.728h-164.45c-2.474,0-4.615,0.905-6.423,2.712c-1.809,1.809-2.712,3.949-2.712,6.424v18.271c0,2.475,0.903,4.617,2.712,6.424c1.809,1.809,3.946,2.713,6.423,2.713h164.454c2.478,0,4.612-0.905,6.427-2.713c1.804-1.807,2.703-3.949,2.703-6.424v-18.271c0-2.475-0.903-4.615-2.707-6.424C287.851,183.633,285.706,182.728,283.228,182.728z')
 
+              var list = svg
+                .append('g')
+                .attr('class', 'yaxis')
+                .attr('transform', 'translate(0, 0)');
+
           }
 
           svg
@@ -535,11 +549,6 @@
           .attr("width", width);
 
 
-          // list group
-          var list = svg
-            .append('g')
-            .attr('class', 'yaxis')
-            .attr('transform', 'translate(0, 0)');
 
           // set tooltip position based on cursor
           function setEventToolTipPosition (pos) {
@@ -761,6 +770,7 @@
             if ($('.assignments-overlay').length) {
               var t0 = d3.select('#pulse-chart svg').transition().duration(750);
               t0.selectAll('.assignment-marker')
+              .attr('y2', height)
               .attr('class', function (d, index) {
                 var placement = timeScale(moment(d.date));
                 var classname = "assignment-marker";
