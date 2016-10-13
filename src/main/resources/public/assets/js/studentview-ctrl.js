@@ -33,7 +33,7 @@
             $scope.activityOverTimeData = null;
 
             $scope.displayMode = 'chart';
-            $scope.detailView = '7days';
+            $scope.detailView = '30days';
 
             $scope.verbList = [
                 {
@@ -43,15 +43,15 @@
                 },{
                     label: 'Submitted',
                     color: 'rgba(84, 255, 0, 0.5)',
-                    filter: false
+                    filter: true
                 },{
                     label: 'NavigatedTo',
                     color: 'rgba(255, 132, 7, 0.5)',
-                    filter: false
+                    filter: true
                 },{
                     label: 'Viewed',
                     color: 'rgba(29, 178, 37, 0.5)',
-                    filter: false
+                    filter: true
                 },{
                     label: 'LoggedIn',
                     color: 'rgba(13, 191, 255, 0.5)',
