@@ -1,97 +1,103 @@
-<section>
-    <div class="od-breadcrumb">
-        <a href="" ui-sref="index.courselist({groupId: null})">Class List</a>
-        <span ng-if="listType == 'students' || listType == 'student'"> 
-    
-            <span class="dropdown">
-              &gt; <a href="" data-toggle="dropdown">{{currentCourse.label}}
-              <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li ng-repeat="course in classes">
-                    <a href="#" ng-click="$emit('chart-change', {id: course.id, type: 'course', notify: true})">{{course.label}}</a>
-                </li>
-              </ul>
-            </span>
-
-            <span>&gt; Students</span>
-
-            <span class="dropdown" ng-if="listType == 'student'">
-              &gt; <a href="" data-toggle="dropdown">{{currentStudent.label}}
-              <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li ng-repeat="student in currentCourse.students">
-                    <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student', notify: true})">{{student.label}}</a>
-                </li>
-              </ul>
-            </span>
-        </span>
-    </div>
-
-    <div class="chart-container">
-        <div class="filters" ng-show="chartInitialized">
-            <label for="assignment-toggle" ng-click="$emit('draw-assignments')">
-                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
-            </label>
-        </div>
-        <div id="pulse-chart">
-
-        </div>
+<section class="col-md-12">
+    <div class="col-md-11">
+        <div class="od-breadcrumb">
+            <a href="" ui-sref="index.courselist({groupId: null})">Class List</a>
+            <span ng-if="listType == 'students' || listType == 'student'"> 
         
-        <div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
-            <i class="fa fa-info-circle"></i>
-            <span>
-                <span class="info-label">Date:</span>
-                <span class="info-value">{{chartInfo.date | amDateFormat:'M-D'}}</span>
-            </span>
-            <span>
-                <span class="info-label">Events:</span>
-                <span class="info-value">{{chartInfo.events}}</span>
+                <span class="dropdown">
+                  &gt; <a href="" data-toggle="dropdown">{{currentCourse.label}}
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="course in classes">
+                        <a href="#" ng-click="$emit('chart-change', {id: course.id, type: 'course', notify: true})">{{course.label}}</a>
+                    </li>
+                  </ul>
+                </span>
+
+                <span>&gt; Students</span>
+
+                <span class="dropdown" ng-if="listType == 'student'">
+                  &gt; <a href="" data-toggle="dropdown">{{currentStudent.label}}
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="student in currentCourse.students">
+                        <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student', notify: true})">{{student.label}}</a>
+                    </li>
+                  </ul>
+                </span>
             </span>
         </div>
 
-
-        <div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
-            <i class="fa fa-info-circle"></i>
-            <span>
-                <span class="info-label">Title:</span>
-                <span class="info-value">{{assignmentInfo.label}}</span>
-            </span>
-            <span>
-                <span class="info-label">Date:</span>
-                <span class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
-            </span>
-            <span>
-                <span class="info-label">Type:</span>
-                <span class="info-value">{{assignmentInfo.events}}</span>
-            </span>
-        </div>
-    </div>
-
-    <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Email {{emailstudent.name}}</h4>
-          </div>
-          <div class="modal-body">
-            <div ng-if="sent" class="alert alert-success">
-                Email sent to {{emailstudent.name}}.
+        <div class="chart-container">
+            <div class="filters" ng-show="chartInitialized">
+                <label for="assignment-toggle" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
+                    <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
+                </label>
             </div>
-            <form action="">
-                <div class="form-group">
-                    <label for="exampleInputEmail1">message</label>
-                    <textarea class="form-control"></textarea>
-                    
+
+
+            <div id="pulse-chart">
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Email {{emailstudent.name}}</h4>
+              </div>
+              <div class="modal-body">
+                <div ng-if="sent" class="alert alert-success">
+                    Email sent to {{emailstudent.name}}.
                 </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" ng-click="sent = 1">Send Email</button>
+                <form action="">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">message</label>
+                        <textarea class="form-control"></textarea>
+                        
+                    </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" ng-click="sent = 1">Send Email</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
     </div>
 </section>
 <div class="ui-view" ng-if="listType == 'student'"></div>
+
+<div class="tooltips">
+    <div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
+        <i class="fa fa-info-circle"></i>
+        <span>
+            <span class="info-label">Date:</span>
+            <span class="info-value">{{chartInfo.date | amDateFormat:'M-D'}}</span>
+        </span>
+        <span>
+            <span class="info-label">Events:</span>
+            <span class="info-value">{{chartInfo.events}}</span>
+        </span>
+    </div>
+
+
+    <div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
+        <i class="fa fa-info-circle"></i>
+        <span>
+            <span class="info-label">Title:</span>
+            <span class="info-value">{{assignmentInfo.label}}</span>
+        </span>
+        <span>
+            <span class="info-label">Date:</span>
+            <span class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
+        </span>
+        <span>
+            <span class="info-label">Type:</span>
+            <span class="info-value">{{assignmentInfo.events}}</span>
+        </span>
+    </div>
+</div>

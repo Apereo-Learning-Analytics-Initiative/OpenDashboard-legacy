@@ -12,7 +12,8 @@
     'EnrollmentDataService',
     'UserDataService',
     'EventService',
-    function($scope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService){
+    'LineItemDataService',
+    function($scope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService){
       "use strict";
 
     // $scope._ = _;
@@ -138,6 +139,7 @@
     */
 
     if (currentUser) {
+
       EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
         .then(function(enrollments){
           if (enrollments.isError) {
@@ -153,6 +155,12 @@
 
             _.each(labels, function (enrollment) {
               //classes.push(enrollment.class);
+
+              LineItemDataService.getLineItemsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+              .then(function(data){
+                enrollment.class.assignments = data;
+              });
+
               
               EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
                   .then(function (statistics) {
@@ -161,6 +169,7 @@
                       var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
                       var queue = [];
 
+
                        _.each(keys, function (studentId) {
                         queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
                       });
@@ -168,7 +177,6 @@
                       return $q
                         .all(queue)
                         .then(function (response) {
-                          // console.log(response);
                           students = response;
                         })
                         .finally(function () {
@@ -199,7 +207,8 @@
         label: c.title,
         studentEventMax: 0,
         events: [],
-        students: []
+        students: [],
+        assignments: c.assignments
       };
 
       // process events object for the class
@@ -253,7 +262,6 @@
       $scope.maxEvents = $scope.coursesMaxEvents;
       $scope.datalist = processedClasses;
       //$scope.$broadcast('draw-chart');
-
 
       if (coursesProcessed) {
         if ($state.params.studentId && $state.params.groupId) {
@@ -366,12 +374,6 @@
       link: function (scope, element, attrs) {
         var maxEvents = 0;
 
-        var plotWidth = 950;
-        var lineHeight = 30;
-        var weekWidth = 75;
-        var height = 100;
-        var chartOffset = 0;
-
         var padding = {
           top: 50,
           right: 30,
@@ -380,9 +382,16 @@
           line: 2,
         };
 
+        var plotWidth = $('#pulse-chart').width() - (padding.left + padding.right);
+        var lineHeight = 30;
+        var height = 100;
+        var chartOffset = 0;
+
+
+
         var width = padding.left + padding.right + plotWidth;
 
-        $('.filters').width(width);
+        // $('.filters').width(width);
 
         // time scale
         var timeScale = d3.scaleTime()
@@ -391,8 +400,8 @@
         // set tooltip position based on cursor
         function setAssignmentToolTipPosition (pos) {
           var posOffset = {
-            y: pos.y - chartOffset.top - 20,
-            x: pos.x - chartOffset.left + 20,
+            y: pos.y - chartOffset.top ,
+            x: pos.x - chartOffset.left + 50,
           };
 
           $('.tool-tip-assignment-info').css({
@@ -430,8 +439,17 @@
           });
         }
 
+        function redrawChart () {
+          plotWidth = $('#pulse-chart').width() - (padding.left + padding.right);
+          width = padding.left + padding.right + plotWidth;
+          d3.select("#plot-container svg")
+          .attr("height", height)
+          .attr("width", width);
+          timeScale.range([padding.left, plotWidth + padding.left]);
+          drawChart();
+        }
+
         function drawChart(obj) {
-          console.log('drawchart');
           // var maxEvents = obj.maxEvents;
           var plots = {};
           var zoomed = false;
@@ -496,16 +514,11 @@
             var t1 = svg.transition().duration(750);
             t1.selectAll(".xaxis").call(xAxis);
             var zoomgroup = svg.select('.zoom-icon');
-
             resetZoom();
 
           } else {
             // No chart yet, let's make one.
             var svg = d3.select('#pulse-chart').append('svg');
-
-            svg
-            .attr("height", height)
-            .attr("width", width);
 
             // list text
             var xLabel = svg
@@ -553,8 +566,8 @@
           // set tooltip position based on cursor
           function setEventToolTipPosition (pos) {
             var posOffset = {
-              y: pos.y - chartOffset.top - 20,
-              x: pos.x - chartOffset.left + 20,
+              y: pos.y - chartOffset.top,
+              x: pos.x - chartOffset.left + 50,
             };
 
             $('.tool-tip-event-info').css({
@@ -563,6 +576,7 @@
             });
           }
 
+          $('.assignments-overlay').remove();
           drawAssignments();
 
           // set width n height
@@ -765,7 +779,7 @@
         function drawAssignments() {
           // assignments overlay
           // $('.assignments-overlay').remove();
-          if (scope.assignmentOverlay) {
+          if (scope.assignmentOverlay && (scope.listType == 'students' || scope.listType == 'student')) {
             var assignments;
             if ($('.assignments-overlay').length) {
               var t0 = d3.select('#pulse-chart svg').transition().duration(750);
@@ -773,60 +787,59 @@
               .attr('y2', height)
               .attr('class', function (d, index) {
                 var placement = timeScale(moment(d.date));
-                var classname = "assignment-marker";
+                var classname = "assignment-marker " + d.category.title;
 
                 if (placement >= padding.left && placement <= padding.left + plotWidth) {
                   
                 } else {
-                  classname = "assignment-marker hide";
+                  classname = "assignment-marker hide " + d.category.title;
                 }
 
                 return classname;
               })
               .attr('x1', function(d){
-                return timeScale(moment(d.date));
+                return timeScale(moment(d.dueDate, moment.ISO_8601));
               })
               .attr('x2', function(d){
-                return timeScale(moment(d.date));
+                return timeScale(moment(d.dueDate, moment.ISO_8601));
               })
 
 
             } else {
-              console.log('this');
               assignments = d3.select('#pulse-chart svg').append('g')
                 .attr('class', 'assignments-overlay');
 
               assignments
                 .selectAll('line')
-                .data(scope.assignments)
+                .data(scope.currentCourse.assignments)
                 .enter()
                 .append('line')
                 .attr('class', function(d) {
                   var placement = timeScale(moment(d.date));
-                  var classname = "assignment-marker";
+                  var classname = "assignment-marker " + d.category.title;
 
                   if (placement >= padding.left && placement <= padding.left + plotWidth) {
                     
                   } else {
-                    classname = "assignment-marker hide";
+                    classname = "assignment-marker hide" + d.category.title;
                   }
 
                   return classname;
 
                 })
-                .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+                // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
                 .attr('x1', function(d){
-                  return timeScale(moment(d.date));
+                  return timeScale(moment(d.dueDate, moment.ISO_8601));
                 })
                 .attr('x2', function(d){
-                  return timeScale(moment(d.date));
+                  return timeScale(moment(d.dueDate, moment.ISO_8601));
                 })
                 .attr('y1', padding.top - 15)
                 .attr('y2', height)
                 .attr('opacity', 0.3)
                 .on('mouseover', function(d){
                   d3.select(this)
-                  .attr('style', 'stroke:rgb(0,100,0);stroke-width:6;')
+                  // .attr('style', 'stroke:rgb(0,100,0);stroke-width:6;')
                   .attr('opacity',1);
 
                   setAssignmentToolTipPosition({
@@ -837,16 +850,16 @@
                   });
                   scope.$apply(function () {
                       scope.assignmentInfo = {
-                        label: d.label,
+                        label: d.title,
                         date: moment(d.date),
-                        events: d.type
+                        events: d.category.title
                       };
                   });
 
                 })
                 .on('mouseout', function(d){
                   d3.select(this)
-                  .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+                  // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
                   .attr('opacity',0.3);
 
                   scope.$apply(function () {
@@ -862,6 +875,7 @@
 
         scope.$on('draw-chart', drawChart);
         scope.$on('draw-assignments', drawAssignments);
+        $(window).resize(redrawChart);
       }
     };
   }]);

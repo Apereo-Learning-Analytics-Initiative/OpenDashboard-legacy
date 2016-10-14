@@ -69,32 +69,31 @@
         // opacity: 1;
       }
     }
+    .assignment-marker {
+      stroke: #999999;
+      stroke-width: 2;
+      &.lab {
+        stroke: blue;
+      }
+      &.exam {
+        stroke: red;
+      }
+      &.quiz {
+        stroke: green;
+      }
+      &.report {
+        stroke: orange;
+      }
+      &:hover {
+        stroke-width: 6;
+      }
+    }
     .pulse-list-item:hover rect {
       fill: #dedeff;
     }
   }
 
   .chart-container {
-    position: relative;
-    .tool-tip-info {
-      position: absolute;
-      background: #fff;
-      padding: 0px 10px;
-      border-radius: 5px;
-      box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
-      border: 1px solid #999;
-      color: #005695;
-    }
-    .info-label {
-      text-transform: uppercase;
-      font-weight: bold;
-      color: #999;
-      font-size: 11px;
-    }
-    .info-value {
-      font-weight: bold;
-      font-size: 13px;
-    }
   }
   // classes
   .class-list {
@@ -116,3 +115,25 @@
     background: blue;
   }
 // }
+
+.tooltips {
+  .tool-tip-info {
+    position: absolute;
+    background: #fff;
+    padding: 0px 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    border: 1px solid #999;
+    color: #005695;
+  }
+  .info-label {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #999;
+    font-size: 11px;
+  }
+  .info-value {
+    font-weight: bold;
+    font-size: 13px;
+  }
+}
