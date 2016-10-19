@@ -1,10 +1,17 @@
 <section class="col-md-12">
-    <div class="col-md-11">
+    <div class="col-md-12">
         <div class="od-breadcrumb">
-            <a href="" ui-sref="index.courselist({groupId: null})">Class List</a>
+            <!-- 
+            When viewing outside of a LMS the breadcrumb is to include navigation for
+            viewing the listing of all classes.
+
+            When viewing from within a LMS the breadcrumb is to only provide navitation
+            withing the selected class.
+            -->
+            <a href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession">Class List</a>
             <span ng-if="listType == 'students' || listType == 'student'"> 
         
-                <span class="dropdown">
+                <span class="dropdown" ng-show="!isLtiSession">
                   &gt; <a href="" data-toggle="dropdown">{{currentCourse.label}}
                   <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -13,6 +20,8 @@
                     </li>
                   </ul>
                 </span>
+
+                <a href="" ng-show="isLtiSession" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
 
                 <span>&gt; Students</span>
 
