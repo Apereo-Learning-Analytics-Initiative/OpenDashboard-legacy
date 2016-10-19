@@ -33,10 +33,6 @@
 
       $scope.error = null;
       $scope.enrollments = null;
-
-      $scope.standAlone = false;
-
-      console.log($scope.isLtiSession);
         
       
     });
