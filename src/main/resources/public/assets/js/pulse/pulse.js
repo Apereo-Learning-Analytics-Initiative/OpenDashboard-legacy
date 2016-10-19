@@ -786,7 +786,7 @@
               t0.selectAll('.assignment-marker')
               .attr('y2', height)
               .attr('class', function (d, index) {
-                var placement = timeScale(moment(d.date));
+                var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
                 var classname = "assignment-marker " + d.category.title;
 
                 if (placement >= padding.left && placement <= padding.left + plotWidth) {
