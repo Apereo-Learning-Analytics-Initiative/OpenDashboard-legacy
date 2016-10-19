@@ -814,19 +814,19 @@
                 .data(scope.currentCourse.assignments)
                 .enter()
                 .append('line')
-                .attr('class', function(d) {
-                  var placement = timeScale(moment(d.date));
+                .attr('class', function (d, index) {
+                  var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
                   var classname = "assignment-marker " + d.category.title;
 
                   if (placement >= padding.left && placement <= padding.left + plotWidth) {
                     
                   } else {
-                    classname = "assignment-marker hide" + d.category.title;
+                    classname = "assignment-marker hide " + d.category.title;
                   }
 
                   return classname;
-
                 })
+
                 // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
                 .attr('x1', function(d){
                   return timeScale(moment(d.dueDate, moment.ISO_8601));
