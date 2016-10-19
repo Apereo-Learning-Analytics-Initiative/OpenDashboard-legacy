@@ -34,6 +34,7 @@
 
             $scope.displayMode = 'chart';
             $scope.detailView = '30days';
+            $scope.allFilters = false;
 
             $scope.verbList = [
                 {
@@ -326,7 +327,6 @@
                     datasets: []
                 };
 
-
                 _.each($scope.actions, function (action) {
                     //console.log(action);
                     var verb = _.last(action.verb.split('#'));
@@ -441,6 +441,16 @@
                 activityOverTime($scope.detailView);
             });
 
+            $scope.$on('toggleAllFilters', function (event, data) {
+                console.log($scope.allFilters);
+
+                $scope.allFilters = !$scope.allFilters;
+
+                _.each($scope.verbList, function (verb) {
+                    verb.filter = $scope.allFilters;
+                });
+                activityOverTime($scope.detailView);
+            });
             
         } 
     );

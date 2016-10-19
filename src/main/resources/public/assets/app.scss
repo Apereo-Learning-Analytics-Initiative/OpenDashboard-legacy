@@ -5,7 +5,9 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
-
+body.isLTI {
+	padding: 0px !important;
+}
 .logo {
 	padding-top: 10px;
 	box-shadow: none !important;
