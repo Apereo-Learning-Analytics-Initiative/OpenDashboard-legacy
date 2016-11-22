@@ -13,14 +13,51 @@
     }
   }
 
+  svg {
+    display: block;
+  }
+
   .od-breadcrumb {
     padding: 10px 0;
+    text-align: center;
+  }
+
+  .classlist-link {
+    float: left;
+  }
+
+  .title-dropdown {
+    display: inline-block; 
+    .dropdown > a {
+      font-size: 28px;
+    }   
   }
   
   .chart-container {
     // display: inline-block;
     .filters {
       text-align: right;
+    }
+  }
+
+  .filters {
+    font-size: 14px;
+    padding: 10px 0;
+    text-align: right;
+    .filter-item {
+      display: inline-block;
+      margin-right: 25px;
+      &:last-of-type {
+        margin-right: 0px;
+      }
+      input[type="number"] {
+        width: 30px;
+        height: 15px;
+        font-size: 14px;
+        border: 1px solid #2c3841;
+        border-width: 0 0 1px 0;
+        background: none;
+      }
     }
   }
 
@@ -93,8 +130,22 @@
     }
   }
 
-  .chart-container {
+  .table-pulse {
+    border-top: none;
+    th {
+      border: 0 none;
+      background: transparent;
+    }
+    th, td {
+      width: 0%;
+      white-space: nowrap;
+      &:last-of-type {
+        width: 100%;
+        padding: 0;
+      } 
+    }
   }
+
   // classes
   .class-list {
     .class {

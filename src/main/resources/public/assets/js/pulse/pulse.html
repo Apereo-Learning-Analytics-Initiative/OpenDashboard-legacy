@@ -1,5 +1,6 @@
 <section class="col-md-12">
     <div class="col-md-12">
+
         <div class="od-breadcrumb">
             <!-- 
             When viewing outside of a LMS the breadcrumb is to include navigation for
@@ -8,11 +9,12 @@
             When viewing from within a LMS the breadcrumb is to only provide navitation
             withing the selected class.
             -->
-            <a href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession">Class List</a>
-            <span ng-if="listType == 'students' || listType == 'student'"> 
+            <a class="classlist-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession"><i class="fa fa-chevron-left"></i> Class List</a>
+
+            <span class="title-dropdown" ng-if="listType == 'students' || listType == 'student'"> 
         
                 <span class="dropdown" ng-show="!isLtiSession">
-                  &gt; <a href="" data-toggle="dropdown">{{currentCourse.label}}
+                  <a href="" data-toggle="dropdown">{{currentCourse.label}}
                   <span class="caret"></span></a>
                   <ul class="dropdown-menu">
                     <li ng-repeat="course in classes">
@@ -23,9 +25,9 @@
 
                 <a href="" ng-show="isLtiSession" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
 
-                <span>&gt; Students</span>
 
-                <span class="dropdown" ng-if="listType == 'student'">
+
+<!--                 <span class="dropdown" ng-if="listType == 'student'">
                   &gt; <a href="" data-toggle="dropdown">{{currentStudent.label}}
                   <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -33,11 +35,88 @@
                         <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student', notify: true})">{{student.label}}</a>
                     </li>
                   </ul>
-                </span>
+                </span> -->
             </span>
         </div>
 
-        <div class="chart-container">
+        <div class="filters">
+            <span class="filter-item">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
+                Hasn't logged in for <input type="number" value="0" min="0"> days</span>
+            <span class="filter-item">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
+                <input type="number" value="0" min="0"> number of submission late or missing</span>
+            <span class="filter-item">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
+                Current Course Grade/Score below <input type="number" value="0" min="0"></span>
+            <span class="filter-item">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
+                Current Course Grade/Score below <input type="number" value="0" min="0"></span>
+            <span class="filter-item" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
+                <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
+            </span>
+
+        </div>
+
+        <table class="table table-striped table-condensed table-pulse">
+            <thead>
+                <tr>
+                    <th ng-if="listType == 'classes'">
+                        Class Name
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        <a href="" class="fa fa-envelope"></a>
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        First Name
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        Last Name
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        Risk
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        Grade
+                    </th>
+                    <th ng-if="listType == 'students'">
+                        Activity
+                    </th>
+                    <th id="timeline-heading">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in datalist" ng-repeat-finish="draw-chart">
+                    <td ng-if="listType == 'students'">
+                        <a href="" class="fa fa-envelope"></a>
+                    </td>
+                    <td ng-if="listType == 'classes'">
+                        {{item.label}}
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <a href="">{{item.firstName}}</a>
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <a href="">{{item.lastName}}</a>
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        {{item.risk}}
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        {{item.grade}}
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        {{item.activity}}
+                    </td>
+                    <td id="pulse-chart-{{item.id}}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+<!--         <div class="chart-container">
             <div class="filters" ng-show="chartInitialized">
                 <label for="assignment-toggle" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
                     <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
@@ -48,7 +127,7 @@
             <div id="pulse-chart">
 
             </div>
-        </div>
+        </div> -->
 
         <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
