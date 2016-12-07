@@ -184,7 +184,7 @@
           $scope.maxEvents = $scope.coursesMaxEvents;
           $scope.datalist = processedClasses;
           $scope.listType = 'classes';  
-          $scope.$broadcast('draw-chart');
+          // $scope.$broadcast('draw-chart');
         }
       }
     }
@@ -401,7 +401,7 @@
 
 
         function drawChart(obj) {
-          // var maxEvents = obj.maxEvents;
+          console.log('drawChart');
 
 
           var timelineHeader = $('#timeline-heading');
@@ -428,11 +428,14 @@
           .attr("height", tlhHeight)
           .attr("width", tlhWidth);
 
-          var overviewPlot = svgTimeOverview.append('g')
-            .attr('transform','translate(0,'+tlhHeight/2+')')
-            .attr('class','plot');
+          if (scope.listType !== "classes") {
+            var overviewPlot = svgTimeOverview.append('g')
+              .attr('transform','translate(0,'+tlhHeight/2+')')
+              .attr('class','plot');
 
-          drawPlots(overviewPlot, scope.currentCourse);
+            drawPlots(overviewPlot, scope.currentCourse);
+          }
+
 
           var xLabel = svgTimelineHeader
             .append('g')
@@ -458,9 +461,15 @@
               .attr('class','plot');
             
             // dot
-            drawPlots(plots, o);
-
+            drawPlots(plots, o);            
           });
+
+          if (scope.listType !== 'classes') {
+            drawAssignments();  
+          } else {
+            $('#pulse-wrapper').trigger('chart-render-finish');
+          }
+          
 
           // scope.$apply(function () {
               scope.chartInitialized = true;
@@ -469,101 +478,90 @@
         }
 
         function drawAssignments() {
-          // assignments overlay
-          // $('.assignments-overlay').remove();
-          if (scope.assignmentOverlay && (scope.listType == 'students' || scope.listType == 'student')) {
-            var assignments;
-            if ($('.assignments-overlay').length) {
-              var t0 = d3.select('#pulse-chart svg').transition().duration(750);
-              t0.selectAll('.assignment-marker')
-              .attr('y2', height)
-              .attr('class', function (d, index) {
-                var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
-                var classname = "assignment-marker " + d.category.title;
+          var heading = $('#timeline-heading');
+          var width = heading.width();
+          var height = $('#pulse-table').height();
+          var offset = heading.position();
+          var overlay = $('#assignment-overlay');
 
-                if (placement >= padding.left && placement <= padding.left + plotWidth) {
-                  
-                } else {
-                  classname = "assignment-marker hide " + d.category.title;
-                }
+          overlay.css({
+            'left': offset.left,
+            'top': offset.top,
+            'width': width,
+            'height': height
+          });
 
-                return classname;
-              })
-              .attr('x1', function(d){
-                return timeScale(moment(d.dueDate, moment.ISO_8601));
-              })
-              .attr('x2', function(d){
-                return timeScale(moment(d.dueDate, moment.ISO_8601));
-              })
+          var assignments = d3.select('#assignment-overlay svg')
+            .attr('class', 'assignments-overlay')
+            .attr("height", height)
+            .attr("width", width);
 
 
-            } else {
-              assignments = d3.select('#pulse-chart svg').append('g')
-                .attr('class', 'assignments-overlay');
+          assignments
+            .selectAll('line')
+            .data(scope.currentCourse.assignments)
+            .enter()
+            .append('line')
+            .attr('class', function (d, index) {
+              var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
+              var classname = "assignment-marker " + d.category.title;
 
-              assignments
-                .selectAll('line')
-                .data(scope.currentCourse.assignments)
-                .enter()
-                .append('line')
-                .attr('class', function (d, index) {
-                  var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
-                  var classname = "assignment-marker " + d.category.title;
+              // if (placement >= padding.left && placement <= padding.left + plotWidth) {
+                
+              // } else {
+              //   classname = "assignment-marker hide " + d.category.title;
+              // }
 
-                  if (placement >= padding.left && placement <= padding.left + plotWidth) {
-                    
-                  } else {
-                    classname = "assignment-marker hide " + d.category.title;
-                  }
+              return classname;
+            })
 
-                  return classname;
-                })
+            // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+            .attr('x1', function(d){
+              return timeScale(moment(d.dueDate, moment.ISO_8601));
+            })
+            .attr('x2', function(d){
+              return timeScale(moment(d.dueDate, moment.ISO_8601));
+            })
+            .attr('y1', 0)
+            .attr('y2', height)
+            .attr('opacity', 0.3)
+            .on('mouseover', function(d){
+              d3.select(this)
+              // .attr('style', 'stroke:rgb(0,100,0);stroke-width:6;')
+              .attr('opacity',1);
 
-                // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
-                .attr('x1', function(d){
-                  return timeScale(moment(d.dueDate, moment.ISO_8601));
-                })
-                .attr('x2', function(d){
-                  return timeScale(moment(d.dueDate, moment.ISO_8601));
-                })
-                .attr('y1', padding.top - 15)
-                .attr('y2', height)
-                .attr('opacity', 0.3)
-                .on('mouseover', function(d){
-                  d3.select(this)
-                  // .attr('style', 'stroke:rgb(0,100,0);stroke-width:6;')
-                  .attr('opacity',1);
+              setAssignmentToolTipPosition({
+                x: d3.event.pageX,
+                y: d3.event.pageY
+                // x: d3.event.clientX,
+                // y: d3.event.clientY
+              });
+              scope.$apply(function () {
+                  scope.assignmentInfo = {
+                    label: d.title,
+                    date: moment(d.date),
+                    events: d.category.title
+                  };
+              });
 
-                  setAssignmentToolTipPosition({
-                    x: d3.event.pageX,
-                    y: d3.event.pageY
-                    // x: d3.event.clientX,
-                    // y: d3.event.clientY
-                  });
-                  scope.$apply(function () {
-                      scope.assignmentInfo = {
-                        label: d.title,
-                        date: moment(d.date),
-                        events: d.category.title
-                      };
-                  });
+            })
+            .on('mouseout', function(d){
+              d3.select(this)
+              // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
+              .attr('opacity',0.3);
 
-                })
-                .on('mouseout', function(d){
-                  d3.select(this)
-                  // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
-                  .attr('opacity',0.3);
+              scope.$apply(function () {
+                  scope.assignmentInfo = undefined;
+              });
 
-                  scope.$apply(function () {
-                      scope.assignmentInfo = undefined;
-                  });
-
-                });  
-            }
-          } else {
-            $('.assignments-overlay').remove();
-          }
+            });  
+            
+            $('#pulse-wrapper').trigger('chart-render-finish');
         }
+
+        $('#pulse-wrapper').on('chart-render-finish', function(){
+          $('#pulse-wrapper').fadeTo('slow', 1);
+        });
 
         scope.$on('draw-chart', drawChart);
         scope.$on('draw-assignments', drawAssignments);

@@ -33,19 +33,13 @@
     }   
   }
   
-  .chart-container {
-    // display: inline-block;
-    .filters {
-      text-align: right;
-    }
-  }
 
   .filters {
     font-size: 14px;
     padding: 10px 0;
-    text-align: right;
+    // text-align: right;
     .filter-item {
-      display: inline-block;
+      display: block;
       margin-right: 25px;
       &:last-of-type {
         margin-right: 0px;
@@ -106,25 +100,6 @@
         // opacity: 1;
       }
     }
-    .assignment-marker {
-      stroke: #999999;
-      stroke-width: 2;
-      &.lab {
-        stroke: blue;
-      }
-      &.exam {
-        stroke: red;
-      }
-      &.quiz {
-        stroke: green;
-      }
-      &.report {
-        stroke: orange;
-      }
-      &:hover {
-        stroke-width: 6;
-      }
-    }
     .pulse-list-item:hover rect {
       fill: #dedeff;
     }
@@ -139,7 +114,7 @@
     th, td {
       width: 0%;
       white-space: nowrap;
-      &:last-of-type {
+      &:last-of-type:not(.actions) {
         width: 100%;
         padding: 0;
       } 
@@ -186,5 +161,55 @@
   .info-value {
     font-weight: bold;
     font-size: 13px;
+  }
+}
+
+.popover.fade.in {
+  display: block;
+}
+
+.popover.right-top {
+  top: 0px !important;
+  max-width: 400px;
+  .arrow {
+    top: 18px!important;
+  }
+}
+
+#assignment-overlay {
+  position: absolute;
+  pointer-events: none;
+}
+
+.assignment-marker {
+  pointer-events: auto;
+  stroke: #999999;
+  stroke-width: 2;
+  &.lab {
+    stroke: blue;
+  }
+  &.exam {
+    stroke: red;
+  }
+  &.quiz {
+    stroke: green;
+  }
+  &.report {
+    stroke: orange;
+  }
+  &:hover {
+    stroke-width: 6;
+  }
+}
+
+#pulse-wrapper {
+  opacity: 0;
+  position: relative;
+  .filters {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1000px;
+    // padding-left: 50px;
   }
 }
