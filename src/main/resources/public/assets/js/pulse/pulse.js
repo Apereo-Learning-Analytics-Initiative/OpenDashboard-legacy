@@ -39,6 +39,9 @@
 
     currentUser = SessionService.getCurrentUser();
 
+    $scope.orderByField = 'label';
+    $scope.reverseSort = false;
+
     /**
       * TODO: Move data loading to payload resolver
     */
@@ -300,7 +303,7 @@
       templateUrl: 'assets/js/pulse/pulse.html',
       link: function (scope, element, attrs) {
 
-
+        var headerHeight = $('.navbar').height();
         var courseStart = moment(scope.coursesStartEnd.start).startOf('week');
         var courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
         var weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
@@ -322,8 +325,8 @@
 
         function setAssignmentToolTipPosition (pos) {
           var posOffset = {
-            y: pos.y ,
-            x: pos.x + 50,
+            y: pos.y - headerHeight,
+            x: pos.x ,
           };
 
           $('.tool-tip-assignment-info').css({
@@ -346,6 +349,7 @@
 
 
         function drawPlots(plots, o) {
+          plots.selectAll('circle').remove();
           plots
             .selectAll('circle')
             .data(o.events)
@@ -399,65 +403,77 @@
             });  
         }
 
-
-        function drawChart(obj) {
-          console.log('drawChart');
-
-
+        function drawTimeline() {
           var timelineHeader = $('#timeline-heading');
           var tlhHeight = timelineHeader.height();
           var tlhWidth = timelineHeader.width();
+          if ($('#timeline-heading svg.timeline-svg').length) {
+            var svgTimelineHeader = d3.select('#timeline-heading svg');
+          } else {
+            var svgTimelineHeader = d3.select('#timeline-heading').append('svg');
 
-          // console.log($('.overview-pulse').css('margin-left', timelineHeader.position().left));
+            timeScale.range([10, tlhWidth - 50]);
 
-
-          // NEW TIMELINE HEADER
-          var svgTimelineHeader = d3.select('#timeline-heading').append('svg');
-          var svgTimeOverview = d3.select('#timeline-heading').insert("svg",":first-child");
-
-
-          timeScale.range([10, timelineHeader.width() - 50]);
-
-
-          svgTimelineHeader
-          .attr("height", tlhHeight)
-          .attr("width", tlhWidth);
-
-
-          svgTimeOverview
-          .attr("height", tlhHeight)
-          .attr("width", tlhWidth);
-
-          if (scope.listType !== "classes") {
-            var overviewPlot = svgTimeOverview.append('g')
-              .attr('transform','translate(0,'+tlhHeight/2+')')
-              .attr('class','plot');
-
-            drawPlots(overviewPlot, scope.currentCourse);
+            svgTimelineHeader
+            .attr("class", 'timeline-svg')
+            .attr("height", tlhHeight)
+            .attr("width", tlhWidth);
+            var xLabel = svgTimelineHeader
+              .append('g')
+              .attr('class', 'xaxis')
+              .attr('transform', 'translate(10, 10)')
+              .call(xAxis);
           }
 
 
-          var xLabel = svgTimelineHeader
-            .append('g')
-            .attr('class', 'xaxis')
-            .attr('transform', 'translate(10, 10)')
-            .call(xAxis);
 
+          if (scope.listType !== "classes") {
+            if ($('#timeline-heading svg.overview-svg g').length) {
+              var overviewPlot = d3.select('#timeline-heading svg.overview-svg g');
+
+            } else {
+              var svgTimeOverview = d3.select('#timeline-heading').insert("svg",":first-child");
+
+              svgTimeOverview
+              .attr("class", 'overview-svg')
+              .attr("height", tlhHeight)
+              .attr("width", tlhWidth);
+
+              var overviewPlot = svgTimeOverview.append('g')
+                .attr('transform','translate(0,'+tlhHeight/2+')')
+                .attr('class','plot');
+            }
+
+            drawPlots(overviewPlot, scope.currentCourse);
+          }
+        }
+
+        function drawChart(obj) {
+
+          drawTimeline();
 
           var charts = {};
+          var height, width;
+
 
           // set width n height
           _.each(scope.datalist, function(o, i){
+            if (i==0) {
+              height = $('#pulse-chart-' + o.id).height();
+              width = $('#pulse-chart-' + o.id).width();
+            }
+
             charts[o.id] = d3.select('#pulse-chart-' + o.id).append('svg');
             var svg = charts[o.id];
 
+
             svg
-            .attr("height", tlhHeight)
-            .attr("width", tlhWidth);
+            .attr("height", height)
+            .attr("width", width);
 
             // row plot group
             var plots = svg.append('g')
-              .attr('transform','translate(0,'+tlhHeight/2+')')
+              .attr('transform','translate(0,'+height/2+')')
               .attr('class','plot');
             
             // dot
@@ -470,10 +486,7 @@
             $('#pulse-wrapper').trigger('chart-render-finish');
           }
           
-
-          // scope.$apply(function () {
-              scope.chartInitialized = true;
-          // });
+          scope.chartInitialized = true;
 
         }
 

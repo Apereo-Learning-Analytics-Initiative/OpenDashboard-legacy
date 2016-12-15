@@ -28,22 +28,23 @@
 
   .title-dropdown {
     display: inline-block; 
-    .dropdown > a {
+    .dropdown > a, > a {
       font-size: 28px;
+      text-decoration: none;
     }   
   }
   
 
   .filters {
-    font-size: 14px;
-    padding: 10px 0;
-    // text-align: right;
+    display: inline-block;
+    position: relative;
+    left: -10px;
+    top: -5px;
     .filter-item {
       display: block;
-      margin-right: 25px;
-      &:last-of-type {
-        margin-right: 0px;
-      }
+      padding: 4px 0;
+      border-bottom:1px solid #dedede;
+
       input[type="number"] {
         width: 30px;
         height: 15px;
@@ -110,6 +111,7 @@
     th {
       border: 0 none;
       background: transparent;
+      cursor: default;
     }
     th, td {
       width: 0%;
@@ -168,12 +170,8 @@
   display: block;
 }
 
-.popover.right-top {
-  top: 0px !important;
-  max-width: 400px;
-  .arrow {
-    top: 18px!important;
-  }
+.popover.bottom {
+  width: 400px;
 }
 
 #assignment-overlay {

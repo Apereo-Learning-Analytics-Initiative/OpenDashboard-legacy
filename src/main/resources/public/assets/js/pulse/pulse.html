@@ -19,7 +19,30 @@
             </a></span>
 
             <span class="title-dropdown" ng-if="listType == 'students' || listType == 'student'"> 
-        
+                
+                <span class="filters"  ng-if="listType !== 'classes'"">
+                    <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters"><i class="fa fa-cog fa-lg"></i></a>
+
+                    <script type="text/ng-template" id="filters.html">
+                        <span class="filter-item">
+                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            Hasn't logged in for <input type="number" value="0" min="0"> days</span>
+                        <span class="filter-item">
+                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            <input type="number" value="0" min="0"> number of submission late or missing</span>
+                        <span class="filter-item">
+                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            Current Course Grade/Score below <input type="number" value="0" min="0"></span>
+                        <span class="filter-item">
+                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            Current Course Grade/Score below <input type="number" value="0" min="0"></span>
+                        <span class="filter-item" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
+                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
+                        </span>
+                    </script>
+                
+                </span>
+
                 <span class="dropdown" ng-show="!isLtiSession">
                   <a href="" data-toggle="dropdown">{{currentCourse.label}}
                   <span class="caret"></span></a>
@@ -49,31 +72,7 @@
         <div id="pulse-wrapper">
             
         
-            <div class="filters">
-                    <a href="#" uib-popover-template="'filters.html'" popover-placement="right-top" popover-title="Filters">
-                        <i class="fa fa-cog"></i>
-                    </a>
-
-                    <script type="text/ng-template" id="filters.html">
-                        <span class="filter-item">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
-                            Hasn't logged in for <input type="number" value="0" min="0"> days</span>
-                        <span class="filter-item">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
-                            <input type="number" value="0" min="0"> number of submission late or missing</span>
-                        <span class="filter-item">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
-                            Current Course Grade/Score below <input type="number" value="0" min="0"></span>
-                        <span class="filter-item">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true">
-                            Current Course Grade/Score below <input type="number" value="0" min="0"></span>
-                        <span class="filter-item" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
-                        </span>
-                    </script>
-
-
-            </div>
+ 
 
             <table id="pulse-table" class="table table-striped table-condensed table-pulse">
                 <thead>
@@ -81,8 +80,10 @@
                         <th class="actions" ng-if="listType == 'students'">
                             <a href="" class="fa fa-envelope"></a>
                         </th>
-                        <th ng-if="listType == 'classes'">
-                            Class Name
+                        <th ng-if="listType == 'classes'" ng-click="$parent.orderByField='label'; $parent.reverseSort = !$parent.reverseSort">
+                            Class Name 
+                            <i ng-if="$parent.orderByField=='label' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='label' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
                         <th ng-if="listType == 'students'">
                             First Name
@@ -105,7 +106,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="item in datalist" ng-repeat-finish="draw-chart">
+                    <tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort" ng-repeat-finish="draw-chart">
                         <td ng-if="listType == 'students'">
                             <a href="" class="fa fa-envelope"></a>
                         </td>
