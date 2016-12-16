@@ -394,14 +394,73 @@
                     events: d.eventCount
                   };
               });
+
             })
             .on('mouseout', function (d) {
               d3.select(this).attr('opacity','0.5');
               scope.$apply(function () {
                   scope.chartInfo = undefined;
               });
-            });  
+            })
+            .on('click', zoomIn);
         }
+
+        function zoomIn(d) {
+          
+          d3.select('.zoom-out')
+          .classed('active', true)
+          .on('click', zoomOut);
+
+          var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
+          var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
+          
+          timeScale.domain([
+              weeksBack, 
+              weeksForward
+            ]);
+
+          xAxis.ticks(5);
+
+          d3.selectAll("svg.timeline-svg .xaxis")
+            .transition()
+            .duration(750)
+            .call(xAxis);
+
+          d3.selectAll("svg .dot")
+            .transition()
+            .duration(750)
+            .attr('cx', function (d, index) {
+              var placement = timeScale(moment(d.date));
+              return placement;
+            });
+
+        }
+
+        function zoomOut(d) {  
+          d3.select('.zoom-out')
+          .classed('active', false);
+        
+          timeScale.domain([
+              courseStart, 
+              courseEnd
+            ]);
+
+          xAxis.ticks(weeks);
+
+          d3.selectAll("svg.timeline-svg .xaxis")
+            .transition()
+            .duration(750)
+            .call(xAxis);
+
+          d3.selectAll("svg .dot")
+            .transition()
+            .duration(750)
+            .attr('cx', function (d, index) {
+              var placement = timeScale(moment(d.date));
+              return placement;
+            });
+        }
+
 
         function drawTimeline() {
           var timelineHeader = $('#timeline-heading');
@@ -449,6 +508,7 @@
         }
 
         function drawChart(obj) {
+          $('.zoom-actions').width($('#timeline-heading').width() + 40)
 
           drawTimeline();
 
@@ -509,7 +569,8 @@
             .attr("height", height)
             .attr("width", width);
 
-
+          assignments.selectAll('line').remove();
+          
           assignments
             .selectAll('line')
             .data(scope.currentCourse.assignments)
