@@ -10,9 +10,9 @@ import java.util.UUID;
 import od.auth.Authenticator;
 import od.auth.OpenDashboardAuthenticationToken;
 import od.auth.OpenDashboardUser;
-import od.providers.ProviderException;
-import od.providers.course.CourseProvider;
-import od.providers.course.learninglocker.LearningLockerStaff;
+import od.framework.model.Tenant;
+import od.providers.ProviderService;
+import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class JiscAuthenticator implements Authenticator {
   @Value("${ukfederation.role:staff}")
   private String validRole;
   
-  @Autowired private CourseProvider courseProvider;
+  @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
 
   @Value("${od.admin.user:admin}")
@@ -116,7 +116,9 @@ public class JiscAuthenticator implements Authenticator {
         }
         
         try {
-          String staffId = courseProvider.getStaffIdWithPid(mongoTenantRepository.findOne(odToken.getTenantId()), eppn);
+          Tenant tenant = mongoTenantRepository.findOne(odToken.getTenantId());
+          UserProvider userProvider = providerService.getUserProvider(tenant);
+          String staffId = userProvider.getUserSourcedIdWithExternalId(tenant, eppn);
           authToken = new OpenDashboardAuthenticationToken(null, 
               null,
               odToken.getTenantId(), 
@@ -129,11 +131,10 @@ public class JiscAuthenticator implements Authenticator {
               AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"));
 
         } 
-        catch (ProviderException e) {
+        catch (Exception e) {
           log.error(e.getMessage(),e);
           throw new AuthenticationCredentialsNotFoundException(e.getMessage(), e);
-        }
-
+        } 
       }
     }
     else if (token instanceof UsernamePasswordAuthenticationToken) {

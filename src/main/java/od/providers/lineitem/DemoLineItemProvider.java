@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import unicon.oneroster.LineItem;
-import unicon.oneroster.LineItemCategory;
-import unicon.oneroster.Status;
+import unicon.matthews.oneroster.LineItem;
+import unicon.matthews.oneroster.LineItemCategory;
+import unicon.matthews.oneroster.Status;
 import unicon.oneroster.Vocabulary;
 
 /**
@@ -99,7 +99,7 @@ public class DemoLineItemProvider implements LineItemProvider {
     
     String [] classSourcedIds = {"demo-class-1","demo-class-2","demo-class-3"};
     
-    Map<String, unicon.oneroster.Class> classes = new HashMap<>();
+    Map<String, unicon.matthews.oneroster.Class> classes = new HashMap<>();
     
     Map<String, String> metadata1 = new HashMap<>();   
     metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 8, 30).toString());
@@ -116,24 +116,24 @@ public class DemoLineItemProvider implements LineItemProvider {
     metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 13).toString());
     metadata3.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
-    unicon.oneroster.Class class1
-      = new unicon.oneroster.Class.Builder()
+    unicon.matthews.oneroster.Class class1
+      = new unicon.matthews.oneroster.Class.Builder()
           .withSourcedId("demo-class-1")
           .withTitle("Introduction to Organic Chemistry")
           .withMetadata(metadata1)
           .withStatus(Status.active)
           .build();
     
-    unicon.oneroster.Class class2
-      = new unicon.oneroster.Class.Builder()
+    unicon.matthews.oneroster.Class class2
+      = new unicon.matthews.oneroster.Class.Builder()
         .withSourcedId("demo-class-2")
         .withTitle("Advanced Chemistry 303")
         .withMetadata(metadata2)
         .withStatus(Status.active)
         .build();
 
-    unicon.oneroster.Class class3
-      = new unicon.oneroster.Class.Builder()
+    unicon.matthews.oneroster.Class class3
+      = new unicon.matthews.oneroster.Class.Builder()
         .withSourcedId("demo-class-3")
         .withTitle("MicroBiology 201")
         .withMetadata(metadata3)
