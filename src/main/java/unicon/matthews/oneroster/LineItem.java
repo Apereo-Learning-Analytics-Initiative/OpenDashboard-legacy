@@ -1,10 +1,8 @@
 /**
  * 
  */
-package unicon.oneroster;
+package unicon.matthews.oneroster;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -195,6 +193,9 @@ public class LineItem {
     }
     
     public LineItem build() {
+      if (_lineItem.klass == null) {
+        throw new IllegalStateException(_lineItem.toString());
+      }
       return _lineItem;
     }
   }

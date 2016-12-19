@@ -38,11 +38,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import unicon.oneroster.Class;
-import unicon.oneroster.Enrollment;
-import unicon.oneroster.Role;
-import unicon.oneroster.Status;
-import unicon.oneroster.User;
+import unicon.matthews.oneroster.Enrollment;
+import unicon.matthews.oneroster.Role;
+import unicon.matthews.oneroster.Status;
+import unicon.matthews.oneroster.User;
+
 
 /**
  * @author ggilbert
@@ -155,13 +155,13 @@ public class LearningLockerEnrollmentProvider extends LearningLockerProvider imp
     return output;
   }
   
-  private Class toClass(LearningLockerModuleInstance learningLockerModuleInstance) {
+  private unicon.matthews.oneroster.Class toClass(LearningLockerModuleInstance learningLockerModuleInstance) {
     if (learningLockerModuleInstance == null || learningLockerModuleInstance.getModule() == null) {
       throw new IllegalArgumentException();
     }
     
-    Class klass 
-      = new Class.Builder()
+    unicon.matthews.oneroster.Class klass 
+      = new unicon.matthews.oneroster.Class.Builder()
         .withSourcedId(learningLockerModuleInstance.getModInstanceId())
         .withTitle(learningLockerModuleInstance.getModule().getModName())
         .withStatus(Status.active)
@@ -184,7 +184,7 @@ public class LearningLockerEnrollmentProvider extends LearningLockerProvider imp
     return user;
   }
 
-  private Enrollment toEnrollment(Role role, User user, Class klass) {
+  private Enrollment toEnrollment(Role role, User user, unicon.matthews.oneroster.Class klass) {
     
     Enrollment enrollment
       = new Enrollment.Builder()

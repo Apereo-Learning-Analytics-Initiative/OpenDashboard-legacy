@@ -33,6 +33,5 @@ import org.apereo.lai.Course;
 public interface CourseProvider extends Provider {
   Course getContext(ProviderData providerData, String contextId) throws ProviderException;
   List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException;
-  List<String> getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException;
-  String getStaffIdWithPid(Tenant tenant, String pid) throws ProviderException;
+  String getClassSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException;
 }

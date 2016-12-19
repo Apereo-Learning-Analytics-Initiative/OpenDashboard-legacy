@@ -101,16 +101,10 @@ public class ContextMappingController {
 		}
 		Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
-    List<String> courseIds = courseProvider.getCourseIdByLTIContextId(tenant, context);
+    String courseId = courseProvider.getClassSourcedIdWithExternalId(tenant, context);
+    ContextMapping cm = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
     
-    for (String courseId : courseIds) {
-      ContextMapping cm = contextMappingRepository.findByTenantIdAndContext(tenant.getId(), courseId);
-      if (cm != null) {
-        return cm;
-      }
-    }
-    
-    return null;
+    return cm;
 	}
 	
   @Secured({"ROLE_INSTRUCTOR", "ROLE_STUDENT"})

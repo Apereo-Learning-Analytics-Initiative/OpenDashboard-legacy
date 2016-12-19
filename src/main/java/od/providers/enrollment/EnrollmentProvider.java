@@ -22,7 +22,7 @@ import java.util.Set;
 import od.providers.Provider;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import unicon.oneroster.Enrollment;
+import unicon.matthews.oneroster.Enrollment;
 
 /**
  * @author ggilbert

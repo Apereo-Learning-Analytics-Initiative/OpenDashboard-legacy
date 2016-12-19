@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderService;
@@ -22,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import unicon.oneroster.Enrollment;
-import unicon.oneroster.User;
+import unicon.matthews.oneroster.Enrollment;
+import unicon.matthews.oneroster.User;
 
 /**
  * @author ggilbert
@@ -91,6 +92,12 @@ public class DemoUserProvider implements UserProvider {
   public User getUserBySourcedId(ProviderData providerData, String userSourcedId) {
     log.debug("{}",users);
     return users.get(userSourcedId);
+  }
+
+  @Override
+  public String getUserSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

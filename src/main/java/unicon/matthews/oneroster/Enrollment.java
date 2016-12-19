@@ -1,7 +1,7 @@
 /**
  * 
  */
-package unicon.oneroster;
+package unicon.matthews.oneroster;
 
 import java.util.Map;
 
@@ -118,9 +118,6 @@ public final class Enrollment {
   public static class Builder {
     private Enrollment _enrollment = new Enrollment();
     
-    @JsonProperty("class")
-    private Class klass;
-
     public Builder withSourcedId(String sourcedId) {
       _enrollment.sourcedId = sourcedId;
       return this;
@@ -151,6 +148,7 @@ public final class Enrollment {
       return this;
     }
     
+    @JsonProperty("class")
     public Builder withKlass(Class klass) {
       _enrollment.klass = klass;
       return this;
