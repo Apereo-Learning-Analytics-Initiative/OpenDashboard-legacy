@@ -168,6 +168,28 @@
 "LABEL_ADD_TENANT":"Add a new tenant",
 "LABEL_TENANT_NAME":"Tenant Name",
 "LABEL_TENANT_DESCRIPTION":"Tenant Description",
-"LABEL_IDP_ENDPOINT":"IDP Endpoint"
+"LABEL_IDP_ENDPOINT":"IDP Endpoint",
+
+"LABEL_LINEITEM_PROVIDERS_KEY":"Line Item Data Providers",
+
+"MATTHEWS_COURSE_NAME":"Matthews LRW Course Data Provider",
+"MATTHEWS_COURSE_DESC":"Uses web services exposed by the Matthews LRW to get course data",
+"MATTHEWS_EVENTS_NAME":"Matthews LRW Event Data Provider",
+"MATTHEWS_EVENTS_DESC":"Pull event data from Matthews LRW in IMS Caliper format",
+"MATTHEWS_ROSTER_NAME":"Matthews LRW Roster Data Provider",
+"MATTHEWS_ROSTER_DESC":"Uses web services exposed by the Matthews LRW to get roster data",
+"MATTHEWS_USER_NAME":"Matthews LRW User Data Provider",
+"MATTHEWS_USER_DESC":"Uses web services exposed by the Matthews LRW to get user data",
+"MATTHEWS_LINEITEMS_NAME":"Matthews Line Item Provider",
+"MATTHEWS_LINEITEMS_DESC":"Uses web services exposed by the Matthews LRW to get line item data",
+
+"OD_DEMO_EVENTS_NAME":"Demo Event Provider",
+"OD_DEMO_EVENTS_DESC":"",
+"OD_DEMO_ENROLLMENTS_NAME":"Demo Roster Provider",
+"OD_DEMO_ENROLLMENTS_DESC":"",
+"OD_DEMO_USER_NAME":"Demo User Provider",
+"OD_DEMO_USER_DESC":"",
+"OD_DEMO_LINEITEMS_NAME":"Demo Line Item Provider",
+"OD_DEMO_LINEITEMS_DESC":""
 
 }
