@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import unicon.oneroster.LineItem;
+import unicon.matthews.oneroster.LineItem;
+
 
 /**
  * @author ggilbert

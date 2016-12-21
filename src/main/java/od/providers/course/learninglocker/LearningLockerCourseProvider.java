@@ -153,12 +153,8 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
   }
   
   @Override
-  public List<String> getCourseIdByLTIContextId(Tenant tenant, String ltiContextId) throws ProviderException {
+  public String getClassSourcedIdWithExternalId(Tenant tenant, String ltiContextId) throws ProviderException {
     
-    if (DEMO) {
-      return Collections.singletonList("13");
-    }
-
     List<String> courseIds = null;
     
     ProviderData providerData = tenant.findByKey(KEY);
@@ -198,7 +194,7 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     }
     
     log.debug("course id is {} for tenant {} lti context {}", courseIds, tenant.getId(), ltiContextId);
-    return courseIds;
+    return courseIds.get(0);
   }
   
   private Course toCourse(LearningLockerModuleInstance llModuleInstance) {
@@ -213,40 +209,40 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
     return course;
   }
 
-  @Override
-  public String getStaffIdWithPid(Tenant tenant, String pid) throws ProviderException {
-    
-    ProviderData providerData = tenant.findByKey(KEY);
-    
-    if (providerData == null) {
-      throw new ProviderException(ProviderException.MISSING_PROVIDER_DATA);
-    }
-
-    RestTemplate restTemplate = getRestTemplate(providerData);
-    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
-    String baseUrl = providerData.findValueForKey("base_url");
-    String staffUrl = buildUrl(baseUrl, STAFF_URI);
-    MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
-    staffParams.add("query", String.format("{\"DASH_SHIB_ID\":{\"$regex\":\"'%s'\"}}", pid));
-    
-    log.debug(buildUri(staffUrl, staffParams).toString());
-    
-    ResponseEntity<LearningLockerStaff[]> responseEntity 
-      = restTemplate.exchange(buildUri(staffUrl,staffParams), HttpMethod.GET, 
-          headers, LearningLockerStaff[].class);
-    
-    if (responseEntity == null || responseEntity.getBody() == null || responseEntity.getBody().length == 0) {
-      log.error(String.format("ResponseEntity null for %s %s", staffUrl, staffParams));
-      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
-    }
-    
-    LearningLockerStaff staff = responseEntity.getBody()[0];
-    String staffId = null;
-    if (staff != null) {
-      staffId = staff.getStaffId();
-    }
-    
-    return staffId;
-  }
+//  @Override
+//  public String getStaffIdWithPid(Tenant tenant, String pid) throws ProviderException {
+//    
+//    ProviderData providerData = tenant.findByKey(KEY);
+//    
+//    if (providerData == null) {
+//      throw new ProviderException(ProviderException.MISSING_PROVIDER_DATA);
+//    }
+//
+//    RestTemplate restTemplate = getRestTemplate(providerData);
+//    HttpEntity headers = new HttpEntity<>(createHeadersWithBasicAuth(providerData.findValueForKey("key"), providerData.findValueForKey("secret")));
+//    String baseUrl = providerData.findValueForKey("base_url");
+//    String staffUrl = buildUrl(baseUrl, STAFF_URI);
+//    MultiValueMap<String, String> staffParams = new LinkedMultiValueMap<String, String>();
+//    staffParams.add("query", String.format("{\"DASH_SHIB_ID\":{\"$regex\":\"'%s'\"}}", pid));
+//    
+//    log.debug(buildUri(staffUrl, staffParams).toString());
+//    
+//    ResponseEntity<LearningLockerStaff[]> responseEntity 
+//      = restTemplate.exchange(buildUri(staffUrl,staffParams), HttpMethod.GET, 
+//          headers, LearningLockerStaff[].class);
+//    
+//    if (responseEntity == null || responseEntity.getBody() == null || responseEntity.getBody().length == 0) {
+//      log.error(String.format("ResponseEntity null for %s %s", staffUrl, staffParams));
+//      throw new ProviderException(ProviderException.NO_STAFF_ENTRY_ERROR_CODE);
+//    }
+//    
+//    LearningLockerStaff staff = responseEntity.getBody()[0];
+//    String staffId = null;
+//    if (staff != null) {
+//      staffId = staff.getStaffId();
+//    }
+//    
+//    return staffId;
+//  }
 
 }

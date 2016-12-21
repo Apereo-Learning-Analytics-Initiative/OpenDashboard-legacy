@@ -81,11 +81,6 @@ public class LTIEntryPointController {
     String consumerKey = launchRequest.getOauth_consumer_key();
     String contextId = launchRequest.getContext_id();
     
-    Map<String, String> demoData = new HashMap<>();
-    demoData.put("3976369fdc876c4c859ebf44ef05553ea37783b3", "demo-class-3");
-    
-    String classId = demoData.get(contextId);
-    
     Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
 
     // Create a token using spring provided class : LTIAuthenticationToken
@@ -96,6 +91,9 @@ public class LTIEntryPointController {
       throw new UnauthorizedUserException("Does not have the instructor role");
       //role = "ROLE_STUDENT";
     }
+    
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    String classId = courseProvider.getClassSourcedIdWithExternalId(tenant, contextId);
 
     OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 
         null,
