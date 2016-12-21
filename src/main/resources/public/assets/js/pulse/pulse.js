@@ -42,64 +42,6 @@
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
 
-    /**
-      * TODO: Move data loading to payload resolver
-    */
-
-    if (currentUser) {
-
-      EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
-        .then(function(enrollments){
-          if (enrollments.isError) {
-            $scope.errorData = {};
-            $scope.errorData['userId'] = currentUser.user_id;
-            $scope.errorData['errorCode'] = enrollments.errorCode;
-            $scope.error = enrollments.errorCode;
-          } else {
-            labels = enrollments;
-            var statCount = 1;
-
-            // console.log(enrollments);
-
-            _.each(labels, function (enrollment) {
-              //classes.push(enrollment.class);
-
-              LineItemDataService.getLineItemsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
-              .then(function(data){
-                enrollment.class.assignments = data;
-              });
-
-              
-              EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
-                  .then(function (statistics) {
-                      enrollment.class.statistics = statistics;
-
-                      var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
-                      var queue = [];
-
-
-                       _.each(keys, function (studentId) {
-                        queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
-                      });
-
-                      return $q
-                        .all(queue)
-                        .then(function (response) {
-                          students = response;
-                        })
-                        .finally(function () {
-                          if (statCount === labels.length) {
-                            coursesProcessed = true;
-                          }
-                          processData(enrollment.class);
-                          statCount++;
-                        });
-                  });
-            });
-          }   
-      });
-    }
-
     function getStudentBySourcedId (id) {
       return _.find(students, function (student) {
         return student.sourcedId === id;
@@ -182,9 +124,11 @@
           buildStudent($state.params.groupId, $state.params.studentId);
         } else if ($state.params.groupId) {
           $scope.listType = 'students';
+          $scope.orderByField = 'lastName';
           buildStudentList($state.params.groupId);
         } else {
           $scope.maxEvents = $scope.coursesMaxEvents;
+          $scope.orderByField = 'label';
           $scope.datalist = processedClasses;
           $scope.listType = 'classes';  
           // $scope.$broadcast('draw-chart');
@@ -210,7 +154,6 @@
       $scope.currentStudent = student;
       $scope.datalist = [student];
 
-
       $scope.$broadcast('draw-chart');
     }
 
@@ -225,16 +168,6 @@
 
       $scope.maxEvents = course.studentEventMax;
       $scope.datalist = course.students;
-      // if (!$scope.datalist[0].isClass) {
-      //   $scope.datalist.unshift({
-      //     isClass: true,
-      //     id: course.id,
-      //     label: course.label,
-      //     events: course.events
-      //   });        
-      // }
-
-      // $scope.$broadcast('draw-chart');
     }
 
     function handleChartChange(event, data) {
@@ -244,6 +177,8 @@
         $state.go('index.courselist', { groupId: data.id }, {notify: false});
         // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.listType = 'students';
+        $scope.orderByField = 'lastName';
+
         buildStudentList(data.id);
 
       } else if (data.type === 'courselist') {
@@ -253,6 +188,7 @@
         $scope.maxEvents = $scope.coursesMaxEvents;
         $scope.datalist = processedClasses;
         $scope.listType = 'classes';  
+        $scope.orderByField = 'label';
         $scope.$broadcast('draw-chart');
 
       } else if (data.type === 'student') {
@@ -272,6 +208,65 @@
     function init() {
       console.log('init');
       $scope.$on('chart-change', handleChartChange);
+
+
+      /**
+        * TODO: Move data loading to payload resolver
+      */
+
+      if (currentUser) {
+
+        EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+          .then(function(enrollments){
+            if (enrollments.isError) {
+              $scope.errorData = {};
+              $scope.errorData['userId'] = currentUser.user_id;
+              $scope.errorData['errorCode'] = enrollments.errorCode;
+              $scope.error = enrollments.errorCode;
+            } else {
+              labels = enrollments;
+              var statCount = 1;
+
+              // console.log(enrollments);
+
+              _.each(labels, function (enrollment) {
+                //classes.push(enrollment.class);
+
+                LineItemDataService.getLineItemsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                .then(function(data){
+                  enrollment.class.assignments = data;
+                });
+
+                
+                EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                    .then(function (statistics) {
+                        enrollment.class.statistics = statistics;
+
+                        var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
+                        var queue = [];
+
+
+                         _.each(keys, function (studentId) {
+                          queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
+                        });
+
+                        return $q
+                          .all(queue)
+                          .then(function (response) {
+                            students = response;
+                          })
+                          .finally(function () {
+                            if (statCount === labels.length) {
+                              coursesProcessed = true;
+                            }
+                            processData(enrollment.class);
+                            statCount++;
+                          });
+                    });
+              });
+            }   
+        });
+      }
     }
 
     init();
@@ -570,7 +565,7 @@
             .attr("width", width);
 
           assignments.selectAll('line').remove();
-          
+
           assignments
             .selectAll('line')
             .data(scope.currentCourse.assignments)

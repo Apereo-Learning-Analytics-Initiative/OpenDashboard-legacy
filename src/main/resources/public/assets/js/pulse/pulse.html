@@ -54,18 +54,6 @@
                 </span>
 
                 <a href="" ng-show="isLtiSession" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
-
-
-
-<!--                 <span class="dropdown" ng-if="listType == 'student'">
-                  &gt; <a href="" data-toggle="dropdown">{{currentStudent.label}}
-                  <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li ng-repeat="student in currentCourse.students">
-                        <a href="#" ng-click="$emit('chart-change', {id: student.id, type: 'student', notify: true})">{{student.label}}</a>
-                    </li>
-                  </ul>
-                </span> -->
             </span>
         </div>
         
@@ -87,20 +75,30 @@
                             <i ng-if="$parent.orderByField=='label' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='label' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'">
+                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='firstName'; $parent.reverseSort = !$parent.reverseSort">
                             First Name
+                            <i ng-if="$parent.orderByField=='firstName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='firstName' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'">
+                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='lastName'; $parent.reverseSort = !$parent.reverseSort">
                             Last Name
+                            <i ng-if="$parent.orderByField=='lastName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='lastName' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'">
+                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='risk'; $parent.reverseSort = !$parent.reverseSort">
                             Risk
+                            <i ng-if="$parent.orderByField=='risk' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='risk' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'">
+                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='grade'; $parent.reverseSort = !$parent.reverseSort">
                             Grade
+                            <i ng-if="$parent.orderByField=='grade' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='grade' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'">
+                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='activity'; $parent.reverseSort = !$parent.reverseSort">
                             Activity
+                            <i ng-if="$parent.orderByField=='activity' && !$parent.reverseSort" class="fa fa-caret-down"></i>
+                            <i ng-if="$parent.orderByField=='activity' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
                         <th id="timeline-heading">
 
