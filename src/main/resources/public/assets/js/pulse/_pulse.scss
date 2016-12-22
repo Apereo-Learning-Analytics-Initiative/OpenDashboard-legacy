@@ -22,8 +22,9 @@
     text-align: center;
   }
 
-  .classlist-link {
+  .back-link {
     float: left;
+    margin-right: 10px;
   }
 
   .title-dropdown {
@@ -172,6 +173,7 @@
 
 .popover.bottom {
   width: 400px;
+  max-width: 400px;
 }
 
 #assignment-overlay {
