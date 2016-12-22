@@ -178,7 +178,10 @@
     <repository>
       <id>git-lai</id>
       <name>LAI Git based repo</name>
-      <url>https://github.com/Apereo-Learning-Analytics-Initiative/maven-repo/tree/master/</url>
+      <url>https://raw.github.com/Apereo-Learning-Analytics-Initiative/maven-repo/master/</url>
+      <snapshots>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
     </repository>  
   </repositories>
 	<build>
