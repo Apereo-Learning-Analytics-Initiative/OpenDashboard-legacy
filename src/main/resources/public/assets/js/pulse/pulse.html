@@ -9,9 +9,14 @@
             When viewing from within a LMS the breadcrumb is to only provide navitation
             withing the selected class.
             -->
-            <a class="classlist-link" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession" ng-if="listType !== 'classes'">
+            <a class="back-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession" ng-if="listType !== 'classes'">
                 <i class="fa fa-chevron-left"></i> 
                 Class List
+            </a>
+
+            <a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-show="!isLtiSession" ng-if="listType === 'student'">
+                <i class="fa fa-chevron-left"></i> 
+                {{currentCourse.label}}
             </a>
 
             <span class="title-dropdown" ng-if="listType == 'classes'"><a href="">
@@ -22,22 +27,21 @@
                 
                 <span class="filters"  ng-if="listType !== 'classes'"">
                     <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters"><i class="fa fa-cog fa-lg"></i></a>
-
                     <script type="text/ng-template" id="filters.html">
                         <span class="filter-item">
-                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            <input id="" type="checkbox">
                             Hasn't logged in for <input type="number" value="0" min="0"> days</span>
                         <span class="filter-item">
-                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            <input id="" type="checkbox">
                             <input type="number" value="0" min="0"> number of submission late or missing</span>
                         <span class="filter-item">
-                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            <input id="" type="checkbox">
                             Current Course Grade/Score below <input type="number" value="0" min="0"></span>
                         <span class="filter-item">
-                            <input id="" type="checkbox" ng-model="" ng-init="">
+                            <input id="" type="checkbox">
                             Current Course Grade/Score below <input type="number" value="0" min="0"></span>
-                        <span class="filter-item" ng-click="$emit('draw-assignments')" ng-show="listType == 'students' || listType == 'student'">
-                            <input id="assignment-toggle" type="checkbox" ng-model="assignmentOverlay" ng-init="assignmentOverlay = true"> Assignment Overlay
+                        <span class="filter-item" ng-show="listType == 'students' || listType == 'student'">
+                            <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.$parent.assignmentOverlay"> Assignment Overlay
                         </span>
                     </script>
                 
@@ -59,7 +63,6 @@
         
         <div id="pulse-wrapper">
             
-        
             <div class="zoom-actions">
                 <i class="fa fa-search-minus zoom-out"></i>
             </div>
@@ -75,27 +78,27 @@
                             <i ng-if="$parent.orderByField=='label' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='label' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='firstName'; $parent.reverseSort = !$parent.reverseSort">
+                        <th ng-if="listType != 'classes'" ng-click="$parent.orderByField='firstName'; $parent.reverseSort = !$parent.reverseSort">
                             First Name
                             <i ng-if="$parent.orderByField=='firstName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='firstName' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='lastName'; $parent.reverseSort = !$parent.reverseSort">
+                        <th ng-if="listType != 'classes'" ng-click="$parent.orderByField='lastName'; $parent.reverseSort = !$parent.reverseSort">
                             Last Name
                             <i ng-if="$parent.orderByField=='lastName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='lastName' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='risk'; $parent.reverseSort = !$parent.reverseSort">
+                        <th ng-if="listType != 'classes'" ng-click="$parent.orderByField='risk'; $parent.reverseSort = !$parent.reverseSort">
                             Risk
                             <i ng-if="$parent.orderByField=='risk' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='risk' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='grade'; $parent.reverseSort = !$parent.reverseSort">
+                        <th ng-if="listType != 'classes'" ng-click="$parent.orderByField='grade'; $parent.reverseSort = !$parent.reverseSort">
                             Grade
                             <i ng-if="$parent.orderByField=='grade' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='grade' && $parent.reverseSort" class="fa fa-caret-up"></i>
                         </th>
-                        <th ng-if="listType == 'students'" ng-click="$parent.orderByField='activity'; $parent.reverseSort = !$parent.reverseSort">
+                        <th ng-if="listType != 'classes'" ng-click="$parent.orderByField='activity'; $parent.reverseSort = !$parent.reverseSort">
                             Activity
                             <i ng-if="$parent.orderByField=='activity' && !$parent.reverseSort" class="fa fa-caret-down"></i>
                             <i ng-if="$parent.orderByField=='activity' && $parent.reverseSort" class="fa fa-caret-up"></i>
@@ -114,10 +117,10 @@
                             <a ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
                         </td>
                         <td ng-if="listType != 'classes'">
-                            <a href="">{{item.firstName}}</a>
+                            <a href="" ng-click="$emit('chart-change', {id: item.id, type: 'student'})">{{item.firstName}}</a>
                         </td>
                         <td ng-if="listType != 'classes'">
-                            <a href="">{{item.lastName}}</a>
+                            <a href="" ng-click="$emit('chart-change', {id: item.id, type: 'student'})">{{item.lastName}}</a>
                         </td>
                         <td ng-if="listType != 'classes'">
                             {{item.risk}}
@@ -132,7 +135,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div id="assignment-overlay"><svg></svg></div>
+            <div ng-show="assignmentOverlay" id="assignment-overlay"><svg></svg></div>
         </div>
 
 

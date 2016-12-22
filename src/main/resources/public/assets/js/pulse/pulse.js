@@ -4,6 +4,7 @@
   angular.module('OpenDashboard')
   .controller('pulseController',[
     '$scope',
+    '$rootScope',
     '$http',
     '$q',
     '$timeout',
@@ -13,7 +14,7 @@
     'UserDataService',
     'EventService',
     'LineItemDataService',
-    function($scope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService){
+    function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService){
       "use strict";
 
     // $scope._ = _;
@@ -41,6 +42,7 @@
 
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
+    $scope.assignmentOverlay = true;
 
     function getStudentBySourcedId (id) {
       return _.find(students, function (student) {
@@ -131,7 +133,6 @@
           $scope.orderByField = 'label';
           $scope.datalist = processedClasses;
           $scope.listType = 'classes';  
-          // $scope.$broadcast('draw-chart');
         }
       }
     }
@@ -153,8 +154,6 @@
 
       $scope.currentStudent = student;
       $scope.datalist = [student];
-
-      $scope.$broadcast('draw-chart');
     }
 
     function buildStudentList(id) {
@@ -174,7 +173,8 @@
       console.log('handleChartChange');
       if (data.type === 'course') {
         // Go to specific course with list of students
-        $state.go('index.courselist', { groupId: data.id }, {notify: false});
+        $state.go('index.courselist', { groupId: data.id });
+        // $state.go('index.courselist', { groupId: data.id }, {notify: false});
         // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.listType = 'students';
         $scope.orderByField = 'lastName';
@@ -183,7 +183,7 @@
 
       } else if (data.type === 'courselist') {
         // Go to specific student
-        $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+        $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id });
         // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
         $scope.maxEvents = $scope.coursesMaxEvents;
         $scope.datalist = processedClasses;
@@ -192,10 +192,12 @@
         $scope.$broadcast('draw-chart');
 
       } else if (data.type === 'student') {
-        // Go to specific student
-        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
+        // $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
         $scope.listType = 'student';  
         buildStudent($scope.currentCourse.id, data.id);
+        // Go to specific student
+        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
+
       }
     }
 
@@ -209,6 +211,15 @@
       console.log('init');
       $scope.$on('chart-change', handleChartChange);
 
+      $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+
+        if (toState.name === "index.courselist" && toState.params.groupId) {
+          $scope.listType = 'students';
+          $scope.orderByField = 'lastName';
+          console.log(toState.params.groupId);
+          buildStudentList(toParams.groupId);
+        }
+      });
 
       /**
         * TODO: Move data loading to payload resolver
@@ -518,7 +529,7 @@
               width = $('#pulse-chart-' + o.id).width();
             }
 
-            charts[o.id] = d3.select('#pulse-chart-' + o.id).append('svg');
+            charts[o.id] = !d3.select('#pulse-chart-' + o.id + ' svg').empty() ? d3.select('#pulse-chart-' + o.id + ' svg') : d3.select('#pulse-chart-' + o.id).append('svg');
             var svg = charts[o.id];
 
 
@@ -527,7 +538,10 @@
             .attr("width", width);
 
             // row plot group
-            var plots = svg.append('g')
+            
+            var plots = !svg.select('g').empty() ? svg.select('g') : svg.append('g');
+
+            plots
               .attr('transform','translate(0,'+height/2+')')
               .attr('class','plot');
             
