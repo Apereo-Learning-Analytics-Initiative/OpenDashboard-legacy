@@ -169,37 +169,37 @@
       $scope.datalist = course.students;
     }
 
-    function handleChartChange(event, data) {
-      console.log('handleChartChange');
-      if (data.type === 'course') {
-        // Go to specific course with list of students
-        $state.go('index.courselist', { groupId: data.id });
-        // $state.go('index.courselist', { groupId: data.id }, {notify: false});
-        // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
-        $scope.listType = 'students';
-        $scope.orderByField = 'lastName';
+    // function handleChartChange(event, data) {
+    //   console.log('handleChartChange');
+    //   if (data.type === 'course') {
+    //     // Go to specific course with list of students
+    //     $state.go('index.courselist', { groupId: data.id });
+    //     // $state.go('index.courselist', { groupId: data.id }, {notify: false});
+    //     // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+    //     $scope.listType = 'students';
+    //     $scope.orderByField = 'lastName';
 
-        buildStudentList(data.id);
+    //     buildStudentList(data.id);
 
-      } else if (data.type === 'courselist') {
-        // Go to specific student
-        $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id });
-        // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
-        $scope.maxEvents = $scope.coursesMaxEvents;
-        $scope.datalist = processedClasses;
-        $scope.listType = 'classes';  
-        $scope.orderByField = 'label';
-        $scope.$broadcast('draw-chart');
+    //   } else if (data.type === 'courselist') {
+    //     // Go to specific student
+    //     $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id });
+    //     // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
+    //     $scope.maxEvents = $scope.coursesMaxEvents;
+    //     $scope.datalist = processedClasses;
+    //     $scope.listType = 'classes';  
+    //     $scope.orderByField = 'label';
+    //     $scope.$broadcast('draw-chart');
 
-      } else if (data.type === 'student') {
-        // $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
-        $scope.listType = 'student';  
-        buildStudent($scope.currentCourse.id, data.id);
-        // Go to specific student
-        $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
+    //   } else if (data.type === 'student') {
+    //     // $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
+    //     $scope.listType = 'student';  
+    //     buildStudent($scope.currentCourse.id, data.id);
+    //     // Go to specific student
+    //     $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
 
-      }
-    }
+    //   }
+    // }
 
     $scope.drawChart = function(draw) {
       if (draw) {
@@ -209,16 +209,23 @@
 
     function init() {
       console.log('init');
-      $scope.$on('chart-change', handleChartChange);
+      // $scope.$on('chart-change', handleChartChange);
 
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+        if (toState.name === "index.courselist" && toParams.groupId) {
 
-        if (toState.name === "index.courselist" && toState.params.groupId) {
           $scope.listType = 'students';
           $scope.orderByField = 'lastName';
-          console.log(toState.params.groupId);
           buildStudentList(toParams.groupId);
-        }
+        } else if (toState.name === "index.courselist" && !toParams.groupId) {
+          $scope.maxEvents = $scope.coursesMaxEvents;
+          $scope.datalist = processedClasses;
+          $scope.listType = 'classes';  
+          $scope.orderByField = 'label';
+        } else if (toState.name === "index.courselist.studentView") {
+          $scope.listType = 'student';  
+          buildStudent($scope.currentCourse.id, toParams.studentId);
+        } 
       });
 
       /**
@@ -290,15 +297,22 @@
     function($timeout) {
       return {
         link: function (scope, element, attr) {
-          if (scope.$last === true) {
-            $timeout(function () {
-              // console.log(attr.ngRepeatFinish);
-              scope.$emit(attr.ngRepeatFinish);
-            });
+          function checkFinished() {
+            if (scope.$last === true) {
+              $timeout(function () {
+                console.log(attr.ngRepeatFinish);
+                scope.$emit(attr.ngRepeatFinish);
+              });
+            }
           }
+          // checkFinished();
+          scope.$watch(attr.watchForChanges, checkFinished);
         }
       }
-    }])
+    }
+  ])
+
+
 
 
   .directive('pulse', [
@@ -565,7 +579,7 @@
           var height = $('#pulse-table').height();
           var offset = heading.position();
           var overlay = $('#assignment-overlay');
-
+          console.log('assignment height', height);
           overlay.css({
             'left': offset.left,
             'top': offset.top,

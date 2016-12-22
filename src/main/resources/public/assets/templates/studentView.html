@@ -12,7 +12,7 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
-<section class="col-md-12 studentActivity">
+<section class="studentActivity">
     <div class="col-md-2">
         <div class="activityCard">
             <div class="heading">Total Activity</div>
@@ -29,9 +29,11 @@ permissions and limitations under the License.
                 <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
             </button>
         </div>
+
         <h3>Filter by Activity</h3>
-        <div class="filters">
-            <form>
+        <div class="student-filters">
+            <form class="form">
+
                 <button class="btn btn-primary btn-block" type="button" ng-click="$emit('toggleAllFilters')">
                     <i class="fa" aria-hidden="true" ng-class="{'fa-toggle-off': !allFilters, 'fa-toggle-on': allFilters}"></i> Toggle All
                 </button>
