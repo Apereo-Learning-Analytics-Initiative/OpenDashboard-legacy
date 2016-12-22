@@ -345,25 +345,25 @@
 
         function setAssignmentToolTipPosition (pos) {
           var posOffset = {
-            y: pos.y - headerHeight,
+            y: pos.y,
             x: pos.x ,
           };
 
           $('.tool-tip-assignment-info').css({
-            'top': posOffset.y,
-            'left': posOffset.x,
+            'top': posOffset.y - 20,
+            'left': posOffset.x + 5,
           });
         }
 
         function setEventToolTipPosition (pos) {
           var posOffset = {
-            y: pos.y - 80,
+            y: pos.y,
             x: pos.x - 0,
           };
 
           $('.tool-tip-event-info').css({
-            'top': posOffset.y,
-            'left': posOffset.x,
+            'top': posOffset.y - 20,
+            'left': posOffset.x + 5,
           });
         }
 
@@ -522,8 +522,13 @@
                 .attr('transform','translate(0,'+tlhHeight/2+')')
                 .attr('class','plot');
             }
-
-            drawPlots(overviewPlot, scope.currentCourse);
+            if (scope.listType === "students") {
+              drawPlots(overviewPlot, scope.currentCourse);  
+            }
+            if (scope.listType === "student") {
+              drawPlots(overviewPlot, scope.currentStudent);  
+            }
+            
           }
         }
 
@@ -579,7 +584,7 @@
           var height = $('#pulse-table').height();
           var offset = heading.position();
           var overlay = $('#assignment-overlay');
-          console.log('assignment height', height);
+          
           overlay.css({
             'left': offset.left,
             'top': offset.top,

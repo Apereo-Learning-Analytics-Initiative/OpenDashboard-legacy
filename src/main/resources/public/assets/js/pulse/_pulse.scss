@@ -113,6 +113,9 @@
       border: 0 none;
       background: transparent;
       cursor: default;
+      a.hide-th {
+        visibility: hidden;
+      }
     }
     th, td {
       width: 0%;

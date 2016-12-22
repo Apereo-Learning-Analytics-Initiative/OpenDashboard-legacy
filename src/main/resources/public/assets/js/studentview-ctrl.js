@@ -35,7 +35,7 @@
             $scope.displayMode = 'chart';
             $scope.detailView = '30days';
             $scope.allFilters = false;
-
+            
             $scope.verbList = [
                 {
                     label: 'Completed',
