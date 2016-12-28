@@ -153,7 +153,8 @@
       })[0];
 
       $scope.currentStudent = student;
-      $scope.datalist = [student];
+      $scope.datalist = [];
+      $scope.$broadcast('draw-chart', true);
     }
 
     function buildStudentList(id) {
@@ -201,11 +202,12 @@
     //   }
     // }
 
-    $scope.drawChart = function(draw) {
-      if (draw) {
-        $scope.$emit('draw-chart');
-      }
-    }
+    // $scope.drawChart = function(draw) {
+    //   console.log(draw);
+    //   if (draw) {
+    //     $scope.$emit('draw-chart');
+    //   }
+    // }
 
     function init() {
       console.log('init');
@@ -301,7 +303,7 @@
             if (scope.$last === true) {
               $timeout(function () {
                 console.log(attr.ngRepeatFinish);
-                scope.$emit(attr.ngRepeatFinish);
+                scope.$emit(attr.ngRepeatFinish, true);
               });
             }
           }
@@ -350,8 +352,8 @@
           };
 
           $('.tool-tip-assignment-info').css({
-            'top': posOffset.y - 20,
-            'left': posOffset.x + 5,
+            'top': posOffset.y - 80,
+            'left': posOffset.x - 15,
           });
         }
 
@@ -362,8 +364,8 @@
           };
 
           $('.tool-tip-event-info').css({
-            'top': posOffset.y - 20,
-            'left': posOffset.x + 5,
+            'top': posOffset.y - 80,
+            'left': posOffset.x - 15,
           });
         }
 
@@ -491,7 +493,7 @@
           } else {
             var svgTimelineHeader = d3.select('#timeline-heading').append('svg');
 
-            timeScale.range([10, tlhWidth - 50]);
+            timeScale.range([20, tlhWidth - 50]);
 
             svgTimelineHeader
             .attr("class", 'timeline-svg')
@@ -500,7 +502,7 @@
             var xLabel = svgTimelineHeader
               .append('g')
               .attr('class', 'xaxis')
-              .attr('transform', 'translate(10, 10)')
+              // .attr('transform', 'translate(10, 10)')
               .call(xAxis);
           }
 
@@ -533,7 +535,6 @@
         }
 
         function drawChart(obj) {
-          $('.zoom-actions').width($('#timeline-heading').width() + 40)
 
           drawTimeline();
 
@@ -565,13 +566,18 @@
               .attr('class','plot');
             
             // dot
-            drawPlots(plots, o);            
+            drawPlots(plots, o);
           });
+
+          $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
+          $('.zoom-actions').width($('#timeline-heading').width() + 40);
+          
+          // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
 
           if (scope.listType !== 'classes') {
             drawAssignments();  
           } else {
-            $('#pulse-wrapper').trigger('chart-render-finish');
+            $('#pulse-data').trigger('chart-render-finish');
           }
           
           scope.chartInitialized = true;
@@ -581,8 +587,8 @@
         function drawAssignments() {
           var heading = $('#timeline-heading');
           var width = heading.width();
-          var height = $('#pulse-table').height();
-          var offset = heading.position();
+          var height = $('#pulse-table-header').height() + $('#pulse-table-data').height() - $('#hidden-header').height();
+          var offset = heading.offset();
           var overlay = $('#assignment-overlay');
           
           overlay.css({
@@ -638,10 +644,11 @@
                 // x: d3.event.clientX,
                 // y: d3.event.clientY
               });
+
               scope.$apply(function () {
                   scope.assignmentInfo = {
                     label: d.title,
-                    date: moment(d.date),
+                    date: moment(d.dueDate, moment.ISO_8601),
                     events: d.category.title
                   };
               });
@@ -658,14 +665,34 @@
 
             });  
             
-            $('#pulse-wrapper').trigger('chart-render-finish');
+            $('#pulse-data').trigger('chart-render-finish');
+        };
+
+        function alignTables(e, drawChartFlag) {
+          $timeout(function(){
+            if (scope.listType !== 'student') {
+              $('#pulse-table-header th:last-of-type').removeAttr('style');
+              $('#pulse-table-data td:last-of-type').removeAttr('style');
+
+              var hw = $('#pulse-table-header th:last-of-type').width();
+              var dw = $('#pulse-table-data td:last-of-type').width();
+              var w = hw < dw ? hw : dw;
+
+              $('#pulse-table-header th:last-of-type').width(w);
+              $('#pulse-table-data td:last-of-type').width(w);
+            }
+
+            if (drawChartFlag) {
+              drawChart();
+            }
+          });
         }
 
-        $('#pulse-wrapper').on('chart-render-finish', function(){
-          $('#pulse-wrapper').fadeTo('slow', 1);
+        $('#pulse-data').on('chart-render-finish', function(){
+          $('#pulse-data').fadeTo('slow', 1);
         });
 
-        scope.$on('draw-chart', drawChart);
+        scope.$on('draw-chart', alignTables);
         scope.$on('draw-assignments', drawAssignments);
         // $(window).resize(redrawChart);
       }

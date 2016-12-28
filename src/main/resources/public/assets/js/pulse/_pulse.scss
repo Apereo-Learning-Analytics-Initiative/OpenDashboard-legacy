@@ -1,3 +1,12 @@
+body.application {
+  padding-top: 56px;
+}
+
+
+.pulse-charts {
+  position: relative;
+}
+
 // &.courselist {
   // timeline
   .timeline {
@@ -17,98 +26,82 @@
     display: block;
   }
 
-  .od-breadcrumb {
-    padding: 10px 0;
+  .pulse-header {
+    padding: 10px 0 0;
     text-align: center;
-  }
+    position: fixed;
+    background: #F1F0EB;
+    z-index: 5;
+    right: 25px;
+    left: 25px;
 
-  .back-link {
-    float: left;
-    margin-right: 10px;
-  }
-
-  .title-dropdown {
-    display: inline-block; 
-    .dropdown > a, > a {
-      font-size: 28px;
-      text-decoration: none;
-    }   
-  }
-  
-
-  .filters {
-    display: inline-block;
-    position: relative;
-    left: -10px;
-    top: -5px;
-    .filter-item {
-      display: block;
-      padding: 4px 0;
-      border-bottom:1px solid #dedede;
-
-      input[type="number"] {
-        width: 30px;
-        height: 15px;
-        font-size: 14px;
-        border: 1px solid #2c3841;
-        border-width: 0 0 1px 0;
-        background: none;
-      }
+    .back-link {
+      float: left;
+      margin-right: 10px;
     }
-  }
 
-  #pulse-chart {
-    width: 100%;
-    .odd {
-      fill: #dedede;
+    .title-dropdown {
+      display: inline-block; 
+      white-space: nowrap;
+      .dropdown > a, > a {
+        font-size: 28px;
+        text-decoration: none;
+      }   
     }
-    .even {
-      fill: #efefef;
-    }
-    .zoom-icon {
-      fill: #aaa;
-      circle {
-        opacity: 0;
-      }
 
-      &.active {
-        fill: #0087a7;
-        cursor: pointer;
-        &:hover {
-          fill: darken(#0087a7, 5%);
+    .filters {
+      display: inline-block;
+      position: relative;
+      left: -10px;
+      top: -5px;
+      .filter-item {
+        display: block;
+        padding: 4px 0;
+        border-bottom:1px solid #dedede;
+
+        input[type="number"] {
+          width: 30px;
+          height: 15px;
+          font-size: 14px;
+          border: 1px solid #2c3841;
+          border-width: 0 0 1px 0;
+          background: none;
         }
       }
     }
-    .email-link {
-      transform: scale(0.03) translate(350px, 250px);
-      cursor: pointer;
-    }
-    .listlabel {
-      font-size: 12px;
-      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-      fill: #0087a7;
-      &:hover {
-        fill: darken(#0087a7, 20%);
-        cursor: pointer;
-      }
-      &.student-list-item {
-        transform: translate(25px, 0);
-      }
-    }
-    .dot {
-      // opacity: 0.5;
-      cursor: pointer;
-      &:hover {
-        // opacity: 1;
+
+    .zoom-actions {
+      text-align: left;
+      pointer-events: none;
+      position: absolute;
+      // width: 100%;
+      right: -20px;
+      top: 40px;
+      .zoom-out {
+        pointer-events: auto;
+        color: #999;
+        &.active {
+          color: #00557f;
+          cursor: pointer;
+        }
+        &.active:hover {
+          color: #23527c;
+        }
       }
     }
-    .pulse-list-item:hover rect {
-      fill: #dedeff;
-    }
+
+  }
+
+  #hidden-header {
+    visibility: hidden;
   }
 
   .table-pulse {
     border-top: none;
+    margin-bottom: 0;
+    &#pulse-table-data {
+      margin-bottom: 20px;
+    }
     th {
       border: 0 none;
       background: transparent;
@@ -120,10 +113,13 @@
     th, td {
       width: 0%;
       white-space: nowrap;
-      &:last-of-type:not(.actions) {
+      &:last-of-type{
         width: 100%;
         padding: 0;
-      } 
+      }
+      .spacer {
+        visibility: hidden;
+      }
     }
   }
 
@@ -157,6 +153,7 @@
     box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
     border: 1px solid #999;
     color: #005695;
+    z-index: 6;
   }
   .info-label {
     text-transform: uppercase;
@@ -180,8 +177,9 @@
 }
 
 #assignment-overlay {
-  position: absolute;
+  position: fixed;
   pointer-events: none;
+  z-index: 6;
 }
 
 .assignment-marker {
@@ -205,25 +203,13 @@
   }
 }
 
-#pulse-wrapper {
+#pulse-data {
   position: relative;
   opacity: 0;
-  .zoom-actions {
-    pointer-events: none;
-    position: absolute;
-    // width: 100%;
-    right: -20px;
-    top: 4px;
-    .zoom-out {
-      pointer-events: auto;
-      color: #999;
-      &.active {
-        color: #00557f;
-        cursor: pointer;
-      }
-      &.active:hover {
-        color: #23527c;
-      }
-    }
-  }
+  padding-right: 1px;
+}
+
+footer.footer {
+  // position: relative;
+  z-index: 7;
 }

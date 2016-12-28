@@ -20,6 +20,18 @@ permissions and limitations under the License.
                 <h1>{{ actions.length }}</h1>
             </div>
         </div>
+        <div class="activityCard">
+            <div class="heading">Risk</div>
+            <div class="body">
+                <h1>{{ currentStudent.risk }}</h1>
+            </div>
+        </div>
+        <div class="activityCard">
+            <div class="heading">Grade</div>
+            <div class="body">
+                <h1>{{ currentStudent.grade }}</h1>
+            </div>
+        </div>
         <!-- Toggle between chart and table -->
         <div class="buttons">
             <button class="btn btn-primary btn-block" type="button" ng-click="displayMode='table'" ng-disabled="displayMode=='table'">
