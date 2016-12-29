@@ -34,15 +34,22 @@ body.application {
     z-index: 5;
     right: 25px;
     left: 25px;
-
-    .back-link {
-      float: left;
-      margin-right: 10px;
+    
+    .backlinks {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      .back-link {
+        float: left;
+        margin-right: 10px;
+      }      
     }
 
     .title-dropdown {
       display: inline-block; 
       white-space: nowrap;
+      position: relative;
+      z-index: 7;
       .dropdown > a, > a {
         font-size: 28px;
         text-decoration: none;
@@ -205,8 +212,11 @@ body.application {
 
 #pulse-data {
   position: relative;
-  opacity: 0;
   padding-right: 1px;
+}
+
+.hide-until-ready {
+  opacity: 0;
 }
 
 footer.footer {

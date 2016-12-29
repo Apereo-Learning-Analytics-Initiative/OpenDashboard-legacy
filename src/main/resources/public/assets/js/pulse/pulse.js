@@ -502,7 +502,7 @@
             var xLabel = svgTimelineHeader
               .append('g')
               .attr('class', 'xaxis')
-              // .attr('transform', 'translate(10, 10)')
+              .attr('transform', 'translate(0, 10)')
               .call(xAxis);
           }
 
@@ -688,8 +688,8 @@
           });
         }
 
-        $('#pulse-data').on('chart-render-finish', function(){
-          $('#pulse-data').fadeTo('slow', 1);
+        $('.pulse-charts').on('chart-render-finish', function(){
+          $('.hide-until-ready').fadeTo('slow', 1);
         });
 
         scope.$on('draw-chart', alignTables);
