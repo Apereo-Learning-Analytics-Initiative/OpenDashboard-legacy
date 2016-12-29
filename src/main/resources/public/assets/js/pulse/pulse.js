@@ -17,7 +17,6 @@
     function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService){
       "use strict";
 
-    // $scope._ = _;
     $scope.chartInitialized = false;
     $scope.listType = 'classes';
     $scope.datalist = [];
@@ -43,6 +42,26 @@
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
+    
+    $scope.emailList = [];
+
+    $scope.handleEmail = function(o, bulk) {
+      $scope.emailList = [];
+      if (bulk) {
+        _.each($scope.datalist, function(s){
+          $scope.emailList.push({
+            label: s.label,
+            email: s.email
+          });
+        });
+      } else {
+        $scope.emailList.push({
+          label: o.label,
+          email: o.email
+        });
+      }
+      $('#emailModal').modal('show');
+    }
 
     function getStudentBySourcedId (id) {
       return _.find(students, function (student) {
@@ -85,6 +104,7 @@
           label: studentSrc.familyName + ', ' + studentSrc.givenName,
           firstName: studentSrc.givenName,
           lastName: studentSrc.familyName,
+          email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
           risk: Math.round(Math.random() * (100 - 0)),
           grade: Math.round(Math.random() * (100 - 0)),
           activity: Math.round(Math.random() * (1000 - 100) + 100),
@@ -485,13 +505,13 @@
 
 
         function drawTimeline() {
-          var timelineHeader = $('#timeline-heading');
+          var timelineHeader = $('#floating-header .timeline-heading');
           var tlhHeight = timelineHeader.height();
           var tlhWidth = timelineHeader.width();
-          if ($('#timeline-heading svg.timeline-svg').length) {
-            var svgTimelineHeader = d3.select('#timeline-heading svg');
+          if ($('#floating-header .timeline-heading svg.timeline-svg').length) {
+            var svgTimelineHeader = d3.select('#floating-header .timeline-heading svg');
           } else {
-            var svgTimelineHeader = d3.select('#timeline-heading').append('svg');
+            var svgTimelineHeader = d3.select('#floating-header .timeline-heading').append('svg');
 
             timeScale.range([20, tlhWidth - 50]);
 
@@ -509,11 +529,11 @@
 
 
           if (scope.listType !== "classes") {
-            if ($('#timeline-heading svg.overview-svg g').length) {
-              var overviewPlot = d3.select('#timeline-heading svg.overview-svg g');
+            if ($('#floating-header .timeline-heading svg.overview-svg g').length) {
+              var overviewPlot = d3.select('#floating-header .timeline-heading svg.overview-svg g');
 
             } else {
-              var svgTimeOverview = d3.select('#timeline-heading').insert("svg",":first-child");
+              var svgTimeOverview = d3.select('#floating-header .timeline-heading').insert("svg",":first-child");
 
               svgTimeOverview
               .attr("class", 'overview-svg')
@@ -570,7 +590,7 @@
           });
 
           $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
-          $('.zoom-actions').width($('#timeline-heading').width() + 40);
+          $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 40);
           
           // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
 
@@ -585,7 +605,7 @@
         }
 
         function drawAssignments() {
-          var heading = $('#timeline-heading');
+          var heading = $('#floating-header .timeline-heading');
           var width = heading.width();
           var height = $('#pulse-table-header').height() + $('#pulse-table-data').height() - $('#hidden-header').height();
           var offset = heading.offset();

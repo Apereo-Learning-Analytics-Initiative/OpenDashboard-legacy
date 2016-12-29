@@ -86,63 +86,11 @@
         </div>
         
         <!-- header table -->
-        <table id="pulse-table-header" class="table table-striped table-condensed table-pulse">
-            <thead>
-                <tr>
-                    <th class="actions" ng-if="listType == 'students'">
-                        <a href="" class="fa fa-envelope"></a>
-                    </th>
-                    <th ng-if="listType == 'classes'">
-                        <a href="" ng-click="$parent.orderByField='label'; $parent.reverseSort = !$parent.reverseSort">
-                        Class Name 
-                        <i ng-if="$parent.orderByField=='label' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='label' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='firstName'; $parent.reverseSort = !$parent.reverseSort">
-                        First Name
-                        <i ng-if="$parent.orderByField=='firstName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='firstName' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='firstName'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='lastName'; $parent.reverseSort = !$parent.reverseSort;">
-                        Last Name
-                        <i ng-if="$parent.orderByField=='lastName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='lastName' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='risk'; $parent.reverseSort = !$parent.reverseSort;">
-                        Risk
-                        <i ng-if="$parent.orderByField=='risk' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='risk' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='grade'; $parent.reverseSort = !$parent.reverseSort;">
-                        Grade
-                        <i ng-if="$parent.orderByField=='grade' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='grade' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='grade'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='activity'; $parent.reverseSort = !$parent.reverseSort;">
-                        Activity
-                        <i ng-if="$parent.orderByField=='activity' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='activity' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='activity'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th id="timeline-heading">
-
-                    </th>
-                </tr>
+        <table 
+        id="pulse-table-header" 
+        class="table table-striped table-condensed table-pulse">
+            <thead id="floating-header" ng-include="'table-header.html'">
+                
             </thead>
         </table>
 
@@ -153,67 +101,76 @@
     <!--  -->
     <div id="pulse-data" class="hide-until-ready">
         <table id="pulse-table-data" class="table table-striped table-condensed table-pulse">
-            <thead id="hidden-header">
-                <tr>
-                    <th class="actions" ng-if="listType == 'students'">
-                        <a href="" class="fa fa-envelope"></a>
-                    </th>
-                    <th ng-if="listType == 'classes'">
-                        <a href="" ng-click="$parent.orderByField='label'; $parent.reverseSort = !$parent.reverseSort">
-                        Class Name 
-                        <i ng-if="$parent.orderByField=='label' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='label' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='firstName'; $parent.reverseSort = !$parent.reverseSort">
-                        First Name
-                        <i ng-if="$parent.orderByField=='firstName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='firstName' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='firstName'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='lastName'; $parent.reverseSort = !$parent.reverseSort;">
-                        Last Name
-                        <i ng-if="$parent.orderByField=='lastName' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='lastName' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='risk'; $parent.reverseSort = !$parent.reverseSort;">
-                        Risk
-                        <i ng-if="$parent.orderByField=='risk' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='risk' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='grade'; $parent.reverseSort = !$parent.reverseSort;">
-                        Grade
-                        <i ng-if="$parent.orderByField=='grade' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='grade' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='grade'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th ng-if="listType != 'classes'">
-                        <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.orderByField='activity'; $parent.reverseSort = !$parent.reverseSort;">
-                        Activity
-                        <i ng-if="$parent.orderByField=='activity' && !$parent.reverseSort" class="fa fa-caret-down"></i>
-                        <i ng-if="$parent.orderByField=='activity' && $parent.reverseSort" class="fa fa-caret-up"></i>
-                        <i ng-if="$parent.orderByField!='activity'" class="fa fa-caret-up spacer"></i>
-                        </a>
-                    </th>
-                    <th>
+            <thead id="hidden-header" ng-include="'table-header.html'">
 
-                    </th>
-                </tr>
             </thead>
+
+            <script type="text/ng-template" id="table-header.html">
+            <tr>
+                <th class="actions" ng-if="listType == 'students'">
+                    <a href="" class="fa fa-envelope"
+                    ng-click="handleEmail(item, true)"
+                    ></a>
+                </th>
+                <th ng-if="listType == 'classes'">
+                    <a href="" ng-click="$parent.$parent.orderByField='label'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort">
+                    Class Name 
+                    <i ng-if="$parent.$parent.orderByField=='label' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='label' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='firstName'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort">
+                    First Name
+                    <i ng-if="$parent.$parent.orderByField=='firstName' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='firstName' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='firstName'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='lastName'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Last Name
+                    <i ng-if="$parent.$parent.orderByField=='lastName' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='lastName' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Risk
+                    <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='grade'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Grade
+                    <i ng-if="$parent.$parent.orderByField=='grade' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='grade' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='grade'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='activity'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Activity
+                    <i ng-if="$parent.$parent.orderByField=='activity' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='activity' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='activity'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th class="timeline-heading">
+
+                </th>
+            </tr>
+            </script>
+
             <tbody>
                 <tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort" ng-repeat-finish="draw-chart" watch-for-changes="datalist">
                     <td ng-if="listType == 'students'">
-                        <a href="" class="fa fa-envelope"></a>
+                        <a href="" class="fa fa-envelope"
+                        ng-click="handleEmail(item)"
+                        ></a>
                     </td>
                     <td ng-if="listType == 'classes'">
                         <a ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
@@ -275,7 +232,14 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Email {{emailstudent.name}}</h4>
+            <h4 class="modal-title" id="myModalLabel">Email</h4>
+            <div class="email-students">
+                <span class="label-repeat" ng-repeat="student in emailList">
+                    <span class="label label-info">
+                        {{student.label}}
+                    </span>
+                </span>
+            </div>
           </div>
           <div class="modal-body">
             <div ng-if="sent" class="alert alert-success">

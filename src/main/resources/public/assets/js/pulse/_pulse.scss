@@ -219,6 +219,12 @@ body.application {
   opacity: 0;
 }
 
+#emailModal {
+  .label {
+    display: inline-block;
+  }
+}
+
 footer.footer {
   // position: relative;
   z-index: 7;
