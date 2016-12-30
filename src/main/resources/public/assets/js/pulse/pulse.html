@@ -42,11 +42,8 @@
                         <input id="" type="checkbox">
                         <input type="number" value="0" min="0"> number of submission late or missing</span>
                     <span class="filter-item">
-                        <input id="" type="checkbox">
-                        Current Course Grade/Score below <input type="number" value="0" min="0"></span>
-                    <span class="filter-item">
-                        <input id="" type="checkbox">
-                        Current Course Grade/Score below <input type="number" value="0" min="0"></span>
+                        <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
+                        Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
                     <span class="filter-item" ng-show="listType == 'students' || listType == 'student'">
                         <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.$parent.assignmentOverlay"> Assignment Overlay
                     </span>

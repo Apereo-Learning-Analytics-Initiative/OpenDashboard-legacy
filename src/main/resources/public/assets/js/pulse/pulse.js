@@ -14,7 +14,8 @@
     'UserDataService',
     'EventService',
     'LineItemDataService',
-    function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService){
+    'pulseDataService',
+    function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, pulseDataService){
       "use strict";
 
     $scope.chartInitialized = false;
@@ -30,20 +31,40 @@
 
     var processedClasses = [];
     var classes = [];
-    var labels = [];
     var students = [];
     var currentCourse = null;
     var currentUser = null;
     var currentStudent = null;
-    var coursesProcessed = false;
+
 
     currentUser = SessionService.getCurrentUser();
 
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
+    $scope.gradeFilter = false;
+    $scope.gradeFilterScore = 25;
     
     $scope.emailList = [];
+
+    function filterByGrade(nv){
+      if ($scope.currentCourse) {
+        if ($scope.gradeFilter) {
+          $scope.datalist = _.filter($scope.currentCourse.students, function(o){
+            return o.grade < $scope.gradeFilterScore;
+          });
+          
+        } else {
+          $scope.datalist = $scope.currentCourse.students;
+        }
+      }
+    }
+
+    function runFilters() {
+      filterByGrade();
+    }
+
+    $scope.$watchGroup(['gradeFilterScore', 'gradeFilter'], filterByGrade);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -63,107 +84,13 @@
       $('#emailModal').modal('show');
     }
 
-    function getStudentBySourcedId (id) {
-      return _.find(students, function (student) {
-        return student.sourcedId === id;
-      });
-    }
-
-    function processData(c) {
-      var maxEvents = 0;
-
-      // // build course object
-      var course = {
-        id: c.sourcedId,
-        label: c.title,
-        studentEventMax: 0,
-        events: [],
-        students: [],
-        assignments: c.assignments
-      };
-
-      // process events object for the class
-      _.each(c.statistics.eventCountGroupedByDate, function(event, index){
-        if (maxEvents < event) {
-          maxEvents = event;
-        }
-
-        course.events.push({
-          date: index,
-          eventCount: event
-        });
-      });
-
-      var students = c.statistics.eventCountGroupedByDateAndStudent;
-
-      _.each(students, function(s, i) {
-        var studentSrc = getStudentBySourcedId(i);
-        // build student object
-        var student = {
-          id: i,
-          label: studentSrc.familyName + ', ' + studentSrc.givenName,
-          firstName: studentSrc.givenName,
-          lastName: studentSrc.familyName,
-          email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
-          risk: Math.round(Math.random() * (100 - 0)),
-          grade: Math.round(Math.random() * (100 - 0)),
-          activity: Math.round(Math.random() * (1000 - 100) + 100),
-          events: []
-        };
-
-        _.each(s, function(e, j) {
-          if (course.studentEventMax < e) {
-            course.studentEventMax = e;
-          }
-
-          student.events.push({
-            date: j,
-            eventCount: e
-          });
-        });
-
-        course.students.push(student);
-
-      });
-
-      course.students = _.sortBy(course.students, function (student) {
-        return student.label;
-      });
-
-      // // add course object to classes array
-      processedClasses.push(course);
-
-
-      // console.log('processedClasses', processedClasses);
-      $scope.coursesMaxEvents = maxEvents;
-      $scope.maxEvents = $scope.coursesMaxEvents;
-      // $scope.datalist = processedClasses;
-      //$scope.$broadcast('draw-chart');
-
-      if (coursesProcessed) {
-        if ($state.params.studentId && $state.params.groupId) {
-          $scope.listType = 'student';
-          buildStudent($state.params.groupId, $state.params.studentId);
-        } else if ($state.params.groupId) {
-          $scope.listType = 'students';
-          $scope.orderByField = 'lastName';
-          buildStudentList($state.params.groupId);
-        } else {
-          $scope.maxEvents = $scope.coursesMaxEvents;
-          $scope.orderByField = 'label';
-          $scope.datalist = processedClasses;
-          $scope.listType = 'classes';  
-        }
-      }
-    }
 
     function buildStudent(cid, sid) {
-      console.log('buildStudent');
-      var course = _.filter(processedClasses, function(c){
+      var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
-      
-      $scope.classes = processedClasses;
+
+      $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
 
       $scope.maxEvents = course.studentEventMax;
@@ -179,15 +106,17 @@
 
     function buildStudentList(id) {
       console.log('buildStudentList');
-      var course = _.filter(processedClasses, function(c){
+      var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
+
+      console.log(course);
       
-      $scope.classes = processedClasses;
+      $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
 
       $scope.maxEvents = course.studentEventMax;
-      $scope.datalist = course.students;
+      runFilters();
     }
 
     // function handleChartChange(event, data) {
@@ -240,7 +169,7 @@
           $scope.orderByField = 'lastName';
           buildStudentList(toParams.groupId);
         } else if (toState.name === "index.courselist" && !toParams.groupId) {
-          $scope.maxEvents = $scope.coursesMaxEvents;
+          $scope.maxEvents = pulseDataService.coursesMaxEvents;
           $scope.datalist = processedClasses;
           $scope.listType = 'classes';  
           $scope.orderByField = 'label';
@@ -255,56 +184,22 @@
       */
 
       if (currentUser) {
-
-        EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
-          .then(function(enrollments){
-            if (enrollments.isError) {
-              $scope.errorData = {};
-              $scope.errorData['userId'] = currentUser.user_id;
-              $scope.errorData['errorCode'] = enrollments.errorCode;
-              $scope.error = enrollments.errorCode;
+        pulseDataService.initData(currentUser).then(function(data){
+            $scope.processedClasses = data;
+            $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
+            if ($state.params.studentId && $state.params.groupId) {
+              $scope.listType = 'student';
+              buildStudent($state.params.groupId, $state.params.studentId);
+            } else if ($state.params.groupId) {
+              $scope.listType = 'students';
+              $scope.orderByField = 'lastName';
+              buildStudentList($state.params.groupId);
             } else {
-              labels = enrollments;
-              var statCount = 1;
-
-              // console.log(enrollments);
-
-              _.each(labels, function (enrollment) {
-                //classes.push(enrollment.class);
-
-                LineItemDataService.getLineItemsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
-                .then(function(data){
-                  enrollment.class.assignments = data;
-                });
-
-                
-                EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
-                    .then(function (statistics) {
-                        enrollment.class.statistics = statistics;
-
-                        var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
-                        var queue = [];
-
-
-                         _.each(keys, function (studentId) {
-                          queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
-                        });
-
-                        return $q
-                          .all(queue)
-                          .then(function (response) {
-                            students = response;
-                          })
-                          .finally(function () {
-                            if (statCount === labels.length) {
-                              coursesProcessed = true;
-                            }
-                            processData(enrollment.class);
-                            statCount++;
-                          });
-                    });
-              });
-            }   
+              $scope.maxEvents = pulseDataService.coursesMaxEvents;
+              $scope.orderByField = 'label';
+              $scope.datalist = $scope.processedClasses;
+              $scope.listType = 'classes';  
+            }
         });
       }
     }
@@ -312,6 +207,159 @@
     init();
   }
   ])
+
+  .factory('pulseDataService',[
+      '$q',
+      'SessionService',
+      'EnrollmentDataService',
+      'UserDataService',
+      'EventService',
+      'LineItemDataService',
+      function($q, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService) {
+        var service = {
+          coursesProcessed: false,
+          processedClasses: [],
+          processData: function(c) {
+            var maxEvents = 0;
+
+            // // build course object
+            var course = {
+              id: c.sourcedId,
+              label: c.title,
+              studentEventMax: 0,
+              events: [],
+              students: [],
+              assignments: c.assignments
+            };
+
+            // process events object for the class
+            _.each(c.statistics.eventCountGroupedByDate, function(event, index){
+              if (maxEvents < event) {
+                maxEvents = event;
+              }
+
+              course.events.push({
+                date: index,
+                eventCount: event
+              });
+            });
+
+            var students = c.statistics.eventCountGroupedByDateAndStudent;
+            _.each(students, function(s, i) {
+              var studentSrc = _.filter(service.students, function(student){ 
+                return student.sourcedId === i;
+              })[0];
+
+              // build student object
+              var student = {
+                id: i,
+                label: studentSrc.familyName + ', ' + studentSrc.givenName,
+                firstName: studentSrc.givenName,
+                lastName: studentSrc.familyName,
+                email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
+                risk: Math.round(Math.random() * (100 - 0)),
+                grade: Math.round(Math.random() * (100 - 0)),
+                activity: Math.round(Math.random() * (1000 - 100) + 100),
+                events: []
+              };
+
+              _.each(s, function(e, j) {
+                if (course.studentEventMax < e) {
+                  course.studentEventMax = e;
+                }
+
+                student.events.push({
+                  date: j,
+                  eventCount: e
+                });
+              });
+
+              course.students.push(student);
+
+            });
+
+
+            // console.log('course.students', course.students);
+            // course.students = _.sortBy(course.students, function (student) {
+            //   return student.label;
+            // });
+
+            // // add course object to classes array
+            service.processedClasses.push(course);
+
+
+            // console.log('processedClasses', processedClasses);
+            service.coursesMaxEvents = maxEvents;
+          },
+          initData: function(currentUser) {
+            var deferred = $q.defer();
+
+            if (service.processedClasses.length) {
+              deferred.resolve(service.processedClasses);
+            } else {
+              EnrollmentDataService.getEnrollmentsForUser(currentUser.tenant_id, currentUser.user_id)
+                .then(function(enrollments){
+                  if (enrollments.isError) {
+                    // $scope.errorData = {};
+                    // $scope.errorData['userId'] = currentUser.user_id;
+                    // $scope.errorData['errorCode'] = enrollments.errorCode;
+                    // $scope.error = enrollments.errorCode;
+                  } else {
+                    var statCount = 1;
+
+                    // console.log(enrollments);
+
+                    _.each(enrollments, function (enrollment) {
+                      //classes.push(enrollment.class);
+
+                      LineItemDataService.getLineItemsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                      .then(function(data){
+                        enrollment.class.assignments = data;
+                      });
+
+                      
+                      EventService.getEventStatisticsForClass(currentUser.tenant_id, enrollment.class.sourcedId)
+                          .then(function (statistics) {
+                              enrollment.class.statistics = statistics;
+
+                              var keys = _.keys(statistics.eventCountGroupedByDateAndStudent);
+                              var queue = [];
+
+
+                               _.each(keys, function (studentId) {
+                                queue.push(UserDataService.getUser(currentUser.tenant_id, studentId));
+                              });
+
+                              return $q
+                                .all(queue)
+                                .then(function (response) {
+                                  service.students = response;
+                                })
+                                .then(function () {
+                                  service.processData(enrollment.class);
+                                })
+                                .finally(function(){
+                                  if (statCount === enrollments.length) {
+                                    service.coursesProcessed = true;
+                                    deferred.resolve(service.processedClasses);
+                                  }
+                                  statCount++;
+                                });
+                          });
+                    });
+                  }   
+              });
+            }
+
+
+
+            return deferred.promise;
+          }
+        };
+        return service;
+      }
+    ]
+  )
 
 
   .directive('ngRepeatFinish', [
@@ -590,7 +638,7 @@
           });
 
           $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
-          $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 40);
+          $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 20);
           
           // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
 
