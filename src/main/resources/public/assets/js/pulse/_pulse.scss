@@ -82,6 +82,9 @@ body.application {
       left: 0;
       top: 40px;
       width: 400px;
+      .activityCard:first-of-type {
+        padding-left: 0;
+      }
       .body {
         font-size: 24px;
         font-weight: bold;

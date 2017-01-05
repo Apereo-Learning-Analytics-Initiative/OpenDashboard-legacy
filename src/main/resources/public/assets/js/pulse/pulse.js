@@ -51,6 +51,7 @@
     $scope.emailList = [];
 
     function filterByGrade(nv){
+      console.log('filterByGrade');
       if ($scope.currentCourse) {
         if ($scope.gradeFilter) {
           $scope.datalist = _.filter($scope.currentCourse.students, function(o){
@@ -646,8 +647,11 @@
             drawPlots(plots, o);
           });
 
+          // align elements based on layout
           $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
           $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 20);
+          $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left);
+
           
           // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
 
@@ -746,6 +750,7 @@
         };
 
         function alignTables(e, drawChartFlag) {
+          console.log('alignTables');
           $timeout(function(){
             if (scope.listType !== 'student') {
               $('#pulse-table-header th:last-of-type').removeAttr('style');
@@ -771,7 +776,9 @@
 
         scope.$on('draw-chart', alignTables);
         scope.$on('draw-assignments', drawAssignments);
-        // $(window).resize(redrawChart);
+        $(window).resize(function(e){
+          alignTables(e, true);
+        });
       }
     };
   }]);

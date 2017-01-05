@@ -28,23 +28,29 @@
         </a></span>
 
         <!-- main title dropdown, filter settings popover -->
-        <span class="title-dropdown" ng-if="listType == 'students' || listType == 'student'"> 
+        <span class="title-dropdown" ng-if="listType !== 'classes'""> 
             
             <!-- filters and overlays popover -->
-            <span class="filters"  ng-if="listType !== 'classes'"">
+            <span class="filters">
                 <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters &amp; Overlays"><i class="fa fa-cog fa-lg"></i></a>
                 
                 <script type="text/ng-template" id="filters.html">
                     <span ng-if="listType!='student'">
-                        <span class="filter-item">
-                            <input id="" type="checkbox">
-                            Hasn't logged in for <input type="number" value="0" min="0"> days</span>
-                        <span class="filter-item">
-                            <input id="" type="checkbox">
-                            <input type="number" value="0" min="0"> number of submission late or missing</span>
-                        <span class="filter-item">
-                            <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
-                            Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
+                        <span class="checkbox filter-item">
+                            <label>
+                                <input id="" type="checkbox">
+                                Hasn't logged in for <input type="number" value="0" min="0"> days</span>
+                            </label>
+                        <span class="checkbox filter-item">
+                            <label>
+                                <input id="" type="checkbox">
+                                <input type="number" value="0" min="0"> number of submission late or missing</span>
+                            </label>
+                        <span class="checkbox filter-item">
+                            <label>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
+                                Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
+                            </label>
                     </span>
 
                     <div class="buttons" ng-if="listType == 'student'">
@@ -64,7 +70,7 @@
 
                     <span class="checkbox filter-item" ng-show="listType == 'students' || listType == 'student'">
                         <label>
-                            <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.$parent.assignmentOverlay"> Assignment Overlay
+                            <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.assignmentOverlay"> Assignment Overlay
                         </label>
                     </span>
 
@@ -108,7 +114,7 @@
             <div class="col-sm-3 activityCard">
                 <div class="heading">Contact</div>
                 <div class="body">
-                    <a href="" class="fa fa-envelop"></a>
+                    <a href="" class="fa fa-envelope" ng-click="handleEmail(currentStudent)"></a>
                 </div>
             </div>
             <div class="col-sm-3 activityCard">
