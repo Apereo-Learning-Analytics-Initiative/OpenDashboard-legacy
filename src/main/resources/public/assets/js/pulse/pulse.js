@@ -47,11 +47,11 @@
     $scope.assignmentOverlay = true;
     $scope.gradeFilter = false;
     $scope.gradeFilterScore = 25;
+    $scope.submissionFilterScore = 6;
     
     $scope.emailList = [];
 
     function filterByGrade(nv){
-      console.log('filterByGrade');
       if ($scope.currentCourse) {
         if ($scope.gradeFilter) {
           $scope.datalist = _.filter($scope.currentCourse.students, function(o){
@@ -64,11 +64,27 @@
       }
     }
 
+    function filterByMissingSubmissions(nv, ov){
+      console.log('filterByMissingSubmissions');
+      if ($scope.currentCourse) {
+        if ($scope.submissionFilter) {
+          $scope.datalist = _.filter($scope.currentCourse.students, function(o){
+            return o.missingSubmission < $scope.submissionFilterScore;
+          });
+          
+        } else {
+          $scope.datalist = $scope.currentCourse.students;
+        }
+      }
+    }
+
     function runFilters() {
       filterByGrade();
+      filterByMissingSubmissions();
     }
 
     $scope.$watchGroup(['gradeFilterScore', 'gradeFilter'], filterByGrade);
+    $scope.$watchGroup(['submissionFilterScore', 'submissionFilter'], filterByMissingSubmissions);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -113,8 +129,6 @@
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
-
-      console.log(course);
       
       $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
@@ -270,6 +284,7 @@
                 risk: Math.round(Math.random() * (100 - 0)),
                 grade: Math.round(Math.random() * (100 - 0)),
                 activity: Math.round(Math.random() * (1000 - 100) + 100),
+                missingSubmission: Math.round(Math.random() * 6),
                 events: []
               };
 
@@ -770,15 +785,17 @@
           });
         }
 
+        function handleResize(e, drawChartFlag) {
+          
+        }
+
         $('.pulse-charts').on('chart-render-finish', function(){
           $('.hide-until-ready').fadeTo('slow', 1);
         });
 
         scope.$on('draw-chart', alignTables);
         scope.$on('draw-assignments', drawAssignments);
-        $(window).resize(function(e){
-          alignTables(e, true);
-        });
+        $(window).resize(handleResize);
       }
     };
   }]);
