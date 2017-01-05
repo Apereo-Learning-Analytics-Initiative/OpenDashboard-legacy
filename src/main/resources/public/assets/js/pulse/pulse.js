@@ -24,6 +24,9 @@
     $scope.coursesMaxEvents = 0;
     $scope.maxEvents = 0;
     $scope.emailstudent = {};
+    $scope.studentFilters = {};
+    $scope.studentFilters.list = [];
+
     $scope.coursesStartEnd = {
       start: '2016-08-30',
       end: '2016-12-13'
@@ -157,6 +160,12 @@
     //     $scope.$emit('draw-chart');
     //   }
     // }
+
+    $scope.updateStudentCharts = function (data) {
+      // $timeout(function(){
+        $scope.$broadcast('updateTable', data);
+      // });
+    };
 
     function init() {
       console.log('init');
@@ -561,7 +570,7 @@
           } else {
             var svgTimelineHeader = d3.select('#floating-header .timeline-heading').append('svg');
 
-            timeScale.range([20, tlhWidth - 50]);
+            timeScale.range([50, tlhWidth - 50]);
 
             svgTimelineHeader
             .attr("class", 'timeline-svg')

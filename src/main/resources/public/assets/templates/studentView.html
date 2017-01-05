@@ -13,8 +13,8 @@ or implied. See the License for the specific language governing
 permissions and limitations under the License. 
 -->
 <section class="studentActivity">
-    <div class="col-md-2">
-        <div class="activityCard">
+    <!-- <div class="col-md-2"> -->
+<!--         <div class="activityCard">
             <div class="heading">Total Activity</div>
             <div class="body">
                 <h1>{{ actions.length }}</h1>
@@ -31,17 +31,17 @@ permissions and limitations under the License.
             <div class="body">
                 <h1>{{ currentStudent.grade }}</h1>
             </div>
-        </div>
+        </div> -->
         <!-- Toggle between chart and table -->
-        <div class="buttons">
+<!--         <div class="buttons">
             <button class="btn btn-primary btn-block" type="button" ng-click="displayMode='table'" ng-disabled="displayMode=='table'">
                 <i class="fa fa-table" aria-hidden="true"></i> Table
             </button>
             <button class="btn btn-primary btn-block" type="button" ng-click="displayMode='chart'" ng-disabled="displayMode=='chart'">
                 <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
             </button>
-        </div>
-
+        </div> -->
+<!-- 
         <h3>Filter by Activity</h3>
         <div class="student-filters">
             <form class="form">
@@ -49,27 +49,27 @@ permissions and limitations under the License.
                 <button class="btn btn-primary btn-block" type="button" ng-click="$emit('toggleAllFilters')">
                     <i class="fa" aria-hidden="true" ng-class="{'fa-toggle-off': !allFilters, 'fa-toggle-on': allFilters}"></i> Toggle All
                 </button>
-                <div class="checkbox" ng-repeat="verb in verbList track by $index">
+                <div class="checkbox" ng-repeat="verb in studentFilters.verblist track by $index">
                     <label>
-                        <input type="checkbox" ng-model="verb.filter" ng-change="$emit('updateTable', detailView)"> {{verb.label}}
+                        <input type="checkbox" ng-model="verb.filter" ng-change="$emit('updateTable', studentFilters.detailView)"> {{verb.label}}
                     </label>
                 </div>
             </form>
-        </div>
+        </div> -->
 
-    </div>
+    <!-- </div> -->
 
-    <div class="col-md-10">
+    <div class="col-md-12">
         <h3>Detail Activity</h3>
         <div>
             <a href="" ng-click="$emit('updateTable', '7days')">Last 7 Days</a> | <a href="" ng-click="$emit('updateTable', '30days')">Last 30 Days</a>
         </div>
         <!-- Chart -->
-        <div class="activityOverTime" ng-show="displayMode=='chart'">
+        <div class="activityOverTime" ng-show="studentFilters.displayMode=='chart'">
             <canvas id="activityOverTime" width="400" height="300"></canvas>
         </div>
         <!-- Table -->
-        <div class="" ng-show="displayMode=='table'">
+        <div class="" ng-show="studentFilters.displayMode=='table'">
             <table id="activityOverTimeTable" class="table table-hover dataTable">
                 <thead>
                     <tr>
@@ -91,11 +91,11 @@ permissions and limitations under the License.
         </div>
         <h3>Activity By Type</h3>
         <!-- Chart -->
-        <div class="activityByVerbChart" ng-show="displayMode=='chart'">
+        <div class="activityByVerbChart" ng-show="studentFilters.displayMode=='chart'">
             <canvas id="activityByVerbChart" width="400" height="150"></canvas>
         </div>
         <!-- Table -->
-        <div class="activityCard" ng-show="displayMode=='table'">
+        <div class="activityCard" ng-show="studentFilters.displayMode=='table'">
             <table id="activityByVerbTable" class="activityTable">
                 <thead>
                     <tr>
@@ -115,11 +115,11 @@ permissions and limitations under the License.
         </div>
         <h3>Activity By Time of Day</h3>
         <!-- Chart -->
-        <div class="hourlyActivityChart" ng-show="displayMode=='chart'">
+        <div class="hourlyActivityChart" ng-show="studentFilters.displayMode=='chart'">
             <canvas id="hourlyActivityChart" width="400" height="100"></canvas>
         </div>
         <!-- Table -->
-        <div class="" ng-show="displayMode=='table'">
+        <div class="" ng-show="studentFilters.displayMode=='table'">
             <table id="hourlyActivityTable" class="table">
                 <thead>
                     <tr>
@@ -139,11 +139,11 @@ permissions and limitations under the License.
         </div>
         <h3>Activity By Day of Week</h3>
         <!-- Chart -->
-        <div class="activityDayOfWeekChart" ng-show="displayMode=='chart'">
+        <div class="activityDayOfWeekChart" ng-show="studentFilters.displayMode=='chart'">
             <canvas id="activityDayOfWeekChart" width="400" height="200"></canvas>
         </div>
         <!-- Table -->
-        <div class="" ng-show="displayMode=='table'">
+        <div class="" ng-show="studentFilters.displayMode=='table'">
             <table id="activityDayOfWeekTable" class="table table-hover dataTable">
                 <thead>
                     <tr>

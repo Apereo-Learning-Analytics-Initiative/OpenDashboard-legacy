@@ -32,21 +32,42 @@
             
             <!-- filters and overlays popover -->
             <span class="filters"  ng-if="listType !== 'classes'"">
-                <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters"><i class="fa fa-cog fa-lg"></i></a>
+                <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters &amp; Overlays"><i class="fa fa-cog fa-lg"></i></a>
                 
                 <script type="text/ng-template" id="filters.html">
-                    <span class="filter-item">
-                        <input id="" type="checkbox">
-                        Hasn't logged in for <input type="number" value="0" min="0"> days</span>
-                    <span class="filter-item">
-                        <input id="" type="checkbox">
-                        <input type="number" value="0" min="0"> number of submission late or missing</span>
-                    <span class="filter-item">
-                        <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
-                        Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
-                    <span class="filter-item" ng-show="listType == 'students' || listType == 'student'">
-                        <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.$parent.assignmentOverlay"> Assignment Overlay
+                    <span ng-if="listType!='student'">
+                        <span class="filter-item">
+                            <input id="" type="checkbox">
+                            Hasn't logged in for <input type="number" value="0" min="0"> days</span>
+                        <span class="filter-item">
+                            <input id="" type="checkbox">
+                            <input type="number" value="0" min="0"> number of submission late or missing</span>
+                        <span class="filter-item">
+                            <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
+                            Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
                     </span>
+
+                    <div class="buttons" ng-if="listType == 'student'">
+                        <button class="btn btn-primary btn-block" type="button" ng-click="studentFilters.displayMode='table'" ng-disabled="studentFilters.displayMode=='table'">
+                            <i class="fa fa-table" aria-hidden="true"></i> Table
+                        </button>
+                        <button class="btn btn-primary btn-block" type="button" ng-click="studentFilters.displayMode='chart'" ng-disabled="studentFilters.displayMode=='chart'">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+                        </button>
+                    </div>
+
+                    <div ng-if="listType=='student'" class="checkbox filter-item" ng-repeat="verb in studentFilters.verblist track by $index">
+                        <label>
+                            <input type="checkbox" ng-model="verb.filter" ng-change="updateStudentCharts(studentFilters.detailView)"> {{verb.label}}
+                        </label>
+                    </div>
+
+                    <span class="checkbox filter-item" ng-show="listType == 'students' || listType == 'student'">
+                        <label>
+                            <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.$parent.assignmentOverlay"> Assignment Overlay
+                        </label>
+                    </span>
+
                 </script>
             
             </span>
@@ -80,6 +101,34 @@
         <!-- zoom link -->
         <div class="zoom-actions">
             <i class="fa fa-search-minus zoom-out"></i>
+        </div>
+
+        <!-- student details -->
+        <div class="student-details" ng-if="listType == 'student'">
+            <div class="col-sm-3 activityCard">
+                <div class="heading">Contact</div>
+                <div class="body">
+                    <a href="" class="fa fa-envelop"></a>
+                </div>
+            </div>
+            <div class="col-sm-3 activityCard">
+                <div class="heading">Activity</div>
+                <div class="body">
+                    {{ currentStudent.events.length }}
+                </div>
+            </div>
+            <div class="col-sm-3 activityCard">
+                <div class="heading">Risk</div>
+                <div class="body">
+                    {{ currentStudent.risk }}
+                </div>
+            </div>
+            <div class="col-sm-3 activityCard">
+                <div class="heading">Grade</div>
+                <div class="body">
+                    {{ currentStudent.grade }}
+                </div>
+            </div>
         </div>
         
         <!-- header table -->

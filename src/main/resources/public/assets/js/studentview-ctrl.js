@@ -32,11 +32,11 @@
             $scope.activityByVerbChartData = null;
             $scope.activityOverTimeData = null;
 
-            $scope.displayMode = 'chart';
-            $scope.detailView = '30days';
+            $scope.studentFilters.displayMode = 'chart';
+            $scope.studentFilters.detailView = '30days';
             $scope.allFilters = false;
             
-            $scope.verbList = [
+            $scope.studentFilters.verblist = [
                 {
                     label: 'Completed',
                     color: 'rgba(6, 11, 178, 0.5)',
@@ -103,7 +103,7 @@
                             activityByVerbChart();
                             hourlyActivityChart();
                             activityDayOfWeek();
-                            activityOverTime($scope.detailView);
+                            activityOverTime($scope.studentFilters.detailView);
                         });
                     }   
                 });
@@ -141,7 +141,7 @@
                 });
 
                 chartData.labels = [];
-                _.each($scope.verbList, function (verb) {
+                _.each($scope.studentFilters.verblist, function (verb) {
                     chartData.labels.push(verb.label);
                     chartData.datasets[0].data.push(datasets[verb.label]);
                     chartData.datasets[0].backgroundColor.push(verb.color);
@@ -257,7 +257,7 @@
                 // hard coding labels so they can be sorted by type easily
                 chartData.labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-                _.each($scope.verbList, function (verb, index) {
+                _.each($scope.studentFilters.verblist, function (verb, index) {
                     var colors;
                     var set;
                     //if (verb.filter) {
@@ -339,7 +339,7 @@
                         if (daysAgo >= -7 && daysAgo <= 0) {
                             if (!dates[date]) {
                                 dates[date] = [];
-                                _.each($scope.verbList, function (verb) {
+                                _.each($scope.studentFilters.verblist, function (verb) {
                                     dates[date][verb.label] = 0;
                                 });
                             }
@@ -352,7 +352,7 @@
                         if (daysAgo >= -30 && daysAgo <= 0) {
                             if (!dates[date]) {
                                 dates[date] = [];
-                                _.each($scope.verbList, function (verb) {
+                                _.each($scope.studentFilters.verblist, function (verb) {
                                     dates[date][verb.label] = 0;
                                 });
                             }
@@ -372,7 +372,7 @@
                     return label;
                 });
 
-                _.each($scope.verbList, function (verb, index) {
+                _.each($scope.studentFilters.verblist, function (verb, index) {
                     var colors;
                     var set;
                     if (verb.filter) {
@@ -436,9 +436,9 @@
 
             $scope.$on('updateTable', function (event, data) {
                 if (data) {
-                    $scope.detailView = data;
+                    $scope.studentFilters.detailView = data;
                 }
-                activityOverTime($scope.detailView);
+                activityOverTime($scope.studentFilters.detailView);
             });
 
             $scope.$on('toggleAllFilters', function (event, data) {
@@ -446,10 +446,10 @@
 
                 $scope.allFilters = !$scope.allFilters;
 
-                _.each($scope.verbList, function (verb) {
+                _.each($scope.studentFilters.verblist, function (verb) {
                     verb.filter = $scope.allFilters;
                 });
-                activityOverTime($scope.detailView);
+                activityOverTime($scope.studentFilters.detailView);
             });
             
         } 
