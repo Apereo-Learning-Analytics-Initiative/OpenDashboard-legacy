@@ -53,13 +53,17 @@
                             </label>
                     </span>
 
-                    <div class="buttons" ng-if="listType == 'student'">
-                        <button class="btn btn-primary btn-block" type="button" ng-click="studentFilters.displayMode='table'" ng-disabled="studentFilters.displayMode=='table'">
-                            <i class="fa fa-table" aria-hidden="true"></i> Table
-                        </button>
-                        <button class="btn btn-primary btn-block" type="button" ng-click="studentFilters.displayMode='chart'" ng-disabled="studentFilters.displayMode=='chart'">
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
-                        </button>
+                    <div class="btn-group btn-group-justified buttons" role="group" ng-if="listType == 'student'">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" type="button" ng-click="studentFilters.displayMode='chart'" ng-disabled="studentFilters.displayMode=='chart'">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" type="button" ng-click="studentFilters.displayMode='table'" ng-disabled="studentFilters.displayMode=='table'">
+                                <i class="fa fa-table" aria-hidden="true"></i> Table
+                            </button>
+                        </div>
                     </div>
 
                     <div ng-if="listType=='student'" class="checkbox filter-item" ng-repeat="verb in studentFilters.verblist track by $index">
@@ -94,7 +98,7 @@
               <a href="" data-toggle="dropdown">{{currentStudent.firstName}} {{currentStudent.lastName}}
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li ng-repeat="student in currentCourse.students">
+                <li ng-repeat="student in currentCourse.students" ng-class="{'active': student.id == currentStudent.id}">
                     <a href="#" ui-sref="index.courselist.studentView({studentId: student.id})">{{student.label}}</a>
                 </li>
               </ul>
@@ -105,7 +109,7 @@
         </span>
         
         <!-- zoom link -->
-        <div class="zoom-actions">
+        <div class="zoom-actions" ng-class="listType">
             <i class="fa fa-search-minus zoom-out"></i>
         </div>
 

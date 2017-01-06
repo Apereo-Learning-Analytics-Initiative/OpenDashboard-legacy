@@ -121,7 +121,7 @@
 
       $scope.currentStudent = student;
       $scope.datalist = [];
-      $scope.$broadcast('draw-chart', true);
+      $scope.$broadcast('draw-chart');
     }
 
     function buildStudentList(id) {
@@ -395,12 +395,11 @@
           function checkFinished() {
             if (scope.$last === true) {
               $timeout(function () {
-                console.log(attr.ngRepeatFinish);
-                scope.$emit(attr.ngRepeatFinish, true);
+                scope.$emit(attr.ngRepeatFinish);
               });
             }
           }
-          // checkFinished();
+
           scope.$watch(attr.watchForChanges, checkFinished);
         }
       }
@@ -418,22 +417,22 @@
       templateUrl: 'assets/js/pulse/pulse.html',
       link: function (scope, element, attrs) {
 
+        // elements
+        var floatingHeaderTable = $('#pulse-table-header');
+        var dataTable = $('#pulse-table-data');
         var headerHeight = $('.navbar').height();
+
+        // default variables
         var courseStart = moment(scope.coursesStartEnd.start).startOf('week');
         var courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
         var weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
 
+        // d3 timescale
         var timeScale = d3.scaleTime();
-
-        timeScale.domain([
-            courseStart, 
-            courseEnd
-          ]);
 
         // generate x axis
         var xAxis = d3.axisBottom()
           .scale(timeScale)
-          // .tickSize(3)
           .ticks(weeks)
           .tickFormat(d3.timeFormat('%m-%d'));
 
@@ -578,20 +577,25 @@
 
 
         function drawTimeline() {
-          var timelineHeader = $('#floating-header .timeline-heading');
+          var timelineHeader = floatingHeaderTable.find('.timeline-heading');
           var tlhHeight = timelineHeader.height();
           var tlhWidth = timelineHeader.width();
+
+          timeScale.domain([
+              courseStart, 
+              courseEnd
+            ]);
+
           if ($('#floating-header .timeline-heading svg.timeline-svg').length) {
             var svgTimelineHeader = d3.select('#floating-header .timeline-heading svg');
           } else {
             var svgTimelineHeader = d3.select('#floating-header .timeline-heading').append('svg');
-
             timeScale.range([50, tlhWidth - 50]);
 
             svgTimelineHeader
             .attr("class", 'timeline-svg')
             .attr("height", tlhHeight)
-            .attr("width", tlhWidth);
+            .attr("width", "100%")
             var xLabel = svgTimelineHeader
               .append('g')
               .attr('class', 'xaxis')
@@ -611,7 +615,7 @@
               svgTimeOverview
               .attr("class", 'overview-svg')
               .attr("height", tlhHeight)
-              .attr("width", tlhWidth);
+              .attr("width", "100%");
 
               var overviewPlot = svgTimeOverview.append('g')
                 .attr('transform','translate(0,'+tlhHeight/2+')')
@@ -648,7 +652,7 @@
 
             svg
             .attr("height", height)
-            .attr("width", width);
+            .attr("width", "100%");
 
             // row plot group
             
@@ -665,13 +669,13 @@
           // align elements based on layout
           $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
           $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 20);
-          $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left);
+          $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left - 20);
 
           
           // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
 
           if (scope.listType !== 'classes') {
-            drawAssignments();  
+            drawAssignments();
           } else {
             $('#pulse-data').trigger('chart-render-finish');
           }
@@ -681,12 +685,15 @@
         }
 
         function drawAssignments() {
-          var heading = $('#floating-header .timeline-heading');
+          var heading = floatingHeaderTable.find('.timeline-heading');
           var width = heading.width();
-          var height = $('#pulse-table-header').height() + $('#pulse-table-data').height() - $('#hidden-header').height();
+          var height = floatingHeaderTable.height() + dataTable.height() - $('#hidden-header').height();
           var offset = heading.offset();
           var overlay = $('#assignment-overlay');
           
+          console.log($('#pulse-table-header .timeline-heading').offset());
+          console.log(offset);
+
           overlay.css({
             'left': offset.left,
             'top': offset.top,
@@ -697,7 +704,7 @@
           var assignments = d3.select('#assignment-overlay svg')
             .attr('class', 'assignments-overlay')
             .attr("height", height)
-            .attr("width", width);
+            .attr("width", "100%");
 
           assignments.selectAll('line').remove();
 
@@ -709,17 +716,8 @@
             .attr('class', function (d, index) {
               var placement = timeScale(moment(d.dueDate, moment.ISO_8601));
               var classname = "assignment-marker " + d.category.title;
-
-              // if (placement >= padding.left && placement <= padding.left + plotWidth) {
-                
-              // } else {
-              //   classname = "assignment-marker hide " + d.category.title;
-              // }
-
               return classname;
             })
-
-            // .attr('style', 'stroke:rgb(0,100,0);stroke-width:2;')
             .attr('x1', function(d){
               return timeScale(moment(d.dueDate, moment.ISO_8601));
             })
@@ -764,36 +762,82 @@
             $('#pulse-data').trigger('chart-render-finish');
         };
 
-        function alignTables(e, drawChartFlag) {
-          console.log('alignTables');
+        function alignTables(callback) {
           $timeout(function(){
-            if (scope.listType !== 'student') {
-              $('#pulse-table-header th:last-of-type').removeAttr('style');
-              $('#pulse-table-data td:last-of-type').removeAttr('style');
+            var fPlot = floatingHeaderTable.find('.timeline-heading');
+            var dPlot = dataTable.find('.timeline-heading');
 
-              var hw = $('#pulse-table-header th:last-of-type').width();
-              var dw = $('#pulse-table-data td:last-of-type').width();
-              var w = hw < dw ? hw : dw;
+            fPlot.removeAttr('style');
+            dPlot.removeAttr('style');
 
-              $('#pulse-table-header th:last-of-type').width(w);
-              $('#pulse-table-data td:last-of-type').width(w);
-            }
+            var hw = fPlot.width();
+            var dw = dPlot.width();
+            var w = hw < dw ? hw : dw;
 
-            if (drawChartFlag) {
-              drawChart();
-            }
+            fPlot.width(w);
+            dPlot.width(w);
+
+            callback();
+          });
+
+        }
+
+        function handleResize() {
+          alignTables();
+
+          var fPlot = floatingHeaderTable.find('.timeline-heading');
+          var width = fPlot.width();
+          var height = $('#pulse-table-header').height() + $('#pulse-table-data').height() - $('#hidden-header').height();
+          var offset = fPlot.offset();
+          var overlay = $('#assignment-overlay');
+
+          $('.zoom-actions').width(width + 20);
+          $('.pulse-header .student-details').width(offset.left);
+
+          timeScale.range([50, width - 50]);
+
+          d3.selectAll("svg.timeline-svg .xaxis")
+            .transition()
+            .duration(750)
+            .call(xAxis);
+
+          d3.selectAll("svg .dot")
+            .transition()
+            .duration(750)
+            .attr('cx', function (d, index) {
+              var placement = timeScale(moment(d.date));
+              return placement;
+            });
+
+
+
+          d3.selectAll("svg .assignment-marker")
+            .transition()
+            .duration(750)
+            .attr('x1', function(d){
+              return timeScale(moment(d.dueDate, moment.ISO_8601));
+            })
+            .attr('x2', function(d){
+              return timeScale(moment(d.dueDate, moment.ISO_8601));
+            });
+
+          overlay.css({
+            'left': offset.left,
+            'top': offset.top,
+            'width': width,
+            'height': height
           });
         }
 
-        function handleResize(e, drawChartFlag) {
-          
-        }
-
+        // events / listeners
         $('.pulse-charts').on('chart-render-finish', function(){
           $('.hide-until-ready').fadeTo('slow', 1);
         });
 
-        scope.$on('draw-chart', alignTables);
+        scope.$on('draw-chart', function(){
+          alignTables(drawChart);
+        });
+
         scope.$on('draw-assignments', drawAssignments);
         $(window).resize(handleResize);
       }
