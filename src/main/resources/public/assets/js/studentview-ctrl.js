@@ -33,7 +33,7 @@
             $scope.activityOverTimeData = null;
 
             $scope.studentFilters.displayMode = 'chart';
-            $scope.studentFilters.detailView = '30days';
+            $scope.studentFilters.detailView = '90days';
             $scope.allFilters = false;
             
             $scope.studentFilters.verblist = [
@@ -350,6 +350,19 @@
 
                     if (detailView === '30days') {
                         if (daysAgo >= -30 && daysAgo <= 0) {
+                            if (!dates[date]) {
+                                dates[date] = [];
+                                _.each($scope.studentFilters.verblist, function (verb) {
+                                    dates[date][verb.label] = 0;
+                                });
+                            }
+                            dates[date][verb]++;
+                            chartData.labels.push(date);
+                        }
+                    }
+
+                    if (detailView === '90days') {
+                        if (daysAgo >= -90 && daysAgo <= 0) {
                             if (!dates[date]) {
                                 dates[date] = [];
                                 _.each($scope.studentFilters.verblist, function (verb) {
