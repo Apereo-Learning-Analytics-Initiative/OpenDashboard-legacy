@@ -48,8 +48,34 @@
     $scope.gradeFilter = false;
     $scope.gradeFilterScore = 25;
     $scope.submissionFilterScore = 6;
+
+    $scope.appHasRiskData = false;
+    $scope.riskOverlay = true;
+    var riskColorClasses = [
+      'no-risk',
+      'low-risk',
+      'medium-risk',
+      'high-risk',
+    ];
     
     $scope.emailList = [];
+
+    $scope.colorCodeRisk = function(risk){
+      if ($scope.riskOverlay) {
+        var colorclass;
+        // var riskDivided = 100/riskColorClasses.length;
+        // console.log(Math.round(riskDivided/(riskDivided+)));
+        _.each(riskColorClasses, function(r, i){
+          console.log('between: ' + 100/riskColorClasses.length*(i) + " & " + 100/riskColorClasses.length*(i+1));
+          if (risk >= 100/riskColorClasses.length*(i) && risk <= 100/riskColorClasses.length*(i+1)) {
+            colorclass = riskColorClasses[i];
+          }
+        });
+        return colorclass;
+      } else {
+        return "";
+      }
+    }
 
     function filterByGrade(nv){
       if ($scope.currentCourse) {
@@ -132,6 +158,8 @@
       
       $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
+
+      $scope.appHasRiskData = $scope.currentCourse.students[0].risk ? true : false;
 
       $scope.maxEvents = course.studentEventMax;
       runFilters();

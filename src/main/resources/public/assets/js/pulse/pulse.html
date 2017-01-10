@@ -78,6 +78,12 @@
                         </label>
                     </span>
 
+                    <span class="checkbox filter-item" ng-show="listType == 'students' && appHasRiskData">
+                        <label>
+                            <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.riskOverlay"> Risk Overlay
+                        </label>
+                    </span>
+
                 </script>
             
             </span>
@@ -191,7 +197,7 @@
                     <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes'">
+                <th ng-if="listType != 'classes' && appHasRiskData">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
                     Risk
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
@@ -237,7 +243,7 @@
                     <td ng-if="listType != 'classes'">
                         <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
                     </td>
-                    <td ng-if="listType != 'classes'">
+                    <td ng-if="listType != 'classes' && appHasRiskData" ng-class="colorCodeRisk(item.risk)">
                         {{item.risk}}
                     </td>
                     <td ng-if="listType != 'classes'">
