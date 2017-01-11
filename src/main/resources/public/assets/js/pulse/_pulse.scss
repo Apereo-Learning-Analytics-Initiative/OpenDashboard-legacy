@@ -156,6 +156,53 @@ body.application {
         visibility: hidden;
       }
     }
+    td {
+      &.high-risk {
+        background-color: rgba(234, 14, 14, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.medium-risk {
+        background-color: rgba(246, 178, 8, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.low-risk {
+        background-color: rgba(212, 208, 2, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.no-risk {
+        background-color: rgba(127, 191, 63, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.low-grade {
+        background-color: rgba(172, 47, 56, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.medium-low-grade {
+        background-color: rgba(140, 75, 51, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.medium-grade {
+        background-color: rgba(105, 105, 40, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.high-medium-grade {
+        background-color: rgba(70, 137, 41, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+      &.high-grade {
+        background-color: rgba(17, 184, 33, 1)!important;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+      }
+    }
   }
 
   // classes
