@@ -57,19 +57,19 @@
     var riskColorClasses = [
       {
         'threshold':[$scope.maxRisk + 1, $scope.maxRisk/riskTypeCount*3],
-        'classname': 'no-risk'
+        'classname': 'high-risk'
       },
       {
         'threshold':[$scope.maxRisk/riskTypeCount*3, $scope.maxRisk/riskTypeCount*2],
-        'classname': 'low-risk'
-      },
-      {
-        'threshold':[$scope.maxRisk/riskTypeCount*2, $scope.maxRisk/riskTypeCount],
         'classname': 'medium-risk'
       },
       {
+        'threshold':[$scope.maxRisk/riskTypeCount*2, $scope.maxRisk/riskTypeCount],
+        'classname': 'low-risk'
+      },
+      {
         'threshold':[$scope.maxRisk/riskTypeCount, 0],
-        'classname': 'high-risk'
+        'classname': 'no-risk'
       }
     ];
 
