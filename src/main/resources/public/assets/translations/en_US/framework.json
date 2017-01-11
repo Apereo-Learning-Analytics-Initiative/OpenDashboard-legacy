@@ -190,6 +190,9 @@
 "OD_DEMO_USER_NAME":"Demo User Provider",
 "OD_DEMO_USER_DESC":"",
 "OD_DEMO_LINEITEMS_NAME":"Demo Line Item Provider",
-"OD_DEMO_LINEITEMS_DESC":""
+"OD_DEMO_LINEITEMS_DESC":"",
+
+"OD_DEMO_COURSE_NAME":"Demo Course Provider",
+"OD_DEMO_COURSE_DESC":""
 
 }
