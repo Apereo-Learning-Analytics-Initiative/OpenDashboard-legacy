@@ -18,6 +18,16 @@
     function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, pulseDataService){
       "use strict";
 
+    var processedClasses = [];
+    var classes = [];
+    var students = [];
+    var currentCourse = null;
+    var currentUser = null;
+    var currentStudent = null;
+
+
+    currentUser = SessionService.getCurrentUser();
+
     $scope.chartInitialized = false;
     $scope.listType = 'classes';
     $scope.datalist = [];
@@ -32,16 +42,6 @@
       end: '2016-12-13'
     };
 
-    var processedClasses = [];
-    var classes = [];
-    var students = [];
-    var currentCourse = null;
-    var currentUser = null;
-    var currentStudent = null;
-
-
-    currentUser = SessionService.getCurrentUser();
-
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
@@ -49,16 +49,71 @@
     $scope.gradeFilterScore = 25;
     $scope.submissionFilterScore = 6;
 
+    $scope.maxGrade = 100;
+    $scope.maxRisk = 100;
     $scope.appHasRiskData = false;
     $scope.riskOverlay = true;
+    var riskTypeCount = 4;
     var riskColorClasses = [
-      'no-risk',
-      'low-risk',
-      'medium-risk',
-      'high-risk',
+      {
+        'threshold':[$scope.maxRisk + 1, $scope.maxRisk/riskTypeCount*3],
+        'classname': 'no-risk'
+      },
+      {
+        'threshold':[$scope.maxRisk/riskTypeCount*3, $scope.maxRisk/riskTypeCount*2],
+        'classname': 'low-risk'
+      },
+      {
+        'threshold':[$scope.maxRisk/riskTypeCount*2, $scope.maxRisk/riskTypeCount],
+        'classname': 'medium-risk'
+      },
+      {
+        'threshold':[$scope.maxRisk/riskTypeCount, 0],
+        'classname': 'high-risk'
+      }
+    ];
+
+    $scope.gradeOverlay = true;
+    var gradeTypeCount = 5;
+    var gradeColorClasses = [
+      {
+        'threshold':[$scope.maxGrade + 1, ($scope.maxGrade/2)/gradeTypeCount*4+($scope.maxGrade/2)],
+        'classname': 'high-grade'
+      },
+      {
+        'threshold':[($scope.maxGrade/2)/gradeTypeCount*4+($scope.maxGrade/2), ($scope.maxGrade/2)/gradeTypeCount*3+($scope.maxGrade/2)],
+        'classname': 'high-medium-grade'
+      },
+      {
+        'threshold':[($scope.maxGrade/2)/gradeTypeCount*3+($scope.maxGrade/2), ($scope.maxGrade/2)/gradeTypeCount*2+($scope.maxGrade/2)],
+        'classname': 'medium-grade'
+      },
+      {
+        'threshold':[($scope.maxGrade/2)/gradeTypeCount*2+($scope.maxGrade/2), ($scope.maxGrade/2)/gradeTypeCount+($scope.maxGrade/2)],
+        'classname': 'medium-low-grade'
+      },
+      {
+        'threshold':[($scope.maxGrade/2)/gradeTypeCount+($scope.maxGrade/2), 0],
+        'classname': 'low-grade'
+      }
     ];
     
     $scope.emailList = [];
+
+    $scope.colorCodeGrade = function(grade){
+      if ($scope.gradeOverlay) {
+        var colorclass;
+        _.each(gradeColorClasses, function(g, i){
+          if (grade < g.threshold[0] && grade >= g.threshold[1]) {
+            colorclass = g.classname;
+          }
+        });
+
+        return colorclass;
+      } else {
+        return "";
+      }
+    }
 
     $scope.colorCodeRisk = function(risk){
       if ($scope.riskOverlay) {
@@ -66,9 +121,8 @@
         // var riskDivided = 100/riskColorClasses.length;
         // console.log(Math.round(riskDivided/(riskDivided+)));
         _.each(riskColorClasses, function(r, i){
-          console.log('between: ' + 100/riskColorClasses.length*(i) + " & " + 100/riskColorClasses.length*(i+1));
-          if (risk >= 100/riskColorClasses.length*(i) && risk <= 100/riskColorClasses.length*(i+1)) {
-            colorclass = riskColorClasses[i];
+          if (risk < r.threshold[0] && risk >= r.threshold[1]) {
+            colorclass = r.classname;
           }
         });
         return colorclass;
