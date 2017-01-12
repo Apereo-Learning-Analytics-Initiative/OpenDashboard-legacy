@@ -84,12 +84,18 @@
                         </label>
                     </span>
 
-                    <span class="checkbox filter-item" ng-show="listType == 'students'">
+<!--                     <span class="checkbox filter-item" ng-show="listType == 'students'">
                         <label>
                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.gradeOverlay"> Show Grade Colors
                         </label>
                     </span>
-
+ -->
+                     <span class="checkbox filter-item" ng-show="listType == 'students'">
+                         <label>
+                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.activityOverlay"> Show Activity Colors
+                         </label>
+                     </span>
+ 
                 </script>
             
             </span>
@@ -249,14 +255,19 @@
                     <td ng-if="listType != 'classes'">
                         <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
                     </td>
-                    <td ng-if="listType != 'classes' && appHasRiskData" ng-class="colorCodeRisk(item.risk)">
-                        {{item.risk}}
-                    </td>
-                    <td ng-if="listType != 'classes'" ng-class="colorCodeGrade(item.grade)">
-                        {{item.grade}}
+                    <td ng-if="listType != 'classes' && appHasRiskData">
+                        <div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}</div>
                     </td>
                     <td ng-if="listType != 'classes'">
-                        {{item.activity}}
+                        <!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
+                        {{item.grade}}
+                        <!-- </div> -->
+
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <div class="badge" ng-class="colorCodeActivity(item.activity)">
+                            {{item.activity}}
+                        </div>
                     </td>
                     <td id="pulse-chart-{{item.id}}"></td>
                 </tr>
