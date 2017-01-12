@@ -204,7 +204,7 @@
       filterByMissingSubmissions();
     }
 
-    // $scope.$watchGroup(['gradeFilterScore', 'gradeFilter'], filterByGrade);
+    $scope.$watchGroup(['gradeFilterScore', 'gradeFilter'], filterByGrade);
     $scope.$watchGroup(['submissionFilterScore', 'submissionFilter'], filterByMissingSubmissions);
 
     $scope.handleEmail = function(o, bulk) {
