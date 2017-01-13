@@ -1,7 +1,5 @@
 package od.auth;
 
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +26,7 @@ public class DemoAuthenticator implements Authenticator {
   public Authentication authenticate(Authentication token) throws AuthenticationException {
     log.debug("{}", token);
     OpenDashboardAuthenticationToken authToken = null;
-    String uuid = UUID.randomUUID().toString();
+    String uuid = "teacher-sourcedId-1";
     
     if (token instanceof OpenDashboardAuthenticationToken) {
       OpenDashboardAuthenticationToken odToken = (OpenDashboardAuthenticationToken)token;

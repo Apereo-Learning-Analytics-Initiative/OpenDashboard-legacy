@@ -183,6 +183,8 @@
 "MATTHEWS_LINEITEMS_NAME":"Matthews Line Item Provider",
 "MATTHEWS_LINEITEMS_DESC":"Uses web services exposed by the Matthews LRW to get line item data",
 
+"LABEL_MATTHEWS_BASE_URL":"Matthews Base URL",
+
 "OD_DEMO_EVENTS_NAME":"Demo Event Provider",
 "OD_DEMO_EVENTS_DESC":"",
 "OD_DEMO_ENROLLMENTS_NAME":"Demo Roster Provider",

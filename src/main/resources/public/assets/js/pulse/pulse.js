@@ -51,6 +51,7 @@
 
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
+    $scope.maxActivity = 100;
     $scope.appHasRiskData = false;
     $scope.riskOverlay = true;
     var riskTypeCount = 4;
@@ -65,13 +66,37 @@
       },
       {
         'threshold':[$scope.maxRisk/riskTypeCount*2, $scope.maxRisk/riskTypeCount],
-        'classname': 'low-risk'
+        'classname': 'medium-risk'
       },
       {
         'threshold':[$scope.maxRisk/riskTypeCount, 0],
         'classname': 'no-risk'
       }
     ];
+
+    $scope.activityOverlay = true;
+    var activityTypeCount = 4;
+    var activityColorClasses = [];
+    function buildActivityColorThreshold() {
+      activityColorClasses = [
+        {
+          'threshold':[$scope.maxActivities + 1, $scope.maxActivities/activityTypeCount*3],
+          'classname': 'no-risk'
+        },
+        {
+          'threshold':[$scope.maxActivities/activityTypeCount*3, $scope.maxActivities/activityTypeCount*2],
+          'classname': 'medium-risk'
+        },
+        {
+          'threshold':[$scope.maxActivities/activityTypeCount*2, $scope.maxActivities/activityTypeCount],
+          'classname': 'medium-risk'
+        },
+        {
+          'threshold':[$scope.maxActivities/activityTypeCount, 0],
+          'classname': 'high-risk'
+        }
+      ];
+    }
 
     $scope.gradeOverlay = true;
     var gradeTypeCount = 5;
@@ -122,6 +147,22 @@
         // console.log(Math.round(riskDivided/(riskDivided+)));
         _.each(riskColorClasses, function(r, i){
           if (risk < r.threshold[0] && risk >= r.threshold[1]) {
+            colorclass = r.classname;
+          }
+        });
+        return colorclass;
+      } else {
+        return "";
+      }
+    }
+
+    $scope.colorCodeActivity = function(activity){
+      if ($scope.activityOverlay) {
+        var colorclass;
+        // var riskDivided = 100/riskColorClasses.length;
+        // console.log(Math.round(riskDivided/(riskDivided+)));
+        _.each(activityColorClasses, function(r, i){
+          if (activity < r.threshold[0] && activity >= r.threshold[1]) {
             colorclass = r.classname;
           }
         });
@@ -216,6 +257,8 @@
       $scope.appHasRiskData = $scope.currentCourse.students[0].risk ? true : false;
 
       $scope.maxEvents = course.studentEventMax;
+      $scope.maxActivities = course.events.length;
+      buildActivityColorThreshold();
       runFilters();
     }
 
@@ -365,7 +408,8 @@
                 email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
                 risk: Math.round(Math.random() * (100 - 0)),
                 grade: Math.round(Math.random() * (100 - 0)),
-                activity: Math.round(Math.random() * (1000 - 100) + 100),
+                // activity: Math.round(Math.random() * (1000 - 100) + 100),
+                activity: 0,
                 missingSubmission: Math.round(Math.random() * 6),
                 events: []
               };
@@ -380,7 +424,7 @@
                   eventCount: e
                 });
               });
-
+              student.activity = student.events.length;
               course.students.push(student);
 
             });
@@ -858,8 +902,10 @@
 
             fPlot.width(w);
             dPlot.width(w);
-
-            callback();
+            if (callback) {
+              callback();  
+            }
+            
           });
 
         }
