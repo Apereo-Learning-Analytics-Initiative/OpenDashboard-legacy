@@ -178,7 +178,6 @@
           $scope.datalist = _.filter($scope.currentCourse.students, function(o){
             return o.grade < $scope.gradeFilterScore;
           });
-          
         } else {
           $scope.datalist = $scope.currentCourse.students;
         }
@@ -410,6 +409,7 @@
                 grade: Math.round(Math.random() * (100 - 0)),
                 // activity: Math.round(Math.random() * (1000 - 100) + 100),
                 activity: 0,
+                daysSinceLogin: 0,
                 missingSubmission: Math.round(Math.random() * 6),
                 events: []
               };
@@ -425,7 +425,21 @@
                 });
               });
               student.activity = student.events.length;
+              var recentDate = student.events[0].date;
+
+              _.each(student.events,function(evDate, key){
+                if (moment(evDate.date) > moment(recentDate)) {
+                  recentDate = evDate.date;
+                }
+              });
+
+              var lastDate = moment(recentDate);
+              var now = moment();
+              var lastLogin = Math.round(moment.duration(now - lastDate).asDays());
+
+              student.daysSinceLogin = lastLogin;
               course.students.push(student);
+
 
             });
 
