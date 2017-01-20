@@ -38,8 +38,8 @@
                     <span ng-if="listType!='student'">
                         <span class="checkbox filter-item">
                             <label>
-                                <input id="" type="checkbox">
-                                Hasn't logged in for <input type="number" value="0" min="0"> days</span>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.daysSinceLoginFilter">
+                                Hasn't logged in for <input type="number" ng-model="$parent.$parent.$parent.daysSinceLoginFilterCount" min="0"> days</span>
                             </label>
                         <span class="checkbox filter-item">
                             <label>
