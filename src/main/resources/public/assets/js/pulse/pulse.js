@@ -41,17 +41,16 @@
       start: '2016-08-30',
       end: '2016-12-13'
     };
-
-	    $scope.orderByField = 'label';
-	    $scope.reverseSort = false;
-	    $scope.assignmentOverlay = true;
-	    $scope.gradeFilter = false;
-	    $scope.gradeFilterScore = 25;
-	    $scope.submissionFilter = false;
-	    $scope.submissionFilterScore = 6;
-	    $scope.daysSinceLoginFilter = false;
-	    $scope.daysSinceLoginFilterCount = 0;
-	    var currentDataList = [];
+    $scope.orderByField = 'label';
+    $scope.reverseSort = false;
+    $scope.assignmentOverlay = true;
+    $scope.gradeFilter = false;
+    $scope.gradeFilterScore = 25;
+    $scope.submissionFilter = false;
+    $scope.submissionFilterScore = 6;
+    $scope.daysSinceLoginFilter = false;
+    $scope.daysSinceLoginFilterCount = 0;
+    var currentDataList = [];
 
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
@@ -175,61 +174,59 @@
         return "";
       }
     }
-
-	    function filterByGrade(nv){
-		    if ($scope.currentCourse) {
-			    if ($scope.gradeFilter) {
-				    var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
-
-				    currentDataList = _.filter(tempDataList, function(o){
-					    return o.grade < $scope.gradeFilterScore;
-				    });
-
-			    }
-		    }
-	    }
-
-	    function filterByMissingSubmissions(nv, ov){
-		    if ($scope.currentCourse) {
-			    if ($scope.submissionFilter) {
-				    var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
-
-				    currentDataList = _.filter(tempDataList, function(o){
-					    return o.missingSubmission >= $scope.submissionFilterScore;
-				    });
-
-			    }
-		    }
-	    }
-
-	    function filterLastLoginCount(nv, ov){
-		    if ($scope.currentCourse) {
-			    if ($scope.daysSinceLoginFilter) {
-				    var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
-
-				    currentDataList = _.filter(tempDataList, function(o){
-					    return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
-				    });
-			    }
-		    }
-	    }
-
-	    function runFilters() {
-		    if($scope.currentCourse) {
-			    filterByGrade();
-			    filterByMissingSubmissions();
-			    filterLastLoginCount();
-
-			    if(currentDataList.length) {
-				    $scope.datalist = currentDataList;
-				    currentDataList = [];
-			    } else {
-				    $scope.datalist = $scope.currentCourse.students;
-			    }
-		    }
-	    }
-
-	    $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilterCount', 'daysSinceLoginFilter'], runFilters);
+    
+    function filterByGrade(nv){
+      if ($scope.currentCourse) {
+        if ($scope.gradeFilter) {
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
+          
+            currentDataList = _.filter(tempDataList, function(o){
+              return o.grade < $scope.gradeFilterScore;
+          });
+        }
+      }
+    }
+    
+    function filterByMissingSubmissions(nv, ov){
+      if ($scope.currentCourse) {
+        if ($scope.submissionFilter) {
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
+          
+          currentDataList = _.filter(tempDataList, function(o){
+            return o.missingSubmission >= $scope.submissionFilterScore;
+          });
+        }
+      }
+    }
+    
+    function filterLastLoginCount(nv, ov){
+      if ($scope.currentCourse) {
+        if ($scope.daysSinceLoginFilter) {
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
+          
+            currentDataList = _.filter(tempDataList, function(o){
+              return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
+            });
+          }
+        }
+      }
+      
+      function runFilters() {
+        if($scope.currentCourse) {
+          filterByGrade();
+          filterByMissingSubmissions();
+          filterLastLoginCount();
+          
+          if(currentDataList.length) {
+            $scope.datalist = currentDataList;
+            currentDataList = [];
+          } else {
+            $scope.datalist = $scope.currentCourse.students;
+          }
+        }
+      }
+      
+      $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilterCount', 'daysSinceLoginFilter'], runFilters);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
