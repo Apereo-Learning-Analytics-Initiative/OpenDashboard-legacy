@@ -41,13 +41,16 @@
       start: '2016-08-30',
       end: '2016-12-13'
     };
-
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
     $scope.gradeFilter = false;
     $scope.gradeFilterScore = 25;
+    $scope.submissionFilter = false;
     $scope.submissionFilterScore = 6;
+    $scope.daysSinceLoginFilter = false;
+    $scope.daysSinceLoginFilterCount = 0;
+    var currentDataList = [];
 
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
@@ -171,41 +174,59 @@
         return "";
       }
     }
-
+    
     function filterByGrade(nv){
       if ($scope.currentCourse) {
         if ($scope.gradeFilter) {
-          $scope.datalist = _.filter($scope.currentCourse.students, function(o){
-            return o.grade < $scope.gradeFilterScore;
-          });
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
-        } else {
-          $scope.datalist = $scope.currentCourse.students;
+            currentDataList = _.filter(tempDataList, function(o){
+              return o.grade < $scope.gradeFilterScore;
+          });
         }
       }
     }
-
+    
     function filterByMissingSubmissions(nv, ov){
-      console.log('filterByMissingSubmissions');
       if ($scope.currentCourse) {
         if ($scope.submissionFilter) {
-          $scope.datalist = _.filter($scope.currentCourse.students, function(o){
-            return o.missingSubmission < $scope.submissionFilterScore;
-          });
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
-        } else {
-          $scope.datalist = $scope.currentCourse.students;
+          currentDataList = _.filter(tempDataList, function(o){
+            return o.missingSubmission >= $scope.submissionFilterScore;
+          });
         }
       }
     }
-
-    function runFilters() {
-      filterByGrade();
-      filterByMissingSubmissions();
-    }
-
-    $scope.$watchGroup(['gradeFilterScore', 'gradeFilter'], filterByGrade);
-    $scope.$watchGroup(['submissionFilterScore', 'submissionFilter'], filterByMissingSubmissions);
+    
+    function filterLastLoginCount(nv, ov){
+      if ($scope.currentCourse) {
+        if ($scope.daysSinceLoginFilter) {
+          var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
+          
+            currentDataList = _.filter(tempDataList, function(o){
+              return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
+            });
+          }
+        }
+      }
+      
+      function runFilters() {
+        if($scope.currentCourse) {
+          filterByGrade();
+          filterByMissingSubmissions();
+          filterLastLoginCount();
+          
+          if(currentDataList.length) {
+            $scope.datalist = currentDataList;
+            currentDataList = [];
+          } else {
+            $scope.datalist = $scope.currentCourse.students;
+          }
+        }
+      }
+      
+      $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilterCount', 'daysSinceLoginFilter'], runFilters);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -261,45 +282,6 @@
       buildActivityColorThreshold();
       runFilters();
     }
-
-    // function handleChartChange(event, data) {
-    //   console.log('handleChartChange');
-    //   if (data.type === 'course') {
-    //     // Go to specific course with list of students
-    //     $state.go('index.courselist', { groupId: data.id });
-    //     // $state.go('index.courselist', { groupId: data.id }, {notify: false});
-    //     // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
-    //     $scope.listType = 'students';
-    //     $scope.orderByField = 'lastName';
-
-    //     buildStudentList(data.id);
-
-    //   } else if (data.type === 'courselist') {
-    //     // Go to specific student
-    //     $state.go('index.courselist', { groupId: $state.params.groupId, studentId: data.id });
-    //     // $state.go('index.courselist.empty', { groupId: $state.params.groupId, studentId: data.id }, {notify: false} );
-    //     $scope.maxEvents = $scope.coursesMaxEvents;
-    //     $scope.datalist = processedClasses;
-    //     $scope.listType = 'classes';  
-    //     $scope.orderByField = 'label';
-    //     $scope.$broadcast('draw-chart');
-
-    //   } else if (data.type === 'student') {
-    //     // $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id }, {reload: false, inherit: true, notify: true} );
-    //     $scope.listType = 'student';  
-    //     buildStudent($scope.currentCourse.id, data.id);
-    //     // Go to specific student
-    //     $state.go('index.courselist.studentView', { groupId: $state.params.groupId, studentId: data.id });
-
-    //   }
-    // }
-
-    // $scope.drawChart = function(draw) {
-    //   console.log(draw);
-    //   if (draw) {
-    //     $scope.$emit('draw-chart');
-    //   }
-    // }
 
     $scope.updateStudentCharts = function (data) {
       // $timeout(function(){
@@ -410,6 +392,7 @@
                 grade: Math.round(Math.random() * (100 - 0)),
                 // activity: Math.round(Math.random() * (1000 - 100) + 100),
                 activity: 0,
+                daysSinceLogin: 0,
                 missingSubmission: Math.round(Math.random() * 6),
                 events: []
               };
@@ -425,7 +408,21 @@
                 });
               });
               student.activity = student.events.length;
+              var recentDate = student.events[0].date;
+
+              _.each(student.events,function(evDate, key){
+                if (moment(evDate.date) > moment(recentDate)) {
+                  recentDate = evDate.date;
+                }
+              });
+
+              var lastDate = moment(recentDate);
+              var now = moment();
+              var lastLogin = Math.round(moment.duration(now - lastDate).asDays());
+
+              student.daysSinceLogin = lastLogin;
               course.students.push(student);
+
 
             });
 
