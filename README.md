@@ -99,6 +99,11 @@ rm /opt/od/logs/*.log
 su boot -c "sh build.sh"
 su boot -c "sh run.sh start"
 ~~~~
+#### Change the default admin username and password
+You can change the default admin username and/or password using the od.admin.user and od.admin.password properties.
+~~~~
+mvn clean package spring-boot:run -Dod.admin.user=someOtherUsername -Dod.admin.password=someOtherPassword
+~~~~
 
 License
 -------
