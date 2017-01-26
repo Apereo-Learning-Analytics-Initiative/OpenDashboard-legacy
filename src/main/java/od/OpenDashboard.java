@@ -69,6 +69,7 @@ public class OpenDashboard {
     
     @RequestMapping(value = { "/", "/login", "/err/**" }, method = RequestMethod.GET)
     public String openRoutes() {
+      log.info("test");
       return "index";
     }
 

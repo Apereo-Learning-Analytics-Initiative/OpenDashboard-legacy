@@ -30,7 +30,6 @@ auth:
 logging:
   level:
     od: DEBUG
-    org.apache.velocity: OFF
   file: od.log
 
 # Spring settings

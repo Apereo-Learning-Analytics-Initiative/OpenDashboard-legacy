@@ -45,7 +45,6 @@ public class LineItemController {
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     ProviderData providerData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.LINEITEM);
-System.out.println(lineItemProvider.getLineItemsForClass(providerData, classId));    
     return lineItemProvider.getLineItemsForClass(providerData, classId);
   }
 

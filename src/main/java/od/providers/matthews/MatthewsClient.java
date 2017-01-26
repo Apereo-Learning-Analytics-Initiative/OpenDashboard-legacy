@@ -71,7 +71,6 @@ public class MatthewsClient {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
     httpHeaders.add("X-Requested-With", "XMLHttpRequest");
-System.out.println(request.toString());
     HttpEntity<String> entity = new HttpEntity<String>(request.toString(), httpHeaders);
     
     ResponseEntity<Map> loginResponse 
@@ -80,7 +79,6 @@ System.out.println(request.toString());
             HttpMethod.POST, 
             entity, 
             Map.class);
-System.out.println(loginResponse);    
     return (String)loginResponse.getBody().get("token");
   }
   
