@@ -25,7 +25,6 @@
     var currentUser = null;
     var currentStudent = null;
 
-
     currentUser = SessionService.getCurrentUser();
 
     $scope.chartInitialized = false;
@@ -790,8 +789,9 @@
           });
 
           // align elements based on layout
-          $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
-          $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 20);
+
+          $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + ($('body').hasClass('isLTI') ? 0 : 9)});
+          $('.zoom-actions').css({'width':$('#floating-header .timeline-heading').width() + 20, 'top':$('.pulse-header').height() / 2  + ($('body').hasClass('isLTI') ? 0 : 20)});
           $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left - 20);
 
           

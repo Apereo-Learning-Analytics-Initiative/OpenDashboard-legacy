@@ -18,7 +18,7 @@ angular
 .module('OpenDashboard')
 .controller('IndexCtrl',
 
-function IndexCtrl($scope, $state, $stateParams, $translate, Notification, SessionService, LocaleService) {
+function IndexCtrl($scope, $state, $stateParams, $translate, Notification, SessionService, LocaleService, $rootScope) {
   $scope.localesDisplayNames = LocaleService.getLocalesDisplayNames();
   
 // Initial routing logic
@@ -27,6 +27,10 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
     $scope.isAuthenticated = SessionService.isAuthenticated();
     $scope.isStudent = SessionService.hasStudentRole();
     $scope.isLtiSession = SessionService.isLTISession();
+    $rootScope.isLtiSession = SessionService.isLTISession();
+    //  uncomment for testing LTI
+    // $scope.isLtiSession = true;
+    // $rootScope.isLtiSession = true;
     $scope.isAdmin = SessionService.hasAdminRole();
   } 
   else {
@@ -41,7 +45,11 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
     		// TODO - not sure why we're doing this here instead of SessionService'
     		$scope.isAuthenticated = SessionService.isAuthenticated();
     		$scope.isStudent = SessionService.hasStudentRole();
-    	    $scope.isLtiSession = SessionService.isLTISession();
+          $scope.isLtiSession = SessionService.isLTISession();
+    	    $rootScope.isLtiSession = SessionService.isLTISession();
+          //  uncomment for testing LTI
+          // $scope.isLtiSession = true;
+          // $rootScope.isLtiSession = true;
     	    $scope.isAdmin = SessionService.hasAdminRole();
     	  }
     	  return;
@@ -52,6 +60,7 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
 		}
 	  );
   }
+
   
 // App-wide functions
   $scope.changeLanguage = function (locale) {
