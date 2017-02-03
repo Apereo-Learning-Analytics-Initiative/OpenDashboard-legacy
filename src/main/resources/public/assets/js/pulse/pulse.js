@@ -247,6 +247,7 @@
 
 
     function buildStudent(cid, sid) {
+      console.log('buildStudent');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -273,8 +274,6 @@
       
       $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
-
-      $scope.appHasRiskData = $scope.currentCourse.students[0].risk ? true : false;
 
       $scope.maxEvents = course.studentEventMax;
       $scope.maxActivities = course.events.length;
@@ -317,6 +316,9 @@
         pulseDataService.initData(currentUser).then(function(data){
             $scope.processedClasses = data;
             $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
+
+            $scope.appHasRiskData = $scope.processedClasses[0].students[0].risk ? true : false;
+
             if ($state.params.studentId && $state.params.groupId) {
               $scope.listType = 'student';
               buildStudent($state.params.groupId, $state.params.studentId);
