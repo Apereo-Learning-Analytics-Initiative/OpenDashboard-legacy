@@ -36,10 +36,10 @@
     $scope.studentFilters = {};
     $scope.studentFilters.list = [];
 
-    $scope.coursesStartEnd = {
-      start: '2016-08-30',
-      end: '2016-12-13'
-    };
+    // $scope.coursesStartEnd = {
+    //   start: '2016-10-30',
+    //   end: '2016-11-13'
+    // };
 
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
@@ -298,8 +298,10 @@
         }
       });
 
-      $scope.coursesStartEnd.start = start;
-      $scope.coursesStartEnd.end = end;
+      $scope.coursesStartEnd = {
+        start: start,
+        end: end
+      };
 
     }
 
@@ -349,7 +351,7 @@
               $scope.maxEvents = pulseDataService.coursesMaxEvents;
               $scope.orderByField = 'label';
               $scope.datalist = $scope.processedClasses;
-              $scope.listType = 'classes';  
+              $scope.listType = 'classes';
             }
         });
       }
@@ -372,10 +374,6 @@
           processedClasses: [],
           processData: function(c) {
             var maxEvents = 0;
-
-            // // build course object
-
-
             var course = {
               id: c.sourcedId,
               label: c.title,
@@ -584,19 +582,25 @@
         var headerHeight = $('.navbar').height();
 
         // default variables
-        var courseStart = moment(scope.coursesStartEnd.start).startOf('week');
-        var courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
-        var weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
+        var courseStart;
+        var courseEnd;
+        var weeks;
+        var xAxis;
 
         // d3 timescale
         var timeScale = d3.scaleTime();
 
-        // generate x axis
-        var xAxis = d3.axisBottom()
-          .scale(timeScale)
-          .ticks(weeks)
-          .tickFormat(d3.timeFormat('%m-%d'));
-
+        function setDates() {
+          courseStart = moment(scope.coursesStartEnd.start).startOf('week');
+          courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
+          weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
+          
+          // generate x axis
+          xAxis = d3.axisBottom()
+            .scale(timeScale)
+            .ticks(weeks)
+            .tickFormat(d3.timeFormat('%m-%d'));
+        }
 
         function setAssignmentToolTipPosition (pos) {
           var posOffset = {
@@ -973,8 +977,6 @@
               return placement;
             });
 
-
-
           d3.selectAll("svg .assignment-marker")
             .transition()
             .duration(750)
@@ -999,6 +1001,7 @@
         });
 
         scope.$on('draw-chart', function(){
+          setDates();
           alignTables(drawChart);
         });
 
