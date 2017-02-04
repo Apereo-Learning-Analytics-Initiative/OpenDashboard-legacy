@@ -40,6 +40,7 @@
       start: '2016-08-30',
       end: '2016-12-13'
     };
+
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
@@ -281,6 +282,27 @@
       runFilters();
     }
 
+    function hideOptionalData() {
+      $scope.appHasRiskData = $scope.processedClasses[0].students[0].risk ? true : false;
+    }
+
+    function calculateCoursesTerm() {
+      var start = $scope.processedClasses[0].startdate;
+      var end = $scope.processedClasses[0].enddate;
+      _.each($scope.processedClasses, function(o, i){
+        if (moment(o.startdate) < moment(start)) {
+          start = o.startdate;
+        }
+        if (moment(o.enddate) > moment(end)) {
+          end = o.enddate;
+        }
+      });
+
+      $scope.coursesStartEnd.start = start;
+      $scope.coursesStartEnd.end = end;
+
+    }
+
     $scope.updateStudentCharts = function (data) {
       // $timeout(function(){
         $scope.$broadcast('updateTable', data);
@@ -308,16 +330,13 @@
         } 
       });
 
-      /**
-        * TODO: Move data loading to payload resolver
-      */
-
       if (currentUser) {
         pulseDataService.initData(currentUser).then(function(data){
             $scope.processedClasses = data;
             $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
 
-            $scope.appHasRiskData = $scope.processedClasses[0].students[0].risk ? true : false;
+            hideOptionalData();
+            calculateCoursesTerm();
 
             if ($state.params.studentId && $state.params.groupId) {
               $scope.listType = 'student';
@@ -355,14 +374,27 @@
             var maxEvents = 0;
 
             // // build course object
+
+
             var course = {
               id: c.sourcedId,
               label: c.title,
+              startdate: null,
+              enddate: null,
               studentEventMax: 0,
               events: [],
               students: [],
               assignments: c.assignments
             };
+
+            _.each(c.metadata, function(value, key){
+              if (key.indexOf('classStartDate') !== -1 ) {
+                course.startdate = value;
+              }
+              if (key.indexOf('classEndDate') !== -1 ) {
+                course.enddate = value;
+              }
+            });
 
             // process events object for the class
             _.each(c.statistics.eventCountGroupedByDate, function(event, index){
@@ -389,6 +421,7 @@
                 firstName: studentSrc.givenName,
                 lastName: studentSrc.familyName,
                 email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
+                // risk: studentSrc.risk ? studentSrc.risk : false,
                 risk: Math.round(Math.random() * (100 - 0)),
                 grade: Math.round(Math.random() * (100 - 0)),
                 // activity: Math.round(Math.random() * (1000 - 100) + 100),
@@ -440,6 +473,10 @@
             // console.log('processedClasses', processedClasses);
             service.coursesMaxEvents = maxEvents;
           },
+
+          /**
+            * TODO: Move data loading to payload resolver
+          */
           initData: function(currentUser) {
             var deferred = $q.defer();
 
