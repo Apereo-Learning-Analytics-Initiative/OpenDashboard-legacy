@@ -35,12 +35,11 @@
     <h4>Consumers</h4>
     <ul class="list-group">
       <li class="list-group-item" ng-repeat="consumer in tenant.consumers">
-        <span>{{consumer.name}}</span>{{removeConsumer}}
+        <span>{{consumer.name}}</span>
         <span class="pull-right">                
           <a ng-click="removeConsumer(consumer.id,consumer.oauthConsumerKey);"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
         </span>
         <ul>
-          <li>{{consumer.id}}
           <li>Key: {{consumer.oauthConsumerKey}}</li>
           <li>Secret: {{consumer.oauthConsumerSecret}}</li>
         </ul>
