@@ -7,7 +7,6 @@
         When viewing from within a LMS the breadcrumb is to only provide navitation
         withing the selected class.
         -->
-        
         <div class="backlinks">
             <!-- Back link to class list -->
             <a class="back-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession" ng-if="listType !== 'classes'">
@@ -145,7 +144,7 @@
                     {{ currentStudent.events.length }}
                 </div>
             </div>
-            <div class="col-sm-3 activityCard">
+            <div class="col-sm-3 activityCard" ng-show="appHasRiskData">
                 <div class="heading">Risk</div>
                 <div class="body">
                     {{ currentStudent.risk }}

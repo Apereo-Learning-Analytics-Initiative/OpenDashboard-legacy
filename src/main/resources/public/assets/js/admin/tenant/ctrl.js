@@ -61,7 +61,6 @@ function EditTenantCtrl($scope, $state, Notification, TenantService, tenant) {
 function SelectTenantCtrl($scope, $state, Notification, TenantService, tenant, providerTypes) {
   $scope.tenant = tenant;
   $scope.providerTypes = providerTypes;
-  $scope.preconfiguredDashboards = $scope.tenant.dashboards;
   $scope.consumer = {};
   $scope.selectProviderType = function(providerType) {
     $state.go('index.admin.tenants.tenant.provider', {providerType:providerType});
@@ -80,7 +79,14 @@ function SelectTenantCtrl($scope, $state, Notification, TenantService, tenant, p
     if ($scope.consumer.name) {
         
       var consumer = {};
-      consumer['id'] = $scope.consumer.id;
+      
+      if ($scope.consumer.id) {
+        consumer['id'] = $scope.consumer.id;
+      }
+      else {
+        consumer['id'] = createGuid();
+      }
+      
       consumer['name'] = $scope.consumer.name;
       consumer['oauthConsumerKey'] = createGuid();
       consumer['oauthConsumerSecret'] = createGuid();
@@ -104,6 +110,27 @@ function SelectTenantCtrl($scope, $state, Notification, TenantService, tenant, p
      }
     	
   };
+  
+  $scope.removeConsumer = function(id,key) {
+    if (id) {
+      _.remove($scope.tenant.consumers,function(c) {return c.id === id;});
+    }
+    else {
+      _.remove($scope.tenant.consumers,function(c) {return c.oauthConsumerKey === key;});
+    }
+    
+   TenantService.updateTenant($scope.tenant)
+    .then(
+        function (tenant) {
+          Notification.success('Consumer removed');
+          $scope.consumer = {};
+          $state.go('index.admin.tenants.tenant',{id:tenant.id}, {reload: true});                    
+        },
+        function (error) {
+          Notification.error('Unable to remove consumer.');
+        });
+  };
+  
   
 });
 

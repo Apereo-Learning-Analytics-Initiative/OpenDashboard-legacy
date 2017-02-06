@@ -126,6 +126,13 @@ body.application {
       overflow: hidden;
     }
   }
+  
+  .isLTI .pulse-header {
+    padding-top: 0;
+    .title-dropdown {
+      margin-top: 10px;
+    }
+  }
 
   #hidden-header {
     visibility: hidden;
@@ -291,6 +298,7 @@ body.application {
 #pulse-data {
   position: relative;
   padding-right: 1px;
+  // padding-top: 82px;
 }
 
 .hide-until-ready {
