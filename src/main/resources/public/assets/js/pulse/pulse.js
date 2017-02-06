@@ -25,7 +25,6 @@
     var currentUser = null;
     var currentStudent = null;
 
-
     currentUser = SessionService.getCurrentUser();
 
     $scope.chartInitialized = false;
@@ -37,10 +36,11 @@
     $scope.studentFilters = {};
     $scope.studentFilters.list = [];
 
-    $scope.coursesStartEnd = {
-      start: '2016-08-30',
-      end: '2016-12-13'
-    };
+    // $scope.coursesStartEnd = {
+    //   start: '2016-10-30',
+    //   end: '2016-11-13'
+    // };
+
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
@@ -248,6 +248,7 @@
 
 
     function buildStudent(cid, sid) {
+      console.log('buildStudent');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -275,12 +276,33 @@
       $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
 
-      $scope.appHasRiskData = $scope.currentCourse.students[0].risk ? true : false;
-
       $scope.maxEvents = course.studentEventMax;
       $scope.maxActivities = course.events.length;
       buildActivityColorThreshold();
       runFilters();
+    }
+
+    function hideOptionalData() {
+      $scope.appHasRiskData = $scope.processedClasses[0].students[0].risk ? true : false;
+    }
+
+    function calculateCoursesTerm() {
+      var start = $scope.processedClasses[0].startdate;
+      var end = $scope.processedClasses[0].enddate;
+      _.each($scope.processedClasses, function(o, i){
+        if (moment(o.startdate) < moment(start)) {
+          start = o.startdate;
+        }
+        if (moment(o.enddate) > moment(end)) {
+          end = o.enddate;
+        }
+      });
+
+      $scope.coursesStartEnd = {
+        start: start,
+        end: end
+      };
+
     }
 
     $scope.updateStudentCharts = function (data) {
@@ -310,14 +332,14 @@
         } 
       });
 
-      /**
-        * TODO: Move data loading to payload resolver
-      */
-
       if (currentUser) {
         pulseDataService.initData(currentUser).then(function(data){
             $scope.processedClasses = data;
             $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
+
+            hideOptionalData();
+            calculateCoursesTerm();
+
             if ($state.params.studentId && $state.params.groupId) {
               $scope.listType = 'student';
               buildStudent($state.params.groupId, $state.params.studentId);
@@ -329,7 +351,7 @@
               $scope.maxEvents = pulseDataService.coursesMaxEvents;
               $scope.orderByField = 'label';
               $scope.datalist = $scope.processedClasses;
-              $scope.listType = 'classes';  
+              $scope.listType = 'classes';
             }
         });
       }
@@ -352,16 +374,25 @@
           processedClasses: [],
           processData: function(c) {
             var maxEvents = 0;
-
-            // // build course object
             var course = {
               id: c.sourcedId,
               label: c.title,
+              startdate: null,
+              enddate: null,
               studentEventMax: 0,
               events: [],
               students: [],
               assignments: c.assignments
             };
+
+            _.each(c.metadata, function(value, key){
+              if (key.indexOf('classStartDate') !== -1 ) {
+                course.startdate = value;
+              }
+              if (key.indexOf('classEndDate') !== -1 ) {
+                course.enddate = value;
+              }
+            });
 
             // process events object for the class
             _.each(c.statistics.eventCountGroupedByDate, function(event, index){
@@ -388,6 +419,7 @@
                 firstName: studentSrc.givenName,
                 lastName: studentSrc.familyName,
                 email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
+                // risk: studentSrc.risk ? studentSrc.risk : false,
                 risk: Math.round(Math.random() * (100 - 0)),
                 grade: Math.round(Math.random() * (100 - 0)),
                 // activity: Math.round(Math.random() * (1000 - 100) + 100),
@@ -439,6 +471,10 @@
             // console.log('processedClasses', processedClasses);
             service.coursesMaxEvents = maxEvents;
           },
+
+          /**
+            * TODO: Move data loading to payload resolver
+          */
           initData: function(currentUser) {
             var deferred = $q.defer();
 
@@ -546,19 +582,25 @@
         var headerHeight = $('.navbar').height();
 
         // default variables
-        var courseStart = moment(scope.coursesStartEnd.start).startOf('week');
-        var courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
-        var weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
+        var courseStart;
+        var courseEnd;
+        var weeks;
+        var xAxis;
 
         // d3 timescale
         var timeScale = d3.scaleTime();
 
-        // generate x axis
-        var xAxis = d3.axisBottom()
-          .scale(timeScale)
-          .ticks(weeks)
-          .tickFormat(d3.timeFormat('%m-%d'));
-
+        function setDates() {
+          courseStart = moment(scope.coursesStartEnd.start).startOf('week');
+          courseEnd = moment(scope.coursesStartEnd.end).startOf('week').add(moment.duration(1, 'week'));
+          weeks = Math.round(moment.duration(courseEnd - courseStart).asWeeks());
+          
+          // generate x axis
+          xAxis = d3.axisBottom()
+            .scale(timeScale)
+            .ticks(weeks)
+            .tickFormat(d3.timeFormat('%m-%d'));
+        }
 
         function setAssignmentToolTipPosition (pos) {
           var posOffset = {
@@ -790,8 +832,9 @@
           });
 
           // align elements based on layout
-          $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + 9});
-          $('.zoom-actions').width($('#floating-header .timeline-heading').width() + 20);
+
+          $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + ($('body').hasClass('isLTI') ? 0 : 9)});
+          $('.zoom-actions').css({'width':$('#floating-header .timeline-heading').width() + 20, 'top':$('.pulse-header').height() / 2  + ($('body').hasClass('isLTI') ? 0 : 20)});
           $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left - 20);
 
           
@@ -934,8 +977,6 @@
               return placement;
             });
 
-
-
           d3.selectAll("svg .assignment-marker")
             .transition()
             .duration(750)
@@ -960,6 +1001,7 @@
         });
 
         scope.$on('draw-chart', function(){
+          setDates();
           alignTables(drawChart);
         });
 
