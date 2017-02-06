@@ -28,6 +28,10 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
     $scope.isStudent = SessionService.hasStudentRole();
     $scope.isLtiSession = SessionService.isLTISession();
     $scope.isAdmin = SessionService.hasAdminRole();
+    
+    if ($state.is('index')) {
+      $state.go('index.courselist');
+    }
   } 
   else {
 	SessionService
@@ -43,6 +47,10 @@ function IndexCtrl($scope, $state, $stateParams, $translate, Notification, Sessi
     		$scope.isStudent = SessionService.hasStudentRole();
     	    $scope.isLtiSession = SessionService.isLTISession();
     	    $scope.isAdmin = SessionService.hasAdminRole();
+    	    
+    	    if ($state.is('index')) {
+    	      $state.go('index.courselist');
+    	    }
     	  }
     	  return;
     	},
