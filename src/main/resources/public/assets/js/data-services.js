@@ -107,6 +107,40 @@ angular
 });
 // END Provider Service
   
+// Pulse Service
+angular
+  .module('OpenDashboard')
+    .service('PulseApiService', function($log, $http) {
+      return {
+        getPulseData: function(tenantId,userId) {
+		  var url = '/api/tenants/'+tenantId+'/pulse/'+userId;
+		  var promise = $http({
+		    method  : 'GET',
+			url		: url,
+			headers : { 'Content-Type': 'application/json'}
+		  })
+		  .then(
+		  function (response) {
+		    if (response && response.data) {			    			
+		      return response.data;		    			
+			}
+			$log.debug('Pulse data not found');
+			return null;
+	      }, 
+	      function (error) {
+	    	$log.debug(error);
+	    	var errorObj = {};
+	    	errorObj['isError'] = true;
+	    	errorObj['errorCode'] = error.data.errors[0];
+	    	
+	    	return errorObj;
+	      });
+		  return promise;
+		}
+	}
+});
+// END Pulse Service
+  
 // User Service
 angular
   .module('OpenDashboard')

@@ -15,7 +15,8 @@
     'EventService',
     'LineItemDataService',
     'pulseDataService',
-    function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, pulseDataService){
+    'PulseApiService',
+    function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, pulseDataService, PulseApiService){
       "use strict";
 
     var processedClasses = [];
@@ -356,6 +357,18 @@
         });
       }
     }
+    
+    
+// just demoing how to call pulseapi
+
+PulseApiService
+.getPulseData(currentUser.tenant_id, currentUser.user_id)
+.then(function(pulseData){
+  console.log(pulseData);
+});
+
+// end pulseapi
+
 
     init();
   }
