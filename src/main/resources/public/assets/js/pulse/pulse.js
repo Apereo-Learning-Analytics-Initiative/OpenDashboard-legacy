@@ -57,6 +57,8 @@
     $scope.maxRisk = 100;
     $scope.maxActivity = 100;
     $scope.appHasRiskData = false;
+    $scope.appHasGradeData = false;
+    $scope.appHasMissingSubmissionData = false;
     $scope.riskOverlay = true;
     var riskTypeCount = 4;
     var riskColorClasses = [
@@ -283,8 +285,16 @@
       runFilters();
     }
 
-    function hideOptionalData() {
+    function hideOptionalRiskData() {
       $scope.appHasRiskData = $scope.processedClasses[0].students[0].risk ? true : false;
+    }
+
+    function hideOptionalGradeData() {
+      $scope.appHasGradeData = $scope.processedClasses[0].students[0].grade ? true : false;
+    }
+
+    function hideOptionalMissingSubmissionData() {
+      $scope.appHasMissingSubmissionData = $scope.processedClasses[0].students[0].missingSubmission ? true : false;
     }
 
     function calculateCoursesTerm() {
@@ -338,7 +348,9 @@
             $scope.processedClasses = data;
             $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
 
-            hideOptionalData();
+            hideOptionalRiskData();
+            hideOptionalGradeData();
+            hideOptionalMissingSubmissionData();
             calculateCoursesTerm();
 
             if ($state.params.studentId && $state.params.groupId) {
@@ -432,13 +444,18 @@ PulseApiService
                 firstName: studentSrc.givenName,
                 lastName: studentSrc.familyName,
                 email: studentSrc.givenName + '@' + studentSrc.givenName+studentSrc.familyName + '.com',
-                // risk: studentSrc.risk ? studentSrc.risk : false,
-                risk: Math.round(Math.random() * (100 - 0)),
-                grade: Math.round(Math.random() * (100 - 0)),
+                // Hides risk data if no risk data is available through the service
+                risk: studentSrc.risk ? studentSrc.risk : false,
+                //risk: Math.round(Math.random() * (100 - 0)),
+                // Hides grade data if no grade data is available through the service
+                grade: studentSrc.grade ? studentSrc.grade : false,
+                // grade: Math.round(Math.random() * (100 - 0)),
                 // activity: Math.round(Math.random() * (1000 - 100) + 100),
                 activity: 0,
                 daysSinceLogin: 0,
-                missingSubmission: Math.round(Math.random() * 6),
+                // Hides missing submission data if no missing submission data is available throug the service
+                missingSubmission: studentSrc.missingSubmission ? studentSrc.missingSubmission : false,
+                // missingSubmission: Math.round(Math.random() * 6),
                 events: []
               };
 
