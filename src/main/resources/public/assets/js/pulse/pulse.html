@@ -32,24 +32,26 @@
             <!-- filters and overlays popover -->
             <span class="filters">
                 <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters &amp; Overlays"><i class="fa fa-cog fa-lg"></i></a>
-                
                 <script type="text/ng-template" id="filters.html">
                     <span ng-if="listType!='student'">
-                        <span class="checkbox filter-item">
+                        <span class="checkbox filter-item" ng-if="config.hasLastLogin">
                             <label>
-                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.daysSinceLoginFilter">
-                                Hasn't logged in for <input type="number" ng-model="$parent.$parent.$parent.daysSinceLoginFilterCount" min="0"> days</span>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.daysSinceLoginFilter">
+                                Last logged in more than <input type="number" ng-model="$parent.$parent.$parent.$parent.daysSinceLoginFilterCount" min="0"> days ago
                             </label>
-                        <span class="checkbox filter-item">
+                        </span>
+                        <span class="checkbox filter-item" ng-if="config.hasMissingSubmissions">
                             <label>
-                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.submissionFilter">
-                                <input type="number" ng-model="$parent.$parent.$parent.submissionFilterScore" min="0"> number of submission late or missing</span>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.submissionFilter">
+                                <input type="number" ng-model="$parent.$parent.$parent.$parent.submissionFilterScore" min="0"> number of submission late or missing
                             </label>
-                        <span class="checkbox filter-item">
+                        </span>
+                        <span class="checkbox filter-item" ng-if="config.hasGrade">
                             <label>
-                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.gradeFilter">
-                                Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.gradeFilterScore" min="0"></span>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.gradeFilter">
+                                Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.$parent.gradeFilterScore" min="0">
                             </label>
+                        </span>
                     </span>
 
                     <div class="btn-group btn-group-justified buttons" role="group" ng-if="listType == 'student'">
@@ -77,7 +79,7 @@
                         </label>
                     </span>
 
-                    <span class="checkbox filter-item" ng-show="listType == 'students' && appHasRiskData">
+                    <span class="checkbox filter-item" ng-show="listType == 'students' && config.hasRisk">
                         <label>
                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.riskOverlay"> Show Risk Colors
                         </label>
@@ -144,7 +146,7 @@
                     {{ currentStudent.events.length }}
                 </div>
             </div>
-            <div class="col-sm-3 activityCard" ng-show="appHasRiskData">
+            <div class="col-sm-3 activityCard" ng-show="config.hasRisk">
                 <div class="heading">Risk</div>
                 <div class="body">
                     {{ currentStudent.risk }}
@@ -180,7 +182,7 @@
 
             <script type="text/ng-template" id="table-header.html">
             <tr>
-                <th class="actions" ng-if="listType == 'students'">
+                <th class="actions" ng-if="listType == 'students' && config.hasEmail">
                     <a href="" class="fa fa-envelope"
                     ng-click="handleEmail(item, true)"
                     ></a>
@@ -208,7 +210,7 @@
                     <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes' && appHasRiskData">
+                <th ng-if="listType != 'classes' && config.hasRisk">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
                     Risk
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
@@ -216,7 +218,7 @@
                     <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes'">
+                <th ng-if="listType != 'classes' && config.hasGrade">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='grade'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
                     Grade
                     <i ng-if="$parent.$parent.orderByField=='grade' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
@@ -240,7 +242,7 @@
 
             <tbody>
                 <tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort" ng-repeat-finish="draw-chart" watch-for-changes="datalist">
-                    <td ng-if="listType == 'students'">
+                    <td ng-if="listType == 'students' && config.hasEmail">
                         <a href="" class="fa fa-envelope"
                         ng-click="handleEmail(item)"
                         ></a>
@@ -254,10 +256,10 @@
                     <td ng-if="listType != 'classes'">
                         <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
                     </td>
-                    <td ng-if="listType != 'classes' && appHasRiskData">
+                    <td ng-if="listType != 'classes' && config.hasRisk">
                         <div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}</div>
                     </td>
-                    <td ng-if="listType != 'classes'">
+                    <td ng-if="listType != 'classes' && config.hasGrade">
                         <!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
                         {{item.grade}}
                         <!-- </div> -->

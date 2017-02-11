@@ -55,7 +55,7 @@
 
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
-    $scope.maxActivity = 100;
+    $scope.maxActivity = 0;
     $scope.appHasRiskData = false;
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
@@ -86,19 +86,19 @@
     function buildActivityColorThreshold() {
       activityColorClasses = [
         {
-          'threshold':[$scope.maxActivities + 1, $scope.maxActivities/activityTypeCount*3],
+          'threshold':[$scope.currentCourse.studentActivityMax + 1, $scope.currentCourse.studentActivityMax/activityTypeCount*3],
           'classname': 'no-risk'
         },
         {
-          'threshold':[$scope.maxActivities/activityTypeCount*3, $scope.maxActivities/activityTypeCount*2],
+          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount*3, $scope.currentCourse.studentActivityMax/activityTypeCount*2],
           'classname': 'medium-risk'
         },
         {
-          'threshold':[$scope.maxActivities/activityTypeCount*2, $scope.maxActivities/activityTypeCount],
+          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount*2, $scope.currentCourse.studentActivityMax/activityTypeCount],
           'classname': 'medium-risk'
         },
         {
-          'threshold':[$scope.maxActivities/activityTypeCount, 0],
+          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount, 0],
           'classname': 'high-risk'
         }
       ];
@@ -165,8 +165,6 @@
     $scope.colorCodeActivity = function(activity){
       if ($scope.activityOverlay) {
         var colorclass;
-        // var riskDivided = 100/riskColorClasses.length;
-        // console.log(Math.round(riskDivided/(riskDivided+)));
         _.each(activityColorClasses, function(r, i){
           if (activity < r.threshold[0] && activity >= r.threshold[1]) {
             colorclass = r.classname;
@@ -207,29 +205,31 @@
         if ($scope.daysSinceLoginFilter) {
           var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
-            currentDataList = _.filter(tempDataList, function(o){
-              return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
-            });
-          }
+          currentDataList = _.filter(tempDataList, function(o){
+            // console.log(o.daysSinceLogin >= $scope.daysSinceLoginFilterCount);
+            return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
+          });
         }
       }
-      
-      function runFilters() {
-        if($scope.currentCourse) {
-          filterByGrade();
-          filterByMissingSubmissions();
-          filterLastLoginCount();
-          
-          if(currentDataList.length) {
-            $scope.datalist = currentDataList;
-            currentDataList = [];
-          } else {
-            $scope.datalist = $scope.currentCourse.students;
-          }
+    }
+    
+    function runFilters() {
+      if($scope.currentCourse) {
+        filterByGrade();
+        filterByMissingSubmissions();
+        filterLastLoginCount();
+        
+        if(currentDataList.length) {
+          $scope.datalist = currentDataList;
+          currentDataList = [];
+        } else {
+          $scope.datalist = $scope.currentCourse.students;
         }
       }
-      
-      $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilterCount', 'daysSinceLoginFilter'], runFilters);
+    }
+    
+    $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilter', 'daysSinceLoginFilterCount'], runFilters);
+    // $scope.$watchGroup(['daysSinceLoginFilter'], runFilters);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -278,9 +278,7 @@
       
       $scope.classes = $scope.processedClasses;
       $scope.currentCourse = course;
-
       $scope.maxEvents = course.studentEventMax;
-      $scope.maxActivities = course.events.length;
       buildActivityColorThreshold();
       runFilters();
     }
@@ -297,24 +295,88 @@
       $scope.appHasMissingSubmissionData = $scope.processedClasses[0].students[0].missingSubmission ? true : false;
     }
 
-    function calculateCoursesTerm() {
-      var start = $scope.processedClasses[0].startdate;
-      var end = $scope.processedClasses[0].enddate;
-      _.each($scope.processedClasses, function(o, i){
-        if (moment(o.startdate) < moment(start)) {
-          start = o.startdate;
-        }
-        if (moment(o.enddate) > moment(end)) {
-          end = o.enddate;
-        }
+    function addMissingData() {
+      // set app optional data configs
+      $scope.config.hasRisk = $scope.config.hasRisk ? $scope.config.hasRisk : false;
+      $scope.config.hasGrade = $scope.config.hasGrade ? $scope.config.hasGrade : false;
+      $scope.config.hasEmail = $scope.config.hasEmail ? $scope.config.hasEmail : false;
+      $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : true;
+      $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : true;
+
+      // Grab max event count over all classes
+      var maxEvents = 0;
+      _.each($scope.processedClasses, function(c){
+        _.each(c.events, function(event){
+          if (maxEvents < event.eventCount) {
+            maxEvents = event.eventCount;
+          }
+        });
+      });
+      $scope.coursesMaxEvents = maxEvents;
+
+      // Set student activity class total maximum
+      _.each($scope.processedClasses, function(c){
+        var maxActivity = 0;
+        _.each(c.students, function(s){
+          if (maxActivity < s.activity) {
+            maxActivity = s.activity;
+          }
+        });
+        c.studentActivityMax = maxActivity;
       });
 
+      // fake email data
+      if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
+        console.log('build fake email');
+        _.each($scope.processedClasses, function(c){
+          _.each(c.students, function(s){
+            s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
+          });
+        });
+      }
+
+      // fake risk data
+      if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].risk) {
+        console.log('build fake risk data');
+        _.each($scope.processedClasses, function(c){
+          _.each(c.students, function(s){
+            s.risk = s.risk ? s.risk : Math.round(Math.random() * (100 - 0));
+          });
+        });
+      }
+
+      // fake risk data
+      if ($scope.config.hasGrade && !$scope.processedClasses[0].students[0].grade) {
+        console.log('build fake grade data');
+        _.each($scope.processedClasses, function(c){
+          _.each(c.students, function(s){
+            s.grade = s.grade ? s.grade : Math.round(Math.random() * (100 - 0));
+          });
+        });
+      }
+
+
+      // fake missing submission data
+      if ($scope.config.hasMissingSubmissions && $scope.processedClasses[0].students[0].missingSubmission !== 0) {
+        console.log('build fake submission data');
+        _.each($scope.processedClasses, function(c){
+          _.each(c.students, function(s){
+            s.missingSubmission = s.missingSubmission ? s.missingSubmission : Math.round(Math.random() * (50 - 0));
+          });
+        });
+      }
+
+    }
+
+    function setCoursesTerm() {
       $scope.coursesStartEnd = {
-        start: start,
-        end: end
+        start: $scope.config.startDate,
+        end: $scope.config.endDate
       };
 
     }
+
+
 
     $scope.updateStudentCharts = function (data) {
       // $timeout(function(){
@@ -344,40 +406,74 @@
       });
 
       if (currentUser) {
-        pulseDataService.initData(currentUser).then(function(data){
-            $scope.processedClasses = data;
-            $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
+        PulseApiService
+        .getPulseData(currentUser.tenant_id, currentUser.user_id)
+        .then(function(data){
+          console.log(data);
 
-            hideOptionalRiskData();
-            hideOptionalGradeData();
-            hideOptionalMissingSubmissionData();
-            calculateCoursesTerm();
+          $scope.config = _.clone(data);
+          delete $scope.config.pulseClassDetails;
+          $scope.processedClasses = data.pulseClassDetails;
 
-            if ($state.params.studentId && $state.params.groupId) {
-              $scope.listType = 'student';
-              buildStudent($state.params.groupId, $state.params.studentId);
-            } else if ($state.params.groupId) {
-              $scope.listType = 'students';
-              $scope.orderByField = 'lastName';
-              buildStudentList($state.params.groupId);
-            } else {
-              $scope.maxEvents = pulseDataService.coursesMaxEvents;
-              $scope.orderByField = 'label';
-              $scope.datalist = $scope.processedClasses;
-              $scope.listType = 'classes';
-            }
+          addMissingData();
+          setCoursesTerm();
+          // hideOptionalRiskData();
+          // hideOptionalGradeData();
+          // hideOptionalMissingSubmissionData();
+          // calculateCoursesTerm();
+
+          if ($state.params.studentId && $state.params.groupId) {
+            $scope.listType = 'student';
+            buildStudent($state.params.groupId, $state.params.studentId);
+          } else if ($state.params.groupId) {
+            $scope.listType = 'students';
+            $scope.orderByField = 'lastName';
+            buildStudentList($state.params.groupId);
+          } else {
+            $scope.maxEvents = pulseDataService.coursesMaxEvents;
+            $scope.orderByField = 'label';
+            $scope.datalist = $scope.processedClasses;
+            $scope.listType = 'classes';
+          }
+
+
         });
+
+
+        // pulseDataService.initData(currentUser).then(function(data){
+        //     $scope.processedClasses = data;
+        //     $scope.coursesMaxEvents = pulseDataService.coursesMaxEvents;
+
+        //     hideOptionalRiskData();
+        //     hideOptionalGradeData();
+        //     hideOptionalMissingSubmissionData();
+        //     calculateCoursesTerm();
+
+        //     if ($state.params.studentId && $state.params.groupId) {
+        //       $scope.listType = 'student';
+        //       buildStudent($state.params.groupId, $state.params.studentId);
+        //     } else if ($state.params.groupId) {
+        //       $scope.listType = 'students';
+        //       $scope.orderByField = 'lastName';
+        //       buildStudentList($state.params.groupId);
+        //     } else {
+        //       $scope.maxEvents = pulseDataService.coursesMaxEvents;
+        //       $scope.orderByField = 'label';
+        //       $scope.datalist = $scope.processedClasses;
+        //       $scope.listType = 'classes';
+        //     }
+        // });
       }
     }
     
     
 // just demoing how to call pulseapi
 
-PulseApiService
-.getPulseData(currentUser.tenant_id, currentUser.user_id)
-.then(function(pulseData){
-  console.log(pulseData);
-});
+// PulseApiService
+// .getPulseData(currentUser.tenant_id, currentUser.user_id)
+// .then(function(pulseData){
+//   console.log('pulseData',pulseData);
+// });
 
 // end pulseapi
 
