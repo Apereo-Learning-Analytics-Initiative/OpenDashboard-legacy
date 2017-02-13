@@ -78,6 +78,7 @@ public class PulseController {
       
       Set<LocalDate> allClassStartDates = new HashSet<>();
       Set<LocalDate> allClassEndDates = new HashSet<>();
+      Set<Integer> allClassEventCounts = new HashSet<>();
       Set<Long> allStudentEventCounts = new HashSet<>();
 
       for (Enrollment enrollment: enrollments) {
@@ -110,9 +111,11 @@ public class PulseController {
         
         ClassEventStatistics classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
         Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);
-        
+                
         List<PulseDateEventCount> classPulseDateEventCounts = null;
         if (classEventStatistics != null) {
+          allClassEventCounts.add(classEventStatistics.getTotalEvents());
+
           Map<String,Long> eventCountGroupedByDate = classEventStatistics.getEventCountGroupedByDate();
           if (eventCountGroupedByDate != null && !eventCountGroupedByDate.isEmpty()) {
             classPulseDateEventCounts = new ArrayList<>();
@@ -210,6 +213,7 @@ public class PulseController {
             .withEnddate(classEndDate)
             
             .withStudentEventMax(Collections.max(allStudentEventCounts).intValue())
+            .withStudentEventTotalMax(pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong())
             .withAssignments(new ArrayList<>(classLineItems))
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
@@ -223,6 +227,12 @@ public class PulseController {
         = new PulseDetail.Builder()
           .withEndDate(allClassEndDates.stream().max(LocalDate::compareTo).get())
           .withStartDate(allClassStartDates.stream().min(LocalDate::compareTo).get())
+          .withClassesMaxEvents(allClassEventCounts.stream().max(Integer::compareTo).get())
+          .withHasGrade(false)
+          .withHasRisk(false)
+          .withHasMissingSubmissions(false)
+          .withHasLastLogin(false)
+          .withHasEmail(false)
           .withPulseClassDetails(pulseClassDetails)
           .build();
     }

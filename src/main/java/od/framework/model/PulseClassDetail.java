@@ -18,6 +18,7 @@ public class PulseClassDetail {
   private LocalDate startdate;
   private LocalDate enddate;
   private Integer studentEventMax;
+  private Long studentEventTotalMax;
   
   private boolean hasRisk;
   private boolean hasGrade;
@@ -48,6 +49,10 @@ public class PulseClassDetail {
 
   public Integer getStudentEventMax() {
     return studentEventMax;
+  }
+  
+  public Long getStudentEventTotalMax() {
+    return studentEventTotalMax;
   }
 
   public boolean hasRisk() {
@@ -97,6 +102,7 @@ public class PulseClassDetail {
     result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((label == null) ? 0 : label.hashCode());
     result = prime * result + ((startdate == null) ? 0 : startdate.hashCode());
+    result = prime * result + ((studentEventTotalMax == null) ? 0 : studentEventTotalMax.hashCode());
     result = prime * result + ((studentEventMax == null) ? 0 : studentEventMax.hashCode());
     result = prime * result + ((students == null) ? 0 : students.hashCode());
     return result;
@@ -149,6 +155,11 @@ public class PulseClassDetail {
         return false;
     } else if (!startdate.equals(other.startdate))
       return false;
+    if (studentEventTotalMax == null) {
+      if (other.studentEventTotalMax != null)
+        return false;
+    } else if (!studentEventTotalMax.equals(other.studentEventTotalMax))
+      return false;
     if (studentEventMax == null) {
       if (other.studentEventMax != null)
         return false;
@@ -188,6 +199,11 @@ public class PulseClassDetail {
 
     public Builder withStudentEventMax(Integer studentEventMax) {
       _pulseClassDetail.studentEventMax = studentEventMax;
+      return this;
+    }
+    
+    public Builder withStudentEventTotalMax(Long studentEventTotalMax) {
+      _pulseClassDetail.studentEventTotalMax = studentEventTotalMax;
       return this;
     }
     
