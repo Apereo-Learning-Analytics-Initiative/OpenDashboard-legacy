@@ -19,7 +19,7 @@ public class PulseDetail {
   private boolean hasMissingSubmissions;
   private boolean hasLastLogin;
   
-  private Integer classesMaxEvents;
+  private Integer classEventMax;
   
   private List<PulseClassDetail> pulseClassDetails;
   
@@ -33,8 +33,8 @@ public class PulseDetail {
     return endDate;
   }
 
-  public Integer getClassesMaxEvents() {
-    return classesMaxEvents;
+  public Integer getClassEventMax() {
+    return classEventMax;
   }
 
   public boolean isHasRisk() {
@@ -70,7 +70,7 @@ public class PulseDetail {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((classesMaxEvents == null) ? 0 : classesMaxEvents.hashCode());
+    result = prime * result + ((classEventMax == null) ? 0 : classEventMax.hashCode());
     result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
     result = prime * result + (hasEmail ? 1231 : 1237);
     result = prime * result + (hasGrade ? 1231 : 1237);
@@ -91,10 +91,10 @@ public class PulseDetail {
     if (getClass() != obj.getClass())
       return false;
     PulseDetail other = (PulseDetail) obj;
-    if (classesMaxEvents == null) {
-      if (other.classesMaxEvents != null)
+    if (classEventMax == null) {
+      if (other.classEventMax != null)
         return false;
-    } else if (!classesMaxEvents.equals(other.classesMaxEvents))
+    } else if (!classEventMax.equals(other.classEventMax))
       return false;
     if (endDate == null) {
       if (other.endDate != null)
@@ -137,8 +137,8 @@ public class PulseDetail {
       return this;
     }
     
-    public Builder withClassesMaxEvents(Integer classesMaxEvents) {
-      _pulseDetail.classesMaxEvents = classesMaxEvents;
+    public Builder withClassEventMax(Integer classEventMax) {
+      _pulseDetail.classEventMax = classEventMax;
       return this;
     }
     

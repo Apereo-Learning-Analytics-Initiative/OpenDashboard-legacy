@@ -18,27 +18,18 @@
 package od.entrypoints;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import lti.LaunchRequest;
 import od.auth.OpenDashboardAuthenticationToken;
-import od.framework.model.Card;
-import od.framework.model.ContextMapping;
-import od.framework.model.Dashboard;
 import od.framework.model.Tenant;
-import od.providers.NoVLEModuleMapException;
 import od.providers.ProviderException;
 import od.providers.ProviderService;
 import od.providers.config.ProviderDataConfigurationException;
 import od.providers.course.CourseProvider;
+import od.providers.user.UserProvider;
 import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
@@ -54,7 +45,6 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -78,6 +68,8 @@ public class LTIEntryPointController {
   public String lti(HttpServletRequest request) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
     
+    logger.debug("{}",launchRequest);
+    
     String consumerKey = launchRequest.getOauth_consumer_key();
     String contextId = launchRequest.getContext_id();
     
@@ -93,6 +85,24 @@ public class LTIEntryPointController {
     }
     
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    
+    if (launchRequest.getCustom() != null && !launchRequest.getCustom().isEmpty()) {
+      String canvasCourseId = launchRequest.getCustom().get("custom_canvas_course_id");
+      
+      if (StringUtils.isNotBlank(canvasCourseId)) {
+        contextId = canvasCourseId;
+        
+        String userId = launchRequest.getCustom().get("custom_canvas_user_id");
+        UserProvider userProvider = providerService.getUserProvider(tenant);
+        String userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, userId);
+        
+        // this is an ugly but effective workaround
+        launchRequest.setUser_id(userSourcedId);
+      }
+    }
+    
+    logger.debug("Looking up class sourcedId with context id {}",contextId);
+    
     String classId = courseProvider.getClassSourcedIdWithExternalId(tenant, contextId);
 
     OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 

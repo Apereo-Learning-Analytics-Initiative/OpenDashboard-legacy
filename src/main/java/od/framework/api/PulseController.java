@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import od.framework.model.PulseClassDetail;
 import od.framework.model.PulseDateEventCount;
@@ -78,7 +79,7 @@ public class PulseController {
       
       Set<LocalDate> allClassStartDates = new HashSet<>();
       Set<LocalDate> allClassEndDates = new HashSet<>();
-      Set<Integer> allClassEventCounts = new HashSet<>();
+      Set<Integer> allClassStudentEventCounts = new HashSet<>();
       Set<Long> allStudentEventCounts = new HashSet<>();
 
       for (Enrollment enrollment: enrollments) {
@@ -114,7 +115,6 @@ public class PulseController {
                 
         List<PulseDateEventCount> classPulseDateEventCounts = null;
         if (classEventStatistics != null) {
-          allClassEventCounts.add(classEventStatistics.getTotalEvents());
 
           Map<String,Long> eventCountGroupedByDate = classEventStatistics.getEventCountGroupedByDate();
           if (eventCountGroupedByDate != null && !eventCountGroupedByDate.isEmpty()) {
@@ -183,6 +183,7 @@ public class PulseController {
                 
                 .build();
             
+            allClassStudentEventCounts.addAll(studentPulseDateEventCounts.stream().map(PulseDateEventCount::getEventCount).collect(Collectors.toList()));
             pulseStudentDetails.add(pulseStudentDetail);
           }
         }
@@ -227,7 +228,7 @@ public class PulseController {
         = new PulseDetail.Builder()
           .withEndDate(allClassEndDates.stream().max(LocalDate::compareTo).get())
           .withStartDate(allClassStartDates.stream().min(LocalDate::compareTo).get())
-          .withClassesMaxEvents(allClassEventCounts.stream().max(Integer::compareTo).get())
+          .withClassEventMax(allClassStudentEventCounts.stream().max(Integer::compareTo).get())
           .withHasGrade(false)
           .withHasRisk(false)
           .withHasMissingSubmissions(false)
