@@ -303,6 +303,13 @@
       $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : true;
       $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : true;
 
+      // $scope.config.hasRisk = true;
+      // $scope.config.hasGrade = true;
+      // $scope.config.hasEmail = true;
+      // $scope.config.hasMissingSubmissions = true;
+      // $scope.config.hasLastLogin = true;
+
+
       // Grab max event count over all classes
       var maxEvents = 0;
       _.each($scope.processedClasses, function(c){
@@ -312,6 +319,7 @@
           }
         });
       });
+      console.log('maxEvents', maxEvents);
       $scope.coursesMaxEvents = maxEvents;
 
       // Set student activity class total maximum

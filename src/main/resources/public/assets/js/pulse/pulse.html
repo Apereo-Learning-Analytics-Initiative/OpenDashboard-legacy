@@ -134,7 +134,7 @@
 
         <!-- student details -->
         <div class="student-details" ng-if="listType == 'student'">
-            <div class="col-sm-3 activityCard">
+            <div class="col-sm-3 activityCard" ng-show="config.hasEmail">
                 <div class="heading">Contact</div>
                 <div class="body">
                     <a href="" class="fa fa-envelope" ng-click="handleEmail(currentStudent)"></a>
@@ -152,7 +152,7 @@
                     {{ currentStudent.risk }}
                 </div>
             </div>
-            <div class="col-sm-3 activityCard">
+            <div class="col-sm-3 activityCard" ng-show="config.hasGrade">
                 <div class="heading">Grade</div>
                 <div class="body">
                     {{ currentStudent.grade }}
