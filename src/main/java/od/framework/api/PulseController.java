@@ -232,7 +232,7 @@ public class PulseController {
           .withHasGrade(false)
           .withHasRisk(false)
           .withHasMissingSubmissions(false)
-          .withHasLastLogin(false)
+          .withHasLastLogin(true)
           .withHasEmail(false)
           .withPulseClassDetails(pulseClassDetails)
           .build();
