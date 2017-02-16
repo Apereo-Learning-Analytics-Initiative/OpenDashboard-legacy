@@ -390,7 +390,7 @@
           $scope.orderByField = 'lastName';
           buildStudentList(toParams.groupId);
         } else if (toState.name === "index.courselist" && !toParams.groupId) {
-          $scope.maxEvents = pulseDataService.coursesMaxEvents;
+          // $scope.maxEvents = pulseDataService.coursesMaxEvents;
           $scope.datalist = processedClasses;
           $scope.listType = 'classes';  
           $scope.orderByField = 'label';
@@ -421,7 +421,7 @@
             $scope.orderByField = 'lastName';
             buildStudentList($state.params.groupId);
           } else {
-            $scope.maxEvents = pulseDataService.coursesMaxEvents;
+            // $scope.maxEvents = pulseDataService.coursesMaxEvents;
             $scope.orderByField = 'label';
             $scope.datalist = $scope.processedClasses;
             $scope.listType = 'classes';
@@ -746,7 +746,12 @@
           // align elements based on layout
 
           $('#pulse-data').css({'padding-top':$('.pulse-header').height() - $('#hidden-header').height() + ($('body').hasClass('isLTI') ? 0 : 9)});
-          $('.zoom-actions').css({'width':$('#floating-header .timeline-heading').width() + 20, 'top':$('.pulse-header').height() / 2  + ($('body').hasClass('isLTI') ? 0 : 50)});
+          if (scope.listType === 'classes') {
+            $('.zoom-actions').css({'width':$('#floating-header .timeline-heading').width() + 20, 'top':$('.pulse-header').height() / 2  + ($('body').hasClass('isLTI') ? 0 : 35)});  
+          } else {
+            $('.zoom-actions').css({'width':$('#floating-header .timeline-heading').width() + 20, 'top':$('.pulse-header').height() / 2  + ($('body').hasClass('isLTI') ? 0 : 50)});
+          }
+          
           $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left - 20);
 
           
