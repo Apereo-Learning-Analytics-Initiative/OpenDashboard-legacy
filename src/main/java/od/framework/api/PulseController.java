@@ -188,6 +188,9 @@ public class PulseController {
               activity = studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum();
               allClassStudentEventCounts.addAll(studentPulseDateEventCounts.stream().map(PulseDateEventCount::getEventCount).collect(Collectors.toList()));
             }
+            else {
+              studentPulseDateEventCounts = new ArrayList<>();
+            }
             
             Long daysSinceLogin = 0l;
             if (!allStudentEventDates.isEmpty()) {
@@ -217,8 +220,6 @@ public class PulseController {
           }
         }
         
-        
-        
         Set<LineItem> classLineItems = null;
         boolean hasAssignments = false;
         if (lineitemProviderData != null) {
@@ -231,6 +232,10 @@ public class PulseController {
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
           studentEventMax = Collections.max(allStudentEventCounts).intValue();
+        }
+        
+        if (classPulseDateEventCounts == null) {
+          classPulseDateEventCounts = new ArrayList<>();
         }
                 
         PulseClassDetail pulseClassDetail
