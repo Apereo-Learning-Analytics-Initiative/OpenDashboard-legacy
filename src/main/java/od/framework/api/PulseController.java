@@ -1,6 +1,7 @@
 package od.framework.api;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
+import unicon.matthews.oneroster.Role;
 import unicon.oneroster.Vocabulary;
 
 @RestController
@@ -110,8 +112,25 @@ public class PulseController {
           }
         }
         
+        if (classStartDate == null) {
+          // TODO get from events
+          classStartDate = LocalDate.now().minus(1,ChronoUnit.MONTHS);
+          allClassStartDates.add(classStartDate);
+        }
+        
+        if (classEndDate == null) {
+          // TODO get from events
+          classEndDate = LocalDate.now().plus(1, ChronoUnit.MONTHS);
+          allClassEndDates.add(classEndDate);
+        }
+        
         ClassEventStatistics classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
         Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);
+        
+        if (classEnrollment != null && !classEnrollment.isEmpty()) {
+          classEnrollment = 
+              classEnrollment.stream().filter(ce -> ce.getRole().equals(Role.student)).collect(Collectors.toSet());
+        }
                 
         List<PulseDateEventCount> classPulseDateEventCounts = null;
         if (classEventStatistics != null) {
@@ -164,6 +183,17 @@ public class PulseController {
               }
             }
             
+            Long activity = 0l;
+            if (studentPulseDateEventCounts != null) {
+              activity = studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum();
+              allClassStudentEventCounts.addAll(studentPulseDateEventCounts.stream().map(PulseDateEventCount::getEventCount).collect(Collectors.toList()));
+            }
+            
+            Long daysSinceLogin = 0l;
+            if (!allStudentEventDates.isEmpty()) {
+              daysSinceLogin = java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
+            }
+            
             PulseStudentDetail pulseStudentDetail
               = new PulseStudentDetail.Builder()
             
@@ -177,13 +207,12 @@ public class PulseController {
                 .withGrade(null)
                 .withMissingSubmission(false)
                 
-                .withActivity(studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum())
+                .withActivity(activity)
                 .withEvents(studentPulseDateEventCounts)
-                .withDaysSinceLogin(java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now()))
+                .withDaysSinceLogin(daysSinceLogin)
                 
                 .build();
             
-            allClassStudentEventCounts.addAll(studentPulseDateEventCounts.stream().map(PulseDateEventCount::getEventCount).collect(Collectors.toList()));
             pulseStudentDetails.add(pulseStudentDetail);
           }
         }
@@ -197,6 +226,11 @@ public class PulseController {
           if (classLineItems != null && !classLineItems.isEmpty()) {
             hasAssignments = true;
           }
+        }
+        
+        Integer studentEventMax = 0;
+        if (!allStudentEventCounts.isEmpty()) {
+          studentEventMax = Collections.max(allStudentEventCounts).intValue();
         }
                 
         PulseClassDetail pulseClassDetail
@@ -213,7 +247,7 @@ public class PulseController {
             .withStartdate(classStartDate)
             .withEnddate(classEndDate)
             
-            .withStudentEventMax(Collections.max(allStudentEventCounts).intValue())
+            .withStudentEventMax(studentEventMax)
             .withStudentEventTotalMax(pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong())
             .withAssignments(new ArrayList<>(classLineItems))
             .withEvents(classPulseDateEventCounts)
@@ -224,11 +258,16 @@ public class PulseController {
         pulseClassDetails.add(pulseClassDetail);
       }
       
+      Integer classEventMax = 0;
+      if (allClassStudentEventCounts != null && !allClassStudentEventCounts.isEmpty()) {
+        classEventMax = allClassStudentEventCounts.stream().max(Integer::compareTo).get();
+      }
+      
       pulseDetail
         = new PulseDetail.Builder()
           .withEndDate(allClassEndDates.stream().max(LocalDate::compareTo).get())
           .withStartDate(allClassStartDates.stream().min(LocalDate::compareTo).get())
-          .withClassEventMax(allClassStudentEventCounts.stream().max(Integer::compareTo).get())
+          .withClassEventMax(classEventMax)
           .withHasGrade(false)
           .withHasRisk(false)
           .withHasMissingSubmissions(false)

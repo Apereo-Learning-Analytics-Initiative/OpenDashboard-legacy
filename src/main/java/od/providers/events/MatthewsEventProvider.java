@@ -83,10 +83,24 @@ public class MatthewsEventProvider extends MatthewsProvider implements EventProv
     RestTemplate restTemplate = mc.getRestTemplate();
     HttpHeaders headers = mc.getHeaders();
     
-    ResponseEntity<ClassEventStatistics> response 
-      = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), ClassEventStatistics.class);
+    ClassEventStatistics ces = null;
     
-    ClassEventStatistics ces = response.getBody();
+    try {
+      ResponseEntity<ClassEventStatistics> response 
+      = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), ClassEventStatistics.class);
+      ces = response.getBody();
+    }
+    catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    
+    if (ces == null) {
+      ces 
+        = new ClassEventStatistics.Builder()
+          .withClassSourcedId(classSourcedId)
+          .withTotalEvents(0)
+          .build();
+    }
     
     return ces;
   }
