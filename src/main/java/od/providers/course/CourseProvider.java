@@ -26,12 +26,16 @@ import od.providers.ProviderException;
 
 import org.apereo.lai.Course;
 
+import unicon.matthews.oneroster.Class;
+
 /**
  * @author ggilbert
  *
  */
 public interface CourseProvider extends Provider {
+  
   Course getContext(ProviderData providerData, String contextId) throws ProviderException;
   List<Course> getContexts(ProviderData providerData, String userId) throws ProviderException;
   String getClassSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException;
+  Class getClass(Tenant tenant, String classSourcedId) throws ProviderException;
 }
