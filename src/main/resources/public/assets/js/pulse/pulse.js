@@ -85,19 +85,19 @@
     function buildActivityColorThreshold() {
       activityColorClasses = [
         {
-          'threshold':[$scope.currentCourse.studentActivityMax + 1, $scope.currentCourse.studentActivityMax/activityTypeCount*3],
+          'threshold':[$scope.currentCourse.studentEventTotalMax + 1, $scope.currentCourse.studentEventTotalMax/activityTypeCount*3],
           'classname': 'no-risk'
         },
         {
-          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount*3, $scope.currentCourse.studentActivityMax/activityTypeCount*2],
+          'threshold':[$scope.currentCourse.studentEventTotalMax/activityTypeCount*3, $scope.currentCourse.studentEventTotalMax/activityTypeCount*2],
           'classname': 'medium-risk'
         },
         {
-          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount*2, $scope.currentCourse.studentActivityMax/activityTypeCount],
+          'threshold':[$scope.currentCourse.studentEventTotalMax/activityTypeCount*2, $scope.currentCourse.studentEventTotalMax/activityTypeCount],
           'classname': 'medium-risk'
         },
         {
-          'threshold':[$scope.currentCourse.studentActivityMax/activityTypeCount, 0],
+          'threshold':[$scope.currentCourse.studentEventTotalMax/activityTypeCount, 0],
           'classname': 'high-risk'
         }
       ];
@@ -298,27 +298,27 @@
 
 
       // Grab max event count over all classes
-      var maxEvents = 0;
-      _.each($scope.processedClasses, function(c){
-        _.each(c.events, function(event){
-          if (maxEvents < event.eventCount) {
-            maxEvents = event.eventCount;
-          }
-        });
-      });
-      console.log('maxEvents', maxEvents);
-      $scope.coursesMaxEvents = maxEvents;
+      // var maxEvents = 0;
+      // _.each($scope.processedClasses, function(c){
+      //   _.each(c.events, function(event){
+      //     if (maxEvents < event.eventCount) {
+      //       maxEvents = event.eventCount;
+      //     }
+      //   });
+      // });
+      // console.log('maxEvents', maxEvents);
+      $scope.coursesMaxEvents = $scope.config.classEventMax;
 
       // Set student activity class total maximum
-      _.each($scope.processedClasses, function(c){
-        var maxActivity = 0;
-        _.each(c.students, function(s){
-          if (maxActivity < s.activity) {
-            maxActivity = s.activity;
-          }
-        });
-        c.studentActivityMax = maxActivity;
-      });
+      // _.each($scope.processedClasses, function(c){
+      //   var maxActivity = 0;
+      //   _.each(c.students, function(s){
+      //     if (maxActivity < s.activity) {
+      //       maxActivity = s.activity;
+      //     }
+      //   });
+      //   c.studentActivityMax = maxActivity;
+      // });
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
