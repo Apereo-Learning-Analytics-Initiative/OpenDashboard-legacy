@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 
 import unicon.matthews.entity.ClassMapping;
 import unicon.matthews.entity.UserMapping;
+import unicon.matthews.oneroster.Class;
 
 /**
  * @author ggilbert
@@ -94,6 +95,22 @@ public class MatthewsCourseProvider extends MatthewsProvider implements CoursePr
     ClassMapping classMapping = response.getBody();
     
     return classMapping.getClassSourcedId();
+  }
+
+  @Override
+  public Class getClass(Tenant tenant, String classSourcedId) throws ProviderException {
+    ProviderData providerData = tenant.findByKey(KEY);
+
+    String endpoint = providerData.findValueForKey("base_url").concat("/api/classes/").concat(classSourcedId);
+    MatthewsClient mc = new MatthewsClient(providerData.findValueForKey("base_url"), providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
+
+    RestTemplate restTemplate = mc.getRestTemplate();
+    HttpHeaders headers = mc.getHeaders();
+    
+    ResponseEntity<Class> response 
+      = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), Class.class);
+    
+    return response.getBody();
   }
 
 }

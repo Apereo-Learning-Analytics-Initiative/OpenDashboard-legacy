@@ -7,9 +7,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lti.LaunchRequest;
+import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.PulseClassDetail;
 import od.framework.model.PulseDateEventCount;
 import od.framework.model.PulseDetail;
@@ -19,6 +22,7 @@ import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.ProviderService;
 import od.providers.config.ProviderDataConfigurationException;
+import od.providers.course.CourseProvider;
 import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
 import od.providers.lineitem.LineItemProvider;
@@ -30,14 +34,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.Role;
+import unicon.matthews.oneroster.Status;
 import unicon.oneroster.Vocabulary;
 
 @RestController
@@ -51,15 +58,29 @@ public class PulseController {
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR"})
   @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
-  public PulseDetail pulse(@PathVariable("tenantId") final String tenantId,
+  public PulseDetail pulse(Authentication authentication, @PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
     
     log.debug("tenantId: {}", tenantId);
     log.debug("userId: {}", userId);
-
+    log.debug("Authentication: {}", authentication);
+    
+    String tempClassSourcedId = null;
+    
+    if (authentication != null && authentication instanceof OpenDashboardAuthenticationToken) {
+      OpenDashboardAuthenticationToken openDashboardAuthenticationToken
+        = (OpenDashboardAuthenticationToken)authentication;
+      
+      LaunchRequest launchRequest = openDashboardAuthenticationToken.getLaunchRequest();
+      if (launchRequest != null) {
+        tempClassSourcedId = launchRequest.getContext_id();
+      }
+    }
+    final String classSourcedId = tempClassSourcedId;
+    
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
-    EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
+    EventProvider eventProvider = providerService.getEventProvider(tenant);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     
     ProviderData lineitemProviderData = null;
@@ -77,6 +98,28 @@ public class PulseController {
     PulseDetail pulseDetail = null;
     
     if (enrollments != null && !enrollments.isEmpty()) {
+      
+      if (StringUtils.isNotBlank(classSourcedId)) {
+        Enrollment foundEnrollment
+          = enrollments.stream().filter(e -> e.getKlass().getSourcedId().equals(classSourcedId))
+              .findFirst().orElse(null);
+        
+        if (foundEnrollment == null) {
+          
+          CourseProvider courseProvider
+            = providerService.getCourseProvider(tenant);
+          
+          Class klass = courseProvider.getClass(tenant, classSourcedId);
+          
+          foundEnrollment
+            = new Enrollment.Builder()
+                .withKlass(klass)
+                .build();
+        }
+
+        enrollments = Collections.singleton(foundEnrollment);
+      }
+      
       List<PulseClassDetail> pulseClassDetails = new ArrayList<>();
       
       Set<LocalDate> allClassStartDates = new HashSet<>();
@@ -111,19 +154,7 @@ public class PulseController {
             }
           }
         }
-        
-        if (classStartDate == null) {
-          // TODO get from events
-          classStartDate = LocalDate.now().minus(1,ChronoUnit.MONTHS);
-          allClassStartDates.add(classStartDate);
-        }
-        
-        if (classEndDate == null) {
-          // TODO get from events
-          classEndDate = LocalDate.now().plus(1, ChronoUnit.MONTHS);
-          allClassEndDates.add(classEndDate);
-        }
-        
+                
         ClassEventStatistics classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
         Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);
         
@@ -133,6 +164,8 @@ public class PulseController {
         }
                 
         List<PulseDateEventCount> classPulseDateEventCounts = null;
+        LocalDate firstClassEventDate = null;
+        LocalDate lastClassEventDate = null;
         if (classEventStatistics != null) {
 
           Map<String,Long> eventCountGroupedByDate = classEventStatistics.getEventCountGroupedByDate();
@@ -146,7 +179,30 @@ public class PulseController {
                   .build();
               classPulseDateEventCounts.add(pulseDateEventCount);
             }
+            
+            firstClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).min(LocalDate::compareTo).get();
+            lastClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).max(LocalDate::compareTo).get();
           }
+        }
+        
+        if (classStartDate == null) {
+          if (firstClassEventDate != null) {
+            classStartDate = firstClassEventDate;
+          }
+          else {
+            classStartDate = LocalDate.now().minus(1,ChronoUnit.MONTHS);
+          }
+          allClassStartDates.add(classStartDate);
+        }
+        
+        if (classEndDate == null) {
+          if (lastClassEventDate != null) {
+            classEndDate = lastClassEventDate;
+          }
+          else {
+            classEndDate = LocalDate.now().plus(1, ChronoUnit.MONTHS);
+          }
+          allClassEndDates.add(classEndDate);
         }
         
         List<PulseStudentDetail> pulseStudentDetails = null;
@@ -186,7 +242,6 @@ public class PulseController {
             Long activity = 0l;
             if (studentPulseDateEventCounts != null) {
               activity = studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum();
-              allClassStudentEventCounts.addAll(studentPulseDateEventCounts.stream().map(PulseDateEventCount::getEventCount).collect(Collectors.toList()));
             }
             else {
               studentPulseDateEventCounts = new ArrayList<>();
@@ -226,6 +281,8 @@ public class PulseController {
           classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
           if (classLineItems != null && !classLineItems.isEmpty()) {
             hasAssignments = true;
+//            classLineItems
+//              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
           }
         }
         
@@ -236,6 +293,10 @@ public class PulseController {
         
         if (classPulseDateEventCounts == null) {
           classPulseDateEventCounts = new ArrayList<>();
+        }
+        else {
+          int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
+          allClassStudentEventCounts.add(classEventMax);
         }
                 
         PulseClassDetail pulseClassDetail

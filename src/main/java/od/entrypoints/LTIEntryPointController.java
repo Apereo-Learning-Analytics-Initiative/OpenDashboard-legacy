@@ -84,8 +84,6 @@ public class LTIEntryPointController {
       //role = "ROLE_STUDENT";
     }
     
-    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
-    
     if (launchRequest.getCustom() != null && !launchRequest.getCustom().isEmpty()) {
       String canvasCourseId = launchRequest.getCustom().get("custom_canvas_course_id");
       
@@ -100,10 +98,15 @@ public class LTIEntryPointController {
         launchRequest.setUser_id(userSourcedId);
       }
     }
+
     
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+        
     logger.debug("Looking up class sourcedId with context id {}",contextId);
     
     String classId = courseProvider.getClassSourcedIdWithExternalId(tenant, contextId);
+    // also an ugly but effective workaround
+    launchRequest.setContext_id(classId);
 
     OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 
         null,

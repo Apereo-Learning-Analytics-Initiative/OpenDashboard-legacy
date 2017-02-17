@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 
 /**
@@ -81,6 +82,12 @@ public class DemoClassProvider implements CourseProvider {
   @Override
   public String getClassSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException {
      return "demo-class-3";
+  }
+
+  @Override
+  public Class getClass(Tenant tenant, String classSourcedId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

@@ -30,6 +30,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import unicon.matthews.oneroster.Class;
+
 /**
  * @author ggilbert
  *
@@ -207,6 +209,12 @@ public class LearningLockerCourseProvider extends LearningLockerProvider impleme
       course.setTitle(llModuleInstance.getModInstanceId());
     }
     return course;
+  }
+
+  @Override
+  public Class getClass(Tenant tenant, String classSourcedId) throws ProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 //  @Override
