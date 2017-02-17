@@ -23,7 +23,7 @@
             var activityOverTimeChart;
             var activityDayOfWeekChart;
 
-            console.log('StudentViewController');
+            //console.log('StudentViewController');
 
             $scope.error = null;
             $scope.actions = [];
@@ -54,11 +54,12 @@
                     color: 'rgba(29, 178, 37, 0.5)',
                     filter: true
                 },
-                // {
-                //     label: 'LoggedIn',
-                //     color: 'rgba(13, 191, 255, 0.5)',
-                //     filter: false
-                // },{
+                 {
+                     label: 'Posted',
+                     color: 'rgba(13, 191, 255, 0.5)',
+                     filter: false
+                 },
+                //{
                 //     label: 'LoggedOut',
                 //     color: 'rgba(232, 6, 222, 0.5)',
                 //     filter: false
@@ -245,6 +246,9 @@
                     //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     var dayOfWeek = moment(action.timestamp).format('dddd');
+                    
+                    //console.log(verb);
+                    //console.log(dayOfWeek);
 
                     if (!daysOfWeek[dayOfWeek]) {
                         daysOfWeek[dayOfWeek] = [];
@@ -279,7 +283,10 @@
 
                 _.each(chartData.labels, function (label) {
                     _.each(chartData.datasets, function (dataset) {
-                        dataset.data.push(daysOfWeek[label][dataset.label]);
+                    	// GG null check added
+                    	if (daysOfWeek[label]) {
+                    	  dataset.data.push(daysOfWeek[label][dataset.label]);
+                    	}
                     });
                 });
 
@@ -457,7 +464,7 @@
             });
 
             $scope.$on('toggleAllFilters', function (event, data) {
-                console.log($scope.allFilters);
+                //console.log($scope.allFilters);
 
                 $scope.allFilters = !$scope.allFilters;
 
