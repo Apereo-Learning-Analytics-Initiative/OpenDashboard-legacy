@@ -4,6 +4,7 @@
 package od.providers.events;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -181,11 +182,16 @@ public class MatthewsEventProvider extends MatthewsProvider implements EventProv
       }
     };
     
-    List<Event> eventconverted = Arrays.asList(events).stream()
-        .map(myFunction)
-        .collect(Collectors.<Event> toList());
-    
-    return new PageImpl<>(eventconverted);
+    if (events != null && events.length > 0) {
+      List<Event> eventconverted = Arrays.asList(events).stream()
+          .map(myFunction)
+          .collect(Collectors.<Event> toList());
+      
+      return new PageImpl<>(eventconverted);
+    }
+    else {
+      return new PageImpl<>(new ArrayList<Event>());
+    }
   }
 
   @Override
