@@ -497,7 +497,7 @@
           };
 
           $('.tool-tip-assignment-info').css({
-            'top': posOffset.y - 80,
+            'top': posOffset.y - 20,
             'left': posOffset.x - 15,
           });
         }
@@ -505,11 +505,11 @@
         function setEventToolTipPosition (pos) {
           var posOffset = {
             y: pos.y,
-            x: pos.x - 0,
+            x: pos.x,
           };
 
           $('.tool-tip-event-info').css({
-            'top': posOffset.y - 80,
+            'top': posOffset.y - 20,
             'left': posOffset.x - 15,
           });
         }
