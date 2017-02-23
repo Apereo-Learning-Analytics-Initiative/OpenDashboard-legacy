@@ -578,15 +578,27 @@
           .classed('active', true)
           .on('click', zoomOut);
 
-          var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
-          var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
-          
-          timeScale.domain([
-              weeksBack, 
-              weeksForward
-            ]);
+          if (weeks <= 6) {
+            var daysBack = moment(d.date).startOf('week');
+            var daysForward = moment(d.date).endOf('week');
+            xAxis.ticks(7);
 
-          xAxis.ticks(5);
+            timeScale.domain([
+                daysBack, 
+                daysForward
+              ]);
+
+          } else {
+            var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
+            var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
+            xAxis.ticks(5);
+
+            timeScale.domain([
+                weeksBack, 
+                weeksForward
+              ]);
+
+          }
 
           d3.selectAll("svg.timeline-svg .xaxis")
             .transition()
