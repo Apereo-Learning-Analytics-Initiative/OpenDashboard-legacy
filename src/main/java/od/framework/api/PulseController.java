@@ -1,6 +1,7 @@
 package od.framework.api;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -185,6 +186,22 @@ public class PulseController {
           }
         }
         
+        Set<LineItem> classLineItems = null;
+        LocalDate lastAssignmentDueDate = null;
+        boolean hasAssignments = false;
+        if (lineitemProviderData != null) {
+          classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
+          if (classLineItems != null && !classLineItems.isEmpty()) {
+            hasAssignments = true;
+            LocalDateTime lastAssignmentDueDateTime = classLineItems.stream().map(LineItem::getDueDate).max(LocalDateTime::compareTo).get();
+            if (lastAssignmentDueDateTime != null) {
+              lastAssignmentDueDate = lastAssignmentDueDateTime.toLocalDate();
+            }
+//            classLineItems
+//              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
+          }
+        }
+
         if (classStartDate == null) {
           if (firstClassEventDate != null) {
             classStartDate = firstClassEventDate;
@@ -196,7 +213,10 @@ public class PulseController {
         }
         
         if (classEndDate == null) {
-          if (lastClassEventDate != null) {
+          if (lastAssignmentDueDate != null) {
+            classEndDate = lastAssignmentDueDate;
+          }
+          else if (lastClassEventDate != null) {
             classEndDate = lastClassEventDate;
           }
           else {
@@ -274,18 +294,7 @@ public class PulseController {
             pulseStudentDetails.add(pulseStudentDetail);
           }
         }
-        
-        Set<LineItem> classLineItems = null;
-        boolean hasAssignments = false;
-        if (lineitemProviderData != null) {
-          classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
-          if (classLineItems != null && !classLineItems.isEmpty()) {
-            hasAssignments = true;
-//            classLineItems
-//              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
-          }
-        }
-        
+                
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
           studentEventMax = Collections.max(allStudentEventCounts).intValue();
