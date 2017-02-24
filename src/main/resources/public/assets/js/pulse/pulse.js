@@ -935,7 +935,20 @@
         });
 
         scope.$on('draw-assignments', drawAssignments);
-        $(window).resize(handleResize);
+
+        var resizeTimer;
+
+        $(window).on('resize', function(e) {
+          floatingHeaderTable.find('.timeline-heading').removeAttr('style');
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function() {
+
+            // Run code here, resizing has "stopped"
+            handleResize();
+                    
+          }, 250);
+
+        });
       }
     };
   }]);
