@@ -293,6 +293,9 @@ body.application {
   &.report {
     stroke: orange;
   }
+  &.assignment {
+    stroke: teal;
+  }
   &:hover {
     stroke-width: 6;
   }
