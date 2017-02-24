@@ -287,8 +287,8 @@
       $scope.config.hasRisk = $scope.config.hasRisk ? $scope.config.hasRisk : false;
       $scope.config.hasGrade = $scope.config.hasGrade ? $scope.config.hasGrade : false;
       $scope.config.hasEmail = $scope.config.hasEmail ? $scope.config.hasEmail : false;
-      $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : true;
-      $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : true;
+      $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : false;
+      $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : false;
 
       // $scope.config.hasRisk = true;
       // $scope.config.hasGrade = true;
