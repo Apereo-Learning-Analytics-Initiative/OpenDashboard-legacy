@@ -15,7 +15,7 @@
             </a>
             
             <!-- back link to single class -->
-            <a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-show="!isLtiSession" ng-if="listType === 'student'">
+            <a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-if="listType === 'student'">
                 <i class="fa fa-chevron-left"></i> 
                 {{currentCourse.label}}
             </a>
@@ -124,7 +124,7 @@
             </span>
 
 
-            <a href="" ng-show="isLtiSession" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
+            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
         </span>
         
         <!-- zoom link -->
@@ -140,19 +140,19 @@
                     <a href="" class="fa fa-envelope" ng-click="handleEmail(currentStudent)"></a>
                 </div>
             </div>
-            <div class="col-sm-3 activityCard">
+            <div class="col-xs-3 activityCard">
                 <div class="heading">Activity</div>
                 <div class="body">
                     {{ currentStudent.events.length }}
                 </div>
             </div>
-            <div class="col-sm-3 activityCard" ng-show="config.hasRisk">
+            <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
                 <div class="heading">Risk</div>
                 <div class="body">
                     {{ currentStudent.risk }}
                 </div>
             </div>
-            <div class="col-sm-3 activityCard" ng-show="config.hasGrade">
+            <div class="col-xs-3 activityCard" ng-show="config.hasGrade">
                 <div class="heading">Grade</div>
                 <div class="body">
                     {{ currentStudent.grade }}

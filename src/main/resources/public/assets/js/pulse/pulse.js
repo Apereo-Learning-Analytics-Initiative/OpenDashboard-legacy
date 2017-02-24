@@ -287,8 +287,8 @@
       $scope.config.hasRisk = $scope.config.hasRisk ? $scope.config.hasRisk : false;
       $scope.config.hasGrade = $scope.config.hasGrade ? $scope.config.hasGrade : false;
       $scope.config.hasEmail = $scope.config.hasEmail ? $scope.config.hasEmail : false;
-      $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : true;
-      $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : true;
+      $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : false;
+      $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : false;
 
       // $scope.config.hasRisk = true;
       // $scope.config.hasGrade = true;
@@ -497,7 +497,7 @@
           };
 
           $('.tool-tip-assignment-info').css({
-            'top': posOffset.y - 80,
+            'top': posOffset.y - 20,
             'left': posOffset.x - 15,
           });
         }
@@ -505,11 +505,11 @@
         function setEventToolTipPosition (pos) {
           var posOffset = {
             y: pos.y,
-            x: pos.x - 0,
+            x: pos.x,
           };
 
           $('.tool-tip-event-info').css({
-            'top': posOffset.y - 80,
+            'top': posOffset.y - 20,
             'left': posOffset.x - 15,
           });
         }
@@ -578,15 +578,27 @@
           .classed('active', true)
           .on('click', zoomOut);
 
-          var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
-          var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
-          
-          timeScale.domain([
-              weeksBack, 
-              weeksForward
-            ]);
+          if (weeks <= 6) {
+            var daysBack = moment(d.date).startOf('week');
+            var daysForward = moment(d.date).endOf('week');
+            xAxis.ticks(7);
 
-          xAxis.ticks(5);
+            timeScale.domain([
+                daysBack, 
+                daysForward
+              ]);
+
+          } else {
+            var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
+            var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
+            xAxis.ticks(5);
+
+            timeScale.domain([
+                weeksBack, 
+                weeksForward
+              ]);
+
+          }
 
           d3.selectAll("svg.timeline-svg .xaxis")
             .transition()
