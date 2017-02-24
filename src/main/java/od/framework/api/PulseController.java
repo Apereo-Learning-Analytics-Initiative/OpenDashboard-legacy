@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -193,10 +194,16 @@ public class PulseController {
           classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
           if (classLineItems != null && !classLineItems.isEmpty()) {
             hasAssignments = true;
-            LocalDateTime lastAssignmentDueDateTime = classLineItems.stream().map(LineItem::getDueDate).max(LocalDateTime::compareTo).get();
-            if (lastAssignmentDueDateTime != null) {
-              lastAssignmentDueDate = lastAssignmentDueDateTime.toLocalDate();
+            
+            Collection<LocalDate> assignmentDueDates = new ArrayList<>();
+            for (LineItem cli : classLineItems) {
+              LocalDateTime dueDate = cli.getDueDate();
+              if (dueDate != null) {
+                assignmentDueDates.add(dueDate.toLocalDate());
+              }
             }
+            
+            lastAssignmentDueDate = assignmentDueDates.stream().max(LocalDate::compareTo).get();
 //            classLineItems
 //              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
           }
