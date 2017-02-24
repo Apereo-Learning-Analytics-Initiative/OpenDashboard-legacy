@@ -46,7 +46,7 @@
                     color: 'rgba(84, 255, 0, 0.5)',
                     filter: true
                 },{
-                    label: 'Navigated To',
+                    label: 'NavigatedTo',
                     color: 'rgba(255, 132, 7, 0.5)',
                     filter: true
                 },{
