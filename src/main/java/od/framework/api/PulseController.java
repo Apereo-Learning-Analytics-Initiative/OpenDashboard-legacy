@@ -353,7 +353,7 @@ public class PulseController {
           .withHasGrade(false)
           .withHasRisk(false)
           .withHasMissingSubmissions(false)
-          .withHasLastLogin(true)
+          .withHasLastLogin(false)
           .withHasEmail(false)
           .withPulseClassDetails(pulseClassDetails)
           .build();
