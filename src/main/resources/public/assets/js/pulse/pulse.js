@@ -579,8 +579,8 @@
           .on('click', zoomOut);
 
           if (weeks <= 6) {
-            var daysBack = moment(d.date).startOf('week');
-            var daysForward = moment(d.date).endOf('week');
+            var daysBack = moment(d.date).subtract(moment.duration(3, 'day'));
+            var daysForward = moment(d.date).add(moment.duration(4, 'day'));
             xAxis.ticks(7);
 
             timeScale.domain([
@@ -935,7 +935,20 @@
         });
 
         scope.$on('draw-assignments', drawAssignments);
-        $(window).resize(handleResize);
+
+        var resizeTimer;
+
+        $(window).on('resize', function(e) {
+          floatingHeaderTable.find('.timeline-heading').removeAttr('style');
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function() {
+
+            // Run code here, resizing has "stopped"
+            handleResize();
+                    
+          }, 250);
+
+        });
       }
     };
   }]);
