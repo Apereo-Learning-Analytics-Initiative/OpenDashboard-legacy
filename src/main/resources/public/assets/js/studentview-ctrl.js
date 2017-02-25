@@ -40,7 +40,7 @@
                 {
                     label: 'Completed',
                     color: 'rgba(6, 11, 178, 0.5)',
-                    filter: true
+                    filter: false
                 },{
                     label: 'Submitted',
                     color: 'rgba(84, 255, 0, 0.5)',
@@ -48,7 +48,7 @@
                 },{
                     label: 'NavigatedTo',
                     color: 'rgba(255, 132, 7, 0.5)',
-                    filter: true
+                    filter: false
                 },{
                     label: 'Viewed',
                     color: 'rgba(29, 178, 37, 0.5)',
@@ -57,13 +57,13 @@
                  {
                      label: 'Posted',
                      color: 'rgba(13, 191, 255, 0.5)',
-                     filter: false
+                     filter: true
                  },
-                //{
-                //     label: 'LoggedOut',
-                //     color: 'rgba(232, 6, 222, 0.5)',
-                //     filter: false
-                // },
+                {
+                     label: 'Modified',
+                     color: 'rgba(232, 6, 222, 0.5)',
+                     filter: true
+                },
                 {
                     label: 'Searched',
                     color: 'rgba(232, 163, 12, 0.5)',
