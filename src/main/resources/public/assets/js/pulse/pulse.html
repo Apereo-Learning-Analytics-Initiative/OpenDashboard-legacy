@@ -143,7 +143,7 @@
             <div class="col-xs-3 activityCard">
                 <div class="heading">Activity</div>
                 <div class="body">
-                    {{ currentStudent.events.length }}
+                    {{ currentStudent.activity }}
                 </div>
             </div>
             <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
@@ -278,12 +278,12 @@
 
     <div class="tooltips">
         <div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
-            <i class="fa fa-info-circle"></i>
-            <span>
+            <!-- <i class="fa fa-info-circle"></i> -->
+            <span class="tooltip-lineitem">
                 <span class="info-label">Date:</span>
                 <span class="info-value">{{chartInfo.date | amDateFormat:'M-D'}}</span>
             </span>
-            <span>
+            <span class="tooltip-lineitem">
                 <span class="info-label">Events:</span>
                 <span class="info-value">{{chartInfo.events}}</span>
             </span>
@@ -291,16 +291,16 @@
 
 
         <div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
-            <i class="fa fa-info-circle"></i>
-            <span>
+            <!-- <i class="fa fa-info-circle"></i> -->
+            <span class="tooltip-lineitem">
                 <span class="info-label">Title:</span>
                 <span class="info-value">{{assignmentInfo.label}}</span>
             </span>
-            <span>
+            <span class="tooltip-lineitem" ng-if="assignmentInfo.date">
                 <span class="info-label">Date:</span>
                 <span class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
             </span>
-            <span>
+            <span class="tooltip-lineitem">
                 <span class="info-label">Type:</span>
                 <span class="info-value">{{assignmentInfo.events}}</span>
             </span>
