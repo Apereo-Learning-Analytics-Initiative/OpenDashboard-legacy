@@ -605,14 +605,18 @@
         }
 
         function zoomIn(d) {
-          
+          var date = d.date;
+          if (d.hasOwnProperty('dueDate')) {
+            date = d.dueDate ? d.dueDate : courseStart;
+          }
+
           d3.select('.zoom-out')
           .classed('active', true)
           .on('click', zoomOut);
 
           if (weeks <= 6) {
-            var daysBack = moment(d.date).subtract(moment.duration(3, 'day'));
-            var daysForward = moment(d.date).add(moment.duration(4, 'day'));
+            var daysBack = moment(date).subtract(moment.duration(3, 'day'));
+            var daysForward = moment(date).add(moment.duration(4, 'day'));
             xAxis.ticks(7);
 
             timeScale.domain([
@@ -621,8 +625,8 @@
               ]);
 
           } else {
-            var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
-            var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
+            var weeksBack = moment(date).startOf('week').subtract(moment.duration(2, 'week'));
+            var weeksForward = moment(date).startOf('week').add(moment.duration(3, 'week'));
             xAxis.ticks(5);
 
             timeScale.domain([
@@ -649,11 +653,18 @@
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              console.log(d);
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             });
 
 
@@ -687,11 +698,18 @@
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              console.log(d);
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             });
 
         }
@@ -817,9 +835,6 @@
           var height = floatingHeaderTable.height() + dataTable.height() - $('#hidden-header').height();
           var offset = heading.offset();
           var overlay = $('#assignment-overlay');
-          
-          console.log($('#pulse-table-header .timeline-heading').offset());
-          console.log(offset);
 
           overlay.css({
             'left': offset.left,
@@ -846,10 +861,18 @@
               return classname;
             })
             .attr('x1', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              var date = d.dueDate;
+              if (!d.dueDate) {
+                date = courseStart;
+              }
+              return timeScale(moment(date, moment.ISO_8601));
             })
             .attr('y1', 0)
             .attr('y2', height)
@@ -886,7 +909,8 @@
                   scope.assignmentInfo = undefined;
               });
               hideToolTips();
-            });  
+            })
+            .on('click', zoomIn);
             
             $('#pulse-data').trigger('chart-render-finish');
         };
