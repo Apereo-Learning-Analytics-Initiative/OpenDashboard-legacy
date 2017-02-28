@@ -458,7 +458,8 @@
 
   .directive('pulse', [
     '$timeout',
-    function($timeout) {
+    '$window',
+    function($timeout, $window) {
     return {
       controller: 'pulseController',
       templateUrl: 'assets/js/pulse/pulse.html',
@@ -491,27 +492,57 @@
         }
 
         function setAssignmentToolTipPosition (pos) {
+          var tip = $('.tool-tip-assignment-info');
           var posOffset = {
             y: pos.y,
             x: pos.x ,
           };
 
-          $('.tool-tip-assignment-info').css({
-            'top': posOffset.y - 20,
-            'left': posOffset.x - 15,
+          $timeout(function(){
+            if (pos.x + tip.width() + 25 > $(document).width()) {
+              tip.css({
+                'top': posOffset.y - 20,
+                'left': posOffset.x - tip.width() - 65,
+                'visibility': 'visible'
+              });
+            } else {
+              tip.css({
+                'top': posOffset.y - 20,
+                'left': posOffset.x - 15,
+                'visibility': 'visible'
+              });
+            }
           });
         }
 
         function setEventToolTipPosition (pos) {
+          var tip = $('.tool-tip-event-info');
+
           var posOffset = {
             y: pos.y,
             x: pos.x,
           };
 
-          $('.tool-tip-event-info').css({
-            'top': posOffset.y - 20,
-            'left': posOffset.x - 15,
+          $timeout(function(){
+            if (pos.x + tip.width() + 25 > $(document).width()) {
+              tip.css({
+                'top': posOffset.y - 20,
+                'left': posOffset.x - tip.width() - 65,
+                'visibility': 'visible'
+              });
+            } else {
+              tip.css({
+                'top': posOffset.y - 20,
+                'left': posOffset.x - 15,
+                'visibility': 'visible'
+              });
+            }
           });
+        }
+
+        function hideToolTips() {
+          $('.tool-tip-assignment-info').css({'visibility': 'hidden'})
+          $('.tool-tip-event-info').css({'visibility': 'hidden'})
         }
 
 
@@ -568,6 +599,7 @@
               scope.$apply(function () {
                   scope.chartInfo = undefined;
               });
+              hideToolTips();
             })
             .on('click', zoomIn);
         }
@@ -837,9 +869,11 @@
               scope.$apply(function () {
                   scope.assignmentInfo = {
                     label: d.title,
-                    date: moment(d.dueDate, moment.ISO_8601),
                     events: d.category.title
                   };
+                  if (d.dueDate) {
+                    scope.assignmentInfo.date = moment(d.dueDate, moment.ISO_8601)
+                  }
               });
 
             })
@@ -851,7 +885,7 @@
               scope.$apply(function () {
                   scope.assignmentInfo = undefined;
               });
-
+              hideToolTips();
             });  
             
             $('#pulse-data').trigger('chart-render-finish');

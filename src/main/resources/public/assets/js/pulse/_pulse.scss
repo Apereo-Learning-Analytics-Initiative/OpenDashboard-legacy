@@ -249,6 +249,11 @@ body.application {
     border: 1px solid #999;
     color: #005695;
     z-index: 6;
+    visibility: hidden;
+  }
+  .tooltip-lineitem {
+    display: block;
+    white-space: nowrap;
   }
   .info-label {
     text-transform: uppercase;
@@ -259,6 +264,7 @@ body.application {
   .info-value {
     font-weight: bold;
     font-size: 13px;
+    color: rgb(0, 135, 167);
   }
 }
 
