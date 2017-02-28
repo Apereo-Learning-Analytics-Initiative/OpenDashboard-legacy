@@ -77,6 +77,10 @@
                         <label>
                             <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.assignmentOverlay"> Assignment Overlay
                         </label>
+                        <span class="help-block" ng-show="assignmentsWithoutDueDates.length">
+                            {{assignmentsWithoutDueDates.length}} <span ng-show="assignmentsWithoutDueDates.length == 1">assignment missing due date, not displayed.</span> 
+                            <span ng-show="assignmentsWithoutDueDates.length > 1">assignments missing due dates, not displayed.</span>
+                        </span>
                     </span>
 
                     <span class="checkbox filter-item" ng-show="listType == 'students' && config.hasRisk">

@@ -30,6 +30,7 @@
     $scope.chartInitialized = false;
     $scope.listType = 'classes';
     $scope.datalist = [];
+    $scope.assignmentsWithoutDueDates = [];
     $scope.coursesMaxEvents = 0;
     $scope.maxEvents = 0;
     $scope.emailstudent = {};
@@ -371,7 +372,16 @@
 
     }
 
-
+    function handleAssignmentsWithoutDueDates() {
+      _.each($scope.processedClasses, function(c){
+        _.forEachRight(c.assignments, function(a, i){
+          if (!a.dueDate) {
+            $scope.assignmentsWithoutDueDates.push(a);
+            c.assignments.splice(i,1);
+          }
+        });
+      });
+    }
 
     $scope.updateStudentCharts = function (data) {
       // $timeout(function(){
@@ -412,6 +422,7 @@
 
           addMissingData();
           setCoursesTerm();
+          handleAssignmentsWithoutDueDates();
 
           if ($state.params.studentId && $state.params.groupId) {
             $scope.listType = 'student';
