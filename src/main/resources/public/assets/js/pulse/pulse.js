@@ -660,22 +660,16 @@
               return placement;
             });
 
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
           d3.selectAll('#assignment-overlay svg .assignment-marker')
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);
             });
 
 
@@ -705,22 +699,16 @@
               return placement;
             });
 
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
           d3.selectAll('#assignment-overlay svg .assignment-marker')
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);
             });
 
         }
@@ -840,12 +828,26 @@
 
         }
 
+        
+        function assignmentPositon(d, arr) {
+          var date = d.dueDate;
+          var assignmentOnDate = (arr.indexOf(date.split('T')[0]) != -1) ? true : false;
+          arr.push(date.split('T')[0]);
+          if (assignmentOnDate) {
+            return timeScale(moment(date, moment.ISO_8601)) + 4;  
+          } else {
+            return timeScale(moment(date, moment.ISO_8601));  
+          }
+        }
+
         function drawAssignments() {
           var heading = floatingHeaderTable.find('.timeline-heading');
           var width = heading.width();
           var height = floatingHeaderTable.height() + dataTable.height() - $('#hidden-header').height();
           var offset = heading.offset();
           var overlay = $('#assignment-overlay');
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
 
           overlay.css({
             'left': offset.left,
@@ -860,7 +862,6 @@
             .attr("width", "100%");
 
           assignments.selectAll('line').remove();
-
           assignments
             .selectAll('line')
             .data(scope.currentCourse.assignments)
@@ -871,19 +872,11 @@
               var classname = "assignment-marker " + d.category.title;
               return classname;
             })
-            .attr('x1', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+            .attr('x1', function(d, i){
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              var date = d.dueDate;
-              if (!d.dueDate) {
-                date = courseStart;
-              }
-              return timeScale(moment(date, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);;
             })
             .attr('y1', 0)
             .attr('y2', height)
