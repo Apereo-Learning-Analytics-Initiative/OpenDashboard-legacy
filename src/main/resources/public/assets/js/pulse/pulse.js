@@ -831,10 +831,16 @@
         
         function assignmentPositon(d, arr) {
           var date = d.dueDate;
-          var assignmentOnDate = (arr.indexOf(date.split('T')[0]) != -1) ? true : false;
+          
+          var search = date.split('T')[0];
+          var count = arr.reduce(function(n, val) {
+              return n + (val === search);
+          }, 0);
+
           arr.push(date.split('T')[0]);
-          if (assignmentOnDate) {
-            return timeScale(moment(date, moment.ISO_8601)) + 4;  
+
+          if (count > 0) {
+            return timeScale(moment(date, moment.ISO_8601)) + (4 * count);  
           } else {
             return timeScale(moment(date, moment.ISO_8601));  
           }
