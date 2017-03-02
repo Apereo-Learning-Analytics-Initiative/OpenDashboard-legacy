@@ -30,6 +30,7 @@
     $scope.chartInitialized = false;
     $scope.listType = 'classes';
     $scope.datalist = [];
+    $scope.assignmentsWithoutDueDates = [];
     $scope.coursesMaxEvents = 0;
     $scope.maxEvents = 0;
     $scope.emailstudent = {};
@@ -371,7 +372,16 @@
 
     }
 
-
+    function handleAssignmentsWithoutDueDates() {
+      _.each($scope.processedClasses, function(c){
+        _.forEachRight(c.assignments, function(a, i){
+          if (!a.dueDate) {
+            $scope.assignmentsWithoutDueDates.push(a);
+            c.assignments.splice(i,1);
+          }
+        });
+      });
+    }
 
     $scope.updateStudentCharts = function (data) {
       // $timeout(function(){
@@ -412,6 +422,7 @@
 
           addMissingData();
           setCoursesTerm();
+          handleAssignmentsWithoutDueDates();
 
           if ($state.params.studentId && $state.params.groupId) {
             $scope.listType = 'student';
@@ -605,14 +616,18 @@
         }
 
         function zoomIn(d) {
-          
+          var date = d.date;
+          if (d.hasOwnProperty('dueDate')) {
+            date = d.dueDate ? d.dueDate : courseStart;
+          }
+
           d3.select('.zoom-out')
           .classed('active', true)
           .on('click', zoomOut);
 
           if (weeks <= 6) {
-            var daysBack = moment(d.date).subtract(moment.duration(3, 'day'));
-            var daysForward = moment(d.date).add(moment.duration(4, 'day'));
+            var daysBack = moment(date).subtract(moment.duration(3, 'day'));
+            var daysForward = moment(date).add(moment.duration(4, 'day'));
             xAxis.ticks(7);
 
             timeScale.domain([
@@ -621,8 +636,8 @@
               ]);
 
           } else {
-            var weeksBack = moment(d.date).startOf('week').subtract(moment.duration(2, 'week'));
-            var weeksForward = moment(d.date).startOf('week').add(moment.duration(3, 'week'));
+            var weeksBack = moment(date).startOf('week').subtract(moment.duration(2, 'week'));
+            var weeksForward = moment(date).startOf('week').add(moment.duration(3, 'week'));
             xAxis.ticks(5);
 
             timeScale.domain([
@@ -645,15 +660,16 @@
               return placement;
             });
 
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
           d3.selectAll('#assignment-overlay svg .assignment-marker')
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              console.log(d);
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);
             });
 
 
@@ -683,15 +699,16 @@
               return placement;
             });
 
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
           d3.selectAll('#assignment-overlay svg .assignment-marker')
             .transition()
             .duration(750)
             .attr('x1', function(d){
-              console.log(d);
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);
             });
 
         }
@@ -811,15 +828,32 @@
 
         }
 
+        
+        function assignmentPositon(d, arr) {
+          var date = d.dueDate;
+          
+          var search = date.split('T')[0];
+          var count = arr.reduce(function(n, val) {
+              return n + (val === search);
+          }, 0);
+
+          arr.push(date.split('T')[0]);
+
+          if (count > 0) {
+            return timeScale(moment(date, moment.ISO_8601)) + (4 * count);  
+          } else {
+            return timeScale(moment(date, moment.ISO_8601));  
+          }
+        }
+
         function drawAssignments() {
           var heading = floatingHeaderTable.find('.timeline-heading');
           var width = heading.width();
           var height = floatingHeaderTable.height() + dataTable.height() - $('#hidden-header').height();
           var offset = heading.offset();
           var overlay = $('#assignment-overlay');
-          
-          console.log($('#pulse-table-header .timeline-heading').offset());
-          console.log(offset);
+          var assignmentDatesX1 = [];
+          var assignmentDatesX2 = [];
 
           overlay.css({
             'left': offset.left,
@@ -834,7 +868,6 @@
             .attr("width", "100%");
 
           assignments.selectAll('line').remove();
-
           assignments
             .selectAll('line')
             .data(scope.currentCourse.assignments)
@@ -845,11 +878,11 @@
               var classname = "assignment-marker " + d.category.title;
               return classname;
             })
-            .attr('x1', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+            .attr('x1', function(d, i){
+              return assignmentPositon(d, assignmentDatesX1);
             })
             .attr('x2', function(d){
-              return timeScale(moment(d.dueDate, moment.ISO_8601));
+              return assignmentPositon(d, assignmentDatesX2);;
             })
             .attr('y1', 0)
             .attr('y2', height)
@@ -886,7 +919,8 @@
                   scope.assignmentInfo = undefined;
               });
               hideToolTips();
-            });  
+            })
+            .on('click', zoomIn);
             
             $('#pulse-data').trigger('chart-render-finish');
         };
