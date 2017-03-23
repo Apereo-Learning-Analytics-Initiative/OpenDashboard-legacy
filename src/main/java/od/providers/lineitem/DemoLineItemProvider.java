@@ -102,18 +102,18 @@ public class DemoLineItemProvider implements LineItemProvider {
     Map<String, unicon.matthews.oneroster.Class> classes = new HashMap<>();
     
     Map<String, String> metadata1 = new HashMap<>();   
-    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 8, 30).toString());
-    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 11).toString());
+    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 23).toString());
+    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 11).toString());
     metadata1.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     Map<String, String> metadata2 = new HashMap<>();
-    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 9, 1).toString());
-    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 10).toString());
+    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 18).toString());
+    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 10).toString());
     metadata2.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
 
     Map<String, String> metadata3 = new HashMap<>();
-    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 9, 8).toString());
-    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 13).toString());
+    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 28).toString());
+    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 27).toString());
     metadata3.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     unicon.matthews.oneroster.Class class1
@@ -179,8 +179,8 @@ public class DemoLineItemProvider implements LineItemProvider {
         .withStatus(Status.active)
         .withTitle("Hands-on Lab")
         .withDescription("Learn how to use the microscope.")
-        .withAssignDate(LocalDateTime.of(2016, 9, 7, 0, 0))
-        .withDueDate(LocalDateTime.of(2016, 9, 14, 0, 0))
+        .withAssignDate(LocalDateTime.of(2017, 2, 7, 0, 0))
+        .withDueDate(LocalDateTime.of(2017, 2, 14, 0, 0))
         .withClass(class1)
         .withCategory(lab)
         .build();
@@ -191,8 +191,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withStatus(Status.active)
       .withTitle("Lab Report")
       .withDescription("Report on observations")
-      .withAssignDate(LocalDateTime.of(2016, 9, 7,0,0))
-      .withDueDate(LocalDateTime.of(2016, 10, 1,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 3, 7,0,0))
+      .withDueDate(LocalDateTime.of(2017, 4, 1,0,0))
       .withClass(class1)
       .withCategory(report)
       .build();
@@ -203,8 +203,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withStatus(Status.active)
       .withTitle("Midterm Exam")
       .withDescription("Good luck!")
-      .withAssignDate(LocalDateTime.of(2016, 9, 1,0,0))
-      .withDueDate(LocalDateTime.of(2016, 10, 27,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 3, 1,0,0))
+      .withDueDate(LocalDateTime.of(2017, 3, 27,0,0))
       .withClass(class1)
       .withCategory(exam)
       .build();
@@ -214,8 +214,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withSourcedId(UUID.randomUUID().toString())
       .withStatus(Status.active)
       .withTitle("Quiz #1")
-      .withAssignDate(LocalDateTime.of(2016, 11, 15,0,0))
-      .withDueDate(LocalDateTime.of(2016, 11, 15,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 4, 15,0,0))
+      .withDueDate(LocalDateTime.of(2017, 4, 15,0,0))
       .withClass(class1)
       .withCategory(quiz)
       .build();
@@ -226,8 +226,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withStatus(Status.active)
       .withTitle("Final Exam")
       .withDescription("Enjoy break!")
-      .withAssignDate(LocalDateTime.of(2016, 9, 1,0,0))
-      .withDueDate(LocalDateTime.of(2016, 12, 10,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 2, 1,0,0))
+      .withDueDate(LocalDateTime.of(2017, 2, 10,0,0))
       .withClass(class1)
       .withCategory(exam)
       .build();
@@ -244,8 +244,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withStatus(Status.active)
       .withTitle("Hands-on Lab")
       .withDescription("Compounds and more!")
-      .withAssignDate(LocalDateTime.of(2016, 9, 2,0,0))
-      .withDueDate(LocalDateTime.of(2016, 9, 19,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 3, 2,0,0))
+      .withDueDate(LocalDateTime.of(2017, 3, 19,0,0))
       .withClass(class2)
       .withCategory(lab)
       .build();
@@ -256,8 +256,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withStatus(Status.active)
     .withTitle("Lab Report")
     .withDescription("Report on compounds")
-    .withAssignDate(LocalDateTime.of(2016, 9, 2,0,0))
-    .withDueDate(LocalDateTime.of(2016, 10, 15,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 4, 2,0,0))
+    .withDueDate(LocalDateTime.of(2017, 4, 15,0,0))
     .withClass(class2)
     .withCategory(report)
     .build();
@@ -268,8 +268,8 @@ public class DemoLineItemProvider implements LineItemProvider {
       .withStatus(Status.active)
       .withTitle("Quiz #1")
       .withDescription("Knowledge check")
-      .withAssignDate(LocalDateTime.of(2016, 9, 2,0,0))
-      .withDueDate(LocalDateTime.of(2016, 10, 19,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 4, 2,0,0))
+      .withDueDate(LocalDateTime.of(2017, 4, 19,0,0))
       .withClass(class2)
       .withCategory(report)
       .build();
@@ -281,8 +281,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withStatus(Status.active)
     .withTitle("Midterm Exam")
     .withDescription("Good luck!")
-    .withAssignDate(LocalDateTime.of(2016, 9, 2,0,0))
-    .withDueDate(LocalDateTime.of(2016, 10, 30,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 4, 2,0,0))
+    .withDueDate(LocalDateTime.of(2017, 4, 30,0,0))
     .withClass(class2)
     .withCategory(exam)
     .build();
@@ -292,8 +292,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withSourcedId(UUID.randomUUID().toString())
     .withStatus(Status.active)
     .withTitle("Quiz #2")
-    .withAssignDate(LocalDateTime.of(2016, 11, 15,0,0))
-    .withDueDate(LocalDateTime.of(2016, 11, 19,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 3, 15,0,0))
+    .withDueDate(LocalDateTime.of(2017, 3, 19,0,0))
     .withClass(class2)
     .withCategory(quiz)
     .build();
@@ -304,8 +304,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withStatus(Status.active)
     .withTitle("Final Exam")
     .withDescription("Enjoy break!")
-    .withAssignDate(LocalDateTime.of(2016, 9, 2,0,0))
-    .withDueDate(LocalDateTime.of(2016, 12, 6,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 4, 2,0,0))
+    .withDueDate(LocalDateTime.of(2017, 4, 6,0,0))
     .withClass(class2)
     .withCategory(exam)
     .build();
@@ -323,8 +323,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withStatus(Status.active)
     .withTitle("Hands-on Lab")
     .withDescription("Disection! The innards of ficus.")
-    .withAssignDate(LocalDateTime.of(2016, 9, 10,0,0))
-    .withDueDate(LocalDateTime.of(2016, 9, 15,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 2, 10,0,0))
+    .withDueDate(LocalDateTime.of(2017, 2, 15,0,0))
     .withClass(class3)
     .withCategory(lab)
     .build();
@@ -335,8 +335,8 @@ LineItem class3_li1
   .withStatus(Status.active)
   .withTitle("Lab Report")
   .withDescription("Report on discection")
-  .withAssignDate(LocalDateTime.of(2016, 9, 10,0,0))
-  .withDueDate(LocalDateTime.of(2016, 10, 1,0,0))
+  .withAssignDate(LocalDateTime.of(2017, 3, 10,0,0))
+  .withDueDate(LocalDateTime.of(2017, 4, 1,0,0))
   .withClass(class3)
   .withCategory(report)
   .build();
@@ -347,8 +347,8 @@ LineItem class3_li1
     .withStatus(Status.active)
     .withTitle("Quiz #1")
     .withDescription("Knowledge check")
-    .withAssignDate(LocalDateTime.of(2016, 9, 19,0,0))
-    .withDueDate(LocalDateTime.of(2016, 10, 17,0,0))
+    .withAssignDate(LocalDateTime.of(2017, 3, 19,0,0))
+    .withDueDate(LocalDateTime.of(2017, 4, 17,0,0))
     .withClass(class3)
     .withCategory(report)
     .build();
@@ -360,8 +360,8 @@ LineItem class3_li1
       .withStatus(Status.active)
       .withTitle("Midterm Exam")
       .withDescription("Good luck!")
-      .withAssignDate(LocalDateTime.of(2016, 9, 17,0,0))
-      .withDueDate(LocalDateTime.of(2016, 11, 1,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 3, 17,0,0))
+      .withDueDate(LocalDateTime.of(2017, 4, 1,0,0))
       .withClass(class3)
       .withCategory(exam)
       .build();
@@ -371,8 +371,8 @@ LineItem class3_li1
       .withSourcedId(UUID.randomUUID().toString())
       .withStatus(Status.active)
       .withTitle("Quiz #2")
-      .withAssignDate(LocalDateTime.of(2016, 11, 15,0,0))
-      .withDueDate(LocalDateTime.of(2016, 11, 15,0,0))
+      .withAssignDate(LocalDateTime.of(2017, 4, 15,0,0))
+      .withDueDate(LocalDateTime.of(2017, 4, 15,0,0))
       .withClass(class3)
       .withCategory(quiz)
       .build();
@@ -383,8 +383,8 @@ LineItem class3_li1
       .withStatus(Status.active)
       .withTitle("Final Exam")
       .withDescription("Enjoy break!")
-      .withAssignDate(LocalDateTime.of(2016, 9, 7, 0, 0))
-      .withDueDate(LocalDateTime.of(2016, 12, 9, 0, 0))
+      .withAssignDate(LocalDateTime.of(2017, 4, 7, 0, 0))
+      .withDueDate(LocalDateTime.of(2017, 4, 9, 0, 0))
       .withClass(class3)
       .withCategory(exam)
       .build();

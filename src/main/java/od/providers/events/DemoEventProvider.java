@@ -132,12 +132,12 @@ public class DemoEventProvider implements EventProvider {
     
     String [] classSourcedIds = {"demo-class-1","demo-class-2","demo-class-3"};
     
-    long demoClass1StartTime = Timestamp.valueOf("2016-08-30 00:00:00").getTime();
-    long demoClass1EndTime = Timestamp.valueOf("2016-12-11 00:00:00").getTime();
-    long demoClass2StartTime = Timestamp.valueOf("2016-09-01 00:00:00").getTime();
-    long demoClass2EndTime = Timestamp.valueOf("2016-12-10 00:00:00").getTime();
-    long demoClass3StartTime = Timestamp.valueOf("2016-09-08 00:00:00").getTime();
-    long demoClass3EndTime = Timestamp.valueOf("2016-12-13 00:00:00").getTime();
+    long demoClass1StartTime = Timestamp.valueOf("2017-01-23 00:00:00").getTime();
+    long demoClass1EndTime = Timestamp.valueOf("2017-05-11 00:00:00").getTime();
+    long demoClass2StartTime = Timestamp.valueOf("2017-01-18 00:00:00").getTime();
+    long demoClass2EndTime = Timestamp.valueOf("2017-05-10 00:00:00").getTime();
+    long demoClass3StartTime = Timestamp.valueOf("2017-01-28 00:00:00").getTime();
+    long demoClass3EndTime = Timestamp.valueOf("2017-05-27 00:00:00").getTime();
     
     List<Verb> verbs = new ArrayList<>();
     verbs.add(new Verb(3.0,"http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedIn"));
