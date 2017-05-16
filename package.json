@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "gulp"
+    "build": "gulp",
+    "start": "mvn clean package spring-boot:run -Drun.profiles=demo"
   },
   "repository": {
     "type": "git",
