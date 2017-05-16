@@ -83,18 +83,18 @@ public class DemoEnrollmentProvider implements EnrollmentProvider {
     Map<String, unicon.matthews.oneroster.Class> classes = new HashMap<>();
     
     Map<String, String> metadata1 = new HashMap<>();   
-    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 8, 30).toString());
-    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 11).toString());
+    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 23).toString());
+    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 11).toString());
     metadata1.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     Map<String, String> metadata2 = new HashMap<>();
-    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 9, 1).toString());
-    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 10).toString());
+    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 18).toString());
+    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 10).toString());
     metadata2.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
 
     Map<String, String> metadata3 = new HashMap<>();
-    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2016, 9, 8).toString());
-    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2016, 12, 13).toString());
+    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 28).toString());
+    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 27).toString());
     metadata3.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     unicon.matthews.oneroster.Class class1
