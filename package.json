@@ -32,7 +32,7 @@
     "angular-translate-storage-cookie": "^2.12.1",
     "angular-translate-storage-local": "^2.12.1",
     "angular-ui-bootstrap": "^2.1.3",
-    "angular-ui-notification": "^0.2.0",
+    "angular-ui-notification": "^0.3.6",
     "angular-ui-router": "^0.3.2",
     "angular-ui-sortable": "^0.14.3",
     "angular-visjs": "^4.16.0",
