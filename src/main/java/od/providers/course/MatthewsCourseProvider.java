@@ -93,7 +93,9 @@ public class MatthewsCourseProvider extends MatthewsProvider implements CoursePr
     ResponseEntity<ClassMapping> response 
       = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), ClassMapping.class);
     
-    if (response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (response.getStatusCode() == HttpStatus.NOT_FOUND 
+        || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR 
+        || response.getBody() == null) {
       return null;
     }
     
