@@ -88,7 +88,9 @@ public class MatthewsUserProvider extends MatthewsProvider implements UserProvid
     ResponseEntity<UserMapping> response 
       = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), UserMapping.class);
     
-    if (response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (response.getStatusCode() == HttpStatus.NOT_FOUND 
+        || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR 
+        || response.getBody() == null) {
       return null;
     }
     
