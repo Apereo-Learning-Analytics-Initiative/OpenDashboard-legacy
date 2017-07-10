@@ -76,6 +76,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
   private String lis_person_contact_email_primary;
   private String lis_outcome_service_url;
   private String lis_result_sourcedid;
+  private String lis_course_section_sourcedid;
   private String context_title;
   private String context_label;
   private String tool_consumer_info_product_family_code;
@@ -128,6 +129,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
       @JsonProperty("lis_person_name_full") String lis_person_name_full,
       @JsonProperty("lis_person_contact_email_primary") String lis_person_contact_email_primary,
       @JsonProperty("lis_outcome_service_url") String lis_outcome_service_url, @JsonProperty("lis_result_sourcedid") String lis_result_sourcedid,
+      @JsonProperty("lis_course_section_sourcedid") String lis_course_section_sourcedid,
       @JsonProperty("context_title") String context_title, @JsonProperty("context_label") String context_label,
       @JsonProperty("tool_consumer_info_product_family_code") String tool_consumer_info_product_family_code,
       @JsonProperty("tool_consumer_info_version") String tool_consumer_info_version,
@@ -167,6 +169,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     this.lis_person_contact_email_primary = lis_person_contact_email_primary;
     this.lis_outcome_service_url = lis_outcome_service_url;
     this.lis_result_sourcedid = lis_result_sourcedid;
+    this.lis_course_section_sourcedid = lis_course_section_sourcedid;
     this.context_title = context_title;
     this.context_label = context_label;
     this.tool_consumer_info_product_family_code = tool_consumer_info_product_family_code;
@@ -246,6 +249,9 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     }
     if (lis_result_sourcedid != null) {
       sm.put("lis_result_sourcedid", lis_result_sourcedid);
+    }
+    if (lis_course_section_sourcedid != null) {
+      sm.put("lis_course_section_sourcedid", lis_course_section_sourcedid);
     }
     if (context_id != null) {
       sm.put("context_id", context_id);
@@ -330,18 +336,16 @@ public class LaunchRequest extends LtiMessage implements Serializable {
         + launch_presentation_height + ", launch_presentation_return_url=" + launch_presentation_return_url + ", user_id=" + user_id + ", roles="
         + roles + ", context_type=" + context_type + ", launch_presentation_locale=" + launch_presentation_locale + ", launch_presentation_css_url="
         + launch_presentation_css_url + ", role_scope_mentor=" + role_scope_mentor + ", user_image=" + user_image + ", custom=" + custom + ", ext="
-        + ext + ", extra=" + extra + ", oauth_consumer_key=" + oauth_consumer_key + ", oauth_signature_method=" + oauth_signature_method
-        + ", oauth_timestamp=" + oauth_timestamp + ", oauth_nonce=" + oauth_nonce + ", oauth_version=" + oauth_version + ", oauth_signature="
-        + oauth_signature + ", oauth_callback=" + oauth_callback + ", resource_link_title=" + resource_link_title + ", resource_link_description="
-        + resource_link_description + ", lis_person_name_given=" + lis_person_name_given + ", lis_person_name_family=" + lis_person_name_family
-        + ", lis_person_name_full=" + lis_person_name_full + ", lis_person_contact_email_primary=" + lis_person_contact_email_primary
-        + ", lis_outcome_service_url=" + lis_outcome_service_url + ", lis_result_sourcedid=" + lis_result_sourcedid + ", context_title="
-        + context_title + ", context_label=" + context_label + ", tool_consumer_info_product_family_code=" + tool_consumer_info_product_family_code
-        + ", tool_consumer_info_version=" + tool_consumer_info_version + ", tool_consumer_instance_guid=" + tool_consumer_instance_guid
-        + ", tool_consumer_instance_name=" + tool_consumer_instance_name + ", tool_consumer_instance_description="
-        + tool_consumer_instance_description + ", tool_consumer_instance_url=" + tool_consumer_instance_url
-        + ", tool_consumer_instance_contact_email=" + tool_consumer_instance_contact_email + ", lti_message_type=" + lti_message_type
-        + ", lti_version=" + lti_version + "]";
+        + ext + ", extra=" + extra + ", resource_link_title=" + resource_link_title + ", resource_link_description=" + resource_link_description
+        + ", lis_person_name_given=" + lis_person_name_given + ", lis_person_name_family=" + lis_person_name_family + ", lis_person_name_full="
+        + lis_person_name_full + ", lis_person_contact_email_primary=" + lis_person_contact_email_primary + ", lis_outcome_service_url="
+        + lis_outcome_service_url + ", lis_result_sourcedid=" + lis_result_sourcedid + ", lis_course_section_sourcedid="
+        + lis_course_section_sourcedid + ", context_title=" + context_title + ", context_label=" + context_label
+        + ", tool_consumer_info_product_family_code=" + tool_consumer_info_product_family_code + ", tool_consumer_info_version="
+        + tool_consumer_info_version + ", tool_consumer_instance_guid=" + tool_consumer_instance_guid + ", tool_consumer_instance_name="
+        + tool_consumer_instance_name + ", tool_consumer_instance_description=" + tool_consumer_instance_description
+        + ", tool_consumer_instance_url=" + tool_consumer_instance_url + ", tool_consumer_instance_contact_email="
+        + tool_consumer_instance_contact_email + "]";
   }
 
   public String getResource_link_id() {
@@ -710,6 +714,14 @@ public class LaunchRequest extends LtiMessage implements Serializable {
       log.error(e.getMessage(), e);
     } 
     return launchRequest;
+  }
+
+  public String getLis_course_section_sourcedid() {
+    return lis_course_section_sourcedid;
+  }
+
+  public void setLis_course_section_sourcedid(String lis_course_section_sourcedid) {
+    this.lis_course_section_sourcedid = lis_course_section_sourcedid;
   }
 
 }

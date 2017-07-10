@@ -33,7 +33,7 @@ import od.providers.user.UserProvider;
 import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class LTIEntryPointController {
     logger.debug("{}",launchRequest);
     
     String consumerKey = launchRequest.getOauth_consumer_key();
-    String contextId = launchRequest.getContext_id();
+    //String contextId = launchRequest.getContext_id();
     
     Tenant tenant = mongoTenantRepository.findByConsumersOauthConsumerKey(consumerKey);
 
@@ -84,29 +84,60 @@ public class LTIEntryPointController {
       //role = "ROLE_STUDENT";
     }
     
-    if (launchRequest.getCustom() != null && !launchRequest.getCustom().isEmpty()) {
-      String canvasCourseId = launchRequest.getCustom().get("custom_canvas_course_id");
+    // Find user mapping
+    UserProvider userProvider = providerService.getUserProvider(tenant);
+    logger.debug("Looking up usersourcedId with user id {}",launchRequest.getUser_id());
+    String userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, launchRequest.getUser_id());
+    
+    if (StringUtils.isBlank(userSourcedId)) {
+      if (launchRequest.getCustom() != null && !launchRequest.getCustom().isEmpty()) {        
+        String custom_canvas_user_id = launchRequest.getCustom().get("custom_canvas_user_id");
+        if (StringUtils.isNotBlank(custom_canvas_user_id)) {
+          userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, custom_canvas_user_id);
+        }
+      }
       
-      if (StringUtils.isNotBlank(canvasCourseId)) {
-        contextId = canvasCourseId;
-        
-        String userId = launchRequest.getCustom().get("custom_canvas_user_id");
-        UserProvider userProvider = providerService.getUserProvider(tenant);
-        String userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, userId);
-        
-        // this is an ugly but effective workaround
-        launchRequest.setUser_id(userSourcedId);
+      if (StringUtils.isBlank(userSourcedId)) {
+        if (launchRequest.getExt() != null && !launchRequest.getExt().isEmpty()) {        
+          String ext_user_username = launchRequest.getExt().get("ext_user_username");
+          if (StringUtils.isNotBlank(ext_user_username)) {
+            userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, ext_user_username);
+          }
+        }
+      }
+    }
+    
+    if (StringUtils.isBlank(userSourcedId)) {
+      throw new ProviderException("No user mapping found");
+    }
+    
+    // this is an ugly but effective workaround
+    launchRequest.setUser_id(userSourcedId);
+    
+    // Find class mapping
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    logger.debug("Looking up class sourcedId with context id {}",launchRequest.getContext_id());
+    String classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, launchRequest.getContext_id());
+    
+    if (StringUtils.isBlank(classSourcedId)) {
+      String custom_canvas_course_id = launchRequest.getCustom().get("custom_canvas_course_id");
+      
+      if (StringUtils.isNotBlank(custom_canvas_course_id)) {
+        logger.debug("Looking up class sourcedId with custom_canvas_course_id {}", custom_canvas_course_id);
+        classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, custom_canvas_course_id);
+      }
+      else if (launchRequest.getLis_course_section_sourcedid() != null) {
+        logger.debug("Looking up class sourcedId with lis_course_section_sourcedid {}", launchRequest.getLis_course_section_sourcedid());
+        classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, launchRequest.getLis_course_section_sourcedid());
       }
     }
 
+    if (StringUtils.isBlank(classSourcedId)) {
+      throw new ProviderException("No class mapping found");
+    }
     
-    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
-        
-    logger.debug("Looking up class sourcedId with context id {}",contextId);
-    
-    String classId = courseProvider.getClassSourcedIdWithExternalId(tenant, contextId);
     // also an ugly but effective workaround
-    launchRequest.setContext_id(classId);
+    launchRequest.setContext_id(classSourcedId);
 
     OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 
         null,
@@ -135,8 +166,8 @@ public class LTIEntryPointController {
 
     //return "index";
     String cmUrl = null;
-    if (StringUtils.isNotBlank(classId)) {
-      cmUrl = String.format("/direct/courselist/%s",classId);
+    if (StringUtils.isNotBlank(classSourcedId)) {
+      cmUrl = String.format("/direct/courselist/%s",classSourcedId);
     }
     else {
       cmUrl = "/direct/courselist";
