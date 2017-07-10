@@ -504,6 +504,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     this.lis_person_contact_email_primary = paramMap.get("lis_person_contact_email_primary");
     this.lis_outcome_service_url = paramMap.get("lis_outcome_service_url");
     this.lis_result_sourcedid = paramMap.get("lis_result_sourcedid");
+    this.lis_course_section_sourcedid = paramMap.get("lis_course_section_sourcedid");
     this.context_id = paramMap.get("context_id");
     this.context_type = paramMap.get("context_type");
     this.context_title = paramMap.get("context_title");
