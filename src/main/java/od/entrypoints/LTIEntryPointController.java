@@ -120,11 +120,9 @@ public class LTIEntryPointController {
     String classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, launchRequest.getContext_id());
     
     if (StringUtils.isBlank(classSourcedId)) {
-      String custom_canvas_course_id = launchRequest.getCustom().get("custom_canvas_course_id");
-      
-      if (StringUtils.isNotBlank(custom_canvas_course_id)) {
-        logger.debug("Looking up class sourcedId with custom_canvas_course_id {}", custom_canvas_course_id);
-        classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, custom_canvas_course_id);
+      if (launchRequest.getCustom() != null && StringUtils.isNotBlank(launchRequest.getCustom().get("custom_canvas_course_id"))) {
+        logger.debug("Looking up class sourcedId with custom_canvas_course_id {}", launchRequest.getCustom().get("custom_canvas_course_id"));
+        classSourcedId = courseProvider.getClassSourcedIdWithExternalId(tenant, launchRequest.getCustom().get("custom_canvas_course_id"));
       }
       else if (launchRequest.getLis_course_section_sourcedid() != null) {
         logger.debug("Looking up class sourcedId with lis_course_section_sourcedid {}", launchRequest.getLis_course_section_sourcedid());
