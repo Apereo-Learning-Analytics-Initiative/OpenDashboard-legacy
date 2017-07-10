@@ -191,10 +191,15 @@ public class PulseController {
         LocalDate lastAssignmentDueDate = null;
         boolean hasAssignments = false;
         if (lineitemProviderData != null) {
-          classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
+          try {
+            classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
+          }
+          catch (Exception e) {
+            log.info(e.getLocalizedMessage());
+          }
           if (classLineItems != null && !classLineItems.isEmpty()) {
             hasAssignments = true;
-            
+
             Collection<LocalDate> assignmentDueDates = new ArrayList<>();
             for (LineItem cli : classLineItems) {
               LocalDateTime dueDate = cli.getDueDate();
@@ -202,7 +207,7 @@ public class PulseController {
                 assignmentDueDates.add(dueDate.toLocalDate());
               }
             }
-            
+
             lastAssignmentDueDate = assignmentDueDates.stream().max(LocalDate::compareTo).get();
 //            classLineItems
 //              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
@@ -282,7 +287,7 @@ public class PulseController {
             PulseStudentDetail pulseStudentDetail
               = new PulseStudentDetail.Builder()
             
-                .withId(studentEnrollment.getUser().getSourcedId())
+                .withId(StringUtils.replace(studentEnrollment.getUser().getSourcedId(), ":", ""))
                 .withLabel(studentEnrollment.getUser().getFamilyName() +", "+studentEnrollment.getUser().getGivenName())
                 .withFirstName(studentEnrollment.getUser().getGivenName())
                 .withLastName(studentEnrollment.getUser().getFamilyName())
@@ -331,7 +336,7 @@ public class PulseController {
             
             .withStudentEventMax(studentEventMax)
             .withStudentEventTotalMax(pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong())
-            .withAssignments(new ArrayList<>(classLineItems))
+            .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList())
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
             
