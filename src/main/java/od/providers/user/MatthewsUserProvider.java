@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -86,6 +87,10 @@ public class MatthewsUserProvider extends MatthewsProvider implements UserProvid
     
     ResponseEntity<UserMapping> response 
       = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), UserMapping.class);
+    
+    if (response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+      return null;
+    }
     
     UserMapping userMapping = response.getBody();
     

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -91,6 +92,10 @@ public class MatthewsCourseProvider extends MatthewsProvider implements CoursePr
     
     ResponseEntity<ClassMapping> response 
       = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), ClassMapping.class);
+    
+    if (response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+      return null;
+    }
     
     ClassMapping classMapping = response.getBody();
     
