@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +27,7 @@ import od.providers.course.CourseProvider;
 import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
 import od.providers.lineitem.LineItemProvider;
+import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,6 @@ import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.Role;
-import unicon.matthews.oneroster.Status;
 import unicon.oneroster.Vocabulary;
 
 @RestController
@@ -84,6 +83,7 @@ public class PulseController {
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
     EventProvider eventProvider = providerService.getEventProvider(tenant);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
+    UserProvider userProvider = providerService.getUserProvider(tenant);
     
     ProviderData lineitemProviderData = null;
     try {
@@ -130,6 +130,7 @@ public class PulseController {
       Set<Long> allStudentEventCounts = new HashSet<>();
 
       for (Enrollment enrollment: enrollments) {
+        
         unicon.matthews.oneroster.Class klass
           = enrollment.getKlass();
         
@@ -158,9 +159,29 @@ public class PulseController {
         }
                 
         ClassEventStatistics classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
-        Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);
+        Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);        
         
         if (classEnrollment != null && !classEnrollment.isEmpty()) {
+          
+          // temp workaround
+          ProviderData userProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.USER);
+          Set<Enrollment> populatedEnrollments = new HashSet<>();
+          for (Enrollment e : classEnrollment) {
+            Enrollment populatedEnrollment
+              = new Enrollment.Builder()
+                  .withKlass(e.getKlass())
+                  .withMetadata(e.getMetadata())
+                  .withPrimary(e.isPrimary())
+                  .withRole(e.getRole())
+                  .withSourcedId(e.getSourcedId())
+                  .withStatus(e.getStatus())
+                  .withUser(userProvider.getUserBySourcedId(userProviderData, e.getUser().getSourcedId()))
+                  .build();
+            
+            populatedEnrollments.add(populatedEnrollment);
+          }
+          classEnrollment = populatedEnrollments;
+          
           classEnrollment = 
               classEnrollment.stream().filter(ce -> ce.getRole().equals(Role.student)).collect(Collectors.toSet());
         }
