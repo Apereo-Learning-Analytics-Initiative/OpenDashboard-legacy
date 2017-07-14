@@ -84,6 +84,7 @@ public class PulseController {
     EventProvider eventProvider = providerService.getEventProvider(tenant);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     UserProvider userProvider = providerService.getUserProvider(tenant);
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
     
     ProviderData lineitemProviderData = null;
     try {
@@ -107,10 +108,7 @@ public class PulseController {
               .findFirst().orElse(null);
         
         if (foundEnrollment == null) {
-          
-          CourseProvider courseProvider
-            = providerService.getCourseProvider(tenant);
-          
+                    
           Class klass = courseProvider.getClass(tenant, classSourcedId);
           
           foundEnrollment
@@ -120,6 +118,23 @@ public class PulseController {
         }
 
         enrollments = Collections.singleton(foundEnrollment);
+      }
+      else {
+        Set<Enrollment> tempEnrollments = new HashSet<>();
+        for (Enrollment e : enrollments) {
+          Enrollment copyOfEnrollment
+            = new Enrollment.Builder()
+              .withKlass(courseProvider.getClass(tenant, e.getKlass().getSourcedId()))
+              .withMetadata(e.getMetadata())
+              .withPrimary(e.isPrimary())
+              .withRole(e.getRole())
+              .withSourcedId(e.getSourcedId())
+              .withStatus(e.getStatus())
+              .withUser(e.getUser())
+              .build();
+          tempEnrollments.add(copyOfEnrollment);
+        }
+        enrollments = tempEnrollments;
       }
       
       List<PulseClassDetail> pulseClassDetails = new ArrayList<>();
