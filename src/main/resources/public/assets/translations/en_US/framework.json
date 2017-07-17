@@ -185,6 +185,17 @@
 
 "LABEL_MATTHEWS_BASE_URL":"Matthews Base URL",
 
+"JDBC_COURSE_NAME":"Jdbc Course Provider",
+"JDBC_COURSE_DESC":"Uses JDBC data source to get course data",
+"JDBC_EVENTS_NAME":"Jdbc Event Data Provider",
+"JDBC_EVENTS_DESC":"Uses JDBC data source to get event data",
+"JDBC_ROSTER_NAME":"Jdbc Roster Data Provider",
+"JDBC_ROSTER_DESC":"Uses JDBC data source to get roster data",
+"JDBC_USER_NAME":"Jdbc User Data Provider",
+"JDBC_USER_DESC":"Uses JDBC data source to get user data",
+"JDBC_LINEITEMS_NAME":"Jdbc Line Item Provider",
+"JDBC_LINEITEMS_DESC":"Uses JDBC data source to get line item data",
+
 "OD_DEMO_EVENTS_NAME":"Demo Event Provider",
 "OD_DEMO_EVENTS_DESC":"",
 "OD_DEMO_ENROLLMENTS_NAME":"Demo Roster Provider",
