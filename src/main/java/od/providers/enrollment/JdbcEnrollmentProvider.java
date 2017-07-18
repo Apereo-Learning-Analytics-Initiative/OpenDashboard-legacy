@@ -76,18 +76,22 @@ public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String 
 
 
 	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "select * from VW_OD_EN_ForClass where CLASSSOURCEID = '" + classSourcedId + "'";
+	 String SQL = "SELECT * FROM VW_OD_EN_FORCLASS WHERE CLASSSOURCEDID = '" + classSourcedId + "'";
      ResultSet Rs = client.getData(SQL);
      try {
          while (Rs.next())
         	 {
+
         	 studentEnrollments.add(toEnrollment(Role.student
-			            		  				, toUser(Role.student
-			            		  						,Rs.getString("LAST_NAME")
-			            		  						,Rs.getString("FIRST_NAME")
-			            		  						,Rs.getString("USER_ID")
-			            		  						,Rs.getString("USER_ID"))
-			            		  				, toClass(Rs.getString("CLASSSOURCEID"), Rs.getString("TITLE"))));
+			            		  				,toUser(Role.student
+					            		  				,Rs.getString("FAMILYNAME")
+					            		  				,Rs.getString("GIVENNAME")
+					            		  				,Rs.getString("SOURCEDID")
+					            		  				,Rs.getString("USERID"))
+			            		  				,toClass(classSourcedId
+			            		  						,Rs.getString("TITLE"))
+			            		  				)
+        			 				);
              }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -102,18 +106,21 @@ public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String 
 	  staffEnrollments = new HashSet<Enrollment>();
 
 	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "select * from VW_OD_EN_FORUSER where CLASSSOURCEID = 'MATH_115L_118_201440'";
+	 String SQL = "SELECT * FROM VW_OD_EN_FORUSER WHERE USERSOURCEDID = '" + userSourcedId + "'";
      ResultSet Rs = client.getData(SQL);
      try {
     	 while (Rs.next())
     	 {
     		 staffEnrollments.add(toEnrollment(Role.teacher,
-        		  				toUser(Role.teacher
-        		  						,Rs.getString("LAST_NAME")
-        		  						,Rs.getString("FIRST_NAME")
-        		  						,Rs.getString("USER_ID")
-        		  						,Rs.getString("USER_ID"))
-        		  				,toClass(Rs.getString("CLASSSOURCEID"), Rs.getString("TITLE"))));
+				        		  				toUser(Role.teacher
+				        		  						, Rs.getString("FAMILYNAME")
+								  						, Rs.getString("GIVENNAME")
+								  						, Rs.getString("SOURCEDID")
+								  						, Rs.getString("USERID"))
+						  						,toClass(Rs.getString("CLASSSOURCEID")
+					  										, Rs.getString("TITLE"))
+			  									)
+    				 			);
          }
 
 		} catch (SQLException e) {

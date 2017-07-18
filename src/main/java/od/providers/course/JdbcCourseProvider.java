@@ -17,7 +17,6 @@ import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.config.ProviderConfiguration;
-//import od.providers.events.JdbcEventProvider;
 import od.providers.jdbc.JdbcClient;
 import od.providers.jdbc.JdbcProvider;
 import od.repository.mongo.MongoTenantRepository;
@@ -42,8 +41,8 @@ import unicon.oneroster.Vocabulary;
 
 /**
  *  
- * @author	Marist College Data Science (Kaushik, Sumit, Ed)
- * @version	0.1
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.0.1
  * @since	2017-06-01
  */
 
@@ -96,20 +95,20 @@ public class JdbcCourseProvider extends JdbcProvider implements CourseProvider {
   public String getClassSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException {
 	    ProviderData providerData = tenant.findByKey(KEY);
 
-	    JdbcClient client = new JdbcClient(providerData);
-	    ResultSet Rs = client.getData("SELECT * FROM VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID where CLASSSOURCEID = 'MATH_115L_118_201440' ");
-	    String s = null;
+	    String classSourcedId = null;
 	    try {
-			while (Rs.next()) {
-			    s = Rs.getString("CLASSSOURCEID");
+		    JdbcClient client = new JdbcClient(providerData);
+		    String SQL = "SELECT * FROM VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID WHERE EXTERNALID = '" + externalId  + "'";
+		    ResultSet Rs = client.getData(SQL);
+			if (Rs.next()) {
+				classSourcedId = Rs.getString("CLASSSOURCEDID");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-    return s;
+    return classSourcedId;
   }
-
 
   @Override
   public Class getClass(Tenant tenant, String classSourcedId) throws ProviderException {
@@ -117,19 +116,19 @@ public class JdbcCourseProvider extends JdbcProvider implements CourseProvider {
 	  Map<String, unicon.matthews.oneroster.Class> classes = new HashMap<>();
 	  
 	   JdbcClient client = new JdbcClient(providerData);
-      String SQL = "select * from VW_OD_CO_GETCLASS where CLASSSOURCEID = '" + classSourcedId + "'";
+      String SQL = "SELECT * FROM VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID = '" + classSourcedId + "'";
       ResultSet Rs = client.getData(SQL);
       try {   
       while (Rs.next()) {   
   
     	  	Map<String, String> metadata = new HashMap<>();
-        	  		metadata.put(Vocabulary.CLASS_START_DATE, Rs.getString("START_DATE"));
-					metadata.put(Vocabulary.CLASS_END_DATE, Rs.getString("END_DATE"));
-					metadata.put(Vocabulary.SOURCE_SYSTEM, Rs.getString("COURSE_ID_ILEARN"));
+        	  		metadata.put(Vocabulary.CLASS_START_DATE, Rs.getString("CLASS_START_DATE"));
+					metadata.put(Vocabulary.CLASS_END_DATE, Rs.getString("CLASS_END_DATE"));
+					metadata.put(Vocabulary.SOURCE_SYSTEM, Rs.getString("SOURCE_SYSTEM"));
 
 					unicon.matthews.oneroster.Class class1
 					= new unicon.matthews.oneroster.Class.Builder()
-						.withSourcedId(Rs.getString("CLASSSOURCEID"))
+						.withSourcedId(Rs.getString("CLASSSOURCEDID"))
 						.withTitle(Rs.getString("TITLE"))
 						.withMetadata(metadata)
 						.withStatus(Status.active)

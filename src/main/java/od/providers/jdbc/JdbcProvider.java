@@ -33,10 +33,13 @@ import unicon.oneroster.Vocabulary;
  * VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID
  * 
  * During initial development the pattern "VW_" does not have to be a view and in some cases was actually a table, the "VW_"
- * prefix is intended to mean a "view into the data" and not necessarily a view implementation in the database. 
+ * prefix is intended to mean a "view into the data" and not necessarily a view implementation in the database.
+ * 
+ * The following views are needed:
+ * Course: VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID,  VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID
  *  
- * @author	Marist College Data Science (Kaushik, Sumit, Ed)
- * @version	0.1
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.0.1
  * @since	2017-06-01
  */
 
@@ -76,7 +79,7 @@ public abstract class JdbcProvider implements Provider {
 		return klass;
 	}
 
-  protected User toUser(Role role, String familyname , String givenname, String userID, String userId) {
+  protected User toUser(Role role, String familyname , String givenname, String sourcedId, String userId) {
 		
 		User user
 			= new User.Builder()
@@ -84,7 +87,7 @@ public abstract class JdbcProvider implements Provider {
 			.withFamilyName(familyname)
 			.withGivenName(givenname)
 			.withStatus(Status.active)
-			.withSourcedId(userID)
+			.withSourcedId(sourcedId)
 			.withUserId(userId)
 			.build();
 
