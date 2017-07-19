@@ -105,6 +105,22 @@ public class LTIEntryPointController {
           }
         }
       }
+      
+      if (StringUtils.isBlank(userSourcedId)) {
+        if (StringUtils.isNotBlank(launchRequest.getLis_person_sourcedid())) {        
+          userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, launchRequest.getLis_person_sourcedid());
+        }
+      }
+
+      if (StringUtils.isBlank(userSourcedId)) {
+        if (launchRequest.getExt() != null && !launchRequest.getExt().isEmpty()) {        
+          String ext_user_username = launchRequest.getExt().get("ext_sakai_eid");
+          if (StringUtils.isNotBlank(ext_user_username)) {
+            userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, ext_user_username);
+          }
+        }
+      }
+
     }
     
     if (StringUtils.isBlank(userSourcedId)) {
