@@ -70,6 +70,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
   /* Deprecated Parameters */
   private String resource_link_title;
   private String resource_link_description;
+  private String lis_person_sourcedid;
   private String lis_person_name_given;
   private String lis_person_name_family;
   private String lis_person_name_full;
@@ -125,6 +126,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
       @JsonProperty("user_image") String user_image, @JsonProperty("custom") Map<String, String> custom,
       @JsonProperty("ext") Map<String, String> ext, @JsonProperty("resource_link_title") String resource_link_title,
       @JsonProperty("resource_link_description") String resource_link_description,
+      @JsonProperty("lis_person_sourcedid") String lis_person_sourcedid,
       @JsonProperty("lis_person_name_given") String lis_person_name_given, @JsonProperty("lis_person_name_family") String lis_person_name_family,
       @JsonProperty("lis_person_name_full") String lis_person_name_full,
       @JsonProperty("lis_person_contact_email_primary") String lis_person_contact_email_primary,
@@ -163,6 +165,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     this.ext = ext;
     this.resource_link_title = resource_link_title;
     this.resource_link_description = resource_link_description;
+    this.lis_person_sourcedid = lis_person_sourcedid;
     this.lis_person_name_given = lis_person_name_given;
     this.lis_person_name_family = lis_person_name_family;
     this.lis_person_name_full = lis_person_name_full;
@@ -231,6 +234,9 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     }
     if (role_scope_mentor != null) {
       sm.put("role_scope_mentor", role_scope_mentor);
+    }
+    if (lis_person_sourcedid != null) {
+      sm.put("lis_person_sourcedid", lis_person_sourcedid);
     }
     if (lis_person_name_given != null) {
       sm.put("lis_person_name_given", lis_person_name_given);
@@ -423,6 +429,10 @@ public class LaunchRequest extends LtiMessage implements Serializable {
   public String getResource_link_description() {
     return resource_link_description;
   }
+  
+  public String getLis_person_sourcedid() {
+    return lis_person_sourcedid;
+  }
 
   public String getLis_person_name_given() {
     return lis_person_name_given;
@@ -498,6 +508,7 @@ public class LaunchRequest extends LtiMessage implements Serializable {
     this.user_image = paramMap.get("user_image");
     this.roles = paramMap.get("roles");
     this.role_scope_mentor = paramMap.get("role_scope_mentor");
+    this.lis_person_sourcedid = paramMap.get("lis_person_sourcedid");
     this.lis_person_name_given = paramMap.get("lis_person_name_given");
     this.lis_person_name_family = paramMap.get("lis_person_name_family");
     this.lis_person_name_full = paramMap.get("lis_person_name_full");
@@ -723,6 +734,10 @@ public class LaunchRequest extends LtiMessage implements Serializable {
 
   public void setLis_course_section_sourcedid(String lis_course_section_sourcedid) {
     this.lis_course_section_sourcedid = lis_course_section_sourcedid;
+  }
+  
+  public void setLis_person_sourcedid(String lis_person_sourcedid) {
+    this.lis_person_sourcedid = lis_person_sourcedid;
   }
 
 }
