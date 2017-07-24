@@ -11,23 +11,22 @@ import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
 import unicon.matthews.oneroster.Enrollment;
-import unicon.matthews.oneroster.LineItemCategory;
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Role;
 import unicon.matthews.oneroster.Status;
 import unicon.matthews.oneroster.User;
-import unicon.oneroster.Vocabulary;
 
 /**
  * This implementation is the base provider for connecting to a JDBC data source it follows the pattern
- * established for other providers in the open dashboard source tree.  At runtime it is assumed that the JDBC provider
+ * established for other providers in the open dashboard source tree.  At runtime it is assumed that the JDBC driver
  * defined during the configuration is in the resolution path for execution, this eliminates the need to specifically 
- * import any one specific JDBC provider.
+ * import the JDBC driver.
  * 
  * Each of the providers established use specific views that follow the following pattern:
  * VW_OD_XX_NNNNNNNNNNNNNNN
  * 
  * Where XX Is: (EN)rollment, (US)er, (CO)urse, (LI)ne Item, (EV)ents
- * And NNNNNNNNNNNNNNN: is the override name )or an abbreviation as their may be a character limit on the view name
+ * And NNNNNNNNNNNNNNN: is the override name or an abbreviation as their may be a character limit on the view name
  * 
  * For example, the view for the course provider for the override getClassSourcedIdWithExternalId is:
  * VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID
@@ -37,6 +36,8 @@ import unicon.oneroster.Vocabulary;
  * 
  * The following views are needed:
  * Course: VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID,  VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID
+ * Enrollment: VW_OD_EN_FORCLASS, VW_OD_EN_FORUSER
+ * 
  *  
  * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
  * @version	0.0.1
@@ -67,47 +68,30 @@ public abstract class JdbcProvider implements Provider {
     return new DefaultProviderConfiguration(options);
   }
 
-  protected unicon.matthews.oneroster.Class toClass(String classSourcedId, String title) {
-		
-	    unicon.matthews.oneroster.Class klass 
-	    = new unicon.matthews.oneroster.Class.Builder()
-	      .withSourcedId(classSourcedId)
-	      .withTitle(title)
-	      .withStatus(Status.active)
-	      .build();
+  protected Role getMathesRoleFromString(String roleName){
+	  Role retVal = Role.student;
+	  
+	  switch(roleName.toLowerCase()){
+		  case "administrator":
+			  retVal = Role.administrator;
+		  case "aide":
+			  retVal = Role.aide;
+		  case "guardian":
+			  retVal = Role.guardian;
+		  case "parent":
+			  retVal = Role.parent;
+		  case "relative":
+			  retVal = Role.relative;
+		  case "student":
+			  retVal = Role.student;
+		  case "teacher":
+			  retVal = Role.teacher;
+		  default:
+		  		retVal = Role.student;
+	  }
+	  return retVal;
+  }
 
-		return klass;
-	}
-
-  protected User toUser(Role role, String familyname , String givenname, String sourcedId, String userId) {
-		
-		User user
-			= new User.Builder()
-			.withRole(role)
-			.withFamilyName(familyname)
-			.withGivenName(givenname)
-			.withStatus(Status.active)
-			.withSourcedId(sourcedId)
-			.withUserId(userId)
-			.build();
-
-		return user;
-	}
-
-  protected	Enrollment toEnrollment(Role role,User user,unicon.matthews.oneroster.Class Klass) {
-		
-		Enrollment enrollment
-		 = new Enrollment.Builder()
-		 	.withRole(role)
-		 	.withStatus(Status.active)
-		 	.withUser(user)
-		 	.withKlass(Klass)
-		 	.build();
-		
-		return enrollment;
-	}
-  
-  
   @Override
   public ProviderConfiguration getProviderConfiguration() {
     return providerConfiguration;

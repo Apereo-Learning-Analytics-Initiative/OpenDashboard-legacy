@@ -83,8 +83,8 @@ public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvid
 
 
 	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "select * from VW_OD_LI_FORCLASS where classSourceId = '" + classSourcedId + "'";
-     ResultSet Rs = client.getData(SQL);
+	 String SQL = "SELECT * FROM VW_OD_LI_FORCLASS WHERE CLASSSOURCEDID = ?";
+     ResultSet Rs = client.getData(SQL, classSourcedId);
      try {
          while (Rs.next())
         	 {	     
@@ -110,7 +110,7 @@ public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvid
 
 
 
-private unicon.matthews.oneroster.LineItem toLineItem(String classSourceId, Status active, String title, String description,
+private LineItem toLineItem(String classSourceId, Status active, String title, String description,
 		LocalDateTime assignDate, LocalDateTime dueDate,unicon.matthews.oneroster.Class Klass, unicon.matthews.oneroster.LineItemCategory lineItemCategory) {
 		
 		unicon.matthews.oneroster.LineItem lineitem 
@@ -128,7 +128,7 @@ private unicon.matthews.oneroster.LineItem toLineItem(String classSourceId, Stat
 		return lineitem;
 	} 
 
-private unicon.matthews.oneroster.LineItemCategory toLineItemCategory(String classSourceId, Status active, String title) {
+private LineItemCategory toLineItemCategory(String classSourceId, Status active, String title) {
 	
 	   unicon.matthews.oneroster.LineItemCategory lineitemcategory
 	   				= new unicon.matthews.oneroster.LineItemCategory.Builder()

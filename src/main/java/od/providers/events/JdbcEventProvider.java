@@ -125,9 +125,8 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
 	      // *********** remove the above lines before moving to production or testing
 	      
 	      // Get Summary data
-	      String SQL = "SELECT * FROM VW_OD_EV_SummaryData WHERE  classSourcedId = '" 
-	    		  		+ classSourcedId +  "'";
-		  ResultSet Rs = client.getData(SQL);
+	      String SQL = "SELECT * FROM VW_OD_EV_SummaryData WHERE  classSourcedId = ?";
+		  ResultSet Rs = client.getData(SQL, classSourcedId);
 		  while(Rs.next())
 		  {
 		  Integer numEvents = Rs.getInt("numEvents");
@@ -136,9 +135,8 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
 		  Rs.close();
 		  
 		  // Get Events by Date
-	      SQL = "SELECT * FROM VW_OD_EV_CountByDate WHERE  classSourcedId = '" 
-	    		  		+ classSourcedId +  "' ORDER BY eventDate";
-		  Rs = client.getData(SQL);
+	      SQL = "SELECT * FROM VW_OD_EV_CountByDate WHERE  classSourcedId = ? ORDER BY eventDate";
+		  Rs = client.getData(SQL, classSourcedId);
 		  Map<String, Long> eventCountByDate = new HashMap<String, Long>();
 	      while (Rs.next())
 		 {
@@ -146,9 +144,8 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
 		 }
 
 		  // Get Events by Date
-	      SQL = "SELECT * FROM VW_OD_EV_CountByDateByStudent WHERE  classSourcedId = '" 
-	    		  		+ classSourcedId +  "' ORDER BY eventDate";
-		  Rs = client.getData(SQL);
+	      SQL = "SELECT * FROM VW_OD_EV_CountByDateByStudent WHERE  classSourcedId = ? ORDER BY eventDate";
+		  Rs = client.getData(SQL, classSourcedId);
 		  Map<String, Map<String, Long>> eventCountGroupedByDateAndStudent = new HashMap<String, Map<String, Long>> ();
 		  
 		  String lastEventDate = "NONE";
@@ -222,8 +219,8 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
     JdbcClient client = new JdbcClient(providerData);
     List<Event> userEvents = new ArrayList<Event>();
     try {
-    	String SQL1 = "select * from VW_EV_EVENTS_PROVIDER";
-        ResultSet Rs = client.getData(SQL1);
+    	String SQL = "select * from VW_EV_EVENTS_PROVIDER";
+        ResultSet Rs = client.getData(SQL);
         
     	while (Rs.next()) 
        	 {
