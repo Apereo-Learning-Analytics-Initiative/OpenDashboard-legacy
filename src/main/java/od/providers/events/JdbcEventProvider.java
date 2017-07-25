@@ -1,29 +1,19 @@
 /**
- *
+ *  
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.1
+ * @since	2017-06-01
  */
+
 package od.providers.events;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -31,12 +21,10 @@ import od.exception.MethodNotImplementedException;
 import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
-import od.providers.events.DemoEventProvider.Verb;
 import od.providers.jdbc.JdbcClient;
 import od.providers.jdbc.JdbcProvider;
 import od.repository.mongo.MongoTenantRepository;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
 import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
@@ -46,21 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-/**
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Ed)
- * @version	0.1
- * @since	2017-06-01
- */
 
 @Component("events_jdbc")
 public class JdbcEventProvider extends JdbcProvider implements EventProvider {
@@ -72,10 +48,6 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
   @Autowired private MongoTenantRepository mongoTenantRepository;
-  
-  private Set<Event> demoClass1Events;
-  private Map<String, Set<Event>> classEventsMap;
-  private Map<String, ClassEventStatistics> classEventsStatsMap;
   
   @PostConstruct
   public void init() {
@@ -113,91 +85,79 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
   @Override
   public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
 	  ClassEventStatistics classEventsStats = null;
+	  Integer numEvents = 0;
+	  Integer numStudents = 0;
+	  
 	  try
 	  {
-		  Tenant tenant = mongoTenantRepository.findOne(tenantId);
-	      ProviderData providerData = tenant.findByKey(KEY);
-	      JdbcClient client = new JdbcClient(providerData);
-	      
-	      // *********** Debug, setting class source ID to iLearn ID for 
-	      String origClassSourcedId = classSourcedId;
-	      classSourcedId = "MATH_115L_118_201440";
-	      // *********** remove the above lines before moving to production or testing
-	      
-	      // Get Summary data
-	      String SQL = "SELECT * FROM VW_OD_EV_SummaryData WHERE  classSourcedId = ?";
-		  ResultSet Rs = client.getData(SQL, classSourcedId);
-		  while(Rs.next())
-		  {
-		  Integer numEvents = Rs.getInt("numEvents");
-		  Integer numStudents = Rs.getInt("numStudents");
-
-		  Rs.close();
+		JdbcClient client = new JdbcClient(mongoTenantRepository.findOne(tenantId).findByKey(KEY));
 		  
-		  // Get Events by Date
-	      SQL = "SELECT * FROM VW_OD_EV_CountByDate WHERE  classSourcedId = ? ORDER BY eventDate";
-		  Rs = client.getData(SQL, classSourcedId);
-		  Map<String, Long> eventCountByDate = new HashMap<String, Long>();
-	      while (Rs.next())
-		 {
-			  eventCountByDate.put(Rs.getString("eventDate"), Rs.getLong("numEvents"));
-		 }
+		// Get Summary data first, could be big, let the DB do the grouping, may be more summary data in the future
+		String SQL = "SELECT * FROM VW_OD_EV_SUMMARYDATA WHERE  CLASSSOURCEDID = ?";
+		ResultSet Rs = client.getData(SQL, classSourcedId);
+		if (Rs.next()){
+			numEvents = Rs.getInt("NUMEVENTS");
+			numStudents = Rs.getInt("NUMSTUDENTS");
+		}
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
 
-		  // Get Events by Date
-	      SQL = "SELECT * FROM VW_OD_EV_CountByDateByStudent WHERE  classSourcedId = ? ORDER BY eventDate";
-		  Rs = client.getData(SQL, classSourcedId);
-		  Map<String, Map<String, Long>> eventCountGroupedByDateAndStudent = new HashMap<String, Map<String, Long>> ();
-		  
-		  String lastEventDate = "NONE";
-		  Map<String, Long> studentEvents = null; 
-		  String currentEventDate = null;
-		  Long eventCount = null;
-		  String studentId = null;
-	      while (Rs.next())
-	 	  {
-	    	  currentEventDate = Rs.getString("eventDate");
-	    	  eventCount = Rs.getLong("numEvents");
-	    	  studentId = Rs.getString("studentId");
-	    	  
-	    	  if (!lastEventDate.equalsIgnoreCase(currentEventDate))
-	    	  {
-	    		  if (!lastEventDate.equalsIgnoreCase("NONE"))
-	    		  {
-	    			  eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
-	    		  }
-	    		  studentEvents = new HashMap<String, Long>();
-	    	  }
-	    	  
-	    	  studentEvents.put(studentId, eventCount);    	  
-	    	  lastEventDate = currentEventDate;
-	 	  }
-	      Rs.close();
-	      if (studentEvents.size() > 0)
-	      {
-	    	  eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
-	      }
-	
-	      
-	      // *********** Debug, put class source id back 
-		  classSourcedId = origClassSourcedId;
-	      // *********** remove the above lines before moving to production or testing
-	
-		  classEventsStats 
-		      = new ClassEventStatistics.Builder()
-		        .withClassSourcedId(classSourcedId)
-		        .withTotalEvents(numEvents)
-		        .withTotalStudentEnrollments(numStudents)
-		        .withEventCountGroupedByDate(eventCountByDate)
-		        .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
-		        .build();
-	  }
+		// Get Events by Date
+		SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATE WHERE CLASSSOURCEDID = ? ORDER BY EVENTDATE";
+		Rs = client.getData(SQL, classSourcedId);
+		Map<String, Long> eventCountByDate = new HashMap<String, Long>();
+		while (Rs.next()){
+		  eventCountByDate.put(Rs.getString("EVENTDATE"), Rs.getLong("NUMEVENTS"));
+		}
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
+
+		// Get Events by Date
+		SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATEBYSTUDENT WHERE  CLASSSOURCEDID = ? ORDER BY EVENTDATE";
+		Rs = client.getData(SQL, classSourcedId);
+		Map<String, Map<String, Long>> eventCountGroupedByDateAndStudent = new HashMap<String, Map<String, Long>> ();
+		
+		String lastEventDate = "NONE";
+		Map<String, Long> studentEvents = null; 
+		String currentEventDate = null;
+		Long eventCount = null;
+		String studentId = null;
+		while (Rs.next()){
+			currentEventDate = Rs.getString("EVENTDATE");
+			eventCount = Rs.getLong("NUMEVENTS");
+			studentId = Rs.getString("STUDENTID");
+			
+			if (!lastEventDate.equalsIgnoreCase(currentEventDate)){
+				if (!lastEventDate.equalsIgnoreCase("NONE")){
+					eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
+				}
+				studentEvents = new HashMap<String, Long>();
+			}
+			
+			studentEvents.put(studentId, eventCount);    	  
+			lastEventDate = currentEventDate;
+		}
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
+		if (studentEvents != null && studentEvents.size() > 0){
+			eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
+		}
+		classEventsStats= new ClassEventStatistics.Builder()
+								.withClassSourcedId(classSourcedId)
+								.withTotalEvents(numEvents)
+								.withTotalStudentEnrollments(numStudents)
+								.withEventCountGroupedByDate(eventCountByDate)
+								.withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
+								.build();
 	  }
 	  catch(Exception e)
 	  {
-		  e.printStackTrace();
+		log.error(e.getMessage());
 	  }
 	  return classEventsStats;	  
-   
     }
 
   @Override
@@ -213,32 +173,35 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
   }
 
   @Override
-  public Page<Event> getEventsForCourseAndUser(String tenantId, String courseId, String userId, Pageable pageable) throws ProviderException {
+  public Page<Event> getEventsForCourseAndUser(String tenantId, String classSourcedId, String userSourcedId, Pageable pageable) throws ProviderException {
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     ProviderData providerData = tenant.findByKey(KEY);
     JdbcClient client = new JdbcClient(providerData);
     List<Event> userEvents = new ArrayList<Event>();
     try {
-    	String SQL = "select * from VW_EV_EVENTS_PROVIDER";
-        ResultSet Rs = client.getData(SQL);
+    	String SQL = "SELECT * FROM VW_OD_EV_COURSEANDUSER WHERE CLASSSOURCEDID = ? AND USERSOURCEDID = ?";
+        ResultSet Rs = client.getData(SQL, classSourcedId, userSourcedId);
         
     	while (Rs.next()) 
        	 {
     		 EventImpl eventImpl = new EventImpl();
-    	      eventImpl.setActor(userId);
-    	      eventImpl.setContext(courseId);
+    	      eventImpl.setActor(userSourcedId);
+    	      eventImpl.setContext(classSourcedId);
     	      eventImpl.setId(UUID.randomUUID().toString());
     	      eventImpl.setObject(Rs.getString("OBJ"));
     	      eventImpl.setObjectType(Rs.getString("OBJTYPE"));
-    	      eventImpl.setSourcedId(Rs.getString("SOURCEID"));
+    	      eventImpl.setSourcedId(Rs.getString("SOURCEDID"));
     	      eventImpl.setVerb(Rs.getString("VERB"));
     	      eventImpl.setTimestamp(Rs.getString("TIMESTAMP"));
     	      
     	      userEvents.add(eventImpl);    
        	 }
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
     }
     catch (SQLException e) {
-		e.printStackTrace();
+		log.error(e.getMessage());
 	}
     
     

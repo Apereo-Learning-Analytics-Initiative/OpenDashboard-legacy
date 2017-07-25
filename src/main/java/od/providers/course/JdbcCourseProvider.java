@@ -1,6 +1,10 @@
 /**
- *
+ *  
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.1
+ * @since	2017-06-01
  */
+
 package od.providers.course;
 
 import java.sql.ResultSet;
@@ -26,13 +30,6 @@ import org.slf4j.LoggerFactory;
 import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Status;
 import unicon.oneroster.Vocabulary;
-
-/**
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
- * @version	0.0.1
- * @since	2017-06-01
- */
 
 @Component("course_jdbc")
 public class JdbcCourseProvider extends JdbcProvider implements CourseProvider {

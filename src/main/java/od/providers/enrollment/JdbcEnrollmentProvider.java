@@ -1,6 +1,10 @@
 /**
- *
+ *  
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.1
+ * @since	2017-06-01
  */
+
 package od.providers.enrollment;
 
 import java.util.HashSet;
@@ -24,13 +28,6 @@ import unicon.matthews.oneroster.Status;
 import unicon.matthews.oneroster.User;
 
 import java.sql.*;
-
-/**
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
- * @version	0.1
- * @since	2017-06-01
- */
 
 @Component("roster_jdbc")
 public class JdbcEnrollmentProvider extends JdbcProvider implements EnrollmentProvider {
@@ -67,8 +64,8 @@ public class JdbcEnrollmentProvider extends JdbcProvider implements EnrollmentPr
 
 private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
 {
+	Role r = getMathewsRoleFromString(Rs.getString("ROLENAME"));
 	Status s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
-	Role r = getMathesRoleFromString(Rs.getString("ROLENAME"));
 	User u = new User.Builder()
 			.withRole(r)
 			.withFamilyName(Rs.getString("FAMILYNAME"))
@@ -90,8 +87,9 @@ private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
 		 	.build();
 }
 
-//**
-//** In both the override calls below the returning RS must have both the classSourcedId and userSourcedId in the result set.
+//***
+// * In both the override calls below the returning RS must have both the classSourcedId and userSourcedId in the result set.
+// * Both are used in the getEnrollmentFromRS method above
 //**
 
 @Override

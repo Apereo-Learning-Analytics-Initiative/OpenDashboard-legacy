@@ -1,5 +1,7 @@
 /**
- *
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.0.1
+ * @since	2017-06-01
  */
 package od.providers.jdbc;
 
@@ -10,11 +12,8 @@ import od.providers.config.DefaultProviderConfiguration;
 import od.providers.config.ProviderConfiguration;
 import od.providers.config.ProviderConfigurationOption;
 import od.providers.config.TranslatableKeyValueConfigurationOptions;
-import unicon.matthews.oneroster.Enrollment;
-import unicon.matthews.oneroster.Class;
+
 import unicon.matthews.oneroster.Role;
-import unicon.matthews.oneroster.Status;
-import unicon.matthews.oneroster.User;
 
 /**
  * This implementation is the base provider for connecting to a JDBC data source it follows the pattern
@@ -38,10 +37,6 @@ import unicon.matthews.oneroster.User;
  * Course: VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID,  VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID
  * Enrollment: VW_OD_EN_FORCLASS, VW_OD_EN_FORUSER
  * 
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
- * @version	0.0.1
- * @since	2017-06-01
  */
 
 public abstract class JdbcProvider implements Provider {
@@ -68,7 +63,7 @@ public abstract class JdbcProvider implements Provider {
     return new DefaultProviderConfiguration(options);
   }
 
-  protected Role getMathesRoleFromString(String roleName){
+  protected Role getMathewsRoleFromString(String roleName){
 	  Role retVal = Role.student;
 	  
 	  switch(roleName.toLowerCase()){
