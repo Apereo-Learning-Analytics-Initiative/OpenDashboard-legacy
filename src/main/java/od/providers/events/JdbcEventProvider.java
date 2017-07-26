@@ -13,12 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
 import od.exception.MethodNotImplementedException;
-import od.framework.model.Tenant;
 import od.providers.ProviderData;
 import od.providers.ProviderException;
 import od.providers.jdbc.JdbcClient;
@@ -161,21 +159,76 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
     }
 
   @Override
-  public Page<Event> getEventsForUser(String tenantId, String userId, Pageable pageable) throws ProviderException {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException();
+  public Page<Event> getEventsForUser(String tenantId, String userSourcedId, Pageable pageable) throws ProviderException {
+	    ProviderData providerData = mongoTenantRepository.findOne(tenantId).findByKey(KEY);
+	    JdbcClient client = new JdbcClient(providerData);
+	    List<Event> userEvents = new ArrayList<Event>();
+	    try {
+	    	String SQL = "SELECT * FROM VW_OD_EV_USER WHERE USERSOURCEDID = ?";
+	        ResultSet Rs = client.getData(SQL, userSourcedId);
+	        
+	    	while (Rs.next()) 
+	       	 {
+	    		 EventImpl eventImpl = new EventImpl();
+	    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
+	    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
+	    	      eventImpl.setId(Rs.getString("ID"));
+	    	      eventImpl.setObject(Rs.getString("OBJECT"));
+	    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
+	    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
+	    	      eventImpl.setVerb(Rs.getString("VERB"));
+	    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
+	    	      
+	    	      userEvents.add(eventImpl);
+	       	 }
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	    }
+	    catch (SQLException e) {
+			log.error(e.getMessage());
+		}
+	    return new PageImpl<>(userEvents);
   }
 
   @Override
-  public Page<Event> getEventsForCourse(String tenantId, String courseId, Pageable pageable) throws ProviderException {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException();
+  public Page<Event> getEventsForCourse(String tenantId, String classSourcedId, Pageable pageable) throws ProviderException {
+
+	    ProviderData providerData = mongoTenantRepository.findOne(tenantId).findByKey(KEY);
+	    JdbcClient client = new JdbcClient(providerData);
+	    List<Event> userEvents = new ArrayList<Event>();
+	    try {
+	    	String SQL = "SELECT * FROM VW_OD_EV_COURSE WHERE CLASSSOURCEDID = ?";
+	        ResultSet Rs = client.getData(SQL, classSourcedId);
+	        
+	    	while (Rs.next()) 
+	       	 {
+	    		 EventImpl eventImpl = new EventImpl();
+	    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
+	    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
+	    	      eventImpl.setId(Rs.getString("ID"));
+	    	      eventImpl.setObject(Rs.getString("OBJECT"));
+	    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
+	    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
+	    	      eventImpl.setVerb(Rs.getString("VERB"));
+	    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
+	    	      
+	    	      userEvents.add(eventImpl);
+	       	 }
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	    }
+	    catch (SQLException e) {
+			log.error(e.getMessage());
+		}
+	    return new PageImpl<>(userEvents);
   }
 
   @Override
   public Page<Event> getEventsForCourseAndUser(String tenantId, String classSourcedId, String userSourcedId, Pageable pageable) throws ProviderException {
-    Tenant tenant = mongoTenantRepository.findOne(tenantId);
-    ProviderData providerData = tenant.findByKey(KEY);
+
+    ProviderData providerData = mongoTenantRepository.findOne(tenantId).findByKey(KEY);
     JdbcClient client = new JdbcClient(providerData);
     List<Event> userEvents = new ArrayList<Event>();
     try {
@@ -185,16 +238,16 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
     	while (Rs.next()) 
        	 {
     		 EventImpl eventImpl = new EventImpl();
-    	      eventImpl.setActor(userSourcedId);
-    	      eventImpl.setContext(classSourcedId);
-    	      eventImpl.setId(UUID.randomUUID().toString());
-    	      eventImpl.setObject(Rs.getString("OBJ"));
-    	      eventImpl.setObjectType(Rs.getString("OBJTYPE"));
-    	      eventImpl.setSourcedId(Rs.getString("SOURCEDID"));
+	   	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
+	   	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
+    	      eventImpl.setId(Rs.getString("ID"));
+    	      eventImpl.setObject(Rs.getString("OBJECT"));
+    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
+    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
     	      eventImpl.setVerb(Rs.getString("VERB"));
-    	      eventImpl.setTimestamp(Rs.getString("TIMESTAMP"));
+    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
     	      
-    	      userEvents.add(eventImpl);    
+    	      userEvents.add(eventImpl);
        	 }
 		if (!Rs.isClosed()){
 			  Rs.close();
@@ -203,7 +256,6 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
     catch (SQLException e) {
 		log.error(e.getMessage());
 	}
-    
     
     return new PageImpl<>(userEvents);
   }
