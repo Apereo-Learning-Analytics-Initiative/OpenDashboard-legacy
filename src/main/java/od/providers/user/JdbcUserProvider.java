@@ -1,6 +1,10 @@
 /**
- *
+ *  
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.1
+ * @since	2017-06-01
  */
+
 package od.providers.user;
 
 import java.sql.*;
@@ -17,15 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-
+import unicon.matthews.oneroster.Role;
+import unicon.matthews.oneroster.Status;
 import unicon.matthews.oneroster.User;
-
-/**
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Ed)
- * @version	0.1
- * @since	2017-06-01
- */
 
 @Component("user_jdbc")
 public class JdbcUserProvider extends JdbcProvider implements UserProvider {
@@ -36,9 +34,6 @@ public class JdbcUserProvider extends JdbcProvider implements UserProvider {
   private static final String BASE = "JDBC_USER";
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
-
-private User User;
-  
 
   @PostConstruct
   public void init() throws ProviderException {
@@ -60,27 +55,54 @@ private User User;
     return DESC;
   }
 
-
-  
   @Override
   public User getUserBySourcedId(ProviderData providerData, String userSourcedId) {
-	  
+  
+	User user = null;
 	JdbcClient client = new JdbcClient(providerData);
-	  String SQL = "SELECT * FROM VW_OD_US_STUDENTENROLLMENTS";
-	  ResultSet Rs = client.getData(SQL);
-             try {
-                 while (Rs.next()) 
-                 {
-                     }
-     		} catch (SQLException e) {
-     			log.error(e.getMessage());
-     		} 
-    return User;
+	  
+	String SQL = "SELECT * FROM VW_OD_US_USERBYSOURCEDID WHERE USERSOURCEDID = ?";
+	ResultSet Rs = client.getData(SQL, userSourcedId);
+	try {
+		if (Rs.next()){
+			Role r = getMathewsRoleFromString(Rs.getString("ROLENAME"));
+			Status s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+		    user = new User.Builder()
+			        .withSourcedId(Rs.getString("CLASSTITLE"))
+			        .withRole(r)
+			        .withFamilyName(Rs.getString("FAMILYNAME"))
+			        .withGivenName(Rs.getString("GIVENNAME"))
+			        .withUserId(Rs.getString("USERID"))
+			        .withStatus(s)
+			        .build();
+		}
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
+	} catch (SQLException e) {
+		log.error(e.getMessage());
+	} 
+	return user;
   }
   
   @Override
   public String getUserSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException {
-	  return null;
+	
+	String userSourcedId = null;
+	JdbcClient client = new JdbcClient(tenant.findByKey(KEY)); // findByKey gets provider data
+	String SQL = "SELECT * FROM VW_OD_US_USERSOURCEDIDWITHEXTERNALID WHERE EXTERNALID = ?";
+	ResultSet Rs = client.getData(SQL, externalId);
+	try {
+		if (Rs.next()){
+			userSourcedId = Rs.getString("USERSOURCEDID");
+		}
+		if (!Rs.isClosed()){
+			  Rs.close();
+		}
+	} catch (SQLException e) {
+		log.error(e.getMessage());
+	} 
+  return userSourcedId;
   }
 
   

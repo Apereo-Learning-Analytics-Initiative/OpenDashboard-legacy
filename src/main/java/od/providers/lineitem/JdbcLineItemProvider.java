@@ -1,16 +1,16 @@
 /**
- *
+ *  
+ * @author	Marist College Data Science (Kaushik, Sumit, Joy, Ed)
+ * @version	0.1
+ * @since	2017-06-01
  */
+
 package od.providers.lineitem;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -22,28 +22,12 @@ import od.providers.jdbc.JdbcProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.datetime.joda.LocalDateTimeParser;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.LineItemCategory;
-import unicon.matthews.oneroster.Role;
 import unicon.matthews.oneroster.Status;
-import unicon.oneroster.Vocabulary;
-
-/**
- *  
- * @author	Marist College Data Science (Kaushik, Sumit, Ed)
- * @version	0.1
- * @since	2017-06-01
- */
 
 @Component("lineitem_jdbc")
 public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvider {
@@ -55,8 +39,6 @@ public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvid
   private static final String NAME = String.format("%s_NAME", BASE);
   private static final String DESC = String.format("%s_DESC", BASE);
 
-  private Set<LineItem> LineItem;
-  
   @PostConstruct
   public void init() {
     providerConfiguration = getDefaultJdbcConfiguration();
@@ -79,67 +61,48 @@ public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvid
 
   @Override
   public Set<LineItem> getLineItemsForClass(ProviderData providerData, String classSourcedId) throws ProviderException {
-	  LineItem  = new HashSet<>();
 
-
-	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "SELECT * FROM VW_OD_LI_FORCLASS WHERE CLASSSOURCEDID = ?";
-     ResultSet Rs = client.getData(SQL, classSourcedId);
-     try {
-         while (Rs.next())
-        	 {	     
-        	 
-        	 LineItem.add(toLineItem(Rs.getString("ITEMSOURCEDID")
-        			 				,Status.active
-        			 				,Rs.getString("ITEMTITLE")
-        			 				,Rs.getString("ITEMDESCRIPTION")
-        			 				,LocalDateTime.parse(Rs.getString("ASSIGNDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm"))
-        			 				,LocalDateTime.parse(Rs.getString("DUEDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm"))
-        			 	,toClass(Rs.getString("CLASSSOURCEID"), Rs.getString("CLASSTITLE"))	
-        			 	,toLineItemCategory(Rs.getString("CATEGORYSOURCEID")
-        			 				,Status.active
-        			 				,Rs.getString("CATEGORYTITLE"))));
-
-        	 }
-		} catch (SQLException e) {
-			e.printStackTrace();
+	Set<LineItem>lineItems = new HashSet<LineItem>();
+	JdbcClient client = new JdbcClient(providerData);
+	String SQL = "SELECT * FROM VW_OD_LI_FORCLASS WHERE CLASSSOURCEDID = ?";
+	ResultSet Rs = client.getData(SQL, classSourcedId);
+    try {
+    	 while (Rs.next()){	     
+   			Status s = Rs.getString("ISACTIVECLASS").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+			Class c = new Class.Builder()
+						.withSourcedId(Rs.getString("CLASSSOURCEDID"))
+						.withTitle(Rs.getString("CLASSTITLE"))
+						.withStatus(s)
+						.build();
+  			s = Rs.getString("ISACTIVECATEGORY").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+			LineItemCategory lc = new LineItemCategory.Builder()
+									.withSourcedId(Rs.getString("LINEITEMCATEGORYSOURCEDID"))
+									.withStatus(s)
+									.withTitle(Rs.getString("LINEITEMCATEGORYTITLE"))
+									.build();
+			// Since Line Item is the primary the names are not qualified as is the same for the other providers
+			// The two objects are ancillary to the line item and have qualified names (eg: CLASSSOURCEDID)
+  			s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+			LineItem l = new LineItem.Builder()
+							.withSourcedId(Rs.getString("SOURCEDID"))
+							.withStatus(s)
+							.withTitle(Rs.getString("TITLE"))
+							.withDescription(Rs.getString("DESCRIPTION"))
+							.withAssignDate(LocalDateTime.parse(Rs.getString("ASSIGNDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
+							.withDueDate(LocalDateTime.parse(Rs.getString("DUEDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
+							.withClass(c)
+							.withCategory(lc)
+							.build();
+			lineItems.add(l);
+    	 }
+		if (!Rs.isClosed()){
+			  Rs.close();
 		}
+     } catch (SQLException e) {
+ 		log.error(e.getMessage());
+     }
 
-     return LineItem;
+     return lineItems;
   }
-
-
-
-private LineItem toLineItem(String classSourceId, Status active, String title, String description,
-		LocalDateTime assignDate, LocalDateTime dueDate,unicon.matthews.oneroster.Class Klass, unicon.matthews.oneroster.LineItemCategory lineItemCategory) {
-		
-		unicon.matthews.oneroster.LineItem lineitem 
-						= new unicon.matthews.oneroster.LineItem.Builder()
-								.withSourcedId(classSourceId)
-								.withStatus(Status.active)
-								.withTitle(title)
-								.withDescription(description)
-								.withAssignDate(assignDate)
-								.withDueDate(dueDate)
-								.withClass(Klass)
-								.withCategory(lineItemCategory)
-								.build(); 
-		
-		return lineitem;
-	} 
-
-private LineItemCategory toLineItemCategory(String classSourceId, Status active, String title) {
-	
-	   unicon.matthews.oneroster.LineItemCategory lineitemcategory
-	   				= new unicon.matthews.oneroster.LineItemCategory.Builder()
-	   							.withSourcedId(classSourceId)
-	   							.withStatus(Status.active)
-	   							.withTitle(title)
-	   							.build();
-
-	return lineitemcategory;
-}
-
-
 
 }
