@@ -96,8 +96,7 @@ public class DemoUserProvider implements UserProvider {
 
   @Override
   public String getUserSourcedIdWithExternalId(Tenant tenant, String externalId) throws ProviderException {
-    // TODO Auto-generated method stub
-    return null;
+    return "teacher-sourcedId-1";
   }
 
 }
