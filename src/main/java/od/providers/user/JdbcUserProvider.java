@@ -68,7 +68,7 @@ public class JdbcUserProvider extends JdbcProvider implements UserProvider {
 			Role r = getMathewsRoleFromString(Rs.getString("ROLENAME"));
 			Status s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
 		    user = new User.Builder()
-			        .withSourcedId(Rs.getString("CLASSTITLE"))
+			        .withSourcedId(Rs.getString("USERSOURCEDID"))
 			        .withRole(r)
 			        .withFamilyName(Rs.getString("FAMILYNAME"))
 			        .withGivenName(Rs.getString("GIVENNAME"))
