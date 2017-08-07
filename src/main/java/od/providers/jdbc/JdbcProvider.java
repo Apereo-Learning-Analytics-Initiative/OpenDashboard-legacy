@@ -34,11 +34,12 @@ import unicon.matthews.oneroster.Role;
  * prefix is intended to mean a "view into the data" and not necessarily a view implementation in the database.
  * 
  * The following views are needed:
- * Course: VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID,  VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID
+ * Course: VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID,  VW_OD_CO_GETCLASS, 
  * Enrollment: VW_OD_EN_FORCLASS, VW_OD_EN_FORUSER
  * Event: VW_OD_EV_SUMMARYDATA, VW_OD_EV_COUNTBYDATE, VW_OD_EV_COUNTBYDATEBYSTUDENT
  *        VW_OD_EV_USER, VW_OD_EV_COURSE, VW_OD_EV_COURSEANDUSER
- * 
+ * Line Item: VW_OD_LI_FORCLASS
+ * User: VW_OD_US_USERBYSOURCEDID, VW_OD_US_USERSOURCEDIDWITHEXTERNALID
  * 
  */
 
