@@ -360,15 +360,38 @@ angular
             },
             controller: 'StudentViewController'
         })
-        // .state('index.courselist.empty', {
-        //     url: '/',
-        //     // templateUrl: '/assets/templates/studentView.html',
-        //     template: ''
-        //     // params: {
-        //     //     studentId: { value: null, squash: true }
-        //     // },
-        //     // controller: 'StudentViewController'
-        // })
+        
+        // **
+        // ** Marist Universal Student Experience (MUSE)
+        // **
+        /*
+        .state('index.MUSE', {
+            url: 'direct/courselist/:groupId',
+            templateUrl: '/assets/templates/courselist.html',
+            params: {
+                groupId: { value: null, squash: true }
+            },
+            controller: 'CourseListController'
+        })
+        .state('index.MUSE.instructor', {
+            url: 'direct/course/:groupId/student/:studentId',
+            templateUrl: '/assets/templates/courselist.html',
+            params: {
+            	courseId: { value: null, squash: true }
+            	studentId: { value: null, squash: true }
+            },
+            controller: 'CourseListController'
+        })
+        .state('index.MUSE.instructor.student', {
+            url: '/student/:studentId',
+            templateUrl: '/assets/templates/courselist.html',
+            params: {
+                groupId: { value: null, squash: true }
+            },
+            controller: 'CourseListController'
+        })
+        */
+        
         .state('index.addDashboard', {
             url: 'cm/:cmid/addDashboard',
             templateUrl: '/assets/templates/dashboard/add.html',
