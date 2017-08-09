@@ -93,6 +93,7 @@ public class LTIEntryPointController {
       if (launchRequest.getCustom() != null && !launchRequest.getCustom().isEmpty()) {        
         String custom_canvas_user_id = launchRequest.getCustom().get("custom_canvas_user_id");
         if (StringUtils.isNotBlank(custom_canvas_user_id)) {
+          logger.debug("Looking up usersourcedId with custom_canvas_user_id {}",custom_canvas_user_id);
           userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, custom_canvas_user_id);
         }
       }
@@ -101,6 +102,7 @@ public class LTIEntryPointController {
         if (launchRequest.getExt() != null && !launchRequest.getExt().isEmpty()) {        
           String ext_user_username = launchRequest.getExt().get("ext_user_username");
           if (StringUtils.isNotBlank(ext_user_username)) {
+            logger.debug("Looking up usersourcedId with ext_user_username {}",ext_user_username);
             userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, ext_user_username);
           }
         }
@@ -108,15 +110,17 @@ public class LTIEntryPointController {
       
       if (StringUtils.isBlank(userSourcedId)) {
         if (StringUtils.isNotBlank(launchRequest.getLis_person_sourcedid())) {        
+          logger.debug("Looking up usersourcedId with lis_person_sourcedid {}",launchRequest.getLis_person_sourcedid());
           userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, launchRequest.getLis_person_sourcedid());
         }
       }
 
       if (StringUtils.isBlank(userSourcedId)) {
         if (launchRequest.getExt() != null && !launchRequest.getExt().isEmpty()) {        
-          String ext_user_username = launchRequest.getExt().get("ext_sakai_eid");
-          if (StringUtils.isNotBlank(ext_user_username)) {
-            userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, ext_user_username);
+          String ext_sakai_eid = launchRequest.getExt().get("ext_sakai_eid");
+          if (StringUtils.isNotBlank(ext_sakai_eid)) {
+            logger.debug("Looking up usersourcedId with ext_sakai_eid {}",ext_sakai_eid);
+            userSourcedId = userProvider.getUserSourcedIdWithExternalId(tenant, ext_sakai_eid);
           }
         }
       }

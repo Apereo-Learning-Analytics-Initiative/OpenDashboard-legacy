@@ -46,6 +46,7 @@ import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.Role;
+import unicon.matthews.oneroster.User;
 import unicon.oneroster.Vocabulary;
 
 @RestController
@@ -182,6 +183,18 @@ public class PulseController {
           ProviderData userProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.USER);
           Set<Enrollment> populatedEnrollments = new HashSet<>();
           for (Enrollment e : classEnrollment) {
+            User tempUser = null;
+            try {
+              tempUser = userProvider.getUserBySourcedId(userProviderData, e.getUser().getSourcedId());
+            }
+            catch (Exception ex) {
+              log.info("Could not find enrollment for user {}", e.getUser().getSourcedId());
+            }
+            
+            if (tempUser == null) {
+              continue;
+            }
+            
             Enrollment populatedEnrollment
               = new Enrollment.Builder()
                   .withKlass(e.getKlass())
@@ -190,7 +203,7 @@ public class PulseController {
                   .withRole(e.getRole())
                   .withSourcedId(e.getSourcedId())
                   .withStatus(e.getStatus())
-                  .withUser(userProvider.getUserBySourcedId(userProviderData, e.getUser().getSourcedId()))
+                  .withUser(tempUser)
                   .build();
             
             populatedEnrollments.add(populatedEnrollment);
