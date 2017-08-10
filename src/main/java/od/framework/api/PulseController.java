@@ -174,7 +174,14 @@ public class PulseController {
           }
         }
                 
-        ClassEventStatistics classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
+        ClassEventStatistics classEventStatistics = null;
+        try {
+          classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
+        } 
+        catch (Exception e1) {
+          log.warn(e1.getMessage(),e1);
+        }
+        
         Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);        
         
         if (classEnrollment != null && !classEnrollment.isEmpty()) {
@@ -385,7 +392,7 @@ public class PulseController {
             
             .withStudentEventMax(studentEventMax)
             .withStudentEventTotalMax(pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong())
-            .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList())
+            .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
             
