@@ -195,7 +195,7 @@ public class PulseController {
               tempUser = userProvider.getUserBySourcedId(userProviderData, e.getUser().getSourcedId());
             }
             catch (Exception ex) {
-              log.info("Could not find enrollment for user {}", e.getUser().getSourcedId());
+              log.info("Could not find user record for user {}", e.getUser().getSourcedId());
             }
             
             if (tempUser == null) {
@@ -362,6 +362,8 @@ public class PulseController {
             pulseStudentDetails.add(pulseStudentDetail);
           }
         }
+        
+        log.info("{}",pulseStudentDetails);
                 
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
@@ -391,7 +393,10 @@ public class PulseController {
             .withEnddate(classEndDate)
             
             .withStudentEventMax(studentEventMax)
-            .withStudentEventTotalMax(pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong())
+            .withStudentEventTotalMax(
+                pulseStudentDetails != null ? 
+                    pulseStudentDetails.stream().mapToLong(PulseStudentDetail::getActivity).max().getAsLong() :
+                      0l)
             .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
@@ -400,6 +405,8 @@ public class PulseController {
         
         pulseClassDetails.add(pulseClassDetail);
       }
+      
+      log.info("{}",pulseClassDetails);
       
       Integer classEventMax = 0;
       if (allClassStudentEventCounts != null && !allClassStudentEventCounts.isEmpty()) {
