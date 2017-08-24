@@ -63,44 +63,49 @@ public class JdbcLineItemProvider extends JdbcProvider implements LineItemProvid
   public Set<LineItem> getLineItemsForClass(ProviderData providerData, String classSourcedId) throws ProviderException {
 
 	Set<LineItem>lineItems = new HashSet<LineItem>();
-	JdbcClient client = new JdbcClient(providerData);
-	String SQL = "SELECT * FROM VW_OD_LI_FORCLASS WHERE CLASSSOURCEDID = ?";
-	ResultSet Rs = client.getData(SQL, classSourcedId);
-    try {
-    	 while (Rs.next()){	     
-   			Status s = Rs.getString("ISACTIVECLASS").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
-			Class c = new Class.Builder()
-						.withSourcedId(Rs.getString("CLASSSOURCEDID"))
-						.withTitle(Rs.getString("CLASSTITLE"))
-						.withStatus(s)
-						.build();
-  			s = Rs.getString("ISACTIVECATEGORY").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
-			LineItemCategory lc = new LineItemCategory.Builder()
-									.withSourcedId(Rs.getString("LINEITEMCATEGORYSOURCEDID"))
-									.withStatus(s)
-									.withTitle(Rs.getString("LINEITEMCATEGORYTITLE"))
-									.build();
-			// Since Line Item is the primary the names are not qualified as is the same for the other providers
-			// The two objects are ancillary to the line item and have qualified names (eg: CLASSSOURCEDID)
-  			s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
-			LineItem l = new LineItem.Builder()
-							.withSourcedId(Rs.getString("SOURCEDID"))
+	try {
+		JdbcClient client = new JdbcClient(providerData);
+		String SQL = "SELECT * FROM VW_OD_LI_FORCLASS WHERE CLASSSOURCEDID = ?";
+		try {
+			ResultSet Rs = client.getData(SQL, classSourcedId);
+			while (Rs.next()){	     
+				Status s = Rs.getString("ISACTIVECLASS").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+				Class c = new Class.Builder()
+							.withSourcedId(Rs.getString("CLASSSOURCEDID"))
+							.withTitle(Rs.getString("CLASSTITLE"))
 							.withStatus(s)
-							.withTitle(Rs.getString("TITLE"))
-							.withDescription(Rs.getString("DESCRIPTION"))
-							.withAssignDate(LocalDateTime.parse(Rs.getString("ASSIGNDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
-							.withDueDate(LocalDateTime.parse(Rs.getString("DUEDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
-							.withClass(c)
-							.withCategory(lc)
 							.build();
-			lineItems.add(l);
-    	 }
-		if (!Rs.isClosed()){
-			  Rs.close();
+				s = Rs.getString("ISACTIVECATEGORY").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+				LineItemCategory lc = new LineItemCategory.Builder()
+										.withSourcedId(Rs.getString("LINEITEMCATEGORYSOURCEDID"))
+										.withStatus(s)
+										.withTitle(Rs.getString("LINEITEMCATEGORYTITLE"))
+										.build();
+				// Since Line Item is the primary the names are not qualified as is the same for the other providers
+				// The two objects are ancillary to the line item and have qualified names (eg: CLASSSOURCEDID)
+				s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+				LineItem l = new LineItem.Builder()
+								.withSourcedId(Rs.getString("SOURCEDID"))
+								.withStatus(s)
+								.withTitle(Rs.getString("TITLE"))
+								.withDescription(Rs.getString("DESCRIPTION"))
+								.withAssignDate(LocalDateTime.parse(Rs.getString("ASSIGNDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
+								.withDueDate(LocalDateTime.parse(Rs.getString("DUEDATE"), DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm")))
+								.withClass(c)
+								.withCategory(lc)
+								.build();
+				lineItems.add(l);
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage());
 		}
-     } catch (SQLException e) {
- 		log.error(e.getMessage());
-     }
+		client.close();
+	} catch (Exception e){
+		log.error(e.getMessage());
+	}
 
      return lineItems;
   }
