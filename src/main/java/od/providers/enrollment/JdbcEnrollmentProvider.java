@@ -7,7 +7,9 @@
 
 package od.providers.enrollment;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +28,7 @@ import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.Role;
 import unicon.matthews.oneroster.Status;
 import unicon.matthews.oneroster.User;
+import unicon.oneroster.Vocabulary;
 
 import java.sql.*;
 
@@ -74,16 +77,28 @@ private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
 			.withSourcedId(Rs.getString("USERSOURCEDID"))
 			.withUserId(Rs.getString("USERID"))
 			.build();
+
+	Map<String, String> metadataClass = new HashMap<>();
+	metadataClass.put(Vocabulary.CLASS_START_DATE, Rs.getString("CLASS_START_DATE"));
+	metadataClass.put(Vocabulary.CLASS_END_DATE, Rs.getString("CLASS_END_DATE"));
+	metadataClass.put(Vocabulary.SOURCE_SYSTEM, Rs.getString("SOURCE_SYSTEM"));
+	metadataClass.put(Vocabulary.CLASS_STATISTICS,  Rs.getString("CLASS_STATISTICS"));
+
 	Class c = new Class.Builder()
 			.withSourcedId(Rs.getString("CLASSSOURCEDID"))
 			.withTitle(Rs.getString("TITLE"))
 			.withStatus(s)
+			.withMetadata(metadataClass)
 			.build();
+
+	Map<String, String> metadataEnrollment = new HashMap<>();
+	metadataEnrollment.put(Vocabulary.CLASS_STATISTICS,  Rs.getString("ENROLLMENT_STATISTICS"));
 	return new Enrollment.Builder()
 		 	.withRole(r)
 		 	.withStatus(s)
 		 	.withUser(u)
 		 	.withKlass(c)
+		 	.withMetadata(metadataEnrollment)
 		 	.build();
 }
 
@@ -96,27 +111,31 @@ private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
  public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String classSourcedId, boolean activeOnly) throws ProviderException {
 	 studentEnrollments = new HashSet<>();
 
-	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "SELECT * FROM VW_OD_EN_FORCLASS WHERE CLASSSOURCEDID = ?";
-	 // append to SQL "AND" if we only want active this reduces the record set being returned
-	 // rather than filter after transfer (modest speed improvement depending on max row count)
-	 // ** Attention should be paid to the query on the DB side to make sure the "WHERE" clauses
-	 //    don't create a performance issue 
-	 if (activeOnly)
-	 {
-		 SQL += " AND ISACTIVE = 'YES'";
-	 }
-     try {
-        ResultSet Rs = client.getData(SQL, classSourcedId);
-    	while (Rs.next()){
-    		studentEnrollments.add(getEnrollmentFromRS(Rs));
-    	}
-		if (!Rs.isClosed()){
-			  Rs.close();
+    try {
+		 JdbcClient client = new JdbcClient(providerData);
+		 String SQL = "SELECT * FROM VW_OD_EN_FORCLASS WHERE CLASSSOURCEDID = ?";
+		 // append to SQL "AND" if we only want active this reduces the record set being returned
+		 // rather than filter after transfer (modest speed improvement depending on max row count)
+		 // ** Attention should be paid to the query on the DB side to make sure the "WHERE" clauses
+		 //    don't create a performance issue 
+		 if (activeOnly){
+			 SQL += " AND ISACTIVE = 'YES'";
+		 }
+	     try {
+	        ResultSet Rs = client.getData(SQL, classSourcedId);
+	    	while (Rs.next()){
+	    		studentEnrollments.add(getEnrollmentFromRS(Rs));
+	    	}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage());
 		}
-	} catch (SQLException e) {
-		log.error(e.getMessage());
-	}
+	    client.close();
+    } catch (Exception e){
+    	log.error(e.getMessage());
+    }
 
     return studentEnrollments;
 
@@ -126,25 +145,29 @@ private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
   public Set<Enrollment> getEnrollmentsForUser(ProviderData providerData, String userSourcedId, boolean activeOnly) throws ProviderException {
 	 staffEnrollments = new HashSet<Enrollment>();
 
-	 JdbcClient client = new JdbcClient(providerData);
-	 String SQL = "SELECT * FROM VW_OD_EN_FORUSER WHERE USERSOURCEDID = ?";
-	 // see comment in getEnrollmentsForClass above, same applies here.
-	 if (activeOnly)
-	 {
-		 SQL += " AND ISACTIVE = 'YES'";
+	 try {
+		 JdbcClient client = new JdbcClient(providerData);
+		 String SQL = "SELECT * FROM VW_OD_EN_FORUSER WHERE USERSOURCEDID = ?";
+		 // see comment in getEnrollmentsForClass above, same applies here.
+		 if (activeOnly){
+			 SQL += " AND ISACTIVE = 'YES'";
+		 }
+	     try {
+	    	 ResultSet Rs = client.getData(SQL, userSourcedId);	 
+	    	 while (Rs.next()) {
+	    		 staffEnrollments.add(getEnrollmentFromRS(Rs));
+	        }
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	     } catch (SQLException e) {
+	    	 log.error(e.getMessage());
+		 }
+	     client.close();
+	 } catch(Exception e){
+		 log.error(e.getMessage());
 	 }
-	 ResultSet Rs = client.getData(SQL, userSourcedId);	 
-     
-     try {
-    	 while (Rs.next()) {
-    		 staffEnrollments.add(getEnrollmentFromRS(Rs));
-        }
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-     } catch (SQLException e) {
- 		log.error(e.getMessage());
-	 }
+	 
 	return staffEnrollments;
   }
 

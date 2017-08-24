@@ -81,14 +81,19 @@ public class JdbcCourseProvider extends JdbcProvider implements CourseProvider {
 	    try {
 		    JdbcClient client = new JdbcClient(tenant.findByKey(KEY)); // findByKey gets provider data
 		    String SQL = "SELECT * FROM VW_OD_CO_CLASSSOURCEDIDWITHEXTERNALID WHERE EXTERNALID = ?";
-		    ResultSet Rs = client.getData(SQL, externalId);
-			if (Rs.next()) {
-				classSourcedId = Rs.getString("CLASSSOURCEDID");
-			}
-			if (!Rs.isClosed()){
-				  Rs.close();
-			}
-		} catch (SQLException e) {
+		    try {
+			    ResultSet Rs = client.getData(SQL, externalId);
+				if (Rs.next()) {
+					classSourcedId = Rs.getString("CLASSSOURCEDID");
+				}
+				if (!Rs.isClosed()){
+					  Rs.close();
+				}
+		    } catch(SQLException e){
+		    	log.error(e.getMessage());
+		    }
+	    	client.close();
+		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
@@ -98,28 +103,33 @@ public class JdbcCourseProvider extends JdbcProvider implements CourseProvider {
   @Override
   public Class getClass(Tenant tenant, String classSourcedId) throws ProviderException {
 
-	  JdbcClient client = new JdbcClient(tenant.findByKey(KEY)); // findByKey gets provider data
-      String SQL = "SELECT * FROM VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID = ?";
-      ResultSet Rs = client.getData(SQL, classSourcedId);
-      unicon.matthews.oneroster.Class returnClass = null;
-      try {   
-		if (Rs.next()){   
-			Map<String, String> metadata = new HashMap<>();
-			metadata.put(Vocabulary.CLASS_START_DATE, Rs.getString("CLASS_START_DATE"));
-			metadata.put(Vocabulary.CLASS_END_DATE, Rs.getString("CLASS_END_DATE"));
-			metadata.put(Vocabulary.SOURCE_SYSTEM, Rs.getString("SOURCE_SYSTEM"));
-		
-			returnClass = new Class.Builder()
-								.withSourcedId(Rs.getString("CLASSSOURCEDID"))
-								.withTitle(Rs.getString("TITLE"))
-								.withMetadata(metadata)
-								.withStatus(Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive)
-								.build();
-		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-      } catch (SQLException e) {
+      Class returnClass = null;
+      try {
+    	  JdbcClient client = new JdbcClient(tenant.findByKey(KEY)); // findByKey gets provider data
+          String SQL = "SELECT * FROM VW_OD_CO_GETCLASS WHERE CLASSSOURCEDID = ?";
+	      try {
+	          ResultSet Rs = client.getData(SQL, classSourcedId);
+	          if (Rs.next()){   
+				Map<String, String> metadata = new HashMap<>();
+				metadata.put(Vocabulary.CLASS_START_DATE, Rs.getString("CLASS_START_DATE"));
+				metadata.put(Vocabulary.CLASS_END_DATE, Rs.getString("CLASS_END_DATE"));
+				metadata.put(Vocabulary.SOURCE_SYSTEM, Rs.getString("SOURCE_SYSTEM"));
+				metadata.put(Vocabulary.CLASS_STATISTICS,  Rs.getString("CLASS_STATISTICS"));
+				returnClass = new Class.Builder()
+									.withSourcedId(Rs.getString("CLASSSOURCEDID"))
+									.withTitle(Rs.getString("TITLE"))
+									.withMetadata(metadata)
+									.withStatus(Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive)
+									.build();
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	      } catch (SQLException e) {
+	    	  log.error(e.getMessage());
+	      }
+	      client.close();
+      } catch(Exception e){
     	  log.error(e.getMessage());
       }
       return returnClass;

@@ -41,7 +41,7 @@ import java.sql.*;
 
 public class JdbcClient {
 
-  private static final Logger log = LoggerFactory.getLogger(JdbcCourseProvider.class);
+  private static final Logger log = LoggerFactory.getLogger(JdbcClient.class);
   
   private String jdbcConnector;
   private String myDriver;
@@ -74,6 +74,17 @@ public class JdbcClient {
 		log.error(e.getMessage());
 	}
 
+  }
+  
+  public void close(){
+	try{
+		if (this.Conn != null && !this.Conn.isClosed()){
+			this.Conn.close();
+		}
+	}
+	catch(Exception e){
+		log.error(e.getMessage());
+	}
   }
   
   // variable arguments for prepared statement (may be more than one "where" condition in the SQL

@@ -73,18 +73,25 @@ public abstract class JdbcProvider implements Provider {
 	  switch(roleName.toLowerCase()){
 		  case "administrator":
 			  retVal = Role.administrator;
+			  break;
 		  case "aide":
 			  retVal = Role.aide;
+			  break;
 		  case "guardian":
 			  retVal = Role.guardian;
+			  break;
 		  case "parent":
 			  retVal = Role.parent;
+			  break;
 		  case "relative":
 			  retVal = Role.relative;
+			  break;
 		  case "student":
 			  retVal = Role.student;
+			  break;
 		  case "teacher":
 			  retVal = Role.teacher;
+			  break;
 		  default:
 		  		retVal = Role.student;
 	  }

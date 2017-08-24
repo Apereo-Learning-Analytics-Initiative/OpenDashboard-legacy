@@ -59,29 +59,33 @@ public class JdbcUserProvider extends JdbcProvider implements UserProvider {
   public User getUserBySourcedId(ProviderData providerData, String userSourcedId) {
   
 	User user = null;
-	JdbcClient client = new JdbcClient(providerData);
-	  
-	String SQL = "SELECT * FROM VW_OD_US_USERBYSOURCEDID WHERE USERSOURCEDID = ?";
-	ResultSet Rs = client.getData(SQL, userSourcedId);
 	try {
-		if (Rs.next()){
-			Role r = getMathewsRoleFromString(Rs.getString("ROLENAME"));
-			Status s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
-		    user = new User.Builder()
-			        .withSourcedId(Rs.getString("USERSOURCEDID"))
-			        .withRole(r)
-			        .withFamilyName(Rs.getString("FAMILYNAME"))
-			        .withGivenName(Rs.getString("GIVENNAME"))
-			        .withUserId(Rs.getString("USERID"))
-			        .withStatus(s)
-			        .build();
+		JdbcClient client = new JdbcClient(providerData);
+		String SQL = "SELECT * FROM VW_OD_US_USERBYSOURCEDID WHERE USERSOURCEDID = ?";
+		try {
+			ResultSet Rs = client.getData(SQL, userSourcedId);
+			if (Rs.next()){
+				Role r = getMathewsRoleFromString(Rs.getString("ROLENAME"));
+				Status s = Rs.getString("ISACTIVE").compareToIgnoreCase("YES") == 0 ? Status.active : Status.inactive;
+			    user = new User.Builder()
+				        .withSourcedId(Rs.getString("USERSOURCEDID"))
+				        .withRole(r)
+				        .withFamilyName(Rs.getString("FAMILYNAME"))
+				        .withGivenName(Rs.getString("GIVENNAME"))
+				        .withUserId(Rs.getString("USERID"))
+				        .withStatus(s)
+				        .build();
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage());
 		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-	} catch (SQLException e) {
+		client.close();
+	} catch (Exception e){
 		log.error(e.getMessage());
-	} 
+	}
 	return user;
   }
   
@@ -91,17 +95,22 @@ public class JdbcUserProvider extends JdbcProvider implements UserProvider {
 	String userSourcedId = null;
 	JdbcClient client = new JdbcClient(tenant.findByKey(KEY)); // findByKey gets provider data
 	String SQL = "SELECT * FROM VW_OD_US_USERSOURCEDIDWITHEXTERNALID WHERE EXTERNALID = ?";
-	ResultSet Rs = client.getData(SQL, externalId);
 	try {
-		if (Rs.next()){
-			userSourcedId = Rs.getString("USERSOURCEDID");
-		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-	} catch (SQLException e) {
+		ResultSet Rs = client.getData(SQL, externalId);
+		try {
+			if (Rs.next()){
+				userSourcedId = Rs.getString("USERSOURCEDID");
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+		} 
+		client.close();
+	} catch(Exception e){
 		log.error(e.getMessage());
-	} 
+	}
   return userSourcedId;
   }
 

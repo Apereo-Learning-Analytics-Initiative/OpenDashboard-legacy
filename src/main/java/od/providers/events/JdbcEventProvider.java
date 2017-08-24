@@ -89,71 +89,75 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
 	  try
 	  {
 		JdbcClient client = new JdbcClient(mongoTenantRepository.findOne(tenantId).findByKey(KEY));
-		  
-		// Get Summary data first, could be big, let the DB do the grouping, may be more summary data in the future
-		String SQL = "SELECT * FROM VW_OD_EV_SUMMARYDATA WHERE  CLASSSOURCEDID = ?";
-		ResultSet Rs = client.getData(SQL, classSourcedId);
-		if (Rs.next()){
-			numEvents = Rs.getInt("NUMEVENTS");
-			numStudents = Rs.getInt("NUMSTUDENTS");
-		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-
-		// Get Events by Date
-		SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATE WHERE CLASSSOURCEDID = ? ORDER BY EVENTDATE";
-		Rs = client.getData(SQL, classSourcedId);
-		Map<String, Long> eventCountByDate = new HashMap<String, Long>();
-		while (Rs.next()){
-		  eventCountByDate.put(Rs.getString("EVENTDATE"), Rs.getLong("NUMEVENTS"));
-		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-
-		// Get Events by Date
-		SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATEBYSTUDENT WHERE  CLASSSOURCEDID = ? ORDER BY EVENTDATE";
-		Rs = client.getData(SQL, classSourcedId);
-		Map<String, Map<String, Long>> eventCountGroupedByDateAndStudent = new HashMap<String, Map<String, Long>> ();
-		
-		String lastEventDate = "NONE";
-		Map<String, Long> studentEvents = null; 
-		String currentEventDate = null;
-		Long eventCount = null;
-		String studentId = null;
-		while (Rs.next()){
-			currentEventDate = Rs.getString("EVENTDATE");
-			eventCount = Rs.getLong("NUMEVENTS");
-			studentId = Rs.getString("STUDENTID");
-			
-			if (!lastEventDate.equalsIgnoreCase(currentEventDate)){
-				if (!lastEventDate.equalsIgnoreCase("NONE")){
-					eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
-				}
-				studentEvents = new HashMap<String, Long>();
+		try {
+			// Get Summary data first, could be big, let the DB do the grouping, may be more summary data in the future
+			String SQL = "SELECT * FROM VW_OD_EV_SUMMARYDATA WHERE  CLASSSOURCEDID = ?";
+			ResultSet Rs = client.getData(SQL, classSourcedId);
+			if (Rs.next()){
+				numEvents = Rs.getInt("NUMEVENTS");
+				numStudents = Rs.getInt("NUMSTUDENTS");
 			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	
+			// Get Events by Date
+			SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATE WHERE CLASSSOURCEDID = ? ORDER BY EVENTDATE";
+			Rs = client.getData(SQL, classSourcedId);
+			Map<String, Long> eventCountByDate = new HashMap<String, Long>();
+			while (Rs.next()){
+			  eventCountByDate.put(Rs.getString("EVENTDATE"), Rs.getLong("NUMEVENTS"));
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+	
+			// Get Events by Date
+			SQL = "SELECT * FROM VW_OD_EV_COUNTBYDATEBYSTUDENT WHERE  CLASSSOURCEDID = ? ORDER BY EVENTDATE";
+			Rs = client.getData(SQL, classSourcedId);
+			Map<String, Map<String, Long>> eventCountGroupedByDateAndStudent = new HashMap<String, Map<String, Long>> ();
 			
-			studentEvents.put(studentId, eventCount);    	  
-			lastEventDate = currentEventDate;
+			String lastEventDate = "NONE";
+			Map<String, Long> studentEvents = null; 
+			String currentEventDate = null;
+			Long eventCount = null;
+			String studentId = null;
+			while (Rs.next()){
+				currentEventDate = Rs.getString("EVENTDATE");
+				eventCount = Rs.getLong("NUMEVENTS");
+				studentId = Rs.getString("STUDENTID");
+				
+				if (!lastEventDate.equalsIgnoreCase(currentEventDate)){
+					if (!lastEventDate.equalsIgnoreCase("NONE")){
+						eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
+					}
+					studentEvents = new HashMap<String, Long>();
+				}
+				
+				studentEvents.put(studentId, eventCount);    	  
+				lastEventDate = currentEventDate;
+			}
+			if (!Rs.isClosed()){
+				  Rs.close();
+			}
+			if (studentEvents != null && studentEvents.size() > 0){
+				eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
+			}
+			classEventsStats= new ClassEventStatistics.Builder()
+									.withClassSourcedId(classSourcedId)
+									.withTotalEvents(numEvents)
+									.withTotalStudentEnrollments(numStudents)
+									.withEventCountGroupedByDate(eventCountByDate)
+									.withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
+									.build();
+		} catch (Exception e){
+			log.error(e.getMessage());
 		}
-		if (!Rs.isClosed()){
-			  Rs.close();
-		}
-		if (studentEvents != null && studentEvents.size() > 0){
-			eventCountGroupedByDateAndStudent.put(lastEventDate, studentEvents);
-		}
-		classEventsStats= new ClassEventStatistics.Builder()
-								.withClassSourcedId(classSourcedId)
-								.withTotalEvents(numEvents)
-								.withTotalStudentEnrollments(numStudents)
-								.withEventCountGroupedByDate(eventCountByDate)
-								.withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
-								.build();
+		client.close();
 	  }
 	  catch(Exception e)
 	  {
-		log.error(e.getMessage());
+		  log.error(e.getMessage());
 	  }
 	  return classEventsStats;	  
     }
@@ -161,33 +165,37 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
   @Override
   public Page<Event> getEventsForUser(String tenantId, String userSourcedId, Pageable pageable) throws ProviderException {
 	    ProviderData providerData = mongoTenantRepository.findOne(tenantId).findByKey(KEY);
-	    JdbcClient client = new JdbcClient(providerData);
 	    List<Event> userEvents = new ArrayList<Event>();
 	    try {
+		    JdbcClient client = new JdbcClient(providerData);
 	    	String SQL = "SELECT * FROM VW_OD_EV_USER WHERE USERSOURCEDID = ?";
-	        ResultSet Rs = client.getData(SQL, userSourcedId);
-	        
-	    	while (Rs.next()) 
-	       	 {
-	    		 EventImpl eventImpl = new EventImpl();
-	    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
-	    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
-	    	      eventImpl.setId(Rs.getString("ID"));
-	    	      eventImpl.setObject(Rs.getString("OBJECT"));
-	    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
-	    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
-	    	      eventImpl.setVerb(Rs.getString("VERB"));
-	    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
-	    	      
-	    	      userEvents.add(eventImpl);
-	       	 }
-			if (!Rs.isClosed()){
-				  Rs.close();
+	    	try {
+		        ResultSet Rs = client.getData(SQL, userSourcedId);
+		    	while (Rs.next()) 
+		       	 {
+		    		 EventImpl eventImpl = new EventImpl();
+		    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
+		    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
+		    	      eventImpl.setId(Rs.getString("ID"));
+		    	      eventImpl.setObject(Rs.getString("OBJECT"));
+		    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
+		    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
+		    	      eventImpl.setVerb(Rs.getString("VERB"));
+		    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
+		    	      
+		    	      userEvents.add(eventImpl);
+		       	 }
+				if (!Rs.isClosed()){
+					  Rs.close();
+				}
+		    }
+		    catch (SQLException e) {
+		    	log.error(e.getMessage());
 			}
+	    	client.close();
+	    } catch(Exception e){
+	    	log.error(e.getMessage());
 	    }
-	    catch (SQLException e) {
-			log.error(e.getMessage());
-		}
 	    return new PageImpl<>(userEvents);
   }
 
@@ -195,33 +203,38 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
   public Page<Event> getEventsForCourse(String tenantId, String classSourcedId, Pageable pageable) throws ProviderException {
 
 	    ProviderData providerData = mongoTenantRepository.findOne(tenantId).findByKey(KEY);
-	    JdbcClient client = new JdbcClient(providerData);
 	    List<Event> userEvents = new ArrayList<Event>();
 	    try {
-	    	String SQL = "SELECT * FROM VW_OD_EV_COURSE WHERE CLASSSOURCEDID = ?";
-	        ResultSet Rs = client.getData(SQL, classSourcedId);
-	        
-	    	while (Rs.next()) 
-	       	 {
-	    		 EventImpl eventImpl = new EventImpl();
-	    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
-	    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
-	    	      eventImpl.setId(Rs.getString("ID"));
-	    	      eventImpl.setObject(Rs.getString("OBJECT"));
-	    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
-	    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
-	    	      eventImpl.setVerb(Rs.getString("VERB"));
-	    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
-	    	      
-	    	      userEvents.add(eventImpl);
-	       	 }
-			if (!Rs.isClosed()){
-				  Rs.close();
+		    JdbcClient client = new JdbcClient(providerData);
+		    try {
+		    	String SQL = "SELECT * FROM VW_OD_EV_COURSE WHERE CLASSSOURCEDID = ?";
+		        ResultSet Rs = client.getData(SQL, classSourcedId);
+		        
+		    	while (Rs.next()) 
+		       	 {
+		    		 EventImpl eventImpl = new EventImpl();
+		    	      eventImpl.setActor(Rs.getString("USERSOURCEDID"));
+		    	      eventImpl.setContext(Rs.getString("CLASSSOURCEDID"));
+		    	      eventImpl.setId(Rs.getString("ID"));
+		    	      eventImpl.setObject(Rs.getString("OBJECT"));
+		    	      eventImpl.setObjectType(Rs.getString("OBJECTTYPE"));
+		    	      eventImpl.setSourcedId(Rs.getString("USERSOURCEDID"));
+		    	      eventImpl.setVerb(Rs.getString("VERB"));
+		    	      eventImpl.setTimestamp(Rs.getString("EVENT_DATE"));
+		    	      
+		    	      userEvents.add(eventImpl);
+		       	 }
+				if (!Rs.isClosed()){
+					  Rs.close();
+				}
+		    }
+		    catch (SQLException e) {
+		    	log.error(e.getMessage());
 			}
+		    client.close();
+	    } catch (Exception e){
+	    	log.error(e.getMessage());
 	    }
-	    catch (SQLException e) {
-			log.error(e.getMessage());
-		}
 	    return new PageImpl<>(userEvents);
   }
 
