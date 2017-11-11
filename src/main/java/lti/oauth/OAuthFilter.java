@@ -59,7 +59,8 @@ public class OAuthFilter extends OncePerRequestFilter {
   @Autowired private MongoTenantRepository tenantRepository;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc) throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res
+		  							, FilterChain fc) throws ServletException, IOException {
     logger.debug("In OAuthFilter");
     logger.debug(req.getMethod());
     
@@ -89,32 +90,39 @@ public class OAuthFilter extends OncePerRequestFilter {
       List<Consumer> consumer = consumers.stream().filter(c -> c.getOauthConsumerKey().equals(consumerKey)).collect(Collectors.toList());
 
       String calculatedSignature;
+      String url = req.getRequestURL().toString();
+      String secret = consumer.get(0).getOauthConsumerSecret();
+      String algorithm = OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM));
       try {
-        calculatedSignature = new OAuthMessageSigner().sign(consumer.get(0).getOauthConsumerSecret(), OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)), "POST",
-            req.getRequestURL().toString(), alphaSortedMap);
+        calculatedSignature =  new OAuthMessageSigner().sign(secret, algorithm , "POST", url, alphaSortedMap);
       } catch (Exception e) {
         logger.error(e.getMessage(), e);
         throw new ServletException("OAUTH_CALCULATION_ERROR");
       }
 
+      // retry by switch prefix between https and http
       if (!signature.equals(calculatedSignature)) {
-        // try again with http
         String recalculatedSignature = null;
 
-        if (StringUtils.startsWithIgnoreCase(req.getRequestURL().toString(), "https:")) {
-          String url = StringUtils.replaceOnce(req.getRequestURL().toString(), "https:", "http:");
-          try {
-            recalculatedSignature = new OAuthMessageSigner().sign(consumer.get(0).getOauthConsumerSecret(), OAuthUtil.mapToJava(alphaSortedMap.get(OAuthUtil.SIGNATURE_METHOD_PARAM)),
-                "POST", url, alphaSortedMap);
-          } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ServletException("OAUTH_CALCULATION_ERROR");
-          }
-        }
-
+        // switch http to https or https to http 
+    	// in case there was a proxy conversion
+		if (StringUtils.startsWithIgnoreCase(url, "http:")) {
+		  url = StringUtils.replaceOnce(url, "http:", "https:");
+		}
+		else {
+			if (StringUtils.startsWithIgnoreCase(url, "https:")) {
+		        url = StringUtils.replaceOnce(url, "https:", "http:");
+		      }        	
+		}
+		try {
+		    recalculatedSignature = new OAuthMessageSigner().sign(secret , algorithm , "POST", url, alphaSortedMap);
+		} catch (Exception e) {
+		    logger.error(e.getMessage(), e);
+		    throw new ServletException("OAUTH_CALCULATION_ERROR");
+		}
         if (!signature.equals(recalculatedSignature)) {
-          throw new AuthorizationServiceException("OAUTH_SIGNATURE_MISMATCH");
-        }
+            throw new AuthorizationServiceException("OAUTH_SIGNATURE_MISMATCH");
+          }
       }
     }
     
