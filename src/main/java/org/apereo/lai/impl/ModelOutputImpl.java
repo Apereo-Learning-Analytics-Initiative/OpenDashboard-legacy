@@ -40,6 +40,7 @@ public class ModelOutputImpl implements ModelOutput {
   
   private Map<String, Object> output;
   private Date createdDate;
+  private String userSourcedId;
   
   public Map<String, Object> getOutput() {
     return output;
@@ -53,6 +54,14 @@ public class ModelOutputImpl implements ModelOutput {
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
   }
+  public String getUserSourcedId() {
+    return userSourcedId;
+  }
+
+  public void setUserSourcedId(String userSourcedId) {
+    this.userSourcedId = userSourcedId;
+  }
+
   @Override
   public String toString() {
     return "ModelOutputImpl [output=" + output + ", createdDate=" + createdDate + "]";

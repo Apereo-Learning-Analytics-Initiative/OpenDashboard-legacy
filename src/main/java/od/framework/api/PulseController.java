@@ -27,14 +27,17 @@ import od.providers.course.CourseProvider;
 import od.providers.enrollment.EnrollmentProvider;
 import od.providers.events.EventProvider;
 import od.providers.lineitem.LineItemProvider;
+import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.lai.ModelOutput;
 import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,6 +82,7 @@ public class PulseController {
       }
     }
     final String classSourcedId = tempClassSourcedId;
+    boolean hasRiskScore = false;
     
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
@@ -86,6 +90,32 @@ public class PulseController {
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     UserProvider userProvider = providerService.getUserProvider(tenant);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    
+    Map<String,Map<String,Object>> modelOutputMap = null;
+    try {
+      ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
+      ProviderData modelOutputProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
+      
+      if (modelOutputProviderData != null) {
+        Page<ModelOutput> page
+          = modelOutputProvider.getModelOutputForContext(modelOutputProviderData, tenantId, classSourcedId, null);
+        
+        List<ModelOutput> output = page.getContent();
+        
+        if (output != null) {
+          modelOutputMap 
+            = output.stream().collect(Collectors.toMap(ModelOutput::getUserSourcedId, ModelOutput::getOutput));
+          if (modelOutputMap != null) {
+            hasRiskScore = true;
+          }
+        }
+        
+      }
+
+    }
+    catch (Exception e) {
+      log.warn(e.getMessage());
+    }
     
     ProviderData lineitemProviderData = null;
     try {
@@ -269,7 +299,7 @@ public class PulseController {
 //              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
           }
         }
-
+        
         if (classStartDate == null) {
           if (firstClassEventDate != null) {
             classStartDate = firstClassEventDate;
@@ -349,7 +379,7 @@ public class PulseController {
                 .withLastName(studentEnrollment.getUser().getFamilyName())
                 .withEmail(studentEnrollment.getUser().getEmail())
                 
-                .withRisk(null)
+                .withRisk(hasRiskScore ? modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString() : null)
                 .withGrade(null)
                 .withMissingSubmission(false)
                 
@@ -387,7 +417,7 @@ public class PulseController {
             .withHasAssignments(hasAssignments)
             .withHasGrade(false)
             .withHasMissingSubmissions(false)
-            .withHasRisk(false)
+            .withHasRisk(hasRiskScore)
             
             .withStartdate(classStartDate)
             .withEnddate(classEndDate)
@@ -419,7 +449,7 @@ public class PulseController {
           .withStartDate(allClassStartDates.stream().min(LocalDate::compareTo).get())
           .withClassEventMax(classEventMax)
           .withHasGrade(false)
-          .withHasRisk(false)
+          .withHasRisk(hasRiskScore)
           .withHasMissingSubmissions(false)
           .withHasLastLogin(false)
           .withHasEmail(false)

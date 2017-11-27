@@ -56,7 +56,6 @@
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
     $scope.maxActivity = 0;
-    $scope.appHasRiskData = false;
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
     $scope.riskOverlay = true;
@@ -327,16 +326,6 @@
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
-          });
-        });
-      }
-
-      // fake risk data
-      if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].risk) {
-        console.log('build fake risk data');
-        _.each($scope.processedClasses, function(c){
-          _.each(c.students, function(s){
-            s.risk = s.risk ? s.risk : Math.round(Math.random() * (100 - 0));
           });
         });
       }
