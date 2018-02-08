@@ -21,5 +21,5 @@ public interface ModelOutput {
 
   Map<String, Object> getOutput();
   Date getCreatedDate();
-
+  String getUserSourcedId();
 }
