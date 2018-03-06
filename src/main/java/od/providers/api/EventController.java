@@ -55,13 +55,14 @@ public class EventController {
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
   @RequestMapping(value = "/api/tenants/{tenantId}/classes/{classId}/events/stats", method = RequestMethod.GET)
   public ClassEventStatistics getEventStatisticsForClass(@PathVariable("tenantId") final String tenantId,
-      @PathVariable("classId") final String classId)
+      @PathVariable("classId") final String classId, 
+      @RequestParam(name="studentsOnly",required=false,defaultValue="true") String studentsOnly)
       throws Exception {
     log.debug("tenantId: {}", tenantId);
     log.debug("classId: {}", classId);
 
     EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
-    return eventProvider.getStatisticsForClass(tenantId, classId);
+    return eventProvider.getStatisticsForClass(tenantId, classId, Boolean.valueOf(studentsOnly));
   }
   
   @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})

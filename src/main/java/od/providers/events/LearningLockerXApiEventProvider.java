@@ -267,7 +267,7 @@ public class LearningLockerXApiEventProvider extends LearningLockerProvider impl
   }
   
   @Override
-  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
     // TODO Auto-generated method stub
     return null;
   }
