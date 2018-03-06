@@ -74,13 +74,16 @@ public class MatthewsEventProvider extends MatthewsProvider implements EventProv
   }
 
   @Override
-  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
     Tenant tenant = mongoTenantRepository.findOne(tenantId);    
     ProviderData providerData = tenant.findByKey(KEY);
 
     MatthewsClient mc = new MatthewsClient(providerData.findValueForKey("base_url"), providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
 
     String endpoint = providerData.findValueForKey("base_url").concat("/api/classes/").concat(classSourcedId).concat("/events/stats");
+    if (!studentsOnly) {
+      endpoint = endpoint.concat("?studentsOnly=false");
+    }
     RestTemplate restTemplate = mc.getRestTemplate();
     HttpHeaders headers = mc.getHeaders();
     

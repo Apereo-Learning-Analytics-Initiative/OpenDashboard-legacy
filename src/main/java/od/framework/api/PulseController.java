@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 
 import lti.LaunchRequest;
@@ -71,6 +72,7 @@ public class PulseController {
     log.debug("Authentication: {}", authentication);
     
     String tempClassSourcedId = null;
+    boolean isSakai = false;
     
     if (authentication != null && authentication instanceof OpenDashboardAuthenticationToken) {
       OpenDashboardAuthenticationToken openDashboardAuthenticationToken
@@ -79,6 +81,16 @@ public class PulseController {
       LaunchRequest launchRequest = openDashboardAuthenticationToken.getLaunchRequest();
       if (launchRequest != null) {
         tempClassSourcedId = launchRequest.getContext_id();
+        
+        SortedMap<String, String> allParams = launchRequest.toSortedMap();
+        if (allParams != null && !allParams.isEmpty()) {
+          for (String k : allParams.keySet()) {
+            if (StringUtils.containsIgnoreCase(k, "sakai")) {
+              isSakai = true;
+              break;
+            }
+          }
+        }
       }
     }
     final String classSourcedId = tempClassSourcedId;
@@ -206,7 +218,8 @@ public class PulseController {
                 
         ClassEventStatistics classEventStatistics = null;
         try {
-          classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId());
+          boolean studentsOnly = !isSakai;          
+          classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId(), studentsOnly);
         } 
         catch (Exception e1) {
           log.warn(e1.getMessage(),e1);

@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface EventProvider extends Provider {
   
-  ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException;
+  ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException;
   
   Page<org.apereo.lai.Event> getEventsForUser(String tenantId, String userId, Pageable pageable) throws ProviderException;
   Page<org.apereo.lai.Event> getEventsForCourse(String tenantId, String courseId, Pageable pageable) throws ProviderException;

@@ -81,7 +81,7 @@ public class JdbcEventProvider extends JdbcProvider implements EventProvider {
 	    }
 	  }
   @Override
-  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
 	  ClassEventStatistics classEventsStats = null;
 	  Integer numEvents = 0;
 	  Integer numStudents = 0;

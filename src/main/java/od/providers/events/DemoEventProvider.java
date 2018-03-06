@@ -262,7 +262,7 @@ public class DemoEventProvider implements EventProvider {
   }
 
   @Override
-  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId) throws ProviderException {
+  public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
     
     Set<Event> classEvents = classEventsMap.get(classSourcedId);
     
