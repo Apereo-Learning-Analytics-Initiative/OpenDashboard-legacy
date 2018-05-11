@@ -62,7 +62,7 @@ public class PulseController {
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR"})
-  @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId}", method = RequestMethod.GET, 
+  @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId:.+}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public PulseDetail pulse(Authentication authentication, @PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {

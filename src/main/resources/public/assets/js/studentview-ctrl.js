@@ -36,55 +36,70 @@
             $scope.studentFilters.detailView = '90days';
             $scope.allFilters = false;
             
+            var colors = [
+                          'rgba(6, 11, 178, 0.5)',
+                          'rgba(84, 255, 0, 0.5)',
+                          'rgba(255, 132, 7, 0.5)',
+                          'rgba(29, 178, 37, 0.5)',
+                          'rgba(13, 191, 255, 0.5)',
+                          'rgba(232, 6, 222, 0.5)',
+                          'rgba(232, 163, 12, 0.5)',
+                          'rgba(50, 12, 132, 0.5)',
+                          'rgba(13, 175, 255, 0.5)',
+                          'rgba(248, 255, 0, 0.5)',
+                          'rgba(232, 143, 12, 0.5)'
+            ];
+            
             $scope.studentFilters.verblist = [
-                {
-                    label: 'Completed',
-                    color: 'rgba(6, 11, 178, 0.5)',
-                    filter: false
-                },{
-                    label: 'Submitted',
-                    color: 'rgba(84, 255, 0, 0.5)',
-                    filter: true
-                },{
-                    label: 'NavigatedTo',
-                    color: 'rgba(255, 132, 7, 0.5)',
-                    filter: false
-                },{
-                    label: 'Viewed',
-                    color: 'rgba(29, 178, 37, 0.5)',
-                    filter: true
-                },
-                 {
-                     label: 'Posted',
-                     color: 'rgba(13, 191, 255, 0.5)',
-                     filter: true
-                 },
-                {
-                     label: 'Modified',
-                     color: 'rgba(232, 6, 222, 0.5)',
-                     filter: true
-                },
-                {
-                    label: 'Searched',
-                    color: 'rgba(232, 163, 12, 0.5)',
-                    filter: false
-                },{
-                    label: 'Shared',
-                    color: 'rgba(50, 12, 132, 0.5)',
-                    filter: false
-                },{
-                    label: 'Bookmarked',
-                    color: 'rgba(13, 175, 255, 0.5)',
-                    filter: false
-                },{
-                    label: 'Commented',
-                    color: 'rgba(248, 255, 0, 0.5)',
-                    filter: false
-                },{
-                    label: 'Recommended',
-                    color: 'rgba(232, 143, 12, 0.5)',
-                    filter: false
-                }];
+//                {
+//                    label: 'Completed',
+//                    color: 'rgba(6, 11, 178, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Submitted',
+//                    color: 'rgba(84, 255, 0, 0.5)',
+//                    filter: true
+//                },{
+//                    label: 'NavigatedTo',
+//                    color: 'rgba(255, 132, 7, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Viewed',
+//                    color: 'rgba(29, 178, 37, 0.5)',
+//                    filter: true
+//                },
+//                 {
+//                     label: 'Posted',
+//                     color: 'rgba(13, 191, 255, 0.5)',
+//                     filter: true
+//                 },
+//                {
+//                     label: 'Modified',
+//                     color: 'rgba(232, 6, 222, 0.5)',
+//                     filter: true
+//                },
+//                {
+//                    label: 'Searched',
+//                    color: 'rgba(232, 163, 12, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Shared',
+//                    color: 'rgba(50, 12, 132, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Bookmarked',
+//                    color: 'rgba(13, 175, 255, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Commented',
+//                    color: 'rgba(248, 255, 0, 0.5)',
+//                    filter: false
+//                },{
+//                    label: 'Recommended',
+//                    color: 'rgba(232, 143, 12, 0.5)',
+//                    filter: false
+//                }
+                ];
 
             currentUser = SessionService.getCurrentUser();
 
@@ -103,6 +118,28 @@
                         EventService.getEventForClassAndUser(currentUser.tenant_id, $state.params.groupId, $state.params.studentId, 0, 1000)
                         .then(function (actions) {
                             $scope.actions = actions.content;
+                            //console.log($scope.actions);
+                            var allVerbs = [];
+                            _.each($scope.actions, function (action) {
+                                //console.log(action);
+                            	$scope.uniqueVerbs 
+                                var verb = _.last(action.verb.split('#'));
+                                verb = _.last(verb.split('/'));
+                                allVerbs.push(verb);
+            
+                            });
+                            
+                            var uniqueVerbs = _.uniq(allVerbs);
+                            _.each(uniqueVerbs, function(verb, index){
+                                var obj = {
+                                   label: verb,
+                                   color: colors[index],
+                                   filter: false
+                               };
+                               
+                               $scope.studentFilters.verblist.push(obj);
+                            });
+
                             activityByVerbChart();
                             hourlyActivityChart();
                             activityDayOfWeek();
@@ -135,6 +172,7 @@
                 _.each($scope.actions, function (action) {
                     //console.log(action);
                     var verb = _.last(action.verb.split('#'));
+                    verb = _.last(verb.split('/'));
 
                     if (!datasets[verb]) {
                         datasets[verb] = 0;
@@ -243,12 +281,13 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
+                    console.log(action);
                     var verb = _.last(action.verb.split('#'));
+                    verb = _.last(verb.split('/'));
                     var dayOfWeek = moment(action.timestamp).format('dddd');
                     
-                    //console.log(verb);
-                    //console.log(dayOfWeek);
+                    console.log(verb);
+                    console.log(dayOfWeek);
 
                     if (!daysOfWeek[dayOfWeek]) {
                         daysOfWeek[dayOfWeek] = [];
@@ -339,6 +378,7 @@
                 _.each($scope.actions, function (action) {
                     //console.log(action);
                     var verb = _.last(action.verb.split('#'));
+                    verb = _.last(verb.split('/'));
                     var date = moment(action.timestamp).format('MM-DD');
                     var daysAgo = moment(action.timestamp).diff(moment(), 'days', true);
 
