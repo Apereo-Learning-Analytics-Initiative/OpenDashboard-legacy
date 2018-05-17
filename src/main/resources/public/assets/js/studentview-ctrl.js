@@ -36,7 +36,7 @@
             $scope.studentFilters.detailView = '90days';
             $scope.allFilters = false;
             
-            var colors = [
+            var clrs = [
                           'rgba(6, 11, 178, 0.5)',
                           'rgba(84, 255, 0, 0.5)',
                           'rgba(255, 132, 7, 0.5)',
@@ -131,9 +131,15 @@
                             
                             var uniqueVerbs = _.uniq(allVerbs);
                             _.each(uniqueVerbs, function(verb, index){
+                            	
+                                var x = 0;
+                                if (index < clrs.length) {
+                                  x = index;
+                                }
+                                
                                 var obj = {
                                    label: verb,
-                                   color: colors[index],
+                                   color: clrs[x],
                                    filter: false
                                };
                                
@@ -281,13 +287,13 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    console.log(action);
+                    //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
                     var dayOfWeek = moment(action.timestamp).format('dddd');
                     
-                    console.log(verb);
-                    console.log(dayOfWeek);
+                    //console.log(verb);
+                    //console.log(dayOfWeek);
 
                     if (!daysOfWeek[dayOfWeek]) {
                         daysOfWeek[dayOfWeek] = [];
