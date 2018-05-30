@@ -64,7 +64,7 @@ public class LTIEntryPointController {
   //@Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
   
-  @RequestMapping(value = { "/lti" }, method = RequestMethod.POST)
+  @RequestMapping(value = { "/lti", "/lti/" }, method = RequestMethod.POST)
   public String lti(HttpServletRequest request) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
     
