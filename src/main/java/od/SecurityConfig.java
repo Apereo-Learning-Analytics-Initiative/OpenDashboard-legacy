@@ -79,7 +79,6 @@ public class SecurityConfig {
       registrationBean.setFilter(oAuthFilter);
       List<String> urls = new ArrayList<>(1);
       urls.add("/lti");
-      urls.add("/lti/");
       registrationBean.setUrlPatterns(urls);
       registrationBean.setOrder(2);
       return registrationBean;
@@ -87,8 +86,9 @@ public class SecurityConfig {
 
     protected void configure(HttpSecurity http) throws Exception {
       http
+        .antMatcher("/lti")
           .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/lti", "/lti/").permitAll()
+            .antMatchers(HttpMethod.POST, "/lti").permitAll()
       .and()
         .headers()
           .contentSecurityPolicy("script-src 'self' 'unsafe-eval' https://cdnjs.cloudflare.com https://ajax.googleapis.com https://maxcdn.bootstrapcdn.com https://www.google.com")
