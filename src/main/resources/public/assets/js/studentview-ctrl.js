@@ -19,6 +19,7 @@
     .module('OpenDashboard')
     .controller('StudentViewController',
         function ($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService) {
+        	//console.log("SVC");
             var currentUser;
             var activityOverTimeChart;
             var activityDayOfWeekChart;
@@ -368,6 +369,7 @@
             }
 
             function activityOverTime (detailView) {
+            	console.log("AOT");
                 var chartData;
                 var colors;
                 var options;
@@ -382,7 +384,7 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
+                    console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
                     var date = moment(action.timestamp).format('MM-DD');
@@ -439,11 +441,14 @@
                 chartData.labels = _.sortBy(chartData.labels, function (label) {
                     return label;
                 });
+                
+                console.log('sf.vl');
+                console.log($scope.studentFilters.verblist);
 
                 _.each($scope.studentFilters.verblist, function (verb, index) {
                     var colors;
                     var set;
-                    if (verb.filter) {
+                    if (true) {
                         colors = [];
                         _.each(chartData.labels, function () {
                             colors.push(verb.color);
@@ -477,6 +482,9 @@
                         }]
                     }
                 };
+                
+                //console.log('aot data');
+                //console.log($scope.activityOverTimeData);
 
                 if (!$scope.activityOverTimeData) {
                     activityOverTimeChart = new Chart(document.getElementById('activityOverTime'), {

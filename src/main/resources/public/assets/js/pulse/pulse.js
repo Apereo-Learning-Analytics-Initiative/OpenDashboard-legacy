@@ -250,7 +250,7 @@
 
 
     function buildStudent(cid, sid) {
-      console.log('buildStudent');
+      //console.log('buildStudent');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -270,7 +270,7 @@
     }
 
     function buildStudentList(id) {
-      console.log('buildStudentList');
+      //console.log('buildStudentList');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
@@ -322,7 +322,7 @@
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
-        console.log('build fake email');
+        //console.log('build fake email');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
@@ -332,7 +332,7 @@
 
       // fake risk data
       if ($scope.config.hasGrade && !$scope.processedClasses[0].students[0].grade) {
-        console.log('build fake grade data');
+        //console.log('build fake grade data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.grade = s.grade ? s.grade : Math.round(Math.random() * (100 - 0));
@@ -343,7 +343,7 @@
 
       // fake missing submission data
       if ($scope.config.hasMissingSubmissions && $scope.processedClasses[0].students[0].missingSubmission !== 0) {
-        console.log('build fake submission data');
+        //console.log('build fake submission data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.missingSubmission = s.missingSubmission ? s.missingSubmission : Math.round(Math.random() * (50 - 0));
@@ -379,7 +379,7 @@
     };
 
     function init() {
-      console.log('init');
+      //console.log('init');
       // $scope.$on('chart-change', handleChartChange);
 
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
@@ -403,7 +403,7 @@
         PulseApiService
         .getPulseData(currentUser.tenant_id, currentUser.user_id)
         .then(function(data){
-          console.log(data);
+          //console.log(data);
 
           $scope.config = _.clone(data);
           delete $scope.config.pulseClassDetails;
