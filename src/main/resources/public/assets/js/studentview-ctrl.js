@@ -369,7 +369,7 @@
             }
 
             function activityOverTime (detailView) {
-            	console.log("AOT");
+            	//console.log("AOT");
                 var chartData;
                 var colors;
                 var options;
@@ -384,7 +384,7 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    console.log(action);
+                    //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
                     var date = moment(action.timestamp).format('MM-DD');
@@ -442,8 +442,8 @@
                     return label;
                 });
                 
-                console.log('sf.vl');
-                console.log($scope.studentFilters.verblist);
+                //console.log('sf.vl');
+                //console.log($scope.studentFilters.verblist);
 
                 _.each($scope.studentFilters.verblist, function (verb, index) {
                     var colors;
