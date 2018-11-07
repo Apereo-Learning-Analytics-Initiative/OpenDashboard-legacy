@@ -674,10 +674,7 @@ public class PulseController {
 	          log.warn(e1.getMessage(),e1);
 	        }
 	        
-	        Set<Enrollment> classEnrollment = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, klass.getSourcedId(), true);        
-	        
-	        classEnrollment = enrollments;
-	         
+	        Set<Enrollment> classEnrollment = enrollments;
 	        
 	        if (classEnrollment != null && !classEnrollment.isEmpty()) {
 	          
@@ -845,7 +842,7 @@ public class PulseController {
 	                .withLastName(studentEnrollment.getUser().getFamilyName())
 	                .withEmail(studentEnrollment.getUser().getEmail())
 	                
-	                //.withRisk(hasRiskScore ? modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString() : null)
+	                .withRisk(hasRiskScore ? modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString() : null)
 	                .withGrade(null)
 	                .withMissingSubmission(false)
 	                
