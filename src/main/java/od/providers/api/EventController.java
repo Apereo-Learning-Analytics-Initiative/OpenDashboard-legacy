@@ -21,6 +21,7 @@ package od.providers.api;
 import od.providers.ProviderService;
 import od.providers.events.EventProvider;
 import od.repository.mongo.MongoTenantRepository;
+import od.utils.PulseUtility;
 
 import org.apereo.lai.Event;
 import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
@@ -65,7 +66,7 @@ public class EventController {
     return eventProvider.getStatisticsForClass(tenantId, classId, Boolean.valueOf(studentsOnly));
   }
   
-  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN", "ROLE_STUDENT"})
   @RequestMapping(value = "/api/tenants/{tenantId}/classes/{classId}/events/{userId}", method = RequestMethod.GET)
   public Page<Event> getEventsForClassAndUser(@PathVariable("tenantId") final String tenantId,
       @PathVariable("classId") final String classId,
@@ -77,8 +78,11 @@ public class EventController {
     log.debug("classId: {}", classId);
     log.debug("userId: {}", userId);
 
+    String scrubbedUserId = PulseUtility.cleanFromPulse(userId);
+    String scrubbedClassId = PulseUtility.cleanFromPulse(classId);
+    
     EventProvider eventProvider = providerService.getEventProvider(mongoTenantRepository.findOne(tenantId));
-    return eventProvider.getEventsForCourseAndUser(tenantId, classId, userId, new PageRequest(page, size));
+    return eventProvider.getEventsForCourseAndUser(tenantId, scrubbedClassId, scrubbedUserId, new PageRequest(page, size));
   }
 
 

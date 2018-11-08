@@ -49,7 +49,7 @@ public class EnrollmentController {
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
-  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN"})
+  @Secured({"ROLE_INSTRUCTOR", "ROLE_ADMIN", "ROLE_STUDENT"})
 	@RequestMapping(value = "/api/tenants/{tenantId}/users/{userId}/enrollments", method = RequestMethod.GET)
 	public Set<Enrollment> getEnrollmentsForUser(@PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId)

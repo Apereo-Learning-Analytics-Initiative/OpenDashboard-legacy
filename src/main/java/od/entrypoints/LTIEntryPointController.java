@@ -79,9 +79,10 @@ public class LTIEntryPointController {
     String role;
     if (LTIEntryPointController.hasInstructorRole(null, launchRequest.getRoles())) {
       role = "ROLE_INSTRUCTOR";
+    } else if (LTIEntryPointController.hasLearnerRole(null, launchRequest.getRoles())) {
+      role = "ROLE_STUDENT";
     } else {
-      throw new UnauthorizedUserException("Does not have the instructor role");
-      //role = "ROLE_STUDENT";
+      throw new UnauthorizedUserException("Does not have the instructor or learner role");
     }
     
     // Find user mapping
@@ -194,7 +195,25 @@ public class LTIEntryPointController {
     return "redirect:"+cmUrl;
   }
 
-  public static boolean hasInstructorRole(List<String> instructorRoles, String roles) {
+  private static boolean hasLearnerRole(List<String> studentRoles, String roles) {
+
+	    if (studentRoles == null) {
+	    	studentRoles = new ArrayList<>();
+	    	studentRoles.add("Learner");
+	    	studentRoles.add("Student");
+	    }
+
+	    for (String instructorRole : studentRoles) {
+	      if (roles.contains(instructorRole)) {
+	        return true;
+	      }
+	    }
+
+	    return false;
+	  }
+   
+
+public static boolean hasInstructorRole(List<String> instructorRoles, String roles) {
 
     if (instructorRoles == null) {
       instructorRoles = new ArrayList<>();
