@@ -32,6 +32,7 @@ import od.providers.course.CourseProvider;
 import od.providers.user.UserProvider;
 import od.repository.mongo.ContextMappingRepository;
 import od.repository.mongo.MongoTenantRepository;
+import od.utils.PulseUtility;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -154,6 +155,9 @@ public class LTIEntryPointController {
     if (StringUtils.isBlank(classSourcedId)) {
       throw new ProviderException("No class mapping found");
     }
+    
+    
+    classSourcedId = PulseUtility.escapeForPulse(classSourcedId);
     
     // also an ugly but effective workaround
     launchRequest.setContext_id(classSourcedId);
