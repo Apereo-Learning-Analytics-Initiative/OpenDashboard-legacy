@@ -156,9 +156,6 @@ public class LTIEntryPointController {
       throw new ProviderException("No class mapping found");
     }
     
-    
-    classSourcedId = PulseUtility.escapeForPulse(classSourcedId);
-    
     // also an ugly but effective workaround
     launchRequest.setContext_id(classSourcedId);
 
@@ -190,7 +187,7 @@ public class LTIEntryPointController {
     //return "index";
     String cmUrl = null;
     if (StringUtils.isNotBlank(classSourcedId)) {
-      cmUrl = String.format("/direct/courselist/%s",classSourcedId);
+      cmUrl = String.format("/direct/courselist/%s",PulseUtility.escapeForPulse(classSourcedId));
     }
     else {
       cmUrl = "/direct/courselist";
