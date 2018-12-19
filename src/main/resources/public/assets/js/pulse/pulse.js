@@ -38,8 +38,8 @@
     $scope.studentFilters.list = [];
 
     // $scope.coursesStartEnd = {
-    //   start: '2016-10-30',
-    //   end: '2016-11-13'
+    // start: '2016-10-30',
+    // end: '2016-11-13'
     // };
 
     $scope.orderByField = 'label';
@@ -58,7 +58,7 @@
     $scope.maxActivity = 0;
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
-    $scope.riskOverlay = true;
+    $scope.riskOverlay = false;
     var riskTypeCount = 4;
     var riskColorClasses = [
       {
@@ -79,7 +79,7 @@
       }
     ];
 
-    $scope.activityOverlay = true;
+    $scope.activityOverlay = false;
     var activityTypeCount = 4;
     var activityColorClasses = [];
     function buildActivityColorThreshold() {
@@ -205,7 +205,8 @@
           var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
           currentDataList = _.filter(tempDataList, function(o){
-            // console.log(o.daysSinceLogin >= $scope.daysSinceLoginFilterCount);
+            // console.log(o.daysSinceLogin >=
+			// $scope.daysSinceLoginFilterCount);
             return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
           });
         }
@@ -250,7 +251,7 @@
 
 
     function buildStudent(cid, sid) {
-      //console.log('buildStudent');
+      console.log('building Student');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -270,7 +271,7 @@
     }
 
     function buildStudentList(id) {
-      //console.log('buildStudentList');
+      // console.log('buildStudentList');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
@@ -300,29 +301,29 @@
       // Grab max event count over all classes
       // var maxEvents = 0;
       // _.each($scope.processedClasses, function(c){
-      //   _.each(c.events, function(event){
-      //     if (maxEvents < event.eventCount) {
-      //       maxEvents = event.eventCount;
-      //     }
-      //   });
+      // _.each(c.events, function(event){
+      // if (maxEvents < event.eventCount) {
+      // maxEvents = event.eventCount;
+      // }
+      // });
       // });
       // console.log('maxEvents', maxEvents);
       $scope.coursesMaxEvents = $scope.config.classEventMax;
 
       // Set student activity class total maximum
       // _.each($scope.processedClasses, function(c){
-      //   var maxActivity = 0;
-      //   _.each(c.students, function(s){
-      //     if (maxActivity < s.activity) {
-      //       maxActivity = s.activity;
-      //     }
-      //   });
-      //   c.studentActivityMax = maxActivity;
+      // var maxActivity = 0;
+      // _.each(c.students, function(s){
+      // if (maxActivity < s.activity) {
+      // maxActivity = s.activity;
+      // }
+      // });
+      // c.studentActivityMax = maxActivity;
       // });
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
-        //console.log('build fake email');
+        // console.log('build fake email');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
@@ -332,7 +333,7 @@
 
       // fake risk data
       if ($scope.config.hasGrade && !$scope.processedClasses[0].students[0].grade) {
-        //console.log('build fake grade data');
+        // console.log('build fake grade data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.grade = s.grade ? s.grade : Math.round(Math.random() * (100 - 0));
@@ -343,7 +344,7 @@
 
       // fake missing submission data
       if ($scope.config.hasMissingSubmissions && $scope.processedClasses[0].students[0].missingSubmission !== 0) {
-        //console.log('build fake submission data');
+        // console.log('build fake submission data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.missingSubmission = s.missingSubmission ? s.missingSubmission : Math.round(Math.random() * (50 - 0));
@@ -379,7 +380,7 @@
     };
 
     function init() {
-      //console.log('init');
+      // console.log('init');
       // $scope.$on('chart-change', handleChartChange);
 
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
@@ -403,7 +404,7 @@
         PulseApiService
         .getPulseData(currentUser.tenant_id, currentUser.user_id)
         .then(function(data){
-          //console.log(data);
+          // console.log(data);
 
           $scope.config = _.clone(data);
           delete $scope.config.pulseClassDetails;
@@ -547,6 +548,12 @@
 
 
         function drawPlots(plots, o) {
+        	console.log("****** INSIDE DRAWPLOTS ******");
+        	console.log("o: %O", o);
+        	console.log("o.students: " + o.students);
+        	console.log("o.events: " + o.events);
+        	
+        	
           plots.selectAll('circle').remove();
           plots
             .selectAll('circle')
@@ -557,11 +564,14 @@
             .attr('r', function (d) {
               var count;
 
+              console.log("d: " + d);
               if (o.students) {
                 count = d.eventCount*100/scope.coursesMaxEvents/10+1;
               } else {
                 count = d.eventCount*100/scope.maxEvents/10+1;
               }
+              console.log("COUNT: " + count);
+
               return count;
             })
             .attr('cx', function (d) {
@@ -604,7 +614,8 @@
             .on('click', zoomIn);
         }
 
-        function zoomIn(d) {
+        function zoomIn(d) {        	        	
+        	
           var date = d.date;
           if (d.hasOwnProperty('dueDate')) {
             date = d.dueDate ? d.dueDate : courseStart;
@@ -749,10 +760,16 @@
                 .attr('class','plot');
             }
             if (scope.listType === "students") {
-              drawPlots(overviewPlot, scope.currentCourse);  
+            	//console.log("*** from from drawtimeline student(s) ****");
+            	//console.log(scope.currentCourse);
+            	//console.log(overviewPlot );            	
+                drawPlots(overviewPlot, scope.currentCourse);  
             }
             if (scope.listType === "student") {
-              drawPlots(overviewPlot, scope.currentStudent);  
+				//console.log("*** from drawtimeline student ****");
+				//console.log(scope.currentStudent);
+				//console.log(overviewPlot);
+               drawPlots(overviewPlot, scope.currentStudent);  
             }
             
           }
@@ -768,6 +785,9 @@
 
           // set width n height
           _.each(scope.datalist, function(o, i){
+        	  
+        	  console.log("inside for each... o.id: " + o.id);
+        	  
             if (i==0) {
               height = $('#pulse-chart-' + o.id).height();
               width = $('#pulse-chart-' + o.id).width();
@@ -790,6 +810,9 @@
               .attr('class','plot');
             
             // dot
+				console.log("**** from drawChart (this is the important single student ****");
+				console.log(o);
+				console.log(plots);
             drawPlots(plots, o);
           });
 
@@ -805,7 +828,8 @@
           $('.pulse-header .student-details').width($('#floating-header .timeline-heading').position().left - 20);
 
           
-          // $('#pulse-data').css({'padding-top':$('.pulse-header').height() + 9});
+          // $('#pulse-data').css({'padding-top':$('.pulse-header').height() +
+			// 9});
 
           if (scope.listType !== 'classes') {
             drawAssignments();
