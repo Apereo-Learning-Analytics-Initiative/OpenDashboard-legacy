@@ -404,8 +404,16 @@ public class PulseController {
             }
 
             String modifiedStudentId = PulseUtility.escapeForPulse(studentEnrollment.getUser().getSourcedId());
+            
+            //Handle risk Score... 
             String riskScore = "NA";
-            if(modelOutputMap.get(studentEnrollment.getUser().getSourcedId())!= null) {
+            if( 
+            		modelOutputMap != null &&
+            		studentEnrollment != null &&
+            		studentEnrollment.getUser() != null &&
+            		studentEnrollment.getUser().getSourcedId() != null &&
+            		modelOutputMap.get(studentEnrollment.getUser().getSourcedId())!= null
+              ) {
             	riskScore = modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString();
             }
             
