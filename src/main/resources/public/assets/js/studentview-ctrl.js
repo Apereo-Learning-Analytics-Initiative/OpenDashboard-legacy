@@ -293,8 +293,15 @@
                     verb = _.last(verb.split('/'));
                     var dayOfWeek = moment(action.timestamp).format('dddd');
                     
-                    //console.log(verb);
-                    //console.log(dayOfWeek);
+                    var testDate = new Date(action.timestamp);
+                    
+                    console.log("test: " + testDate);
+                    console.log("testDateDay: " + testDate.getDay())
+                    console.log("moment: " + moment(action.timestamp));
+                    console.log("action.timestamp: " + action.timestamp);
+                    console.log("dayOfWeek: " + dayOfWeek);
+                    console.log("verb: " + verb);
+                    console.log(dayOfWeek);
 
                     if (!daysOfWeek[dayOfWeek]) {
                         daysOfWeek[dayOfWeek] = [];
@@ -303,6 +310,9 @@
                         daysOfWeek[dayOfWeek][verb] = 0;
                     }
                     daysOfWeek[dayOfWeek][verb]++;
+                    
+                    console.log("daysOfWeek: " + daysOfWeek);
+                    console.log("*********************");
 
                 });
 
@@ -329,10 +339,14 @@
 
                 _.each(chartData.labels, function (label) {
                     _.each(chartData.datasets, function (dataset) {
+                    	console.log("label: " + label);
+                    	console.log("dataset.label" + dataset.label);
+                    	//console.log("daysOfWeek[label][dataset.label]" + daysOfWeek[label][dataset.label]);
                     	// GG null check added
                     	if (daysOfWeek[label]) {
                     	  dataset.data.push(daysOfWeek[label][dataset.label]);
                     	}
+                    	console.log("**********");
                     });
                 });
 

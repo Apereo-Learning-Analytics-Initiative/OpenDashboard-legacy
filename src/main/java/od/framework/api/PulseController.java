@@ -402,10 +402,13 @@ public class PulseController {
             if (!allStudentEventDates.isEmpty()) {
               daysSinceLogin = java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
             }
-            
-            
-            String modifiedStudentId = PulseUtility.escapeForPulse(studentEnrollment.getUser().getSourcedId());
 
+            String modifiedStudentId = PulseUtility.escapeForPulse(studentEnrollment.getUser().getSourcedId());
+            String riskScore = "NA";
+            if(modelOutputMap.get(studentEnrollment.getUser().getSourcedId())!= null) {
+            	riskScore = modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString();
+            }
+            
             PulseStudentDetail pulseStudentDetail
               = new PulseStudentDetail.Builder()
             
@@ -416,11 +419,11 @@ public class PulseController {
                 .withLastName(studentEnrollment.getUser().getFamilyName())
                 .withEmail(studentEnrollment.getUser().getEmail())
                 
-                .withRisk(hasRiskScore ? modelOutputMap.get(studentEnrollment.getUser().getSourcedId()).get("RISK_SCORE").toString() : null)
+                .withRisk(hasRiskScore ? riskScore : null)
                 .withGrade(null)
                 .withMissingSubmission(false)
                 
-                .withActivity(activity)
+                .withActivity(activity) 
                 .withEvents(studentPulseDateEventCounts)
                 .withDaysSinceLogin(daysSinceLogin)
                 
