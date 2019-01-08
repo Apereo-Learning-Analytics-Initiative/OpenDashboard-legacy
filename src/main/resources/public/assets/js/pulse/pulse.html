@@ -82,13 +82,13 @@
                             <span ng-show="assignmentsWithoutDueDates.length > 1">assignments missing due dates, not displayed.</span>
                         </span>
                     </span>
-
+<!--
                     <span class="checkbox filter-item" ng-show="listType == 'students' && config.hasRisk">
                         <label>
                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.riskOverlay"> Show Risk Colors
                         </label>
                     </span>
-
+-->
 <!--                     <span class="checkbox filter-item" ng-show="listType == 'students'">
                         <label>
                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.gradeOverlay"> Show Grade Colors
@@ -151,7 +151,7 @@
                 </div>
             </div>
             <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
-                <div class="heading">Risk</div>
+                <div class="heading">Pass Probability</div>
                 <div class="body">
                     {{ currentStudent.risk }}
                 </div>
@@ -216,7 +216,7 @@
                 </th>
                 <th ng-if="listType != 'classes' && config.hasRisk">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
-                    Risk
+                   Pass Probability 
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
                     <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
                     <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
