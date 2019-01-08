@@ -95,12 +95,13 @@
                         </label>
                     </span>
  -->
+<!--
                      <span class="checkbox filter-item" ng-show="listType == 'students'">
                          <label>
                              <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.activityOverlay"> Show Activity Colors
                          </label>
                      </span>
- 
+--> 
                 </script>
             
             </span>
@@ -216,7 +217,7 @@
                 </th>
                 <th ng-if="listType != 'classes' && config.hasRisk">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
-                   Pass Probability 
+                   Pass % 
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
                     <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
                     <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
