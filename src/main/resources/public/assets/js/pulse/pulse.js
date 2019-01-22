@@ -148,8 +148,10 @@
             colorclass = r.classname;
           }
         });
+console.log(colorclass);
         return colorclass;
       } else {
+console.log('nothing');
         return "";
       }
     }
@@ -244,7 +246,7 @@
 
 
     function buildStudent(cid, sid) {
-      console.log('building Student');
+      //console.log('building Student');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -541,10 +543,10 @@
 
 
         function drawPlots(plots, o) {
-        	console.log("****** INSIDE DRAWPLOTS ******");
-        	console.log("o: %O", o);
-        	console.log("o.students: " + o.students);
-        	console.log("o.events: " + o.events);
+        	//console.log("****** INSIDE DRAWPLOTS ******");
+        	//console.log("o: %O", o);
+        	//console.log("o.students: " + o.students);
+        	//console.log("o.events: " + o.events);
         	
         	
           plots.selectAll('circle').remove();
@@ -557,13 +559,13 @@
             .attr('r', function (d) {
               var count;
 
-              console.log("d: " + d);
+              //console.log("d: " + d);
               if (o.students) {
                 count = d.eventCount*100/scope.coursesMaxEvents/10+1;
               } else {
                 count = d.eventCount*100/scope.maxEvents/10+1;
               }
-              console.log("COUNT: " + count);
+              //console.log("COUNT: " + count);
 
               return count;
             })
@@ -779,7 +781,7 @@
           // set width n height
           _.each(scope.datalist, function(o, i){
         	  
-        	  console.log("inside for each... o.id: " + o.id);
+        	  //console.log("inside for each... o.id: " + o.id);
         	  
             if (i==0) {
               height = $('#pulse-chart-' + o.id).height();
@@ -803,9 +805,9 @@
               .attr('class','plot');
             
             // dot
-				console.log("**** from drawChart (this is the important single student ****");
-				console.log(o);
-				console.log(plots);
+				//console.log("**** from drawChart (this is the important single student ****");
+				//console.log(o);
+				//console.log(plots);
             drawPlots(plots, o);
           });
 
