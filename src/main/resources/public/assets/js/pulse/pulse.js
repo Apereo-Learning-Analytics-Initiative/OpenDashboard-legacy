@@ -147,6 +147,9 @@ console.log('colorCodeRisk');
 console.log(risk);
 console.log(riskColorClasses);
         _.each(riskColorClasses, function(r, i){
+        console.log('loop');
+        console.log(risk < r.threshold[0]);
+        console.log(risk >= r.threshold[1]);
           if (risk < r.threshold[0] && risk >= r.threshold[1]) {
             colorclass = r.classname;
           }
