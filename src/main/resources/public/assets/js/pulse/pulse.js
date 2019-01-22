@@ -59,22 +59,17 @@
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
     $scope.riskOverlay = false;
-    var riskTypeCount = 4;
     var riskColorClasses = [
       {
-        'threshold':[$scope.maxRisk + 1, $scope.maxRisk/riskTypeCount*3],
+        'threshold':[0, .5],
         'classname': 'high-risk'
       },
       {
-        'threshold':[$scope.maxRisk/riskTypeCount*3, $scope.maxRisk/riskTypeCount*2],
+        'threshold':[.501, .7],
         'classname': 'medium-risk'
       },
       {
-        'threshold':[$scope.maxRisk/riskTypeCount*2, $scope.maxRisk/riskTypeCount],
-        'classname': 'medium-risk'
-      },
-      {
-        'threshold':[$scope.maxRisk/riskTypeCount, 0],
+        'threshold':[.701,1],
         'classname': 'no-risk'
       }
     ];
@@ -146,10 +141,8 @@
     }
 
     $scope.colorCodeRisk = function(risk){
-      if ($scope.riskOverlay) {
+      if (true) {
         var colorclass;
-        // var riskDivided = 100/riskColorClasses.length;
-        // console.log(Math.round(riskDivided/(riskDivided+)));
         _.each(riskColorClasses, function(r, i){
           if (risk < r.threshold[0] && risk >= r.threshold[1]) {
             colorclass = r.classname;
