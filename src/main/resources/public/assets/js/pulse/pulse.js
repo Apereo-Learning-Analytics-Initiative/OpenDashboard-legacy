@@ -143,6 +143,9 @@
     $scope.colorCodeRisk = function(risk){
       if (true) {
         var colorclass;
+console.log('colorCodeRisk');
+console.log(risk);
+console.log(riskColorClasses);
         _.each(riskColorClasses, function(r, i){
           if (risk < r.threshold[0] && risk >= r.threshold[1]) {
             colorclass = r.classname;
