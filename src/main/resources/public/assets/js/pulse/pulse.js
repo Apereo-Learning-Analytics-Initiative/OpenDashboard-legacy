@@ -150,7 +150,7 @@ console.log(riskColorClasses);
         console.log('loop');
         console.log(risk < r.threshold[0]);
         console.log(risk >= r.threshold[1]);
-          if (risk < r.threshold[0] && risk >= r.threshold[1]) {
+          if (r.threshold[0] <= risk  && risk <= r.threshold[1]) {
             colorclass = r.classname;
           }
         });
