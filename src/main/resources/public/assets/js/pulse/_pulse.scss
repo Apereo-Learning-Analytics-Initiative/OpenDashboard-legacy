@@ -45,6 +45,21 @@ body.application {
       }      
     }
 
+    .totals {
+      position: absolute;
+      right: 7px;
+
+      table {
+        font-size: 1.2rem;
+        th {
+          font-weight: 900;
+        }
+        td {
+
+        }
+      }
+    }
+
     .title-dropdown {
       display: inline-block; 
       white-space: nowrap;

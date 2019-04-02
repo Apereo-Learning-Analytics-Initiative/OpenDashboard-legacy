@@ -173,6 +173,14 @@
                         backgroundColor: [],
                         borderColor: [],
                         borderWidth: 1
+                    },
+                    {
+                        label: 'Class Average',
+                        data: [],
+                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+                        backgroundColor: [],
+                        borderColor: [],
+                        borderWidth: 1
                     }]
                 };
 
@@ -192,8 +200,12 @@
                 _.each($scope.studentFilters.verblist, function (verb) {
                     chartData.labels.push(verb.label);
                     chartData.datasets[0].data.push(datasets[verb.label]);
+                    chartData.datasets[1].data.push(Math.floor(Math.random() * (50 - 20) + 20));
                     chartData.datasets[0].backgroundColor.push(verb.color);
-                });
+                    chartData.datasets[1].backgroundColor.push('rgba(135, 135, 135, 0.7)');
+                })
+
+                console.log(chartData);
 
                 options = {
                     maintainAspectRatio: false,
