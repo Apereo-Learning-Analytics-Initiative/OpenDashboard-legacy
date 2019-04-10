@@ -25,17 +25,13 @@
             <table>
                 <thead>
                     <th>Activities #</th>
-                    <th>Activity Mean</th>
-                    <th>Activity Median</th>
-                    <th>Pass % Mean</th>
-                    <th>Pass % Median</th>
+                    <th>Activity Mean</th>                    
+                    <th>Pass % Mean</th>                    
                 </thead>
                 <tbody>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">18,721</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">377</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">314</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">55</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">52</div></td>
+                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.totalNumberOfEvents}}</div></td>
+                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.meanStudentEvents}}</div></td>
+                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.meanPassPercent}}</div></td>
                 </tbody>
             </table>
         </div>

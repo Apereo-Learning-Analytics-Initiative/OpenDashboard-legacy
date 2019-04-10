@@ -22,6 +22,9 @@ public class ClassEventStatistics {
   
   private ClassEventStatistics() {}
   
+  public Integer getMeanStudentEvents() {
+    return totalEvents/totalStudentEnrollments;
+  }  
   public String getClassSourcedId() {
     return classSourcedId;
   }

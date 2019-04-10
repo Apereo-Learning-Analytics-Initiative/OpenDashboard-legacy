@@ -19,6 +19,9 @@ public class PulseClassDetail {
   private LocalDate enddate;
   private Integer studentEventMax;
   private Long studentEventTotalMax;
+  private Integer meanStudentEvents;
+  private Double meanPassPercent;
+  private Integer totalNumberOfEvents;
   
   private boolean hasRisk;
   private boolean hasGrade;
@@ -47,12 +50,20 @@ public class PulseClassDetail {
     return enddate;
   }
 
+  public Integer getMeanStudentEvents() {
+    return meanStudentEvents;
+  }
+  
   public Integer getStudentEventMax() {
     return studentEventMax;
   }
   
   public Long getStudentEventTotalMax() {
     return studentEventTotalMax;
+  }
+
+  public Integer getTotalNumberOfEvents() {
+    return totalNumberOfEvents;
   }
 
   public boolean hasRisk() {
@@ -241,6 +252,22 @@ public class PulseClassDetail {
       _pulseClassDetail.assignments = assignments;
       return this;
     }
+    
+    public Builder withMeanStudentEvents(Integer meanStudentEvents) {
+      _pulseClassDetail.meanStudentEvents = meanStudentEvents;
+      return this;
+    }
+    
+    public Builder withMeanPassPercent(Double meanPassPercent) {
+      _pulseClassDetail.meanPassPercent = meanPassPercent;
+      return this;
+    }
+    
+    public Builder withTotalNumberOfEvents(Integer totalNumberOfEvents) {
+      _pulseClassDetail.totalNumberOfEvents = totalNumberOfEvents;
+      return this;
+    }
+    
 
     public PulseClassDetail build() {
       return _pulseClassDetail;

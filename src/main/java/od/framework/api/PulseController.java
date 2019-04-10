@@ -480,6 +480,17 @@ public class PulseController {
             .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
+            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+            .withMeanPassPercent(
+                (Double)(pulseStudentDetails != null ? 
+                    pulseStudentDetails.stream().
+                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+                    .orElse(Double.NaN) :
+                      Double.NaN)
+                
+                )
+            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
+            
             
             .build();
         
@@ -881,6 +892,8 @@ public class PulseController {
 	          int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
 	          allClassStudentEventCounts.add(classEventMax);
 	        }
+	        
+	        
 	        String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
 	        PulseClassDetail pulseClassDetail
 	          = new PulseClassDetail.Builder()
@@ -904,6 +917,17 @@ public class PulseController {
 	            .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
 	            .withEvents(classPulseDateEventCounts)
 	            .withStudents(pulseStudentDetails)
+	            	            
+	            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+	            .withMeanPassPercent(
+	                (Double)(pulseStudentDetails != null ? 
+	                    pulseStudentDetails.stream().
+	                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+	                    .orElse(Double.NaN) :
+	                      Double.NaN)
+	                
+	                )
+	            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
 	            
 	            .build();
 	        
