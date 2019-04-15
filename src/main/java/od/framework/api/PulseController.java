@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -480,7 +481,19 @@ public class PulseController {
             .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
-            
+            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+            .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
+            .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
+            .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
+            .withMeanPassPercent(
+                (Double)(pulseStudentDetails != null ? 
+                    pulseStudentDetails.stream().
+                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+                    .orElse(Double.NaN) :
+                      Double.NaN)
+                
+                )
+            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
         pulseClassDetails.add(pulseClassDetail);
@@ -509,6 +522,9 @@ public class PulseController {
 
     return pulseDetail;
   }
+  
+  
+
   
   
   
@@ -881,6 +897,8 @@ public class PulseController {
 	          int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
 	          allClassStudentEventCounts.add(classEventMax);
 	        }
+	        
+	        
 	        String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
 	        PulseClassDetail pulseClassDetail
 	          = new PulseClassDetail.Builder()
@@ -904,6 +922,17 @@ public class PulseController {
 	            .withAssignments(classLineItems != null ? new ArrayList<>(classLineItems) : new ArrayList<>())
 	            .withEvents(classPulseDateEventCounts)
 	            .withStudents(pulseStudentDetails)
+	            	            
+	            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+	            .withMeanPassPercent(
+	                (Double)(pulseStudentDetails != null ? 
+	                    pulseStudentDetails.stream().
+	                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+	                    .orElse(Double.NaN) :
+	                      Double.NaN)
+	                
+	                )
+	            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
 	            
 	            .build();
 	        

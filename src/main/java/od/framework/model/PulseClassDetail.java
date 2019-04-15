@@ -2,6 +2,7 @@ package od.framework.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,6 +20,9 @@ public class PulseClassDetail {
   private LocalDate enddate;
   private Integer studentEventMax;
   private Long studentEventTotalMax;
+  private Integer meanStudentEvents;
+  private Double meanPassPercent;
+  private Integer totalNumberOfEvents;
   
   private boolean hasRisk;
   private boolean hasGrade;
@@ -28,11 +32,26 @@ public class PulseClassDetail {
   private List<PulseDateEventCount> events;
   private List<PulseStudentDetail> students;
   private List<LineItem> assignments;
+  public Integer studentsWithEvents;
+  public Map<String, Long> eventTypeTotals;
+  public Map<String, Double> eventTypeAverages;
   
   private PulseClassDetail() {}
 
   public String getId() {
     return id;
+  }
+
+  public Integer getStudentsWithEvents() {
+    return studentsWithEvents;
+  }
+
+  public Map<String, Long> getEventTypeTotals() {
+    return eventTypeTotals;
+  }
+
+  public Map<String, Double> getEventTypeAverages() {
+    return eventTypeAverages;
   }
 
   public String getLabel() {
@@ -47,12 +66,20 @@ public class PulseClassDetail {
     return enddate;
   }
 
+  public Integer getMeanStudentEvents() {
+    return meanStudentEvents;
+  }
+  
   public Integer getStudentEventMax() {
     return studentEventMax;
   }
   
   public Long getStudentEventTotalMax() {
     return studentEventTotalMax;
+  }
+
+  public Integer getTotalNumberOfEvents() {
+    return totalNumberOfEvents;
   }
 
   public boolean hasRisk() {
@@ -241,6 +268,36 @@ public class PulseClassDetail {
       _pulseClassDetail.assignments = assignments;
       return this;
     }
+    
+    public Builder withMeanStudentEvents(Integer meanStudentEvents) {
+      _pulseClassDetail.meanStudentEvents = meanStudentEvents;
+      return this;
+    }
+    
+    public Builder withMeanPassPercent(Double meanPassPercent) {
+      _pulseClassDetail.meanPassPercent = meanPassPercent;
+      return this;
+    }
+    
+    public Builder withTotalNumberOfEvents(Integer totalNumberOfEvents) {
+      _pulseClassDetail.totalNumberOfEvents = totalNumberOfEvents;
+      return this;
+    }
+
+    public Builder withStudentsWithEvents(Integer studentsWithEvents) {
+      _pulseClassDetail.studentsWithEvents = studentsWithEvents;
+      return this;
+    }
+
+    public Builder withEventTypeTotals(Map<String, Long> eventTypeTotals) {
+      _pulseClassDetail.eventTypeTotals = eventTypeTotals;
+      return this;
+    }
+
+    public Builder withEventTypeAverages(Map<String, Double> eventTypeAverages) {
+      _pulseClassDetail.eventTypeAverages = eventTypeAverages;
+      return this;
+    }    
 
     public PulseClassDetail build() {
       return _pulseClassDetail;

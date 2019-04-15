@@ -20,6 +20,16 @@
                 {{currentCourse.label}}
             </a>
         </div>
+
+        <div class="totals">
+            <table>
+                <thead>
+                    <th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th>
+                    <th ng-if="currentCourse.meanStudentEvents">Activity Mean: {{currentCourse.meanStudentEvents}}</th>                    
+                    <th ng-if="currentCourse.meanPassPercent">Pass % Mean: {{currentCourse.meanPassPercent}}</th>                    
+                </thead>                
+            </table>
+        </div>
         
         <!-- initial title for class list -->
         <span class="title-dropdown" ng-if="listType == 'classes'"><a href="">

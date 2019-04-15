@@ -50,6 +50,15 @@ public class PulseStudentDetail {
   public String getRisk() {
     return risk;
   }
+  
+  public double getRiskAsDouble() {
+    try {      
+      return Double.parseDouble(risk);
+    }
+    catch (Exception e) {
+      return Double.NaN;
+    }
+  }
 
   public String getGrade() {
     return grade;
