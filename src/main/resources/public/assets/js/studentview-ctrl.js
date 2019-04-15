@@ -19,12 +19,9 @@
     .module('OpenDashboard')
     .controller('StudentViewController',
         function ($scope, $http, $timeout, $state, SessionService, EnrollmentDataService, EventService) {
-        	//console.log("SVC");
             var currentUser;
             var activityOverTimeChart;
             var activityDayOfWeekChart;
-
-            //console.log('StudentViewController');
 
             $scope.error = null;
             $scope.actions = [];
@@ -119,10 +116,8 @@
                         EventService.getEventForClassAndUser(currentUser.tenant_id, $state.params.groupId, $state.params.studentId, 0, 1000)
                         .then(function (actions) {
                             $scope.actions = actions.content;
-                            //console.log($scope.actions);
                             var allVerbs = [];
                             _.each($scope.actions, function (action) {
-                                //console.log(action);
                             	$scope.uniqueVerbs 
                                 var verb = _.last(action.verb.split('#'));
                                 verb = _.last(verb.split('/'));
@@ -164,28 +159,42 @@
                 var datasets = [];
                 var days = [];
 
-                chartData = {
-                    labels: [],
-                    datasets: [{
-                        label: 'Total',
-                        data: [],
-                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
-                        backgroundColor: [],
-                        borderColor: [],
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Class Average',
-                        data: [],
-                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
-                        backgroundColor: [],
-                        borderColor: [],
-                        borderWidth: 1
-                    }]
-                };
+				                
+	            chartData = {
+	                    labels: [],
+	                    datasets: [
+		                    {
+		                        label: 'Total',
+		                        data: [],
+		                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+		                        backgroundColor: [],
+		                        borderColor: [],
+		                        borderWidth: 1
+		                    }
+	                    ]
+	            };
+	            console.log($scope.currentCourse.eventTypeAverages);    
+	              
+	              
+	            // if the average data exists, then add a column to the chart      
+	            var averageDataExists = (typeof $scope.currentCourse.eventTypeAverages !== 'undefined' && $scope.currentCourse.eventTypeAverages !== null)     	            
+                if (averageDataExists) {  
+                
+                console.log("pushing averages");
+                
+	                chartData.datasets.push({
+		                        label: 'Class Average',
+		                        data: [],	                     
+		                        backgroundColor: [],
+		                        borderColor: [],
+		                        borderWidth: 1
+		                    }
+	                );                
+                } 
+                
+
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
 
@@ -197,15 +206,17 @@
                 });
 
                 chartData.labels = [];
-                _.each($scope.studentFilters.verblist, function (verb) {
+                _.each($scope.studentFilters.verblist, function (verb) {               
                     chartData.labels.push(verb.label);
-                    chartData.datasets[0].data.push(datasets[verb.label]);
-                    chartData.datasets[1].data.push(Math.floor(Math.random() * (50 - 20) + 20));
+                    chartData.datasets[0].data.push(datasets[verb.label]);                    
                     chartData.datasets[0].backgroundColor.push(verb.color);
-                    chartData.datasets[1].backgroundColor.push('rgba(135, 135, 135, 0.7)');
+                    
+                    //populate only if the average Data exists
+                    if (averageDataExists) {
+                    	chartData.datasets[1].data.push(Math.round($scope.currentCourse.eventTypeAverages[verb.label]));
+                    	chartData.datasets[1].backgroundColor.push('rgba(135, 135, 135, 0.7)');
+                    }
                 })
-
-                console.log(chartData);
 
                 options = {
                     maintainAspectRatio: false,
@@ -226,7 +237,6 @@
                 });
 
                 $scope.activityByVerbChartData = chartData;
-
             }
 
             function hourlyActivityChart () {
@@ -249,7 +259,6 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
                     var hour = moment(action.timestamp).format('HH');
 
                     // build data based on 24 hour clock
@@ -300,20 +309,11 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
                     var dayOfWeek = moment(action.timestamp).format('dddd');
                     
                     var testDate = new Date(action.timestamp);
-                    
-                    console.log("test: " + testDate);
-                    console.log("testDateDay: " + testDate.getDay())
-                    console.log("moment: " + moment(action.timestamp));
-                    console.log("action.timestamp: " + action.timestamp);
-                    console.log("dayOfWeek: " + dayOfWeek);
-                    console.log("verb: " + verb);
-                    console.log(dayOfWeek);
 
                     if (!daysOfWeek[dayOfWeek]) {
                         daysOfWeek[dayOfWeek] = [];
@@ -322,10 +322,6 @@
                         daysOfWeek[dayOfWeek][verb] = 0;
                     }
                     daysOfWeek[dayOfWeek][verb]++;
-                    
-                    console.log("daysOfWeek: " + daysOfWeek);
-                    console.log("*********************");
-
                 });
 
                 // hard coding labels so they can be sorted by type easily
@@ -351,14 +347,10 @@
 
                 _.each(chartData.labels, function (label) {
                     _.each(chartData.datasets, function (dataset) {
-                    	console.log("label: " + label);
-                    	console.log("dataset.label" + dataset.label);
-                    	//console.log("daysOfWeek[label][dataset.label]" + daysOfWeek[label][dataset.label]);
                     	// GG null check added
                     	if (daysOfWeek[label]) {
                     	  dataset.data.push(daysOfWeek[label][dataset.label]);
                     	}
-                    	console.log("**********");
                     });
                 });
 
@@ -395,7 +387,6 @@
             }
 
             function activityOverTime (detailView) {
-            	//console.log("AOT");
                 var chartData;
                 var colors;
                 var options;
@@ -410,7 +401,6 @@
                 };
 
                 _.each($scope.actions, function (action) {
-                    //console.log(action);
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
                     var date = moment(action.timestamp).format('MM-DD');
@@ -467,9 +457,6 @@
                 chartData.labels = _.sortBy(chartData.labels, function (label) {
                     return label;
                 });
-                
-                //console.log('sf.vl');
-                //console.log($scope.studentFilters.verblist);
 
                 _.each($scope.studentFilters.verblist, function (verb, index) {
                     var colors;
@@ -508,9 +495,6 @@
                         }]
                     }
                 };
-                
-                //console.log('aot data');
-                //console.log($scope.activityOverTimeData);
 
                 if (!$scope.activityOverTimeData) {
                     activityOverTimeChart = new Chart(document.getElementById('activityOverTime'), {
@@ -544,8 +528,6 @@
             });
 
             $scope.$on('toggleAllFilters', function (event, data) {
-                //console.log($scope.allFilters);
-
                 $scope.allFilters = !$scope.allFilters;
 
                 _.each($scope.studentFilters.verblist, function (verb) {

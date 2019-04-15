@@ -24,15 +24,10 @@
         <div class="totals">
             <table>
                 <thead>
-                    <th>Activities #</th>
-                    <th>Activity Mean</th>                    
-                    <th>Pass % Mean</th>                    
-                </thead>
-                <tbody>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.totalNumberOfEvents}}</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.meanStudentEvents}}</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.meanPassPercent}}</div></td>
-                </tbody>
+                    <th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th>
+                    <th ng-if="currentCourse.meanStudentEvents">Activity Mean: {{currentCourse.meanStudentEvents}}</th>                    
+                    <th ng-if="currentCourse.meanPassPercent">Pass % Mean: {{currentCourse.meanPassPercent}}</th>                    
+                </thead>                
             </table>
         </div>
         
@@ -215,11 +210,6 @@
                     </a>
                 </th>
                 <th ng-if="listType != 'classes'">
-                    <div class="badge" ng-class="colorCodeActivity(item.activity)">
-                        #
-                    </div>
-                </th>
-                <th ng-if="listType != 'classes'">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='firstName'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort">
                     First Name
                     <i ng-if="$parent.$parent.orderByField=='firstName' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
@@ -274,11 +264,6 @@
                     </td>
                     <td ng-if="listType == 'classes'">
                         <a ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
-                    </td>
-                    <td ng-if="listType != 'classes'">
-                        <div class="badge" ng-class="colorCodeActivity(item.activity)">
-                            {{datalist.length - $index}}
-                        </div>
                     </td>
                     <td ng-if="listType != 'classes'">
                         <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.firstName}}</a>

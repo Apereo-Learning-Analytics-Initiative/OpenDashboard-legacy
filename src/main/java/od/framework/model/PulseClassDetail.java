@@ -2,6 +2,7 @@ package od.framework.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -31,11 +32,26 @@ public class PulseClassDetail {
   private List<PulseDateEventCount> events;
   private List<PulseStudentDetail> students;
   private List<LineItem> assignments;
+  public Integer studentsWithEvents;
+  public Map<String, Long> eventTypeTotals;
+  public Map<String, Double> eventTypeAverages;
   
   private PulseClassDetail() {}
 
   public String getId() {
     return id;
+  }
+
+  public Integer getStudentsWithEvents() {
+    return studentsWithEvents;
+  }
+
+  public Map<String, Long> getEventTypeTotals() {
+    return eventTypeTotals;
+  }
+
+  public Map<String, Double> getEventTypeAverages() {
+    return eventTypeAverages;
   }
 
   public String getLabel() {
@@ -267,7 +283,21 @@ public class PulseClassDetail {
       _pulseClassDetail.totalNumberOfEvents = totalNumberOfEvents;
       return this;
     }
-    
+
+    public Builder withStudentsWithEvents(Integer studentsWithEvents) {
+      _pulseClassDetail.studentsWithEvents = studentsWithEvents;
+      return this;
+    }
+
+    public Builder withEventTypeTotals(Map<String, Long> eventTypeTotals) {
+      _pulseClassDetail.eventTypeTotals = eventTypeTotals;
+      return this;
+    }
+
+    public Builder withEventTypeAverages(Map<String, Double> eventTypeAverages) {
+      _pulseClassDetail.eventTypeAverages = eventTypeAverages;
+      return this;
+    }    
 
     public PulseClassDetail build() {
       return _pulseClassDetail;

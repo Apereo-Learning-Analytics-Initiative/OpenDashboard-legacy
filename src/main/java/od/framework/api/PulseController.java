@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -481,6 +482,9 @@ public class PulseController {
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
             .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+            .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
+            .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
+            .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
             .withMeanPassPercent(
                 (Double)(pulseStudentDetails != null ? 
                     pulseStudentDetails.stream().
@@ -490,8 +494,6 @@ public class PulseController {
                 
                 )
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
-            
-            
             .build();
         
         pulseClassDetails.add(pulseClassDetail);
@@ -520,6 +522,9 @@ public class PulseController {
 
     return pulseDetail;
   }
+  
+  
+
   
   
   
