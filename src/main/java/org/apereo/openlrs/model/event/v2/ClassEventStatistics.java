@@ -36,6 +36,7 @@ public class ClassEventStatistics {
     return eventTypeAverages;
   }
   public Integer getMeanStudentEvents() {
+    if (totalEvents == null || totalStudentEnrollments == null) return null;
     return totalEvents/totalStudentEnrollments;
   }  
   public String getClassSourcedId() {
