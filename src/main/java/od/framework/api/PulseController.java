@@ -459,7 +459,6 @@ public class PulseController {
         
         double cumulator = 0.0;
         for(PulseStudentDetail studentDetail : pulseStudentDetails) {
-          System.out.println("******* Risk As Double: " + studentDetail.getRiskAsDouble());
           if(!Double.isNaN(studentDetail.getRiskAsDouble()))
           {
             cumulator += studentDetail.getRiskAsDouble();
