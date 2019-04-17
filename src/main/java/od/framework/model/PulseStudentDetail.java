@@ -53,8 +53,7 @@ public class PulseStudentDetail {
   
   public double getRiskAsDouble() {
     try {      
-      Double t = Double.parseDouble(risk);
-      return t;
+      return Double.parseDouble(risk);      
     }
     catch (Exception e) {
       return Double.NaN;
