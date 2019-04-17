@@ -456,8 +456,9 @@ public class PulseController {
         
          
         
-        Double cumulator = 0.0;
+        double cumulator = 0.0;
         for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+          System.out.println("******* Risk As Double: " + studentDetail.getRiskAsDouble());
           cumulator += studentDetail.getRiskAsDouble();          
         }
         System.out.println("Cumulator: " + cumulator);
