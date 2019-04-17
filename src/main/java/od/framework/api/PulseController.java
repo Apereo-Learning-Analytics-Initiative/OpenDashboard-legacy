@@ -499,7 +499,7 @@ public class PulseController {
         pulseClassDetails.add(pulseClassDetail);
       }
       
-      log.info("{}",pulseClassDetails);
+      //log.info("{}",pulseClassDetails);
       
       Integer classEventMax = 0;
       if (allClassStudentEventCounts != null && !allClassStudentEventCounts.isEmpty()) {
@@ -569,18 +569,33 @@ public class PulseController {
 	    
 	    Map<String,Map<String,Object>> modelOutputMap = null;
 	    try {
+	      
+	      System.out.println("Before Trouble spot");
+	      
 	      ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
+	      System.out.println("modeloutputprovider: " + modelOutputProvider);
+	      
 	      ProviderData modelOutputProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
+	      System.out.println("modelOutputProviderData: " + modelOutputProviderData);
 	      
 	      if (modelOutputProviderData != null) {
+	        
+	        System.out.println("modelOutputProviderData not null");
+	        
 	        Page<ModelOutput> page
 	          = modelOutputProvider.getModelOutputForContext(modelOutputProviderData, tenantId, classSourcedId, null);
 	        
+	        System.out.println("Page<ModelOutput> page: " + page);
+	        
 	        List<ModelOutput> output = page.getContent();
+	        
+	        System.out.println("List<ModelOutput> output: " + output);
 	        
 	        if (output != null) {
 	          modelOutputMap 
 	            = output.stream().collect(Collectors.toMap(ModelOutput::getUserSourcedId, ModelOutput::getOutput));
+	          System.out.println("modelOutputMap: " + modelOutputMap);
+	          
 	          if (modelOutputMap != null) {
 	            hasRiskScore = true;
 	          }
