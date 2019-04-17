@@ -54,6 +54,10 @@ public class PulseClassDetail {
     return eventTypeAverages;
   }
 
+  public Double getMeanPassPercent() {
+    return meanPassPercent;
+  }
+
   public String getLabel() {
     return label;
   }
