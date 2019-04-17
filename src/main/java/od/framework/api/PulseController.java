@@ -420,18 +420,14 @@ public class PulseController {
             
             PulseStudentDetail pulseStudentDetail
               = new PulseStudentDetail.Builder()
-            
-                
                 .withId(modifiedStudentId)
                 .withLabel(studentEnrollment.getUser().getFamilyName() +", "+studentEnrollment.getUser().getGivenName())	                
                 .withFirstName(studentEnrollment.getUser().getGivenName())
                 .withLastName(studentEnrollment.getUser().getFamilyName())
                 .withEmail(studentEnrollment.getUser().getEmail())
-                
                 .withRisk(hasRiskScore ? riskScore : null)
                 .withGrade(null)
                 .withMissingSubmission(false)
-                
                 .withActivity(activity) 
                 .withEvents(studentPulseDateEventCounts)
                 .withDaysSinceLogin(daysSinceLogin)
@@ -457,6 +453,13 @@ public class PulseController {
           int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
           allClassStudentEventCounts.add(classEventMax);
         }
+        
+        
+        
+        System.out.println("PulseStudentDetails Risk Averages: " + pulseStudentDetails.stream().
+        mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+        .orElse(Double.NaN));
+        
                                
         String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
         PulseClassDetail pulseClassDetail
