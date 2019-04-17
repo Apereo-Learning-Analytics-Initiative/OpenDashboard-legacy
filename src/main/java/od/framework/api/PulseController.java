@@ -454,10 +454,19 @@ public class PulseController {
           allClassStudentEventCounts.add(classEventMax);
         }
         
+         
         
+        Double cumulator = 0.0;
+        for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+          cumulator += studentDetail.getRiskAsDouble();          
+        }
         
-        System.out.println("PulseStudentDetails Risk Averages: " + pulseStudentDetails.stream().
-        mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
+        Double averageRiskScore = cumulator/pulseStudentDetails.size();
+        System.out.println("PulseStduentDetails Risk average: " + averageRiskScore);
+        
+        System.out.println("********************PulseStudentDetails Risk Averages: " + 
+        pulseStudentDetails.stream().
+          mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
         .orElse(Double.NaN));
         
                                
@@ -488,14 +497,15 @@ public class PulseController {
             .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
-            .withMeanPassPercent(
+            /*.withMeanPassPercent(
                 (Double)(pulseStudentDetails != null ? 
                     pulseStudentDetails.stream().
                     mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
                     .orElse(Double.NaN) :
                       Double.NaN)
                 
-                )
+                )*/
+            .withMeanPassPercent(  averageRiskScore )
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
