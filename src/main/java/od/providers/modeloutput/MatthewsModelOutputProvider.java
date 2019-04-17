@@ -59,7 +59,7 @@ public class MatthewsModelOutputProvider extends MatthewsProvider implements Mod
   public Page<ModelOutput> getModelOutputForContext(ProviderData providerData, String tenantId, String contextId, Pageable page)
       throws ProviderException {
     MatthewsClient mc = new MatthewsClient(providerData.findValueForKey("base_url"), providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
-    String endpoint = providerData.findValueForKey("base_url").concat("/api/risk/").concat(contextId).concat("/latest");
+    String endpoint = providerData.findValueForKey("base_url").concat("/api/risks/").concat(contextId).concat("/latest");
 
     RestTemplate restTemplate = mc.getRestTemplate();
     HttpHeaders headers = mc.getHeaders();
