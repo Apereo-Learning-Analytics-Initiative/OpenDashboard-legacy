@@ -1,5 +1,6 @@
 package od.framework.api;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -464,15 +465,9 @@ public class PulseController {
             cumulator += studentDetail.getRiskAsDouble();
           }
         }
-        System.out.println("Cumulator: " + cumulator);
-        System.out.println("pulseStudentDetails.size(): " + pulseStudentDetails.size());
-        Double averageRiskScore = cumulator/pulseStudentDetails.size();
-        System.out.println("PulseStduentDetails Risk average: " + averageRiskScore);
         
-        System.out.println("********************PulseStudentDetails Risk Averages: " + 
-        pulseStudentDetails.stream().
-          mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
-        .orElse(Double.NaN));
+        DecimalFormat df = new DecimalFormat("###.###");
+        double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
         
                                
         String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
@@ -502,14 +497,6 @@ public class PulseController {
             .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
-            /*.withMeanPassPercent(
-                (Double)(pulseStudentDetails != null ? 
-                    pulseStudentDetails.stream().
-                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
-                    .orElse(Double.NaN) :
-                      Double.NaN)
-                
-                )*/
             .withMeanPassPercent(  averageRiskScore )
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
