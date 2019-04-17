@@ -460,7 +460,8 @@ public class PulseController {
         for(PulseStudentDetail studentDetail : pulseStudentDetails) {
           cumulator += studentDetail.getRiskAsDouble();          
         }
-        
+        System.out.println("Cumulator: " + cumulator);
+        System.out.println("pulseStudentDetails.size(): " + pulseStudentDetails.size());
         Double averageRiskScore = cumulator/pulseStudentDetails.size();
         System.out.println("PulseStduentDetails Risk average: " + averageRiskScore);
         
