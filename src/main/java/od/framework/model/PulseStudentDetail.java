@@ -53,9 +53,7 @@ public class PulseStudentDetail {
   
   public double getRiskAsDouble() {
     try {      
-      System.out.println("RiskScore: " + risk);
       Double t = Double.parseDouble(risk);
-      System.out.println("RiskAsDboule: " + t);
       return t;
     }
     catch (Exception e) {
