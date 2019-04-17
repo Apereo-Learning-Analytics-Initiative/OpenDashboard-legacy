@@ -115,20 +115,23 @@ public class PulseController {
     Map<String,Map<String,Object>> modelOutputMap = null;
     try {
       ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
+      System.out.println("modelOutputProvider: " + modelOutputProvider);
       ProviderData modelOutputProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
-      
+      System.out.println("modelOutputProviderData: " + modelOutputProviderData);
       if (modelOutputProviderData != null) {
         Page<ModelOutput> page
           = modelOutputProvider.getModelOutputForContext(modelOutputProviderData, tenantId, classSourcedId, null);
-        
+        System.out.println("page: " + page);
         List<ModelOutput> output = page.getContent();
-        
+        System.out.println("output: " + output);
         if (output != null) {
           modelOutputMap 
             = output.stream().collect(Collectors.toMap(ModelOutput::getUserSourcedId, ModelOutput::getOutput));
+          System.out.println("modelOutputMap: " + modelOutputMap);
           if (modelOutputMap != null) {
             hasRiskScore = true;
           }
+          System.out.println("hasRiskScore: " + hasRiskScore);
         }
         
       }
