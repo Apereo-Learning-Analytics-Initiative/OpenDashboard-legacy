@@ -60,6 +60,8 @@ public class MatthewsModelOutputProvider extends MatthewsProvider implements Mod
       throws ProviderException {
     MatthewsClient mc = new MatthewsClient(providerData.findValueForKey("base_url"), providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
     String endpoint = providerData.findValueForKey("base_url").concat("/api/risk/").concat(contextId).concat("/latest");
+    
+    System.out.println("getModelOutputForContext endpoint: " + endpoint);
 
     RestTemplate restTemplate = mc.getRestTemplate();
     HttpHeaders headers = mc.getHeaders();
