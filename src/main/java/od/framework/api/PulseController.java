@@ -937,6 +937,8 @@ public class PulseController {
 	                
 	                )
 	            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
+	            .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
+	            .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
 	            
 	            .build();
 	        
