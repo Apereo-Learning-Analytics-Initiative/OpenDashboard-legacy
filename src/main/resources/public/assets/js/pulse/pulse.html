@@ -17,7 +17,7 @@
             <!-- back link to single class -->
             <a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-if="listType === 'student'">
                 <i class="fa fa-chevron-left"></i> 
-                {{currentCourse.label}}
+                {{ currentCourse.label.length > 20 ? (( currentCourse.label | limitTo: 20) + ' ...' ) : currentCourse.label}}
             </a>
         </div>
 
@@ -139,7 +139,9 @@
             </span>
 
 
-            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
+            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">
+            	{{ currentCourse.label.length > 20 ? (( currentCourse.label | limitTo: 20) + ' ...' ) : currentCourse.label}}
+            </a>
         </span>
         
         <!-- zoom link -->
