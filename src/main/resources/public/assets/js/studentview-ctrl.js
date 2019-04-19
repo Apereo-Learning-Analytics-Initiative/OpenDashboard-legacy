@@ -165,23 +165,18 @@
 	                    datasets: [
 		                    {
 		                        label: 'Total',
-		                        data: [],
-		                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+		                        data: [],		                        
 		                        backgroundColor: [],
 		                        borderColor: [],
 		                        borderWidth: 1
 		                    }
 	                    ]
 	            };
-	            console.log($scope.currentCourse.eventTypeAverages);    
 	              
 	              
 	            // if the average data exists, then add a column to the chart      
-	            var averageDataExists = (typeof $scope.currentCourse.eventTypeAverages !== 'undefined' && $scope.currentCourse.eventTypeAverages !== null)     	            
+	            var averageDataExists = (typeof $scope.currentCourse.eventTypeAverages !== 'undefined' && $scope.currentCourse.eventTypeAverages !== null);    	            
                 if (averageDataExists) {  
-                
-                console.log("pushing averages");
-                
 	                chartData.datasets.push({
 		                        label: 'Class Average',
 		                        data: [],	                     
@@ -194,6 +189,11 @@
                 
 
 
+
+
+
+
+				//fill in any verbs that the student has
                 _.each($scope.actions, function (action) {
                     var verb = _.last(action.verb.split('#'));
                     verb = _.last(verb.split('/'));
@@ -204,30 +204,59 @@
 
                     datasets[verb]++;
                 });
+              
+  
+                //fill in any verbs that the course may have averages for, but 
+                //that the student didn't have
+                _.each($scope.currentCourse.eventTypeAverages, function (value, verb) {
+
+                    if (!datasets[verb]) {
+                        datasets[verb] = 0;
+                    }
+                });
+                
 
                 chartData.labels = [];
                 _.each($scope.studentFilters.verblist, function (verb) {               
-                    chartData.labels.push(verb.label);
-                    chartData.datasets[0].data.push(datasets[verb.label]);                    
+                    chartData.labels.push(verb.label);                                                            
+                    chartData.datasets[0].data.push(datasets[verb.label]/$scope.currentCourse.eventTypeAverages[verb.label]);
                     chartData.datasets[0].backgroundColor.push(verb.color);
                     
                     //populate only if the average Data exists
                     if (averageDataExists) {
-                    	chartData.datasets[1].data.push(Math.round($scope.currentCourse.eventTypeAverages[verb.label]));
+                    	//since this is a normalized comparison, we set the
+                    	//averages as the value to normalize against
+                    	chartData.datasets[1].data.push(1);
                     	chartData.datasets[1].backgroundColor.push('rgba(135, 135, 135, 0.7)');
                     }
                 })
 
                 options = {
                     maintainAspectRatio: false,
-                    stacked: true,
+                    stacked: false,
                     scales: {
                         yAxes: [{
+                    		display: false,
                             ticks: {
                                 beginAtZero: true
                             }
                         }]
-                    }
+                    },
+                    
+                    //Set the tooltips to be the actual values, not the normalized data
+                    tooltips: {
+				        callbacks: {
+				            label: function(tooltipItem) {
+				                console.log(tooltipItem);
+				                if (tooltipItem.datasetIndex == 0) {
+				                	return $scope.currentStudent.firstName + ": "  + datasets[tooltipItem.label];
+				                }
+				                else {				                
+				                	return "Course Average: " + Math.round($scope.currentCourse.eventTypeAverages[tooltipItem.label]);
+				                }
+				            }			           
+				        }
+				    }
                 };
 
                 activityByVerbChart = new Chart(document.getElementById('activityByVerbChart'), {

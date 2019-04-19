@@ -18,6 +18,7 @@
     function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService){
       "use strict";
 
+
     var processedClasses = [];
     var classes = [];
     var students = [];
@@ -300,24 +301,7 @@
       $scope.config.hasEmail = $scope.config.hasEmail ? $scope.config.hasEmail : false;
       $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : false;
       $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : false;
-
-      // $scope.config.hasRisk = true;
-      // $scope.config.hasGrade = true;
-      // $scope.config.hasEmail = true;
-      // $scope.config.hasMissingSubmissions = true;
-      // $scope.config.hasLastLogin = true;
-
-
-      // Grab max event count over all classes
-      // var maxEvents = 0;
-      // _.each($scope.processedClasses, function(c){
-      // _.each(c.events, function(event){
-      // if (maxEvents < event.eventCount) {
-      // maxEvents = event.eventCount;
-      // }
-      // });
-      // });
-      // console.log('maxEvents', maxEvents);
+      
       $scope.coursesMaxEvents = $scope.config.classEventMax;
 
       // Set student activity class total maximum
