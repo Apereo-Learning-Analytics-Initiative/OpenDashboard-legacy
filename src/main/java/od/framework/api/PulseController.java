@@ -454,20 +454,6 @@ public class PulseController {
           int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
           allClassStudentEventCounts.add(classEventMax);
         }
-        
-         
-        
-        double cumulator = 0.0;
-        for(PulseStudentDetail studentDetail : pulseStudentDetails) {
-          if(!Double.isNaN(studentDetail.getRiskAsDouble()))
-          {
-            cumulator += studentDetail.getRiskAsDouble();
-          }
-        }
-        
-        DecimalFormat df = new DecimalFormat("###.###");
-        double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
-        
                                
         String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
         PulseClassDetail pulseClassDetail
@@ -496,7 +482,7 @@ public class PulseController {
             .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
-            .withMeanPassPercent(  averageRiskScore )
+            .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
@@ -928,14 +914,7 @@ public class PulseController {
 	            .withStudents(pulseStudentDetails)
 	            	            
 	            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
-	            .withMeanPassPercent(
-	                (Double)(pulseStudentDetails != null ? 
-	                    pulseStudentDetails.stream().
-	                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
-	                    .orElse(Double.NaN) :
-	                      Double.NaN)
-	                
-	                )
+	            .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
 	            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
 	            .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
 	            .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
@@ -973,7 +952,19 @@ public class PulseController {
   
   
   
-  
+  private double getAverageRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+      double cumulator = 0.0;
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getRiskAsDouble()))
+      {
+        cumulator += studentDetail.getRiskAsDouble();
+      }
+    }
+    
+    DecimalFormat df = new DecimalFormat("###.###");
+    double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
+    return averageRiskScore;
+  }
   
   
   

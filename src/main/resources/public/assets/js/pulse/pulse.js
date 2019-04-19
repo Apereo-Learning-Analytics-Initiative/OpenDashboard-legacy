@@ -77,6 +77,8 @@
     $scope.activityOverlay = false;
     var activityTypeCount = 4;
     var activityColorClasses = [];
+    
+    
     function buildActivityColorThreshold() {
       activityColorClasses = [
         {
@@ -140,24 +142,28 @@
       }
     }
 
+
+
+    function sumStudentsAtRisk() {  
+    	var sum=0;   
+    	alert('sum: ' + sum);
+    	_.each($scope.datalist, function(r, i){
+    	    sum = sum + r.risk;
+    	    console.log(sum);
+    	})
+    	alert('sum: ' + sum);    	
+    }
+
     $scope.colorCodeRisk = function(risk){
       if (true) {
         var colorclass;
-console.log('colorCodeRisk');
-console.log(risk);
-console.log(riskColorClasses);
         _.each(riskColorClasses, function(r, i){
-        console.log('loop');
-        console.log(risk < r.threshold[0]);
-        console.log(risk >= r.threshold[1]);
           if (r.threshold[0] <= risk  && risk <= r.threshold[1]) {
             colorclass = r.classname;
           }
         });
-console.log(colorclass);
         return colorclass;
       } else {
-console.log('nothing');
         return "";
       }
     }
@@ -187,7 +193,7 @@ console.log('nothing');
         }
       }
     }
-    
+
     function filterByMissingSubmissions(nv, ov){
       if ($scope.currentCourse) {
         if ($scope.submissionFilter) {
@@ -206,8 +212,6 @@ console.log('nothing');
           var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
           currentDataList = _.filter(tempDataList, function(o){
-            // console.log(o.daysSinceLogin >=
-			// $scope.daysSinceLoginFilterCount);
             return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
           });
         }
@@ -219,13 +223,15 @@ console.log('nothing');
         filterByGrade();
         filterByMissingSubmissions();
         filterLastLoginCount();
-        
+
         if(currentDataList.length) {
           $scope.datalist = currentDataList;
           currentDataList = [];
         } else {
           $scope.datalist = $scope.currentCourse.students;
         }
+        
+        sumStudentsAtRisk();
       }
     }
     

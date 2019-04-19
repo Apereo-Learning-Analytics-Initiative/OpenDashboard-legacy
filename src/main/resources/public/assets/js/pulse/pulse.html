@@ -8,6 +8,10 @@
         withing the selected class.
         -->
         <div class="backlinks">
+        
+        <!-- if we want to add a legend, we can do it here -->
+        <!-- p class="back-link">Understand this Data</p -->
+
             <!-- Back link to class list -->
             <a class="back-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession" ng-if="listType !== 'classes'">
                 <i class="fa fa-chevron-left"></i> 
@@ -21,6 +25,8 @@
             </a>
         </div>
 
+
+
         <div class="totals">
             <table>
                 <thead>
@@ -30,6 +36,7 @@
                 </thead>                
             </table>
         </div>
+        
         
         <!-- initial title for class list -->
         <span class="title-dropdown" ng-if="listType == 'classes'"><a href="">
@@ -139,7 +146,7 @@
             </span>
 
 
-            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">
+            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})" title={{currentCourse.label}}>
             	{{ currentCourse.label.length > 20 ? (( currentCourse.label | limitTo: 20) + ' ...' ) : currentCourse.label}}
             </a>
         </span>
@@ -274,17 +281,18 @@
                         <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
                     </td>
                     <td ng-if="listType != 'classes' && config.hasRisk">
-                        <div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}</div>
+                        <div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}
+                       
+                        </div>
                     </td>
                     <td ng-if="listType != 'classes' && config.hasGrade">
                         <!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
                         {{item.grade}}
                         <!-- </div> -->
-
                     </td>
                     <td ng-if="listType != 'classes'">
                         <div class="badge" ng-class="colorCodeActivity(item.activity)">
-                            {{item.activity}}
+                            {{item.activity}}                            
                         </div>
                     </td>
                     <td id="pulse-chart-{{item.id}}"></td>
