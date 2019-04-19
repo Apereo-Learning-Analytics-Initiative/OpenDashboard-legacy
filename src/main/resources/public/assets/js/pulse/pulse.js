@@ -146,12 +146,12 @@
 
     function sumStudentsAtRisk() {  
     	var sum=0;   
-    	alert('sum: ' + sum);
     	_.each($scope.datalist, function(r, i){
-    	    sum = sum + r.risk;
-    	    console.log(sum);
+    	    if (r.risk <= riskColorClasses[1].threshold[1]) {
+    	        sum = sum + 1;
+    	    }
     	})
-    	alert('sum: ' + sum);    	
+    	alert('number of students at risk: ' + sum);    	
     }
 
     $scope.colorCodeRisk = function(risk){
