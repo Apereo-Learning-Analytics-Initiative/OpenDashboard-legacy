@@ -247,7 +247,6 @@
                     tooltips: {
 				        callbacks: {
 				            label: function(tooltipItem) {
-				                console.log(tooltipItem);
 				                if (tooltipItem.datasetIndex == 0) {
 				                	return $scope.currentStudent.firstName + ": "  + datasets[tooltipItem.label];
 				                }
@@ -279,8 +278,7 @@
                     labels: [],
                     datasets: [{
                         label: 'Total',
-                        data: [],
-                        //backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(255, 99, 132, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)','rgba(75, 192, 192, 0.5)'],
+                        data: [],                        
                         backgroundColor: ['rgba(108, 178, 195, 0.5)'],
                         borderColor: [],
                         borderWidth: 1
@@ -289,7 +287,9 @@
 
                 _.each($scope.actions, function (action) {
                     var hour = moment(action.timestamp).format('HH');
-
+console.log(action.timestamp);
+console.log(hour);
+console.log(action);
                     // build data based on 24 hour clock
                     if (!hours[hour]) {
                         hours[hour] = 0;

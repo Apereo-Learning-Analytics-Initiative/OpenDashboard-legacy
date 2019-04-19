@@ -261,8 +261,7 @@
     }
 
 
-    function buildStudent(cid, sid) {
-      //console.log('building Student');
+    function buildStudent(cid, sid) {      
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -282,7 +281,6 @@
     }
 
     function buildStudentList(id) {
-      // console.log('buildStudentList');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
@@ -317,7 +315,6 @@
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
-        // console.log('build fake email');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
@@ -327,7 +324,6 @@
 
       // fake risk data
       if ($scope.config.hasGrade && !$scope.processedClasses[0].students[0].grade) {
-        // console.log('build fake grade data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.grade = s.grade ? s.grade : Math.round(Math.random() * (100 - 0));
@@ -338,7 +334,6 @@
 
       // fake missing submission data
       if ($scope.config.hasMissingSubmissions && $scope.processedClasses[0].students[0].missingSubmission !== 0) {
-        // console.log('build fake submission data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.missingSubmission = s.missingSubmission ? s.missingSubmission : Math.round(Math.random() * (50 - 0));
@@ -374,8 +369,6 @@
     };
 
     function init() {
-      // console.log('init');
-      // $scope.$on('chart-change', handleChartChange);
 
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
         if (toState.name === "index.courselist" && toParams.groupId) {
@@ -398,7 +391,6 @@
         PulseApiService
         .getPulseData(currentUser.tenant_id, currentUser.user_id)
         .then(function(data){
-          // console.log(data);
 
           $scope.config = _.clone(data);
           delete $scope.config.pulseClassDetails;
@@ -541,13 +533,7 @@
         }
 
 
-        function drawPlots(plots, o) {
-        	//console.log("****** INSIDE DRAWPLOTS ******");
-        	//console.log("o: %O", o);
-        	//console.log("o.students: " + o.students);
-        	//console.log("o.events: " + o.events);
-        	
-        	
+        function drawPlots(plots, o) {        	
           plots.selectAll('circle').remove();
           plots
             .selectAll('circle')
@@ -558,13 +544,11 @@
             .attr('r', function (d) {
               var count;
 
-              //console.log("d: " + d);
               if (o.students) {
                 count = d.eventCount*100/scope.coursesMaxEvents/10+1;
               } else {
                 count = d.eventCount*100/scope.maxEvents/10+1;
               }
-              //console.log("COUNT: " + count);
 
               return count;
             })
@@ -583,12 +567,9 @@
             })
             .on('mouseover', function (d, index, node) {
               d3.select(this).attr('opacity','1');
-              // console.log(d3.event);
               setEventToolTipPosition({
                 x: d3.event.pageX,
                 y: d3.event.pageY
-                // x: d3.event.clientX,
-                // y: d3.event.clientY
               });
               scope.$apply(function () {
                   scope.chartInfo = {
@@ -753,19 +734,12 @@
                 .attr('transform','translate(0,'+tlhHeight/2+')')
                 .attr('class','plot');
             }
-            if (scope.listType === "students") {
-            	//console.log("*** from from drawtimeline student(s) ****");
-            	//console.log(scope.currentCourse);
-            	//console.log(overviewPlot );            	
+            if (scope.listType === "students") {            	     	
                 drawPlots(overviewPlot, scope.currentCourse);  
             }
             if (scope.listType === "student") {
-				//console.log("*** from drawtimeline student ****");
-				//console.log(scope.currentStudent);
-				//console.log(overviewPlot);
                drawPlots(overviewPlot, scope.currentStudent);  
             }
-            
           }
         }
 
@@ -776,12 +750,9 @@
           var charts = {};
           var height, width;
 
-
           // set width n height
           _.each(scope.datalist, function(o, i){
-        	  
-        	  //console.log("inside for each... o.id: " + o.id);
-        	  
+     	  
             if (i==0) {
               height = $('#pulse-chart-' + o.id).height();
               width = $('#pulse-chart-' + o.id).width();
@@ -804,9 +775,6 @@
               .attr('class','plot');
             
             // dot
-				//console.log("**** from drawChart (this is the important single student ****");
-				//console.log(o);
-				//console.log(plots);
             drawPlots(plots, o);
           });
 
