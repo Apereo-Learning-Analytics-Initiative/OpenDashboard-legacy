@@ -31,6 +31,7 @@
             <table>
                 <thead>
                     <th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th>
+                    <th ng-if="currentCourse.totalNumberOfEvents"># At Risk Students: {{currentCourse.numberOfAtRiskStudents}}</th>
                     <th ng-if="currentCourse.meanStudentEvents">Activity Mean: {{currentCourse.meanStudentEvents}}</th>                    
                     <th ng-if="currentCourse.meanPassPercent">Risk Score Mean: {{currentCourse.meanPassPercent}}</th>                    
                 </thead>                

@@ -59,6 +59,9 @@
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
     $scope.riskOverlay = false;
+    
+    $scope.numberOfAtRiskStudents = 5;
+    
     var riskColorClasses = [
       {
         'threshold':[0, .5],
@@ -150,8 +153,8 @@
     	    if (r.risk <= riskColorClasses[1].threshold[1]) {
     	        sum = sum + 1;
     	    }
-    	})
-    	alert('number of students at risk: ' + sum);    	
+    	})    
+    	$scope.numberOfAtRiskStudents = sum;	
     }
 
     $scope.colorCodeRisk = function(risk){
