@@ -287,9 +287,6 @@
 
                 _.each($scope.actions, function (action) {
                     var hour = moment(action.timestamp).format('HH');
-console.log(action.timestamp);
-console.log(hour);
-console.log(action);
                     // build data based on 24 hour clock
                     if (!hours[hour]) {
                         hours[hour] = 0;

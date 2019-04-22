@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
@@ -483,6 +484,7 @@ public class PulseController {
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
             .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
+            .withMedianPassPercent(getMedianRiskScore((pulseStudentDetails))
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
@@ -965,6 +967,27 @@ public class PulseController {
     double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
     return averageRiskScore;
   }
+  
+  private double getMedianRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+    
+    List<Double> allRiskScores = new ArrayList<>();
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getRiskAsDouble()))
+      {
+        allRiskScores.add(studentDetail.getRiskAsDouble());
+      }
+    }
+    Double[] riskArray = (Double[]) allRiskScores.toArray();
+    
+    Arrays.sort(riskArray);
+    double median;
+    if (riskArray.length % 2 == 0)
+        median = ((double)riskArray[riskArray.length/2] + (double)riskArray[riskArray.length/2 - 1])/2;
+    else
+        median = (double) riskArray[riskArray.length/2];
+    
+    return median;
+}
   
   
   
