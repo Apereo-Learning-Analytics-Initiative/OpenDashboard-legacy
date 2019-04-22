@@ -977,7 +977,11 @@ public class PulseController {
         allRiskScores.add(studentDetail.getRiskAsDouble());
       }
     }
-    Double[] riskArray = (Double[]) allRiskScores.toArray();
+    
+    double[] riskArray = allRiskScores.stream().mapToDouble(Double::doubleValue).toArray();
+    
+    
+    //Double[] riskArray = (Double[]) allRiskScores.toArray();
     
     Arrays.sort(riskArray);
     double median;
