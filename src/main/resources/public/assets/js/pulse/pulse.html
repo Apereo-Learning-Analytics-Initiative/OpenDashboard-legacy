@@ -234,7 +234,7 @@
                 </th>
                 <th ng-if="listType != 'classes' && config.hasRisk" title="{{'LABEL_RISK_SCORE_TOOL_TIP' | translate}}">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
-                   <translate="LABEL_RISK_SCORE"/>
+                     {{ 'LABEL_RISK_SCORE' | translate }}
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
                     <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
                     <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
