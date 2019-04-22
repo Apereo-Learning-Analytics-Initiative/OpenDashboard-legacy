@@ -484,7 +484,7 @@ public class PulseController {
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
             .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
-            .withMedianPassPercent(getMedianRiskScore((pulseStudentDetails))
+            .withMedianPassPercent(getMedianRiskScore(pulseStudentDetails))
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
