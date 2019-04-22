@@ -212,6 +212,17 @@
 "OD_DEMO_MODELOUTPUT_DESC":"",
 
 "MATTHEWS_MODELOUTPUT_NAME":"Matthews Model Output Provider",
-"MATTHEWS_MODELOUTPUT_DESC":""
+"MATTHEWS_MODELOUTPUT_DESC":"",
+
+"LABEL_AT_RISK_STUDENT_COUNT":"# At Risk Students",
+"LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP":"The count of all students that are considered at risk",
+"LABEL_ACTIVITY_MEAN":"Activity Mean",
+"LABEL_ACTIVITY_MEAN_TOOLTIP":"Activity Mean",
+"LABEL_RISK_SCORE_MEAN":"Risk Score Mean",
+"LABEL_RISK_SCORE":"Risk Score",
+"LABEL_RISK_SCORE_TOOL_TIP":"Risk Scores measure a student''s projected success potential in this course. Thresholds are from 0 to .5 (at risk), .501 to .7 (medium risk), and .7 to 1 (no risk).",        
+"LABEL_ACTIVITY":"Activity",
+"LABEL_ACTIVITY_TOOLTIP":"This column displays a count of ALL events the student has performed"
+
 
 }

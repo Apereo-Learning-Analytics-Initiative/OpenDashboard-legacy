@@ -25,19 +25,16 @@
             </a>
         </div>
 
-
-
         <div class="totals">
             <table>
                 <thead>
                     <!-- th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th -->
-                    <th ng-if="numberOfAtRiskStudents"># At Risk Students: {{numberOfAtRiskStudents}}</th>
-                    <th ng-if="currentCourse.meanStudentEvents">Activity Mean: {{currentCourse.meanStudentEvents}}</th>                    
-                    <th ng-if="currentCourse.meanPassPercent">Risk Score Mean: {{currentCourse.meanPassPercent}}</th>                    
+                    <th ng-if="numberOfAtRiskStudents" title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{ 'LABEL_AT_RISK_STUDENT_COUNT' | translate }}: {{numberOfAtRiskStudents}}</th>
+                    <th ng-if="currentCourse.meanStudentEvents">{{ 'LABEL_ACTIVITY_MEAN' | translate }}: {{currentCourse.meanStudentEvents}}</th>                    
+                    <th ng-if="currentCourse.meanPassPercent">{{ 'LABEL_RISK_SCORE_MEAN' | translate }}:: {{currentCourse.meanPassPercent}}</th>                    
                 </thead>                
             </table>
         </div>
-        
         
         <!-- initial title for class list -->
         <span class="title-dropdown" ng-if="listType == 'classes'"><a href="">
@@ -166,13 +163,13 @@
                 </div>
             </div>
             <div class="col-xs-3 activityCard">
-                <div class="heading">Activity</div>
-                <div class="body">
+                <div class="heading">{{ 'LABEL_ACTIVITY' | translate }}</div>
+                <div class="body" title="test">
                     {{ currentStudent.activity }}
                 </div>
             </div>
             <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
-                <div class="heading">Pass %</div>
+                <div class="heading"><translate="LABEL_RISK_SCORE"/></div>
                 <div class="body" title="Course Median: " + {{currentCourse.medianPassPercent}}>
                     {{ currentStudent.risk }}
                 </div>
@@ -235,9 +232,9 @@
                     <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes' && config.hasRisk">
+                <th ng-if="listType != 'classes' && config.hasRisk" title="{{'LABEL_RISK_SCORE_TOOL_TIP' | translate}}">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
-                   Pass % 
+                   <translate="LABEL_RISK_SCORE"/>
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
                     <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
                     <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
@@ -251,9 +248,9 @@
                     <i ng-if="$parent.$parent.orderByField!='grade'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes'">
+                <th ng-if="listType != 'classes'" title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='activity'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
-                    Activity
+                    {{ 'LABEL_ACTIVITY' | translate }}
                     <i ng-if="$parent.$parent.orderByField=='activity' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
                     <i ng-if="$parent.$parent.orderByField=='activity' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
                     <i ng-if="$parent.$parent.orderByField!='activity'" class="fa fa-caret-up spacer"></i>

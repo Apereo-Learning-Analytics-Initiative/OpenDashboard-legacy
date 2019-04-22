@@ -950,10 +950,6 @@ public class PulseController {
 	    return pulseDetail;
 	  }
   
-  
-  
-  
-  
   private double getAverageRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
       double cumulator = 0.0;
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
@@ -978,10 +974,11 @@ public class PulseController {
       }
     }
     
+    if (allRiskScores.size() <= 0) {
+      return Double.NaN;
+    }
+    
     double[] riskArray = allRiskScores.stream().mapToDouble(Double::doubleValue).toArray();
-    
-    
-    //Double[] riskArray = (Double[]) allRiskScores.toArray();
     
     Arrays.sort(riskArray);
     double median;
