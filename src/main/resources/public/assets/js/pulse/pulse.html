@@ -173,7 +173,7 @@
             </div>
             <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
                 <div class="heading">Pass %</div>
-                <div class="body">
+                <div class="body" title="Course Median: " + {{currentCourse.medianPassPercent}}>
                     {{ currentStudent.risk }}
                 </div>
             </div>
