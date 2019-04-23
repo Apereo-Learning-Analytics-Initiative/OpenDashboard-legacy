@@ -45,7 +45,24 @@ body.application {
       }      
     }
 
+    .legend {
+      z-index: 10;
+      position: absolute;
+      left: 7px;
+
+      table {
+        font-size: 1.2rem;
+        th {
+          font-weight: 600;
+        }
+        td {
+
+        }
+      }
+    }
+
     .totals {
+      z-index: 10;
       position: absolute;
       right: 7px;
 
@@ -341,4 +358,34 @@ body.application {
 footer.footer {
   // position: relative;
   z-index: 7;
+}
+
+
+
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
