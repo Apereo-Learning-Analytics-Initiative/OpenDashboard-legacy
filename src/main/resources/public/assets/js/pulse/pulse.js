@@ -332,17 +332,16 @@
     var i = 0;
     _.each($scope.currentCourse.students, function (student) { 
     
-    console.log(student);
-                  
+
                     chartData.labels.push(student.label); 
                     //alert ('pushing : ' + student.label);                                                           
                     chartData.datasets.push(
                     
                     {
 		                        label: [student.label],
-		                        data: [{x:i, y:student.risk, z:student.activity}],		                        
-		                        backgroundColor: ["rgba(60,186,159,0.2)"],
-		                        borderColor: ["rgba(60,186,159,0.2)"]
+		                        data: [{x:i, y:student.risk, r:student.activity}],		                        
+		                        backgroundColor: [colorCodeRisk(student.risk)],
+		                        borderColor: [colorCodeRisk(student.risk)]
 		                    }
                     
                     );
@@ -350,7 +349,6 @@
                     i++;
                 })
 
-console.log(chartData);
 			 
 
 
