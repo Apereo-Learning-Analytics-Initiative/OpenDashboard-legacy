@@ -340,8 +340,8 @@
                     {
 		                        label: [student.label],
 		                        data: [{x:i, y:student.risk, r:student.activity}],		                        
-		                        backgroundColor: [colorCodeRisk(student.risk)],
-		                        borderColor: [colorCodeRisk(student.risk)]
+		                        backgroundColor: [$scope.colorCodeRisk(student.risk)],
+		                        borderColor: [$scope.colorCodeRisk(student.risk)]
 		                    }
                     
                     );
