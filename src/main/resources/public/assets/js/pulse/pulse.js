@@ -330,7 +330,10 @@
 	                    datasets: []
 	            };
     var i = 0;
-    _.each($scope.currentCourse.students, function (student) {               
+    _.each($scope.currentCourse.students, function (student) { 
+    
+    console.log(student);
+                  
                     chartData.labels.push(student.label); 
                     //alert ('pushing : ' + student.label);                                                           
                     chartData.datasets.push(
