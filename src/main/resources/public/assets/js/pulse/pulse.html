@@ -157,7 +157,7 @@
         <!-- student details -->
         <div class="student-details" ng-if="listType == 'student'">
         
-	    <div ng-click="hoverEdit=!hoverEdit;">Student Details</div>
+	    <!-- div ng-click="hoverEdit=!hoverEdit;">Student Details</div>
     		<div class="popovert" ng-show="hoverEdit">
 		        <div class="totals">		        		     
 		            <table>
@@ -180,13 +180,12 @@
 			                    <td><div class="badge">{{ currentStudent.risk }} </div></td>
 			                    <td><div class="badge">{{currentCourse.meanPassPercent}}</div></td>
 			                    <td><div class="badge">{{currentStudent.risk/currentCourse.meanPassPercent | number:2}}</div></td>
-			                </tr>
-		                
+			                </tr>		                
 		                </tbody>
 		            </table>
-		            <div ng-click="hoverEdit=!hoverEdit">x</div>
+		            <div ng-click="hoverEdit=!hoverEdit">x</div>		            
 		        </div>    		
-    		</div>
+    		</div -->
 
         
         
@@ -332,7 +331,7 @@
 				                    <th></th>
 				                    <th>{{item.firstName}} {{item.lastName}}</th>
 				                    <th title="Median for the entire course per student">{{ 'LABEL_COURSE_MEDIAN' | translate }}</th>
-				                    <th title="(Students Activity)/(Course Mean)">{{ 'LABEL_COURSE_COMPARISON' | translate }}</th>
+				                    <th title="{{'LABEL_COURSE_COMPARISON_TOOLTIP' | translate}}">{{ 'LABEL_COURSE_COMPARISON' | translate }}</th>
 				                    <th></th>
 				                </thead>
 				                <tbody>
@@ -351,7 +350,7 @@
 					                    <td></td>
 					                </tr>					                
 				                </tbody>
-				            </table>		
+				            </table>				            	
 		    			</div>
                     </td>
                     <td id="pulse-chart-{{item.id}}"></td>
