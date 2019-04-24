@@ -480,6 +480,7 @@ public class PulseController {
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
             .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+            .withMedianStudentEvents(getMedianStudentEvents(pulseStudentDetails))
             .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
@@ -519,7 +520,13 @@ public class PulseController {
 
   
   
-  
+
+
+
+
+
+
+
   public PulseDetail pulseForStudent(Authentication authentication, @PathVariable("tenantId") final String tenantId,
 	      @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
 		  
@@ -989,6 +996,33 @@ public class PulseController {
     
     return median;
 }
+  
+  
+  
+  private Long getMedianStudentEvents(List<PulseStudentDetail> pulseStudentDetails) {
+    List<Long> allActivityCount = new ArrayList<>();
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getActivity()))
+      {
+        allActivityCount.add(studentDetail.getActivity());
+      }
+    }
+    
+    if (allActivityCount.size() <= 0) {
+      return 0l;
+    }
+    long[] studentEventsArray = allActivityCount.stream().mapToLong(l -> l).toArray();
+    //long[] riskArray =  allActivityCount.stream().mapToLong(Long::toLong).toArray();
+    
+    Arrays.sort(studentEventsArray);
+    double median;
+    if (studentEventsArray.length % 2 == 0)
+        median = ((long)studentEventsArray[studentEventsArray.length/2] + (long)studentEventsArray[studentEventsArray.length/2 - 1])/2;
+    else
+        median = (long) studentEventsArray[studentEventsArray.length/2];
+    
+    return (long) median;
+  }
   
   
   

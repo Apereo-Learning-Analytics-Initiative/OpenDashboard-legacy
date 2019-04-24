@@ -29,7 +29,7 @@
             <table>
                 <thead>
                     <!-- th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th -->
-                    <th ng-if="numberOfAtRiskStudents" title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{ 'LABEL_AT_RISK_STUDENT_COUNT' | translate }}: {{numberOfAtRiskStudents}}</th>
+                    <th ng-if="config.hasRisk" title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{ 'LABEL_AT_RISK_STUDENT_COUNT' | translate }}: {{numberOfAtRiskStudents}}</th>
                     <th ng-if="currentCourse.meanStudentEvents">{{ 'LABEL_ACTIVITY_MEAN' | translate }}: {{currentCourse.meanStudentEvents}}</th>                    
                     <th ng-if="currentCourse.meanPassPercent">{{ 'LABEL_RISK_SCORE_MEAN' | translate }}:: {{currentCourse.meanPassPercent}}</th>                    
                 </thead>                
@@ -156,6 +156,40 @@
 
         <!-- student details -->
         <div class="student-details" ng-if="listType == 'student'">
+        
+	    <div ng-click="hoverEdit=!hoverEdit;">Student Details</div>
+    		<div class="popovert" ng-show="hoverEdit">
+		        <div class="totals">		        		     
+		            <table>
+
+		                <thead>
+		                    <th></th>
+		                    <th>Student</th>
+		                    <th>Course Median</th>
+		                    <th>Ratio</th>
+		                </thead>
+		                <tbody>
+			                <tr>
+			                    <th title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">{{ 'LABEL_ACTIVITY' | translate }}</th>
+			                    <td><div class="badge">{{currentStudent.activity}} </div></td>
+			                    <td><div class="badge">{{currentCourse.meanStudentEvents}}</div></td>
+			                    <td><div class="badge">{{currentStudent.activity/currentCourse.meanStudentEvents | number:2}}</div></td>
+			                </tr>
+			                <tr ng-show="config.hasRisk">
+			                    <th title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">{{ 'LABEL_RISK_SCORE' | translate }}</th>
+			                    <td><div class="badge">{{ currentStudent.risk }} </div></td>
+			                    <td><div class="badge">{{currentCourse.meanPassPercent}}</div></td>
+			                    <td><div class="badge">{{currentStudent.risk/currentCourse.meanPassPercent | number:2}}</div></td>
+			                </tr>
+		                
+		                </tbody>
+		            </table>
+		            <div ng-click="hoverEdit=!hoverEdit">x</div>
+		        </div>    		
+    		</div>
+
+        
+        
             <div class="col-sm-3 activityCard" ng-show="config.hasEmail">
                 <div class="heading">Contact</div>
                 <div class="body">
@@ -164,13 +198,13 @@
             </div>
             <div class="col-xs-3 activityCard" title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">
                 <div class="heading">{{ 'LABEL_ACTIVITY' | translate }}</div>
-                <div class="body">
-                    {{ currentStudent.activity }}
+                <div class="body">                
+                    {{ currentStudent.activity }}                    
                 </div>
             </div>
-            <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
-                <div class="heading"><translate="LABEL_RISK_SCORE"/></div>
-                <div class="body" title="Course Median: " + {{currentCourse.medianPassPercent}}>
+            <div class="col-xs-3 activityCard" ng-show="config.hasRisk" title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">
+                <div class="heading">{{ 'LABEL_RISK_SCORE' | translate }}</div>
+                <div class="body" >
                     {{ currentStudent.risk }}
                 </div>
             </div>
@@ -288,10 +322,37 @@
                         {{item.grade}}
                         <!-- </div> -->
                     </td>
-                    <td ng-if="listType != 'classes'">
+                    <td ng-if="listType != 'classes'" ng-click="toggleActivityDetail('student-popup-'+item.id)" >
                         <div class="badge" ng-class="colorCodeActivity(item.activity)">
-                            {{item.activity}}                            
-                        </div>
+                            {{item.activity}}                   
+                        </div>                        
+                        <div id="student-popup-{{item.id}}" class="popovert ng-hide totalsss" >		        		     
+				            <table>
+				                <thead>
+				                    <th></th>
+				                    <th>{{item.firstName}} {{item.lastName}}</th>
+				                    <th title="Median for the entire course per student">Course Mean</th>
+				                    <th title="(Students Activity)/(Course Mean)">Compare</th>
+				                    <th></th>
+				                </thead>
+				                <tbody>
+					                <tr>
+					                    <td title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">{{ 'LABEL_ACTIVITY' | translate }}</td>
+					                    <td><div class="badge">{{item.activity}}</div></td>
+					                    <td><div class="badge">{{currentCourse.medianStudentEvents}}</div></td>
+					                    <td><div class="badge">{{item.activity/currentCourse.medianStudentEvents|number:2}}</div></td>
+					                    <td></td>
+					                </tr>
+									<tr ng-if="config.hasRisk" >
+					                    <td title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">{{ 'LABEL_RISK_SCORE' | translate }}</td>
+					                    <td><div class="badge">{{item.risk}}</div></td>
+					                    <td><div class="badge">{{currentCourse.medianPassPercent}}</div></td>
+					                    <td><div class="badge">{{item.risk/currentCourse.medianPassPercent|number:3}}</div></td>
+					                    <td></td>
+					                </tr>					                
+				                </tbody>
+				            </table>		
+		    			</div>
                     </td>
                     <td id="pulse-chart-{{item.id}}"></td>
                 </tr>
@@ -367,6 +428,8 @@
 
 <!-- Sub-view for student details -->
 <div class="ui-view" ng-if="listType == 'student'"></div>
+
+
 
 
 

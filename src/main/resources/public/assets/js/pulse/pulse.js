@@ -61,6 +61,8 @@
     $scope.appHasMissingSubmissionData = false;
     $scope.riskOverlay = false;
     
+    $scope.popoverIsVisible = true;
+    
     $scope.numberOfAtRiskStudents = 5;
     
     var riskColorClasses = [
@@ -146,6 +148,28 @@
       }
     }
 
+
+$scope.showPopover = function() {
+alert('in here show');
+  $scope.popoverIsVisible = true; 
+};
+
+$scope.hidePopover = function () {
+alert('in here hide');
+  $scope.popoverIsVisible = false;
+};
+
+$scope.toggleActivityDetail = function (id) {
+	var element = document.getElementById(id);
+	if(element.classList.contains("ng-show")) {
+		element.classList.remove("ng-show");
+		element.classList.add("ng-hide");
+	} 
+	else {
+		element.classList.remove("ng-hide");
+		element.classList.add("ng-show");
+	}	
+};
 
 
     function sumStudentsAtRisk() {  
