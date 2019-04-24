@@ -185,6 +185,34 @@
     	$scope.numberOfAtRiskStudents = sum;	
     }
 
+
+
+	$scope.colorCodeRiskForBubble = function(risk){
+    
+        var colorclass;
+        
+        _.each(riskColorClasses, function(r, i){
+          if (r.threshold[0] <= risk  && risk <= r.threshold[1]) {
+            colorclass = r.classname;
+          }
+        });
+        
+        if (colorclass=='no-risk') {
+        	return "rgba(127, 191, 63, 1)";
+        }
+        else if (colorclass=='medium-risk') {
+        	return "rgba(246, 178, 8, 1)";
+        }
+        else if (colorclass=='high-risk') {
+        	return "rgba(234, 14, 14, 1)";
+        }                
+        else {
+             return "";
+        }
+    }
+
+
+
     $scope.colorCodeRisk = function(risk){
       if (true) {
         var colorclass;
@@ -336,71 +364,27 @@
     
     _.each($scope.currentCourse.students, function (student) { 
     
+    
+    console.log($scope.colorCodeRiskForBubble(.1));
+    console.log($scope.colorCodeRiskForBubble(.6));
+    console.log($scope.colorCodeRiskForBubble(.9));
+    
        (student.activity/eventMax)*25;
-                    chartData.labels.push(student.label); 
-                    //alert ('pushing : ' + student.label);                                                           
+                    chartData.labels.push(student.label);                                                           
                     chartData.datasets.push(
                     
                     {
 		                        label: [student.label],
 		                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
-		                        //data: [{x:i, y:Math.random(), r:(student.activity/eventMax)*15}],
 		                        backgroundColor: [$scope.colorCodeRisk(student.risk)],
-		                        borderColor: [$scope.colorCodeRisk(student.risk)]
+		                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
 		                    }
                     
                     );
-                    //chartData.datasets.backgroundColor.push(blue);
                     i++;
                 })
 
-			 
-
-
-var t = {
-      labels: "Africa",
-      datasets: [
-        {
-          label: ["China"],
-          backgroundColor: "rgba(255,221,50,0.2)",
-          borderColor: "rgba(255,221,50,1)",
-          data: [{
-            x: 21269017,
-            y: 5.245,
-            r: 15
-          }]
-        }, {
-          label: ["Denmark"],
-          backgroundColor: "rgba(60,186,159,0.2)",
-          borderColor: "rgba(60,186,159,1)",
-          data: [{
-            x: 258702,
-            y: 7.526,
-            r: 10
-          }]
-        }, {
-          label: ["Germany"],
-          backgroundColor: "rgba(0,0,0,0.2)",
-          borderColor: "#000",
-          data: [{
-            x: 3979083,
-            y: 6.994,
-            r: 15
-          }]
-        }, {
-          label: ["Japan"],
-          backgroundColor: "rgba(193,46,12,0.2)",
-          borderColor: "rgba(193,46,12,1)",
-          data: [{
-            x: 4931877,
-            y: 5.921,
-            r: 15
-          }]
-        }
-      ]
-    };
-    
-    console.log(t);
+			
 
 
 
