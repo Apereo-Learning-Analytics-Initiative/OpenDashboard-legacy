@@ -37,12 +37,6 @@
     $scope.emailstudent = {};
     $scope.studentFilters = {};
     $scope.studentFilters.list = [];
-
-    // $scope.coursesStartEnd = {
-    // start: '2016-10-30',
-    // end: '2016-11-13'
-    // };
-
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
@@ -52,101 +46,17 @@
     $scope.submissionFilterScore = 6;
     $scope.daysSinceLoginFilter = false;
     $scope.daysSinceLoginFilterCount = 0;
-    var currentDataList = [];
-
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
     $scope.maxActivity = 0;
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
-    $scope.riskOverlay = false;
+    $scope.riskOverlay = false;      
+    $scope.numberOfAtRiskStudents = 0;
     
-    $scope.popoverIsVisible = true;
-    
-    $scope.numberOfAtRiskStudents = 5;
-    
-    
+        var currentDataList = [];
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-new Chart(document.getElementById("bubble-chart"), {
-    type: 'bubble',
-    data: {
-      labels: "Africa",
-      datasets: [
-        {
-          label: ["China"],
-          backgroundColor: "rgba(255,221,50,0.2)",
-          borderColor: "rgba(255,221,50,1)",
-          data: [{
-            x: 21269017,
-            y: 5.245,
-            r: 15
-          }]
-        }, {
-          label: ["Denmark"],
-          backgroundColor: "rgba(60,186,159,0.2)",
-          borderColor: "rgba(60,186,159,1)",
-          data: [{
-            x: 258702,
-            y: 7.526,
-            r: 10
-          }]
-        }, {
-          label: ["Germany"],
-          backgroundColor: "rgba(0,0,0,0.2)",
-          borderColor: "#000",
-          data: [{
-            x: 3979083,
-            y: 6.994,
-            r: 15
-          }]
-        }, {
-          label: ["Japan"],
-          backgroundColor: "rgba(193,46,12,0.2)",
-          borderColor: "rgba(193,46,12,1)",
-          data: [{
-            x: 4931877,
-            y: 5.921,
-            r: 15
-          }]
-        }
-      ]
-    },
-
-    options: {
-
-    
-      title: {
-        display: true,
-        text: 'Predicted world population (millions) in 2050'
-      }, scales: {
-        yAxes: [{ 
-          scaleLabel: {
-            display: true,
-            labelString: "Happiness"
-          }
-        }],
-        xAxes: [{ 
-          scaleLabel: {
-            display: true,
-            labelString: "GDP (PPP)"
-          }
-        }]
-      }
-    }
-});
 
 
 
@@ -251,27 +161,18 @@ new Chart(document.getElementById("bubble-chart"), {
     }
 
 
-$scope.showPopover = function() {
-alert('in here show');
-  $scope.popoverIsVisible = true; 
-};
 
-$scope.hidePopover = function () {
-alert('in here hide');
-  $scope.popoverIsVisible = false;
-};
-
-$scope.toggleActivityDetail = function (id) {
-	var element = document.getElementById(id);
-	if(element.classList.contains("ng-show")) {
-		element.classList.remove("ng-show");
-		element.classList.add("ng-hide");
-	} 
-	else {
-		element.classList.remove("ng-hide");
-		element.classList.add("ng-show");
-	}	
-};
+	$scope.toggleActivityDetail = function (id) {
+		var element = document.getElementById(id);
+		if(element.classList.contains("ng-show")) {
+			element.classList.remove("ng-show");
+			element.classList.add("ng-hide");
+		} 
+		else {
+			element.classList.remove("ng-hide");
+			element.classList.add("ng-show");
+		}	
+	};
 
 
     function sumStudentsAtRisk() {  
@@ -366,7 +267,6 @@ $scope.toggleActivityDetail = function (id) {
     }
     
     $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilter', 'daysSinceLoginFilterCount'], runFilters);
-    // $scope.$watchGroup(['daysSinceLoginFilter'], runFilters);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -416,6 +316,113 @@ $scope.toggleActivityDetail = function (id) {
       $scope.maxEvents = course.studentEventMax;
       buildActivityColorThreshold();
       runFilters();
+      
+      buildWholeClassRiskChart();
+    }
+    
+    function buildWholeClassRiskChart() {
+    
+    //var chartData;
+    //chartData.labels = [];
+    
+    var chartData = {
+	                    labels: [],
+	                    datasets: []
+	            };
+    var i = 0;
+    _.each($scope.currentCourse.students, function (student) {               
+                    chartData.labels.push(student.label); 
+                    //alert ('pushing : ' + student.label);                                                           
+                    chartData.datasets.push(
+                    
+                    {
+		                        label: [student.label],
+		                        data: [{x:i, y:student.risk, z:student.activity}],		                        
+		                        backgroundColor: ["rgba(60,186,159,0.2)"],
+		                        borderColor: ["rgba(60,186,159,0.2)"]
+		                    }
+                    
+                    );
+                    //chartData.datasets.backgroundColor.push(blue);
+                    i++;
+                })
+
+console.log(chartData);
+			 
+
+
+var t = {
+      labels: "Africa",
+      datasets: [
+        {
+          label: ["China"],
+          backgroundColor: "rgba(255,221,50,0.2)",
+          borderColor: "rgba(255,221,50,1)",
+          data: [{
+            x: 21269017,
+            y: 5.245,
+            r: 15
+          }]
+        }, {
+          label: ["Denmark"],
+          backgroundColor: "rgba(60,186,159,0.2)",
+          borderColor: "rgba(60,186,159,1)",
+          data: [{
+            x: 258702,
+            y: 7.526,
+            r: 10
+          }]
+        }, {
+          label: ["Germany"],
+          backgroundColor: "rgba(0,0,0,0.2)",
+          borderColor: "#000",
+          data: [{
+            x: 3979083,
+            y: 6.994,
+            r: 15
+          }]
+        }, {
+          label: ["Japan"],
+          backgroundColor: "rgba(193,46,12,0.2)",
+          borderColor: "rgba(193,46,12,1)",
+          data: [{
+            x: 4931877,
+            y: 5.921,
+            r: 15
+          }]
+        }
+      ]
+    };
+    
+    console.log(t);
+
+
+
+new Chart(document.getElementById("wholeClassRisk-chart"), {
+			    type: 'bubble',
+			    data: chartData,
+			
+			    options: {
+			      title: {
+			        display: true,
+			        text: 'TEST'
+			      }, scales: {
+			        yAxes: [{ 
+			          scaleLabel: {
+			            display: true,
+			            labelString: "Happiness"
+			          }
+			        }],
+			        xAxes: [{ 
+			          scaleLabel: {
+			            display: true,
+			            labelString: "GDP (PPP)"
+			          }
+			        }]
+			      }
+			    }
+		});
+
     }
 
     function addMissingData() {
@@ -427,17 +434,6 @@ $scope.toggleActivityDetail = function (id) {
       $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : false;
       
       $scope.coursesMaxEvents = $scope.config.classEventMax;
-
-      // Set student activity class total maximum
-      // _.each($scope.processedClasses, function(c){
-      // var maxActivity = 0;
-      // _.each(c.students, function(s){
-      // if (maxActivity < s.activity) {
-      // maxActivity = s.activity;
-      // }
-      // });
-      // c.studentActivityMax = maxActivity;
-      // });
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
@@ -489,16 +485,12 @@ $scope.toggleActivityDetail = function (id) {
     }
 
     $scope.updateStudentCharts = function (data) {
-      // $timeout(function(){
         $scope.$broadcast('updateTable', data);
-      // });
     };
 
     function init() {
-
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
         if (toState.name === "index.courselist" && toParams.groupId) {
-
           $scope.listType = 'students';
           $scope.orderByField = 'lastName';
           buildStudentList(toParams.groupId);

@@ -160,49 +160,37 @@
 		</span>
 
 
-
-
-
-
-<!-- ng-mouseover="hoverEdit = true" ng-mouseleave="hoverEdit = false" -->
        <div class="clickable" ng-click="toggleActivityDetail('courseAtAGlance')">Course at a glance</div>
        <div id="courseAtAGlance" ng-show="hoverEdit">
 			<div>stuff</div>
 			
 			<div class="totals">
-            <table>
-                <thead>
-                    <th>Class Start Date</th>
-                    <th>Class End Date</th>
-                    <th>Enrollments</th>
-                    <th ng-if="config.hasRisk"
-						title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{
-						'LABEL_AT_RISK_STUDENT_COUNT' | translate }}:
-						{{numberOfAtRiskStudents}}</th>
-                    <th>Max Activity</th>
-                    <th>Median Activity</th>
-                    <th>Min Activity</th>
-                    
-                </thead>
-                <tbody>
-                    <td><div class="badge">{{currentCourse.startdate}}</div></td>
-                    <td><div class="badge">{{currentCourse.enddate}}</div></td>
-                    <td><div class="badge">{{currentCourse.students.length}}</div></td>
-                    <td  ng-if="config.hasRisk"><div class="badge">{{numberOfAtRiskStudents}}</div></td>
-                    <td><div class="badge">{{currentCourse.studentEventTotalMax}}</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>
-                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">52</div></td>
-                </tbody>
-            </table>
-        </div>
-			
-			
-			
-			
-			
-			
-			
-			<canvas class="activityOverTime" id="bubble-chart"></canvas>			
+	            <table>
+	                <thead>
+	                    <th>Class Start Date</th>
+	                    <th>Class End Date</th>
+	                    <th>Enrollments</th>
+	                    <th ng-if="config.hasRisk"
+							title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{
+							'LABEL_AT_RISK_STUDENT_COUNT' | translate }}</th>
+	                    <th>Max Activity</th>
+	                    <th>Median Activity</th>
+	                    <th>Min Activity</th>
+	                    
+	                </thead>
+	                <tbody>
+	                    <td><div class="badge">{{currentCourse.startdate}}</div></td>
+	                    <td><div class="badge">{{currentCourse.enddate}}</div></td>
+	                    <td><div class="badge">{{currentCourse.students.length}}</div></td>
+	                    <td  ng-if="config.hasRisk"><div class="badge">{{numberOfAtRiskStudents}}</div></td>
+	                    <td><div class="badge">{{currentCourse.studentEventTotalMax}}</div></td>
+	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>
+	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">52</div></td>
+	                </tbody>
+	            </table>
+	        </div>
+	        <!-- ng-show="config.hasRisk" -->
+			<canvas   class="wholeClassRisk" id="wholeClassRisk-chart"></canvas>			
        </div>
 
 
@@ -217,39 +205,6 @@
 
 		<!-- student details -->
 		<div class="student-details" ng-if="listType == 'student'">
-
-
-			<!-- div ng-click="hoverEdit=!hoverEdit;">Student Details</div>
-    		<div class="popovert" ng-show="hoverEdit">
-		        <div class="totals">		        		     
-		            <table>
-
-		                <thead>
-		                    <th></th>
-		                    <th>Student</th>
-		                    <th>Course Median</th>
-		                    <th>Ratio</th>
-		                </thead>
-		                <tbody>
-			                <tr>
-			                    <th title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">{{ 'LABEL_ACTIVITY' | translate }}</th>
-			                    <td><div class="badge">{{currentStudent.activity}} </div></td>
-			                    <td><div class="badge">{{currentCourse.meanStudentEvents}}</div></td>
-			                    <td><div class="badge">{{currentStudent.activity/currentCourse.meanStudentEvents | number:2}}</div></td>
-			                </tr>
-			                <tr ng-show="config.hasRisk">
-			                    <th title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">{{ 'LABEL_RISK_SCORE' | translate }}</th>
-			                    <td><div class="badge">{{ currentStudent.risk }} </div></td>
-			                    <td><div class="badge">{{currentCourse.meanPassPercent}}</div></td>
-			                    <td><div class="badge">{{currentStudent.risk/currentCourse.meanPassPercent | number:2}}</div></td>
-			                </tr>		                
-		                </tbody>
-		            </table>
-		            <div ng-click="hoverEdit=!hoverEdit">x</div>		            
-		        </div>    		
-    		</div -->
-
-
 
 			<div class="col-sm-3 activityCard" ng-show="config.hasEmail">
 				<div class="heading">Contact</div>
@@ -291,14 +246,9 @@
 
 	<!--  -->
 	<div id="pulse-data" class="hide-until-ready">
-
-
-
-
 		<table id="pulse-table-data"
 			class="table table-striped table-condensed table-pulse">
 			<thead id="hidden-header" ng-include="'table-header.html'">
-
 			</thead>
 
 			<script type="text/ng-template" id="table-header.html">
