@@ -194,9 +194,14 @@
 	"LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP": "The count of all students that are considered at risk",
 	"LABEL_ACTIVITY_MEAN": "Activity Mean",
 	"LABEL_ACTIVITY_MEAN_TOOLTIP": "Activity Mean",
+	"LABEL_ACTIVITY_MEDIAN": "Activity Median",
+	"LABEL_ACTIVITY_MEDIAN_TOOLTIP": "The Median count of all activities performed in the class",	
 	"LABEL_RISK_SCORE_MEAN": "Risk Score Mean",
+	"LABEL_RISK_SCORE_MEDIAN": "The Median Risk Score for the entire class",	
 	"LABEL_RISK_SCORE": "Risk Score",
-	"LABEL_RISK_SCORE_TOOLTIP": "Risk Scores measure a student''s projected success potential in this course. Thresholds are from 0 to .5 (at risk), .501 to .7 (medium risk), and .7 to 1 (no risk).",
+	"LABEL_RISK_SCORE_TOOLTIP": "Risk Scores measure a student's projected success potential in this course. Thresholds are from 0 to .5 (at risk), .501 to .7 (medium risk), and .7 to 1 (no risk).",
 	"LABEL_ACTIVITY": "Activity",
-	"LABEL_ACTIVITY_TOOLTIP": "A count of ALL events the student has performed"
+	"LABEL_ACTIVITY_TOOLTIP": "A count of ALL events the student has performed",
+	"LABEL_COURSE_MEDIAN": "Course Median",
+	"LABEL_COURSE_COMPARISON": "Compare"
 }

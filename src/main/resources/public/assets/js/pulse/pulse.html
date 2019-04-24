@@ -30,8 +30,8 @@
                 <thead>
                     <!-- th ng-if="currentCourse.totalNumberOfEvents">Activities #: {{currentCourse.totalNumberOfEvents}}</th -->
                     <th ng-if="config.hasRisk" title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{ 'LABEL_AT_RISK_STUDENT_COUNT' | translate }}: {{numberOfAtRiskStudents}}</th>
-                    <th ng-if="currentCourse.meanStudentEvents">{{ 'LABEL_ACTIVITY_MEAN' | translate }}: {{currentCourse.meanStudentEvents}}</th>                    
-                    <th ng-if="currentCourse.meanPassPercent">{{ 'LABEL_RISK_SCORE_MEAN' | translate }}:: {{currentCourse.meanPassPercent}}</th>                    
+                    <th ng-if="currentCourse.meanStudentEvents" title="{{'LABEL_ACTIVITY_MEDIAN_TOOLTIP' | translate}}">{{ 'LABEL_ACTIVITY_MEDIAN' | translate }}: {{currentCourse.medianStudentEvents}}</th>                    
+                    <th ng-if="currentCourse.meanPassPercent" title="{{'LABEL_RISK_SCORE_MEDIAN_TOOLTIP' | translate}}">{{ 'LABEL_RISK_SCORE_MEDIAN' | translate }}:: {{currentCourse.medianPassPercent}}</th>                    
                 </thead>                
             </table>
         </div>
@@ -323,7 +323,7 @@
                         <!-- </div> -->
                     </td>
                     <td ng-if="listType != 'classes'" ng-click="toggleActivityDetail('student-popup-'+item.id)" >
-                        <div class="badge" ng-class="colorCodeActivity(item.activity)">
+                        <div class="badge clickable" ng-class="colorCodeActivity(item.activity)">
                             {{item.activity}}                   
                         </div>                        
                         <div id="student-popup-{{item.id}}" class="popovert ng-hide totalsss" >		        		     
@@ -331,8 +331,8 @@
 				                <thead>
 				                    <th></th>
 				                    <th>{{item.firstName}} {{item.lastName}}</th>
-				                    <th title="Median for the entire course per student">Course Mean</th>
-				                    <th title="(Students Activity)/(Course Mean)">Compare</th>
+				                    <th title="Median for the entire course per student">{{ 'LABEL_COURSE_MEDIAN' | translate }}</th>
+				                    <th title="(Students Activity)/(Course Mean)">{{ 'LABEL_COURSE_COMPARISON' | translate }}</th>
 				                    <th></th>
 				                </thead>
 				                <tbody>
