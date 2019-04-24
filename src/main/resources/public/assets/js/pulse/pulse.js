@@ -330,16 +330,21 @@
 	                    datasets: []
 	            };
     var i = 0;
+    
+    var eventMax = $scope.currentCourse.studentEventTotalMax;
+    
+    
     _.each($scope.currentCourse.students, function (student) { 
     
-
+       (student.activity/eventMax)*25;
                     chartData.labels.push(student.label); 
                     //alert ('pushing : ' + student.label);                                                           
                     chartData.datasets.push(
                     
                     {
 		                        label: [student.label],
-		                        data: [{x:i, y:student.risk, r:student.activity}],		                        
+		                        //data: [{x:i, y:student.risk, r:(student.activity/eventMax)*25}],		                        
+		                        data: [{x:i, y:Math.random(), r:(student.activity/eventMax)*15}],
 		                        backgroundColor: [$scope.colorCodeRisk(student.risk)],
 		                        borderColor: [$scope.colorCodeRisk(student.risk)]
 		                    }
