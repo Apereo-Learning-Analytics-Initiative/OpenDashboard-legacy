@@ -343,8 +343,8 @@
                     
                     {
 		                        label: [student.label],
-		                        //data: [{x:i, y:student.risk, r:(student.activity/eventMax)*25}],		                        
-		                        data: [{x:i, y:Math.random(), r:(student.activity/eventMax)*15}],
+		                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*10}],		                        
+		                        //data: [{x:i, y:Math.random(), r:(student.activity/eventMax)*15}],
 		                        backgroundColor: [$scope.colorCodeRisk(student.risk)],
 		                        borderColor: [$scope.colorCodeRisk(student.risk)]
 		                    }
