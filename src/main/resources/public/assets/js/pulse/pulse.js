@@ -390,18 +390,18 @@ new Chart(document.getElementById("wholeClassRisk-chart"), {
 			    options: {
 			      title: {
 			        display: true,
-			        text: 'TEST'
+			        text: 'Probability of Success'
 			      }, scales: {
 			        yAxes: [{ 
 			          scaleLabel: {
 			            display: true,
-			            labelString: "Happiness"
+			            labelString: "Probability of Success"
 			          }
 			        }],
 			        xAxes: [{ 
 			          scaleLabel: {
 			            display: true,
-			            labelString: "GDP (PPP)"
+			            labelString: "Students"
 			          }
 			        }]
 			      }
