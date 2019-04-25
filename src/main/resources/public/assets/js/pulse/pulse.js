@@ -363,19 +363,14 @@
     
     
     _.each($scope.currentCourse.students, function (student) { 
-    
-    
-    console.log($scope.colorCodeRiskForBubble(.1));
-    console.log($scope.colorCodeRiskForBubble(.6));
-    console.log($scope.colorCodeRiskForBubble(.9));
-    
+       
        (student.activity/eventMax)*25;
                     chartData.labels.push(student.label);                                                           
                     chartData.datasets.push(
                     
                     {
 		                        label: [student.label],
-		                        data: [{x:student.label, y:student.risk, r:(student.activity/eventMax)*20}],		                        
+		                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
 		                        backgroundColor: [$scope.colorCodeRiskForBubble(student.risk)],
 		                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
 		                    }
