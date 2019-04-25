@@ -376,7 +376,7 @@
                     {
 		                        label: [student.label],
 		                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
-		                        backgroundColor: [$scope.colorCodeRisk(student.risk)],
+		                        backgroundColor: [$scope.colorCodeRiskForBubble(student.risk)],
 		                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
 		                    }
                     
