@@ -1,0 +1,68 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{tenant.name}} <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a ui-sref="index.admin.editTenant({tenantId:tenant.id})">Edit</a></li>
+            <li><a ui-sref="index.admin.tenants">All Tenants</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="row">
+  <div class="col-xs-12 col-md-3">
+    <h4>Data Provider Types</h4>
+    <ul class="list-group">
+      <a class="list-group-item" ng-repeat="(key, providerType) in providerTypes" ng-click="selectProviderType(providerType.type);"><span translate="{{providerType.key}}"></span></a>
+    </ul>
+    <hr></hr>
+    <h4>Consumers</h4>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="consumer in tenant.consumers">
+        <span>{{consumer.name}}</span>
+        <span class="pull-right">                
+          <a ng-click="removeConsumer(consumer.id,consumer.oauthConsumerKey);"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+        </span>
+        <ul>
+          <li>Key: {{consumer.oauthConsumerKey}}</li>
+          <li>Secret: {{consumer.oauthConsumerSecret}}</li>
+        </ul>
+      </li>
+      <li class="list-group-item">
+          <form class="" novalidate="novalidate" name="consumerForm">
+            <div class="form-group">
+              <div ng-class="{ 'has-error' : (consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.required)
+              || (consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.maxlength) }">
+                <label for="consumerName">Add new consumer</label>
+                  <input type="text" ng-maxlength="99" class="form-control" id="consumerName" name="consumerName" ng-required="true" ng-model="consumer.name" placeholder="Consumer Name">
+                  <!-- Required Text -->
+                  <p ng-show="consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.required" class="help-block" translate="ERROR_REQUIRED"></p>
+                  <!-- Help Text MAX LENGTH of Secret and keys == 100 -->
+                  <p ng-show="consumerForm.consumerName.$dirty && consumerForm.consumerName.$error.maxlength" class="help-block" translate="ERROR_MAX_LENGTH"></p>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="button"
+              ng-disabled="!consumerForm.$valid || submitted" ng-click="addConsumer();">Save</button>
+          </form>    
+      </li>
+    </ul>
+  </div>
+  <div class="col-xs-12 col-md-9 ui-view">
+  </div>
+</div>

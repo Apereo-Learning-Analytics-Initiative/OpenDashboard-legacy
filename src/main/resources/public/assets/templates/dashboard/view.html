@@ -1,0 +1,28 @@
+<div ng-show="activeDashboard && activeDashboard.cards && activeDashboard.cards.length > 0">
+    <div class="row" ng-repeat="card in activeDashboard.cards">
+        <div class="col-xs-12" >
+            <div ng-include="'/cards/'+card.cardType+'/view.html'"></div>
+        </div>
+        <!-- Former card level menu -->
+<!--         <div class=""> -->
+<!--           <div class="navbar-collapse collapse" ng-show="!isStudent"> -->
+<!--             <ul class="nav navbar-nav navbar-right"> -->
+<!--               <li class="dropdown"> -->
+<!--                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_INDEX_MENU_DROPDOWN"> -->
+<!--                   <i class="glyphicon glyphicon-option-vertical"></i> -->
+<!--                 </a> -->
+<!--                 <ul class="dropdown-menu"> -->
+<!--                   <li ng-show="showEditLink(card);"> -->
+<!--                     <a ui-sref="index.editCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})"  -->
+<!--                       class="pull-left" style="margin-right: 10px;" translate="LABEL_EDIT" id="LINK_VIEW_DASHBOARD_LABEL_EDIT"></a> -->
+<!--                   </li> -->
+<!--                   <li> -->
+<!--                     <a ui-sref="index.removeCard({cmid:contextMapping.id,dbid:activeDashboard.id,cid:card.id})" translate="LABEL_REMOVE" id="LINK_VIEW_DASHBOARD_LABEL_REMOVE"></a> -->
+<!--                   </li> -->
+<!--                 </ul> -->
+<!--               </li> -->
+<!--             </ul> -->
+<!--           </div> -->
+<!--         </div> -->
+    </div>
+</div>

@@ -1,0 +1,14 @@
+# OpenDashboard Configuration
+opendashboard:
+  # possible values - JiscEntryPointProcessor, DemoEntryPointProcessor
+  entrypoint: DemoEntryPointProcessor
+  # posssible values - JiscAuthenticator, DemoAuthenticator
+  authenticator: DemoAuthenticator
+  
+spring:
+  # Mongo settings
+  data:
+    mongodb:
+      uri: mongodb://localhost/demo_od
+
+  

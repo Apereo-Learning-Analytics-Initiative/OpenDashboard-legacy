@@ -1,0 +1,353 @@
+<section class="pulse-charts">
+    <div class="pulse-header hide-until-ready">
+        <!-- 
+        When viewing outside of a LMS the breadcrumb is to include navigation for
+        viewing the listing of all classes.
+
+        When viewing from within a LMS the breadcrumb is to only provide navitation
+        withing the selected class.
+        -->
+        <div class="backlinks">
+            <!-- Back link to class list -->
+            <a class="back-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession" ng-if="listType !== 'classes'">
+                <i class="fa fa-chevron-left"></i> 
+                Class List
+            </a>
+            
+            <!-- back link to single class -->
+            <a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-if="listType === 'student'">
+                <i class="fa fa-chevron-left"></i> 
+                {{currentCourse.label}}
+            </a>
+        </div>
+        
+        <!-- initial title for class list -->
+        <span class="title-dropdown" ng-if="listType == 'classes'"><a href="">
+            Select Course
+        </a></span>
+
+        <!-- main title dropdown, filter settings popover -->
+        <span class="title-dropdown" ng-if="listType !== 'classes'""> 
+            
+            <!-- filters and overlays popover -->
+            <span class="filters">
+                <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom" popover-title="Filters &amp; Overlays"><i class="fa fa-cog fa-lg"></i></a>
+                <script type="text/ng-template" id="filters.html">
+                    <span ng-if="listType!='student'">
+                        <span class="checkbox filter-item" ng-if="config.hasLastLogin">
+                            <label>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.daysSinceLoginFilter">
+                                Last logged in more than <input type="number" ng-model="$parent.$parent.$parent.$parent.daysSinceLoginFilterCount" min="0"> days ago
+                            </label>
+                        </span>
+                        <span class="checkbox filter-item" ng-if="config.hasMissingSubmissions">
+                            <label>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.submissionFilter">
+                                <input type="number" ng-model="$parent.$parent.$parent.$parent.submissionFilterScore" min="0"> number of submission late or missing
+                            </label>
+                        </span>
+                        <span class="checkbox filter-item" ng-if="config.hasGrade">
+                            <label>
+                                <input id="" type="checkbox" ng-model="$parent.$parent.$parent.$parent.gradeFilter">
+                                Current Course Grade/Score below <input type="number" ng-model="$parent.$parent.$parent.$parent.gradeFilterScore" min="0">
+                            </label>
+                        </span>
+                    </span>
+
+                    <div class="btn-group btn-group-justified buttons" role="group" ng-if="listType == 'student'">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" type="button" ng-click="studentFilters.displayMode='chart'" ng-disabled="studentFilters.displayMode=='chart'">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" type="button" ng-click="studentFilters.displayMode='table'" ng-disabled="studentFilters.displayMode=='table'">
+                                <i class="fa fa-table" aria-hidden="true"></i> Table
+                            </button>
+                        </div>
+                    </div>
+
+                    <div ng-if="listType=='student'" class="checkbox filter-item" ng-repeat="verb in studentFilters.verblist track by $index">
+                        <label>
+                            <input type="checkbox" ng-model="verb.filter" ng-change="updateStudentCharts(studentFilters.detailView)"> {{verb.label}}
+                        </label>
+                    </div>
+
+                    <span class="checkbox filter-item" ng-show="listType == 'students' || listType == 'student'">
+                        <label>
+                            <input id="assignment-toggle" type="checkbox" ng-model="$parent.$parent.assignmentOverlay"> Assignment Overlay
+                        </label>
+                        <span class="help-block" ng-show="assignmentsWithoutDueDates.length">
+                            {{assignmentsWithoutDueDates.length}} <span ng-show="assignmentsWithoutDueDates.length == 1">assignment missing due date, not displayed.</span> 
+                            <span ng-show="assignmentsWithoutDueDates.length > 1">assignments missing due dates, not displayed.</span>
+                        </span>
+                    </span>
+
+                    <span class="checkbox filter-item" ng-show="listType == 'students' && config.hasRisk">
+                        <label>
+                            <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.riskOverlay"> Show Risk Colors
+                        </label>
+                    </span>
+
+<!--                     <span class="checkbox filter-item" ng-show="listType == 'students'">
+                        <label>
+                            <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.gradeOverlay"> Show Grade Colors
+                        </label>
+                    </span>
+ -->
+                     <span class="checkbox filter-item" ng-show="listType == 'students'">
+                         <label>
+                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.activityOverlay"> Show Activity Colors
+                         </label>
+                     </span>
+ 
+                </script>
+            
+            </span>
+            
+            <!-- list of courses in main title -->
+            <span class="dropdown" ng-show="!isLtiSession && listType == 'students'">
+              <a href="" data-toggle="dropdown">{{currentCourse.label}}
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="course in classes">
+                    <a href="#" ui-sref="index.courselist({groupId: course.id})">{{course.label}}</a>
+                </li>
+              </ul>
+            </span>
+
+            <!-- list of students in main title -->
+            <span class="dropdown" ng-if="listType == 'student'">
+              <a href="" data-toggle="dropdown">{{currentStudent.firstName}} {{currentStudent.lastName}}
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="student in currentCourse.students" ng-class="{'active': student.id == currentStudent.id}">
+                    <a href="#" ui-sref="index.courselist.studentView({studentId: student.id})">{{student.label}}</a>
+                </li>
+              </ul>
+            </span>
+
+
+            <a href="" ng-show="isLtiSession && listType == 'students'" ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})">{{currentCourse.label}}</a>
+        </span>
+        
+        <!-- zoom link -->
+        <div class="zoom-actions" ng-class="listType">
+            <i class="fa fa-search-minus zoom-out"></i>
+        </div>
+
+        <!-- student details -->
+        <div class="student-details" ng-if="listType == 'student'">
+            <div class="col-sm-3 activityCard" ng-show="config.hasEmail">
+                <div class="heading">Contact</div>
+                <div class="body">
+                    <a href="" class="fa fa-envelope" ng-click="handleEmail(currentStudent)"></a>
+                </div>
+            </div>
+            <div class="col-xs-3 activityCard">
+                <div class="heading">Activity</div>
+                <div class="body">
+                    {{ currentStudent.activity }}
+                </div>
+            </div>
+            <div class="col-xs-3 activityCard" ng-show="config.hasRisk">
+                <div class="heading">Risk</div>
+                <div class="body">
+                    {{ currentStudent.risk }}
+                </div>
+            </div>
+            <div class="col-xs-3 activityCard" ng-show="config.hasGrade">
+                <div class="heading">Grade</div>
+                <div class="body">
+                    {{ currentStudent.grade }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- header table -->
+        <table 
+        id="pulse-table-header" 
+        class="table table-striped table-condensed table-pulse">
+            <thead id="floating-header" ng-include="'table-header.html'">
+                
+            </thead>
+        </table>
+
+        <div ng-show="assignmentOverlay" id="assignment-overlay" class="hide-until-ready"><svg></svg></div>
+
+    </div>
+    
+    <!--  -->
+    <div id="pulse-data" class="hide-until-ready">
+        <table id="pulse-table-data" class="table table-striped table-condensed table-pulse">
+            <thead id="hidden-header" ng-include="'table-header.html'">
+
+            </thead>
+
+            <script type="text/ng-template" id="table-header.html">
+            <tr>
+                <th class="actions" ng-if="listType == 'students' && config.hasEmail">
+                    <a href="" class="fa fa-envelope"
+                    ng-click="handleEmail(item, true)"
+                    ></a>
+                </th>
+                <th ng-if="listType == 'classes'">
+                    <a href="" ng-click="$parent.$parent.orderByField='label'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort">
+                    Class Name 
+                    <i ng-if="$parent.$parent.orderByField=='label' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='label' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='firstName'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort">
+                    First Name
+                    <i ng-if="$parent.$parent.orderByField=='firstName' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='firstName' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='firstName'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='lastName'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Last Name
+                    <i ng-if="$parent.$parent.orderByField=='lastName' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='lastName' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes' && config.hasRisk">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Risk
+                    <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='risk' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='risk'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes' && config.hasGrade">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='grade'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Grade
+                    <i ng-if="$parent.$parent.orderByField=='grade' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='grade' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='grade'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th ng-if="listType != 'classes'">
+                    <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='activity'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
+                    Activity
+                    <i ng-if="$parent.$parent.orderByField=='activity' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
+                    <i ng-if="$parent.$parent.orderByField=='activity' && $parent.$parent.reverseSort" class="fa fa-caret-up"></i>
+                    <i ng-if="$parent.$parent.orderByField!='activity'" class="fa fa-caret-up spacer"></i>
+                    </a>
+                </th>
+                <th class="timeline-heading">
+
+                </th>
+            </tr>
+            </script>
+
+            <tbody>
+                <tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort" ng-repeat-finish="draw-chart" watch-for-changes="datalist">
+                    <td ng-if="listType == 'students' && config.hasEmail">
+                        <a href="" class="fa fa-envelope"
+                        ng-click="handleEmail(item)"
+                        ></a>
+                    </td>
+                    <td ng-if="listType == 'classes'">
+                        <a ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.firstName}}</a>
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <a href="" ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
+                    </td>
+                    <td ng-if="listType != 'classes' && config.hasRisk">
+                        <div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}</div>
+                    </td>
+                    <td ng-if="listType != 'classes' && config.hasGrade">
+                        <!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
+                        {{item.grade}}
+                        <!-- </div> -->
+
+                    </td>
+                    <td ng-if="listType != 'classes'">
+                        <div class="badge" ng-class="colorCodeActivity(item.activity)">
+                            {{item.activity}}
+                        </div>
+                    </td>
+                    <td id="pulse-chart-{{item.id}}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tooltips">
+        <div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
+            <!-- <i class="fa fa-info-circle"></i> -->
+            <span class="tooltip-lineitem">
+                <span class="info-label">Date:</span>
+                <span class="info-value">{{chartInfo.date | amDateFormat:'M-D'}}</span>
+            </span>
+            <span class="tooltip-lineitem">
+                <span class="info-label">Events:</span>
+                <span class="info-value">{{chartInfo.events}}</span>
+            </span>
+        </div>
+
+
+        <div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
+            <!-- <i class="fa fa-info-circle"></i> -->
+            <span class="tooltip-lineitem">
+                <span class="info-label">Title:</span>
+                <span class="info-value">{{assignmentInfo.label}}</span>
+            </span>
+            <span class="tooltip-lineitem" ng-if="assignmentInfo.date">
+                <span class="info-label">Date:</span>
+                <span class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
+            </span>
+            <span class="tooltip-lineitem">
+                <span class="info-label">Type:</span>
+                <span class="info-value">{{assignmentInfo.events}}</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Email</h4>
+            <div class="email-students">
+                <span class="label-repeat" ng-repeat="student in emailList">
+                    <span class="label label-info">
+                        {{student.label}}
+                    </span>
+                </span>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div ng-if="sent" class="alert alert-success">
+                Email sent to {{emailstudent.name}}.
+            </div>
+            <form action="">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">message</label>
+                    <textarea class="form-control"></textarea>
+                    
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" ng-click="sent = 1">Send Email</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- Sub-view for student details -->
+<div class="ui-view" ng-if="listType == 'student'"></div>
+
+
+

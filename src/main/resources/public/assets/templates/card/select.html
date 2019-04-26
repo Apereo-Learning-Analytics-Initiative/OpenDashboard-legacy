@@ -1,0 +1,53 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="row">
+  <div class="col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 translate="TEXT_SELECT_CARD_HEADER"></h3>
+        <h5 translate="TEXT_SELECT_CARD_MESSAGE"></h5>
+      </div>
+      <div class="panel-body">
+      
+      <div class="row">
+          <div class="col-xs-12">
+            <table class="table table-striped table-responsive">
+              <thead>
+                <th class="col-sm-4">TITLE</th>
+                <th class="col-sm-5">DESCRIPTION</th>
+                <th class="col-sm-3">&nbsp;</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="card in cards" ng-init="isConfigured = isConfigured(card.cardType)">
+                  <td>{{card.title}}</td>
+                  <td>{{card.description}}</td>
+                  <td>
+                    <button ng-show="!isConfigured" class="btn btn-link" 
+                      id="BUTTON_SELECT_CARD_ADD" ng-click="addCard(card.cardType);"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    </button>
+                    <button ng-show="isConfigured" class="btn btn-link" id="BUTTON_SELECT_CARD_EDIT_{{card.cardType}}" ng-click="editCard(card.cardType);">
+                      <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+      
+    </div>
+  </div>
+ </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="row">            
+    <div class="col-xs-12 col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 translate="TEXT_ADD_DASHBOARD_HEADER"></h3>
+          <h5 translate="TEXT_ADD_DASHBOARD_MESSAGE"></h5>
+        </div>
+        <div class="panel-body">
+          <form name="addDashboardForm" role="form" novalidate="novalidate">
+            <div class="form-group col-xs-12" ng-class="{ 'has-error' : (addDashboardForm.title.$dirty && addDashboardForm.title.$invalid) || (addDashboardForm.title.$dirty && addDashboardForm.title.$error.required) }">
+              <label for="title" translate="LABEL_TITLE"></label>
+              <input type="text" class="form-control" id="title" name="title" placeholder="Give your dashboard a title" 
+                  data-ng-model="dashboard.title" ng-model-options="{debounce: 200}" ng-change="onDashboardTitleAdd('addDashboardForm', 'title', dashboard.title)" id="INPUT_ADD_DASHBOARD_TITLE" required="required">
+              <p ng-show="addDashboardForm.title.$dirty && addDashboardForm.title.$error.required" class="help-block" translate="ERROR_TITLE_REQUIRED"></p>
+              <p ng-show="addDashboardForm.title.$dirty && addDashboardForm.title.$invalid" class="help-block" translate="ERROR_DASHBOARD_EXISTS">/p>
+            </div>
+            <button ng-disabled="addDashboardForm.$invalid || addDashboardForm.title.$error.required" class="btn btn-primary" ng-click="save()" translate="BUTTON_SAVE" id="BUTTON_ADD_DASHBOARD_SAVE"></button>
+            <button ng-show="contextMapping && contextMapping.dashboards" class="btn btn-link" onclick="javascript:window.history.back()" translate="BUTTON_CANCEL" id="BUTTON_ADD_DASHBOARD_CANCEL"></button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>

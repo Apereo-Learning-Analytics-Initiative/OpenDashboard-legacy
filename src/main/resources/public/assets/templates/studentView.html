@@ -1,0 +1,169 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<section class="studentActivity">
+    <!-- <div class="col-md-2"> -->
+<!--         <div class="activityCard">
+            <div class="heading">Total Activity</div>
+            <div class="body">
+                <h1>{{ actions.length }}</h1>
+            </div>
+        </div>
+        <div class="activityCard">
+            <div class="heading">Risk</div>
+            <div class="body">
+                <h1>{{ currentStudent.risk }}</h1>
+            </div>
+        </div>
+        <div class="activityCard">
+            <div class="heading">Grade</div>
+            <div class="body">
+                <h1>{{ currentStudent.grade }}</h1>
+            </div>
+        </div> -->
+        <!-- Toggle between chart and table -->
+<!--         <div class="buttons">
+            <button class="btn btn-primary btn-block" type="button" ng-click="displayMode='table'" ng-disabled="displayMode=='table'">
+                <i class="fa fa-table" aria-hidden="true"></i> Table
+            </button>
+            <button class="btn btn-primary btn-block" type="button" ng-click="displayMode='chart'" ng-disabled="displayMode=='chart'">
+                <i class="fa fa-bar-chart" aria-hidden="true"></i> Chart
+            </button>
+        </div> -->
+<!-- 
+        <h3>Filter by Activity</h3>
+        <div class="student-filters">
+            <form class="form">
+
+                <button class="btn btn-primary btn-block" type="button" ng-click="$emit('toggleAllFilters')">
+                    <i class="fa" aria-hidden="true" ng-class="{'fa-toggle-off': !allFilters, 'fa-toggle-on': allFilters}"></i> Toggle All
+                </button>
+                <div class="checkbox" ng-repeat="verb in studentFilters.verblist track by $index">
+                    <label>
+                        <input type="checkbox" ng-model="verb.filter" ng-change="$emit('updateTable', studentFilters.detailView)"> {{verb.label}}
+                    </label>
+                </div>
+            </form>
+        </div> -->
+
+    <!-- </div> -->
+
+    <div class="col-md-12">
+        <h3>Detail Activity</h3>
+        <div>
+            <a href="" ng-click="$emit('updateTable', '7days')">Last 7 Days</a> | <a href="" ng-click="$emit('updateTable', '30days')">Last 30 Days</a> | <a href="" ng-click="$emit('updateTable', '90days')">Last 90 Days</a>
+        </div>
+        <!-- Chart -->
+        <div class="activityOverTime" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="activityOverTime" width="400" height="300"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="" ng-show="studentFilters.displayMode=='table'">
+            <table id="activityOverTimeTable" class="table table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th class="dateColumn">Date</th>
+                        <th ng-repeat="dataset in activityOverTimeData.datasets">
+                            {{ dataset.label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="label in activityOverTimeData.labels">
+                        <td>{{label}}</td>
+                        <td ng-repeat="dataset in activityOverTimeData.datasets">
+                            {{ dataset.data[$parent.$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3>Activity By Type</h3>
+        <!-- Chart -->
+        <div class="activityByVerbChart" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="activityByVerbChart" width="400" height="150"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="activityCard" ng-show="studentFilters.displayMode=='table'">
+            <table id="activityByVerbTable" class="activityTable">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in activityByVerbChartData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in activityByVerbChartData.labels">
+                            {{ activityByVerbChartData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3>Activity By Time of Day</h3>
+        <!-- Chart -->
+        <div class="hourlyActivityChart" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="hourlyActivityChart" width="400" height="100"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="" ng-show="studentFilters.displayMode=='table'">
+            <table id="hourlyActivityTable" class="table">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in hourlyActivityChartData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in hourlyActivityChartData.labels">
+                            {{ hourlyActivityChartData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3>Activity By Day of Week</h3>
+        <!-- Chart -->
+        <div class="activityDayOfWeekChart" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="activityDayOfWeekChart" width="400" height="200"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="" ng-show="studentFilters.displayMode=='table'">
+            <table id="activityDayOfWeekTable" class="table table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th class="dateColumn">Activity</th>
+                        <th ng-repeat="label in activityDayOfWeekData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dataset in activityDayOfWeekData.datasets">
+                        <td>{{dataset.label}}</td>
+                        <td ng-repeat="label in activityDayOfWeekData.labels">
+                            {{ dataset.data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+

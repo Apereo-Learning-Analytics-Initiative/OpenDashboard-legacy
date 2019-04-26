@@ -1,0 +1,361 @@
+/*******************************************************************************
+ * Copyright 2015 Unicon (R) Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *******************************************************************************/
+ 
+ /*
+ * Login
+ */
+ /* Custom, iPhone Retina */ 
+    @media only screen and (min-width : 320px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (min-width : 480px) {
+     .login-page { 
+      }
+      
+      .login-panel-default {
+      }
+      
+      .login-margins {
+      }
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (min-width : 768px) {
+      .login-page { 
+      }
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (min-width : 992px) {
+/*       .login-page {  */
+/*         background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed;  */
+/*         -webkit-background-size: cover; */
+/*         -moz-background-size: cover; */
+/*         -o-background-size: cover; */
+/*         background-size: cover; */
+/*       } */
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+   }
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+/*       .login-page {  */
+/*         background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed;  */
+/*         -webkit-background-size: cover; */
+/*         -moz-background-size: cover; */
+/*         -o-background-size: cover; */
+/*         background-size: cover; */
+/*       } */
+      
+      .login-panel-default {
+        opacity: 1;
+        margin-top:30px;
+      }
+      
+      .login-margins {
+        margin-top: 100px;
+        margin-bottom: 200px;
+      }
+    } 
+ 
+.od {
+    width: 100%;
+    height: auto;
+}
+
+.od-background-color {
+  background-color: #F1F0EB;
+}
+
+.od-subheader-background-color {
+  background-color: #ACA8A1;
+}
+
+.od-background-color-white {
+  background-color: #FFFFFF;
+}
+
+.od-text-black {
+  color: #000000;
+}
+
+.od-img-thumb {
+    max-height: 50px;
+}
+
+.od-logo {
+    max-width:100px;
+    margin-bottom: 40px;
+}
+
+.od-left {
+    height: 100%;
+    min-height: 480px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.od-left-nav {
+}
+
+.od-left-nav-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.od-left-nav-item.active {
+    background-color: #FFF;
+}
+
+
+.od-left-nav-item a,
+.od-left-nav-item a:HOVER {
+    padding-left: 10px;
+    text-decoration: none;
+    font-weight:bold;
+    color: #000000;
+}
+
+.od-content {
+    height: 100%;
+    min-height: 800px;
+    background-color: #FFF;
+}
+
+.od-card {
+    background-color: #FFFFFF;
+}
+
+.od-card-add {
+    background-color: #FFFFFF;
+    padding: 10px;
+}
+
+.od-card-box {
+    height: 150px;
+    text-align: center;
+    padding: 5px;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    margin-top: 5px;
+}
+.od-card-box > img {
+    max-height: 50px;
+}
+
+.od-card-box-desc {
+  height: 50px;
+  text-overflow: ellipsis;
+}
+
+/* MARGINS */
+
+.m-t {
+    margin-top: 10px;
+}
+
+.m-t-lg {
+    margin-top: 20px;
+}
+
+.m-b {
+  margin-bottom: 10px;
+}
+
+.m-r-l {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+/* PADDING */
+
+.p-t-lg {
+  padding-top: 20px;
+}
+
+.p-t {
+	padding-top: 10px;
+}
+
+.p-b {
+	padding-bottom: 10px;
+}
+
+.p-t-sm {
+	padding-top: 5px;
+}
+
+.p-b-sm {
+	padding-bottom: 5px;
+}
+
+.spinner {
+	position: fixed; 
+	width: 100%; 
+	height: 100%; 
+	background: black url('/assets/img/spinner.gif') center center no-repeat; 
+	opacity: .5; 
+	z-index: 500;
+}
+
+/* PROVIDERS */
+
+.od-providertype-box {
+}
+
+.od-provider-box {
+}
+
+.od-providertype-box-desc {
+  height: 50px;
+  overflow: hidden;
+}
+/* ACTIVITY-RADAR */
+.radar-chart-title {
+    min-height: 30px;
+}
+
+.radar-chart-title small label{
+    margin-right: 10px;
+}
+
+.radar-chart-stage {
+    padding: 15px;
+}
+
+.glyphicon-transparent:before {
+    content: "\2122";
+    color: transparent !important;
+}
+
+.glyphicon-transparent {
+    border-radius: 10px;
+}
+
+.od-border-right {
+  border-right-color: black;
+  border-right-style: solid;
+}
+
+.od-border-bottom {
+  border-bottom-color: black;
+  border-bottom-style: solid;
+}
+
+.od-danger-color {
+  background-color: #d9534f;
+}
+
+.od-warning-color {
+  background-color: #f0ad4e;
+}
+
+.od-info-color {
+  background-color: #5bc0de;
+}
+
+.od-success-color {
+  background-color: #5cb85c;
+}
+
+.od-badge-danger {
+  background-color: #d9534f;
+  color: #000000;
+}
+
+.od-badge-warning {
+  background-color: #f0ad4e;
+  color: #000000;
+}
+
+.od-badge-info {
+  background-color: #5bc0de;
+  color: #000000;
+}
+
+.od-badge-success {
+  background-color: #5cb85c;
+  color: #000000;
+}
+
+.box-shadow--2dp {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12)
+}
+.box-shadow--3dp {
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12)
+}
+.box-shadow--4dp {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2)
+}
+.box-shadow--6dp {
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12), 0 3px 5px -1px rgba(0, 0, 0, .2)
+}
+.box-shadow--8dp {
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12), 0 5px 5px -3px rgba(0, 0, 0, .2)
+}
+.box-shadow--16dp {
+    box-shadow: 0 16px 24px 2px rgba(0, 0, 0, .14), 0 6px 30px 5px rgba(0, 0, 0, .12), 0 8px 10px -5px rgba(0, 0, 0, .2)
+}
+
+/*
+* BACKGROUND
+*/
+.none {
+  background: none;
+}
+.full {
+  background: url(/assets/img/backgrounds/stairs-people-sitting-architecture.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+/*
+* BOOTSTRAP OVERRIDES
+*/
+
+.panel-default > .panel-heading {
+  background-color: #ACA8A1;
+  color: #000000;
+}

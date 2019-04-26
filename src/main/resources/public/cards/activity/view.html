@@ -1,0 +1,84 @@
+<div class="col-xs-12 od-background-color" ng-controller="ActivityController">
+  <div class="row">
+  
+    <!-- LEFT COLUMN -->
+    <div class="col-md-4">
+      <div class="navbar-collapse collapse" ng-show="!isStudent" style="background-color: #ACA8A1; margin-bottom: 10px; margin-top: 10px;">
+        <div class="nav navbar-nav navbar-left">
+          <p class="navbar-text"><strong>ACTIVITY STREAM</strong></p>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href ng-click="refreshActivityStream();"><i style="color:black;" class="glyphicon glyphicon-refresh"></i></a></li>
+        </ul>
+        <ul ng-show="activeCourse" class="nav navbar-nav navbar-left">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="LINK_ACTIVITY_COURSE_LIST"><strong style="color:black;">{{activeCourse.title}}</strong> <span style="color:black;" class="caret" ng-show="courses"></span></a>
+            <ul class="dropdown-menu" ng-show="courses">
+              <li ng-repeat="course in courses"><a href ng-click="switchCourse(course.id)" id="LINK_ACTIVITY_COURSE_LIST_SELECT">{{course.title}}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="box-shadow--6dp" style="background-color: white;">
+        <div class="media" ng-repeat="event in events | orderBy: 'timestamp':true | limitTo:10">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object"  >
+            </a>
+          </div>
+          <div class="media-body">
+            <h6 class="media-heading">{{event.timestamp | date : 'medium'}}</h6>
+            <p><strong>{{event.actor}}</strong> {{event.verb}} <strong>{{event.object}}</strong>.
+          </div>
+        </div>    
+      </div>
+    </div>
+    
+    <!-- RIGHT Column -->
+    <div class="col-md-8">
+      
+      <div class="navbar-collapse collapse od-subheader-background-color m-b m-t">
+        <div class="nav navbar-nav">
+        <p class="navbar-text"><strong >DATE RANGE</strong>:&nbsp;<strong>{{dateRange}}</strong></p>
+        </div>
+      </div>
+      
+      <canvas id="line" class="chart chart-line" chart-data="data"
+        chart-labels="labels" chart-series="series">
+      </canvas> 
+      
+      <div class="row m-t-lg">
+        <div class="col-md-4 col-xs-12">
+          <div class="panel panel-default box-shadow--6dp">
+            <div class="panel-heading text-center"><strong>TOTAL EVENTS</strong></div>
+            <div class="panel-body text-center">
+              <h1><strong>{{events.length}}</strong></h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+          <div class="panel panel-default box-shadow--6dp">
+            <div class="panel-heading text-center"><strong>MOST ACTIVE USERS</strong></div>
+            <div class="panel-body">
+              <ol class="list-group">
+                <li class="list-group-item" style="word-wrap: break-word;" ng-repeat="actor in eventsByActor | limitTo:3"><span class="badge">{{actor[1]}}</span>{{actor[0]}}</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+          <div class="panel panel-default box-shadow--6dp">
+            <div class="panel-heading text-center"><strong>TOP ACTIONS</strong></div>
+            <div class="panel-body">
+              <ol class="list-group">
+                <li class="list-group-item" style="word-wrap: break-word;" ng-repeat="verb in eventsByVerb | limitTo:3"><span class="badge">{{verb[1]}}</span>{{verb[0]}}</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    
+  </div>
+</div>

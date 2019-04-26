@@ -1,0 +1,56 @@
+<head>
+<link rel="stylesheet" type="text/css" href="assets/templates/muse/muse.css" />
+</head>
+<br>
+<div ng-if = "CourseStudent.authentication[0].authority=='ROLE_INSTRUCTOR' && CourseStudent.statistics.successProbability != undefined && CourseStudent.statistics.isAtRisk != undefined" class="button" ui-sref="index.museCourse()">&laquo; Course View</div>
+<div class="button2" ui-sref="index.muse()">&laquo; Course List</div>
+<br>
+<div id="margin">
+  	<h3 style="color:#000066; font-weight: bold; margin-left:240px; margin-right:245px; cursor:default;" align="center">{{CourseStudent.enrollment.class.title}} - {{CourseStudent.enrollment.user.familyName}}, {{CourseStudent.enrollment.user.givenName}}<br />
+  	<h4 style="color:#000066; font-weight: bold; margin-left:240px; margin-right:245px; cursor:default;" align="center" ng-if = "CourseStudent.authentication[0].authority=='ROLE_INSTRUCTOR' && CourseStudent.statistics.successProbability != undefined && CourseStudent.statistics.isAtRisk != undefined">Success Probability : {{CourseStudent.statistics.successProbability}}, Is At Risk - {{CourseStudent.statistics.isAtRisk}}</h4></h3>
+</div>
+
+<div id="muserisk" class="background-img">
+		<h3 class="subhead2" style="color:#000066;">Activity by Week</h3>
+			<div align="center"  class="chart-legend" style="display: block;">
+				<span style="color:rgba(45,77,255,0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(45,77,255,0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Course Login&nbsp;</span>			
+				<span style="color:rgba(255,196,45,0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(255,196,45,0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Content Read&nbsp;</span>
+				<span style="color:rgba(255,83,45,0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(255,83,45,0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Lesson View&nbsp;</span>
+				<span style="color:rgba(194, 27, 255, 0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(194, 27, 255, 0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Assessment Attempt&nbsp;</span>
+				<span style="color:rgba(84, 255, 27, 0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(84, 255, 27, 0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Assessment Submit&nbsp;</span>
+				<span style="color:rgba(255, 27, 76, 0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(255, 27, 76, 0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Forums Post&nbsp;</span>
+				<span style="color:rgba(21, 255, 239, 0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(21, 255, 239, 0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Forums Read&nbsp;</span>
+				<span style="color:rgba(166, 8, 255, 0.8); font-size:70px; vertical-align:-20px">&#9642;</span><span style="color:rgba(166, 8, 255, 0.4); font-size:70px; vertical-align:-20px">&#9642;</span>
+					<span style="font-size:14px">Other Activity&nbsp;</span>
+					&emsp;
+					<span style="font-size:16px">*(Lighter colors indicate average activity relative to the class)</span>
+			</div>
+			<br>
+		<div class="d3_student_activity"></div>		
+</div>
+
+<div id="muserisk" class="background-img">
+		<h3 class="subhead2" style="color:#000066;">Student Average Activity and Class Average</h3>
+		<div align="center"  class="chart-legend" style="display: block;">
+			<ul style="list-style-type:disc;">
+				<li>
+					<span style="background-color:rgba(255, 231, 108, 0.8)"></span>
+					Activity of Student
+				</li>
+				<li>
+					<span style="background-color:rgba(255, 108, 157, 0.8)"></span>
+					Activity of Class
+				</li>
+			</ul>
+		</div>
+		<div class="d3_studentclass_activity"></div>
+</div>
+
+	

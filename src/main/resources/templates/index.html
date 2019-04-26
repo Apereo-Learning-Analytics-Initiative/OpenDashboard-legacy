@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thymeleaf.org" ng-app="OpenDashboard" ng-csp="" ng-controller="AuthCtrl" ng-class="{full:isLogin()}">
+<head>
+<!-- TODO: Translate -->
+<title>Dashboard</title>
+
+<base href="/"></base>
+<meta charset="utf-8"></meta>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+
+<!-- CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-csp.css"></link>
+<link rel="stylesheet" th:href="@{/assets/css/lib/angular-notification-min.css}"></link>
+<link rel="stylesheet" th:href="@{/assets/css/lib/keen-dashboards.css}"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.4/angular-chart.css"></link>
+<link rel="stylesheet" th:href="@{/assets/css/ux.jisc-1.0.0.style.css}" media="all"></link>
+<link rel="stylesheet" th:href="@{/assets/css/od.css}"></link>
+<link rel="stylesheet" th:href="@{/assets/css/jisc-overrides.css}"></link>
+<link rel="stylesheet" th:href="@{/assets/css/app.css}"></link>
+<!-- END CSS -->
+
+</head>
+
+<body id="ng-app" ng-class="{application:!isLogin(), none:isLogin(), isLTI:isLtiSession}">
+ 
+  <div loading-widget="" class="spinner"></div>
+  <div class="ui-view"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+  <script type="text/javascript" src="/assets/js/min/lib.min.js"></script>
+  <script type="text/javascript" src="/assets/js/min/opendashboard.min.js"></script>
+  <script type="text/javascript" src="/assets/js/min/cards.min.js"></script>
+  
+</body>
+</html>

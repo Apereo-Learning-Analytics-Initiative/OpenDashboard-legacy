@@ -1,0 +1,9 @@
+/application-local.properties
+
+# Marist specific files #
+/assets/Mail-32.png
+
+/assets/img/locales/*
+!/assets/img/locales/cy_GB.png
+!/assets/img/locales/en_GB.png
+!/assets/img/locales/en_US.png

@@ -1,0 +1,9 @@
+LTIDeployment:
+  tags:
+    - LTI_Runner
+  script:
+    # Builds the .jar file to be moved for open dashboard.
+    - . deploy.sh $CI_BUILD_REF_NAME
+  only:
+    - devel
+    - master

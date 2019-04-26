@@ -1,0 +1,40 @@
+<!--
+Copyright (c) 2015 Unicon (R) Licensed under the
+Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+http://www.osedu.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License. 
+-->
+<div class="row">            
+    <div class="col-xs-12">
+      <div class="chart-wrapper">
+        <div class="chart-title">
+          <h3 translate="TEXT_REMOVE_CARD_HEADER"></h3>
+          <h5 translate="TEXT_REMOVE_CARD_MESSAGE"></h5>
+        </div>
+        <div class="chart-stage">
+          <div class="row m-t">
+              <div class="col-xs-12">
+                  <div class="media">
+                    <div class="media-body">
+                      <h4 class="media-heading">{{card.title}}</h4>
+                      {{card.description}}
+                    </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="chart-notes">
+          <button class="btn btn-primary" ng-click="removeCard()" translate="BUTTON_REMOVE" id="BUTTON_REMOVE_CARD_REMOVE"></button>
+          <button class="btn btn-link" ng-click="cancel()" translate="BUTTON_CANCEL" id="BUTTON_REMOVE_CARD_CANCEL"></button>
+        </div>
+      </div>        
+    </div>
+</div>

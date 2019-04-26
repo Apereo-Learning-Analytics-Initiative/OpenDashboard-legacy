@@ -1,0 +1,206 @@
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="assets/templates/muse/muse.css" />
+</head>
+<br>
+<div class="button" ui-sref="index.muse()">&laquo; Course List</div>
+<div id="margin">
+  	<h2 style="color:#000066; margin-left:120px; margin-right:120px; cursor:default;" align="center";>Class Summary - {{course.course.sourcedId}}</h2>  	
+  	<br>
+</div>
+<div id="musecolors">
+<table class="musetable">
+	<thead>
+		<tr>
+			<th style="cursor: default;"> Class Start Date</th>
+			<th style="cursor: default;"> Class End Date</th>
+			<th style="cursor: default;"> Enrollments</th>
+			<th style="cursor: default;"> At Risk Count</th>
+			<th style="cursor: default;"> Max Activity</th>
+			<th style="cursor: default;"> Mean Activity</th>
+			<th style="cursor: default;"> Min Activity</th>
+		</tr>
+	</thead>
+		<td style="color:black; cursor: default;">{{course.course.metadata["http://unicon.net/vocabulary/v1/classStartDate"]}}</td>
+		<td style="color:black; cursor: default;">{{course.course.metadata["http://unicon.net/vocabulary/v1/classEndDate"]}}</td>
+		<td style="color:black; cursor: default;">{{course.courseStatistics.enrollment}}</td>
+		<td style="color:black; cursor: default;">{{course.courseStatistics.atRiskCount}}</td>
+		<td style="color:black; cursor: default;">{{course.courseStatistics.maxActivity}}</td>
+		<td style="color:black; cursor: default;">{{course.courseStatistics.meanActivity}}</td>
+		<td style="color:black; cursor: default;" >{{course.courseStatistics.minActivity}}</td>
+</table>
+</div>
+
+<form  name="contact-form" ng-submit="submit()">
+  <div class="modal fade" id="emailModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width: 750px">
+      <div class="modal-content-email">
+		 <div class="modal-header-email">
+	      <fieldset>
+		      <center style="font-size: 26pt;">Muse Mail</center>   
+		      <div style="min-width:10%; display:inline-block;">
+		      	  <span><strong>To:</strong></span>
+			      <span id="museEmailTo"></span>
+			  </div>
+			  <div style="min-width:10%; display:inline-block; float:right;">
+			      <span><strong>From:</strong></span>
+			      <span id ="museEmailFrom"></span>
+		      </div></br>
+		      
+		      <center><strong>Subject: </strong><span id="museEmailSubject"></span></center>
+	 	      <textarea id="museEmailBody" required style="height:300px; width: 100%; resize: none; font-size: 10pt;"></textarea> 
+		      <strong>Link Resources:</strong><br><div id="emailAttachments"></div>
+		      
+	     </fieldset>
+	    </div>
+	    </br></br>
+       <input type="submit" id="emailSubmit" value="Send" style="float:right; position:absolute; right:60%; top:93%" >
+       <input type="button" id="emailcancel" value="Cancel" data-dismiss="modal" style="float:right; position:absolute; right:30%; top:93%">
+      </div>
+    </div>	
+   </div>
+</form>
+
+<!-- This modal is for presentation purposes -->
+<div class="modal fade" id="testModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Muse mail</h4>
+      </div>
+      <div class="modal-body" style="margin-bottom:-15px">
+      	<div class="alert alert-danger" role="alert">Email notification service is unavailable during the pilot</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="muserisk" class="background-scale-img">
+
+	<div class="d3_donut_small" style="float:right;"></div>
+
+
+	<h3 class="subhead2" style="color:#000066; position: static; margin-top:0px; display: block;">Probability of Success - <span style="font-size:16px">In the presence of insufficient data, the system displays the GPA if it is present in the student record, scaled between 0% - 100%</span></h3>
+	<div class="chart-legend" align="center" style="margin-left: 10%; position: static; display: block;">
+		<ul style="list-style-type:disc;">
+			<li>
+				<span style="background-color:rgba(230,0,0,0.5)"></span>
+				At Risk
+			</li>
+			<li>
+				<span style="background-color:rgba(255,255,0,0.5)"></span>
+				Possibly at Risk
+			</li>
+			<li>
+				<span style="background-color:rgba(34,139,34,0.5)"></span>
+				Not at Risk
+			</li>
+				+ &nbsp;&nbsp;
+			<li>
+				<span style="  
+					-moz-border-radius: 10px/10px;  
+					-webkit-border-radius: 10px 10px;
+ 					border-radius: 50px/50px;
+  					border: solid 2px #111111;
+ 					width: 20px;
+ 					height: 20px;"></span>
+				Insufficient data for prediction
+			</li>
+			</br>
+			&nbsp;
+			<span style="font-size:16px">* (Size of bubble represents the activity relative to others in the class)</span>
+			&nbsp;
+			<span style="font-size:16px">* Final Grades Displayed in Center</span>
+			&nbsp;
+			<span style="font-size:16px">* Ticks on Border Denote Graduate Students</span>
+			
+		</ul>
+	</div>
+	
+	<div class="d3_donut" style="float:left; display:none;">
+		<div class="donut_key" style="float:right;"></div>
+	</div>
+	
+	<div class="d3_bubbles"></div>
+	
+</div>
+
+<div id="muserisk" class="background-img">
+	<h3 class="subhead2" style="color:#000066; margin-top:0px;">Activity by Week</h3>
+	<div id="activityLegend" class="chart-legend" align="center" style="display: block;">
+		<ul style="list-style-type:disc;">
+			<li>
+				<span style="background-color:rgba(45,77,255,0.8)"></span>
+				Course Login Average
+			</li>
+			<li>
+				<span style="background-color:rgba(255,196,45,0.8)"></span>
+				Content Read Average
+			</li>
+			<li>
+				<span style="background-color:rgba(255,83,45,0.8)"></span>
+				Lesson View Average
+			</li>
+			<li>
+				<span style="background-color:rgba(194,27,255,0.8)"></span>
+				Assessment Attempt Average
+			</li>
+			<li>
+				<span style="background-color:rgba(84,255,27,0.8)"></span>
+				Assessment Submit Average
+			</li>
+			<li>
+				<span style="background-color:rgba(255,27,76,0.8)"></span>
+				Forums Post Average
+			</li>
+			<li>
+				<span style="background-color:rgba(21,255,239,0.8)"></span>
+				Forums Read Average
+			</li>
+			<li>
+				<span style="background-color:rgba(136,8,255,0.8)"></span>
+				Activity Average
+			</li>
+		</ul>
+	</div>	
+	<div class="d3_class_activity"></div>
+	
+</div>
+<br><br>
+<div id="margin"><h3 style="color:#000066;">&nbsp;List Of Students in Course &nbsp;&nbsp;<span style="color:black; font-size:14px">*Intervention and probability agreement input will be available from week 6 to week 10</span></h3></div>
+<div id="musecolors">
+	<table id="courseTable" class="table table-striped table-condensed table-hover">
+		<thead>
+			<tr>
+				<th style="cursor:default;" id="instructorConfHead">Intervention</th>
+				<th ng:click="sortData('user.givenName')">First Name<div ng-class="getSortClass('user.givenName')"></div></th>
+				<th ng:click="sortData('user.familyName')">Last Name<div ng-class="getSortClass('user.familyName')"></div></th>
+				<th ng:click="sortData('studentStatistics.isAtRisk')">Is At Risk?<div ng-class="getSortClass('studentStatistics.isAtRisk')"></div></th>
+				<th ng:click="sortData('studentStatistics.successProbability')">Success Probability<div ng-class="getSortClass('studentStatistics.successProbability')"></div></th>
+				<th style="cursor:default;">Email</th>
+			</tr>
+		</thead>
+		<tr ng-switch on="student.studentStatistics.isAtRisk"  
+			ng-repeat="student in enrollments 
+				| filter: {role: 'student'} 
+				| orderBy:sortColumn:reverseSort"
+		>
+			<td class="instructorConfCell"><input type="checkbox" name="intervention"  ng-click="submitApi($event.currentTarget, student)" ng-checked="student.intervention"></td>
+			<td ng-switch-when="YES" ui-sref="index.museStudent({courseId: course.course.sourcedId, studentId: student.user.sourcedId})"><span style="color:red; font-size:220%">*&nbsp;</span>{{student.user.givenName}}</td>
+			<td ng-switch-default ui-sref="index.museStudent({courseId: course.course.sourcedId, studentId: student.user.sourcedId})">{{student.user.givenName}}</td>
+			<td ui-sref="index.museStudent({courseId: course.course.sourcedId, studentId: student.user.sourcedId})">{{student.user.familyName}}</td>
+			<td ng-switch-when="YES" ui-sref="index.museStudent({courseId: course.course.sourcedId, studentId: student.user.sourcedId})"><span style="color:red">{{student.studentStatistics.isAtRisk}}</span></td>
+			<td ng-switch-default ui-sref="index.museStudent({courseId: course.course.sourcedId, studentId: student.user.sourcedId})">{{student.studentStatistics.isAtRisk}}</td>
+			<td><span class="successProbability">{{student.studentStatistics.successProbability*100 | number:0}}%</span> <span class="instructorConfSpan">&emsp;&emsp;&emsp;&emsp;&emsp; Agree? <input type="checkbox" name="correction" value="yes" ng-click="submitApi($event.currentTarget, student)" ng-checked="student.accuracy == 'yes'">&thinsp;Yes &nbsp;<input type="checkbox" name="correction" value="no" ng-click="submitApi($event.currentTarget, student)" ng-checked="student.accuracy == 'no'">&thinsp;No </span></td>
+			<td ng-click="openEmailModal(student.user, course, $event.currentTarget)">
+				<img src="assets\img\locales\Mail.png" alt="Mailer"  
+						class="btn btn-primary btn-lg" 
+				/>		
+			</td>
+		</tr>	
+	</table>
+</div>

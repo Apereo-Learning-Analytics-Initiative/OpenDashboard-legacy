@@ -1,0 +1,74 @@
+<head>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" type="text/css" href="assets/templates/muse/muse.css" /> 
+</head>
+
+<a href="https://ilearn.marist.edu/portal/site/6fdcd350-f035-4ace-957d-775b3047fb87" target="_Muse_Help"><button class = "helpButton">Muse Help & Feedback</button></a>
+<a href="https://ilearn.marist.edu/portal/site/6fdcd350-f035-4ace-957d-775b3047fb87" target="_Muse_Help"><img id="greek_logo" src="assets\img\example.png" alt="Greek-Muse-logo"></a>
+<!-- Greek Muse Logo by Vanessa Carreon -->
+<div id = "hidden-name" style="opacity: 0; font-size: 11px; width: 250px;">Logo by Vanessa Carreon</div>
+
+<div id="wrapper1">
+<div align="center" class="Muselogo">
+<img id="logo" src="assets\img\locales\example.png" alt="Muse-logo">
+
+<div id="musesubhead"><p class="subhead" style="cursor:default;">Marist Universal Student Experience</p></div>
+</div>
+</div>
+
+<div id="musecolors">
+
+	<div ng-if="instructorView && instructorCourseList.length > 0">
+		<table class="musetable">
+			<thead>
+				<tr>
+					<th class="name" ng:click="sortData('title')">Courses<div ng-class="getSortClass('title')"></div></th>
+					<th class="startdate" ng:click="sortData('startdate')">Start Date<div ng-class="getSortClass('startdate')"></div></th>
+					<th ng:click="sortData('enddate')">End Date<div ng-class="getSortClass('enddate')"></div></th>
+					<th>Enrollment</th>
+					<th>At Risk Count</th>
+				</tr>
+			</thead>
+			<tr ng-repeat="course in instructorCourseList| orderBy:sortColumn:reverseSort" ui-sref="index.museCourse({courseId: course.class.sourcedId})">
+				<td>{{course.title}}</td>
+				<td>{{course.startdate}}</td>
+				<td>{{course.enddate}}</td>
+				<td>{{course.statistics.enrollment}}</td>
+				<td>{{course.statistics.atRiskCount}}</td>
+			</tr>
+		</table>
+	</div>
+	
+	<div ng-if="studentView && studentCourseList.length > 0">	
+		<table class="musetable">
+			<thead>
+				<tr>
+					<th class="name" ng:click="sortData('title')">Courses<div ng-class="getSortClass('title')"></div></th>
+					<th class="startdate" ng:click="sortData('startdate')">Start Date<div ng-class="getSortClass('startdate')"></div></th>
+					<th ng:click="sortData('enddate')">End Date<div ng-class="getSortClass('enddate')"></div></th>
+				</tr>
+			</thead>
+			<tr ng-repeat="course in studentCourseList| orderBy:sortColumn:reverseSort" ui-sref="index.museStudent({courseId: course.class.sourcedId, studentId: course.user.sourcedId})">
+				<td>{{course.title}}</td>
+				<td>{{course.startdate}}</td>
+				<td>{{course.enddate}}</td>
+			</tr>
+		</table>
+	</div>
+	
+	<div ng-if="defaultView && (studentCourseList.length <= 0 && instructorCourseList.length <= 0)">
+		<table class="musetable">
+			<tr>
+				<td>
+				There is currently no data available for your assigned role. </br>  
+				If you are an instructor and you believe that you are receiving this message in error, please contact the Marist Help Desk x 4357
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+
+</div>
+<p class="subhead2">© 2017, 2018 Data Science and Analytics, Marist College</p>
+</div>

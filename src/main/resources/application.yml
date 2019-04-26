@@ -1,0 +1,68 @@
+###############################################################################
+# Copyright 2015 Unicon (R) Licensed under the
+# Educational Community License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may
+# obtain a copy of the License at
+#
+# http://www.osedu.org/licenses/ECL-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an "AS IS"
+# BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+###############################################################################
+
+server:
+  port: 8383
+  use-forward-headers: true
+  
+features:
+  saml: false
+  
+# Security settings
+auth:
+  oauth:
+    key: opendash
+    secret: opendash
+
+# Logging settings
+logging:
+  level:
+    od: DEBUG
+  file: od.log
+
+# Spring settings
+spring:
+  thymeleaf:
+    cache: false
+  # Mongo settings
+  data:
+    mongodb:
+      uri: mongodb://localhost/marist_od
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+      
+# OpenDashboard Configuration
+opendashboard:
+  # possible values - JiscEntryPointProcessor, DemoEntryPointProcessor
+  entrypoint: JiscEntryPointProcessor
+  # possible values - JiscAuthenticator, DemoAuthenticator
+  authenticator: JiscAuthenticator
+  
+  # Marist Dashboard Configuration options
+  
+  # allow override string checks the inbound Launch_presentation_return_url in the entry point controller
+  # against the string to see if we want to allow impersonation from the LTI caller, this is used
+  # during debugging on development or QA servers and never in production 
+  allowOverrideString: example.com
+  # turn on views, basically enable and disable instructor or student view in dasboard
+  enableInstructorView: true
+  enableStudentView: false
+  enableDefaultView: true
+  
+  # api settings
+  api:
+    url: http://localhost:1337
+ 

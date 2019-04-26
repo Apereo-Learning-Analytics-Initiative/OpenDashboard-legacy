@@ -1,0 +1,29 @@
+{
+"CL_HEADER":"Fy Nghyrsiau",
+"CL_INSTRUCTIONS":"Dewisiwch y cwrs yr ydych eisiau edrych arno, o'r rhestr isod.",
+
+"APP_TITLE":"Dangosfwrdd Staff Jisc",
+"PLACEHOLDER_USERNAME":"Enw Defynddiwr",
+"PLACEHOLDER_PASSWORD":"Cyfrinair",
+"IM_AN_ADMIN":"Rwyf yn Gweinyddwr",
+
+"ERROR_CODE":"Rhif gwall: {{errorCode}}",
+"ERROR_0":"Does dim hawl gyda chi i weld y cynnwys yma",
+"ERROR_PROVIDER_100":"Methu darganfod cyrsiau ar gyfer y defnyddiwr: {{userId}}.",
+"ERROR_PROVIDER_101":"Mae mwy na un cofnod defynyddiwr staff ar gael ar gyfer: {{userId}}.",
+"ERROR_PROVIDER_301":"Dim cofnod map modiwl VLE wedi cael ei ddarganfod",
+"ERROR_PROVIDER_400":"Dim un cofnod myfyriwr wedi cael ei ddarganfod",
+"ERROR_USERNAME_REQUIRED": "Mae angen enw defnyddiwr.",
+"ERROR_PASSWORD_REQUIRED": "Mae angen cyfrinair.",
+"ERROR_LOGIN":"Mewngofnodi wedi ffaelu",
+
+"BUTTON_SIGN_IN": "Mewngofnodi",
+"BUTTON_CANCEL":"Canslo",
+
+"LABEL_IDP_SELECTION":"Dewisiwch eich darparwr hunaniaeth",
+"TEXT_IDP_SELECTION":"Dewisiwch eich sefydliad o'r rhestr isod, a pwyswych y botwm i llofnodi mewn",
+"LABEL_SELECT_IDP":"Dewisiwch eich sefydliad",
+
+"LABEL_LOGOUT":"Allgofnodi",
+"LABEL_SELECT_IDP":"Dewiswch eich sefydliad"
+}
