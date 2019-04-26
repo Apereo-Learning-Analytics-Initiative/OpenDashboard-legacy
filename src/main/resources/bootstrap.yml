@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: opendashboard
-  cloud:
-    config:
-      uri: http://localhost:8083
-      username: apereo
-      password: openanalytics
