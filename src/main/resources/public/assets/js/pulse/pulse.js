@@ -345,68 +345,68 @@
       buildActivityColorThreshold();
       runFilters();
       
+      
       buildWholeClassRiskChart();
     }
     
     function buildWholeClassRiskChart() {
-    
-    //var chartData;
-    //chartData.labels = [];
-    
-    var chartData = {
-	                    labels: [],
-	                    datasets: []
-	            };
-    var i = 0;
-    
-    var eventMax = $scope.currentCourse.studentEventTotalMax;
-    
-    
-    _.each($scope.currentCourse.students, function (student) { 
-       
-       (student.activity/eventMax)*25;
-                    chartData.labels.push(student.label);                                                           
-                    chartData.datasets.push(
-                    
-                    {
-		                        label: [student.label],
-		                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
-		                        backgroundColor: [$scope.colorCodeRiskForBubble(student.risk)],
-		                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
-		                    }
-                    
-                    );
-                    i++;
-                })
 
-			
-
-
-
-new Chart(document.getElementById("wholeClassRisk-chart"), {
-			    type: 'bubble',
-			    data: chartData,
-			
-			    options: {
-			      title: {
-			        display: true,
-			        text: 'Probability of Success'
-			      }, scales: {
-			        yAxes: [{ 
-			          scaleLabel: {
-			            display: true,
-			            labelString: "Probability of Success"
-			          }
-			        }],
-			        xAxes: [{ 
-			          scaleLabel: {
-			            display: true,
-			            labelString: "Students"
-			          }
-			        }]
-			      }
-			    }
-		});
+		
+		    
+		    var chartData = {
+			                    labels: [],
+			                    datasets: []
+			            };
+		    var i = 0;
+		    
+		    var eventMax = $scope.currentCourse.studentEventTotalMax;
+		    
+		    
+		    _.each($scope.currentCourse.students, function (student) { 
+		       
+		       (student.activity/eventMax)*25;
+		                    chartData.labels.push(student.label);                                                           
+		                    chartData.datasets.push(
+		                    
+		                    {
+				                        label: [student.label],
+				                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
+				                        backgroundColor: [$scope.colorCodeRiskForBubble(student.risk)],
+				                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
+				                    }
+		                    
+		                    );
+		                    i++;
+		                })
+		
+					
+		
+		
+		
+		new Chart(document.getElementById("wholeClassRisk-chart"), {
+					    type: 'bubble',
+					    data: chartData,
+					
+					    options: {
+					      title: {
+					        display: true,
+					        text: 'Probability of Success'
+					      }, scales: {
+					        yAxes: [{ 
+					          scaleLabel: {
+					            display: true,
+					            labelString: "Probability of Success"
+					          }
+					        }],
+					        xAxes: [{ 
+					          scaleLabel: {
+					            display: true,
+					            labelString: "Students"
+					          }
+					        }]
+					      }
+					    }
+				});
 
     }
 
