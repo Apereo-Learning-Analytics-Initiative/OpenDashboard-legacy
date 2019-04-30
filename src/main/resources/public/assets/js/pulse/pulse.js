@@ -385,11 +385,17 @@
 					    data: chartData,
 					
 					    options: {
-					    
+					    tooltips: {
+					          position:'nearest',
+						      callbacks: {
+						          title: function(tooltipItem, data) {
+						          	return data.datasets[tooltipItems.datasetIndex].label;
+						          }
+						      },
 					    
 					    
 					      title: {
-					        display: true,
+					        display: false,
 					        text: 'Probability of Success'
 					      }, scales: {
 					        yAxes: [{ 
