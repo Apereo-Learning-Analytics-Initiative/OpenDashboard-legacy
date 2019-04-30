@@ -388,7 +388,7 @@
 					    
 					    tooltips: {
 					          position:'nearest',
-						      callbacks: {
+						      /*callbacks: {
 						        //title: function(tooltipItem, data) {
 						        //  return data['labels'][tooltipItem[0]['index']];
 						        //},
@@ -400,7 +400,7 @@
 						        //  var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
 						        //  return '(' + percent + '%)';
 						        //}
-						      },
+						      },*/
 						      //backgroundColor: '#FFF',
 						      //titleFontSize: 16,
 						      //titleFontColor: '#0066ff',
