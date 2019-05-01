@@ -478,13 +478,10 @@
 					    data: chartData,
 					
 					    options: {
-					    tooltips: {
-					          position:'nearest',
-						      callbacks: {
-						          title: function(tooltipItem, data) {
-						          	return data.datasets[tooltipItems.datasetIndex].label;
-						          }
-						      },
+
+					       tooltips: {
+					            mode: 'nearest'
+					        },
 					    
 					    
 					      title: {
