@@ -326,7 +326,7 @@
 						<!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
 						{{item.grade}} <!-- </div> -->
 					</td>
-					<td ng-if="listType != 'classes'"
+					<td ng-if="listType != 'classes'" ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)" ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)"
 						ng-click="toggleActivityDetail('student-popup-'+item.id)">
 						<div class="badge clickable"
 							ng-class="colorCodeActivity(item.activity)">

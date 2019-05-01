@@ -37,7 +37,7 @@
     "angular-ui-sortable": "^0.14.3",
     "angular-visjs": "^4.16.0",
     "bootstrap": "^3.3.7",
-    "caliper": "https://github.com/IMSGlobal/caliper-js-public#public",
+    "caliper": "https://github.com/IMSGlobal/caliper-js",
     "chart.js": "^2.3.0",
     "d3": "^4.2.6",
     "d3-scale": "^1.0.3",

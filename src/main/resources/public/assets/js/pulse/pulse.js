@@ -161,6 +161,27 @@
     }
 
 
+	$scope.toggleAllActivityDetailOff = function () {
+		var elements = document.querySelectorAll('[id^=student-popup-]');
+		
+		elements.forEach(function(element) {
+  			element.classList.remove("ng-show");
+			element.classList.add("ng-hide");		
+		});
+	};
+
+	$scope.toggleActivityDetailOn = function (id) {	
+		$scope.toggleAllActivityDetailOff();
+		var element = document.getElementById(id);
+		element.classList.remove("ng-hide");
+		element.classList.add("ng-show");		
+	};
+	
+	$scope.toggleActivityDetailOff = function (id) {
+		var element = document.getElementById(id);
+		element.classList.remove("ng-show");
+		element.classList.add("ng-hide");		
+	};	
 
 	$scope.toggleActivityDetail = function (id) {
 		var element = document.getElementById(id);
@@ -415,6 +436,40 @@
 				}});
 
     }
+    
+    
+    
+    
+    
+    
+  $scope.$on('leafletDirectiveMarker.mouseover', function(event, args){
+      console.log('I am over!');
+      var popup = L.popup({ offset: L.point(0, -28)})
+                  .setLatLng([args.model.lat, args.model.lng])
+                  .setContent(args.model.message)
+      leafletData.getMap().then(function(map) {
+         popup.openOn(map);
+      });
+  });
+
+  $scope.$on('leafletDirectiveMarker.mouseout', function(event){
+    leafletData.getMap().then(function(map) {
+      map.closePopup();
+    });
+  });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     function addMissingData() {
       // set app optional data configs
