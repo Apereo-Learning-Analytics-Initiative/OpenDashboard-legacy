@@ -398,7 +398,7 @@
 		                })
 		
 					
-		
+		/*
 		new Chart(document.getElementById("wholeClassRisk-chart"), {
     type: 'bubble',
     data: {
@@ -468,10 +468,10 @@
       }
     }
 });
+		*/
 		
 		
 		
-/*		
 		
 		new Chart(document.getElementById("wholeClassRisk-chart"), {
 					    type: 'bubble',
@@ -503,7 +503,7 @@
 					      }
 					    }
 				}});
-				*/
+				
 
     }
     
