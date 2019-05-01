@@ -157,10 +157,8 @@
 	                    <th ng-if="config.hasRisk"
 							title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{
 							'LABEL_AT_RISK_STUDENT_COUNT' | translate }}</th>
-	                    <th>Max Activity</th>
-	                    <th>Median Activity</th>
-	                    <th>Min Activity</th>
-	                    
+	                    <th title="{{'LABEL_MAX_ACTIVITY_TOOLTIP' | translate}}">Max Activity</th>
+	                    <th title="{{'LABEL_MEDIAN_ACTIVITY_TOOLTIP' | translate}}">Median Activity</th>
 	                </thead>
 	                <tbody>
 	                    <td><div class="badge">{{currentCourse.startdate}}</div></td>
@@ -168,32 +166,29 @@
 	                    <td><div class="badge">{{currentCourse.students.length}}</div></td>
 	                    <td  ng-if="config.hasRisk"><div class="badge">{{numberOfAtRiskStudents}}</div></td>
 	                    <td><div class="badge">{{currentCourse.studentEventTotalMax}}</div></td>
-	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>
-	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">52</div></td>
+	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>	                    
 	                </tbody>
 	            </table>
 	        </div>
-	        <div>
-		        <!-- ng-show="config.hasRisk" -->
-		        <h3>Probability of Success</h3>
+	        <div ng-show="config.hasRisk">
+		        <h3>{{'LABEL_PROBABILITY_CHART_TITLE' | translate}}</h3>
 		        <ul>
-		        <li>Each bubble represents a student</li>
-		        <li>The size of the bubble represents the relative amount of activity the system has capture for that student.</li>
-		        <li>The higher on the graph indicates the probability of success</li>
+			        <li>Each bubble represents a student</li>
+			        <li>The size of the bubble represents the relative amount of activity the system has capture for that student.</li>
+			        <li>The verticle positions indicate the probability of success</li>
 		        </ul>
-		        
+		        <hr/>
 		        <div class="wholeClassRiskDiv">
-		        <!-- canvas id="wholeClassRisk-chart" width="800" height="50"></canvas -->
-					<canvas   class="wholeClassRisk" id="wholeClassRisk-chart" height="50" ></canvas>
+					<canvas   class="wholeClassRisk" id="wholeClassRisk-chart" height="55" ></canvas>
 				</div>
 			</div>			
        </div>
         
         
      	<!-- zoom link -->
-		<div class="zoom-actions" ng-class="listType">
+		<!-- div class="zoom-actions" ng-class="listType">
 			<i class="fa fa-search-minus zoom-out"></i>
-		</div>
+		</div -->
 
 		<!-- student details -->
 		<div class="student-details" ng-if="listType == 'student'">
@@ -273,7 +268,7 @@
                     <i ng-if="$parent.$parent.orderByField!='lastName'" class="fa fa-caret-up spacer"></i>
                     </a>
                 </th>
-                <th ng-if="listType != 'classes' && config.hasRisk" title="{{'LABEL_RISK_SCORE_TOOL_TIP' | translate}}">
+                <th ng-if="listType != 'classes' && config.hasRisk" title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">
                     <a href="" ng-class="{'hide-th' : listType === 'student'}" ng-click="$parent.$parent.orderByField='risk'; $parent.$parent.reverseSort = !$parent.$parent.reverseSort;">
                      {{ 'LABEL_RISK_SCORE' | translate }}
                     <i ng-if="$parent.$parent.orderByField=='risk' && !$parent.$parent.reverseSort" class="fa fa-caret-down"></i>
