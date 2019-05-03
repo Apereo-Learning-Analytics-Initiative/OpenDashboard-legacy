@@ -18,6 +18,7 @@
     function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService){
       "use strict";
 
+
     var processedClasses = [];
     var classes = [];
     var students = [];
@@ -36,12 +37,6 @@
     $scope.emailstudent = {};
     $scope.studentFilters = {};
     $scope.studentFilters.list = [];
-
-    // $scope.coursesStartEnd = {
-    // start: '2016-10-30',
-    // end: '2016-11-13'
-    // };
-
     $scope.orderByField = 'label';
     $scope.reverseSort = false;
     $scope.assignmentOverlay = true;
@@ -51,14 +46,37 @@
     $scope.submissionFilterScore = 6;
     $scope.daysSinceLoginFilter = false;
     $scope.daysSinceLoginFilterCount = 0;
-    var currentDataList = [];
-
     $scope.maxGrade = 100;
     $scope.maxRisk = 100;
     $scope.maxActivity = 0;
     $scope.appHasGradeData = false;
     $scope.appHasMissingSubmissionData = false;
-    $scope.riskOverlay = false;
+    $scope.riskOverlay = false;      
+    $scope.numberOfAtRiskStudents = 0;
+    
+        var currentDataList = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
     var riskColorClasses = [
       {
         'threshold':[0, .5],
@@ -77,6 +95,8 @@
     $scope.activityOverlay = false;
     var activityTypeCount = 4;
     var activityColorClasses = [];
+    
+    
     function buildActivityColorThreshold() {
       activityColorClasses = [
         {
@@ -140,24 +160,90 @@
       }
     }
 
-    $scope.colorCodeRisk = function(risk){
-      if (true) {
+
+	$scope.toggleAllActivityDetailOff = function () {
+		var elements = document.querySelectorAll('[id^=student-popup-]');
+		
+		elements.forEach(function(element) {
+  			element.classList.remove("ng-show");
+			element.classList.add("ng-hide");		
+		});
+	};
+
+	$scope.toggleActivityDetailOn = function (id) {	
+		$scope.toggleAllActivityDetailOff();
+		var element = document.getElementById(id);
+		element.classList.remove("ng-hide");
+		element.classList.add("ng-show");		
+	};
+	
+	$scope.toggleActivityDetailOff = function (id) {
+		var element = document.getElementById(id);
+		element.classList.remove("ng-show");
+		element.classList.add("ng-hide");		
+	};	
+
+	$scope.toggleActivityDetail = function (id) {
+		var element = document.getElementById(id);
+		if(element.classList.contains("ng-show")) {
+			element.classList.remove("ng-show");
+			element.classList.add("ng-hide");
+		} 
+		else {
+			element.classList.remove("ng-hide");
+			element.classList.add("ng-show");
+		}	
+	};
+
+
+    function sumStudentsAtRisk() {  
+    	var sum=0;   
+    	_.each($scope.datalist, function(r, i){
+    	    if (r.risk <= riskColorClasses[1].threshold[1]) {
+    	        sum = sum + 1;
+    	    }
+    	})    
+    	$scope.numberOfAtRiskStudents = sum;	
+    }
+
+
+
+	$scope.colorCodeRiskForBubble = function(risk){
+    
         var colorclass;
-console.log('colorCodeRisk');
-console.log(risk);
-console.log(riskColorClasses);
+        
         _.each(riskColorClasses, function(r, i){
-        console.log('loop');
-        console.log(risk < r.threshold[0]);
-        console.log(risk >= r.threshold[1]);
           if (r.threshold[0] <= risk  && risk <= r.threshold[1]) {
             colorclass = r.classname;
           }
         });
-console.log(colorclass);
+        
+        if (colorclass=='no-risk') {
+        	return "rgba(127, 191, 63, 1)";
+        }
+        else if (colorclass=='medium-risk') {
+        	return "rgba(246, 178, 8, 1)";
+        }
+        else if (colorclass=='high-risk') {
+        	return "rgba(234, 14, 14, 1)";
+        }                
+        else {
+             return "";
+        }
+    }
+
+
+
+    $scope.colorCodeRisk = function(risk){
+      if (true) {
+        var colorclass;
+        _.each(riskColorClasses, function(r, i){
+          if (r.threshold[0] <= risk  && risk <= r.threshold[1]) {
+            colorclass = r.classname;
+          }
+        });
         return colorclass;
       } else {
-console.log('nothing');
         return "";
       }
     }
@@ -187,7 +273,7 @@ console.log('nothing');
         }
       }
     }
-    
+
     function filterByMissingSubmissions(nv, ov){
       if ($scope.currentCourse) {
         if ($scope.submissionFilter) {
@@ -206,8 +292,6 @@ console.log('nothing');
           var tempDataList = currentDataList.length ? currentDataList : $scope.currentCourse.students;
           
           currentDataList = _.filter(tempDataList, function(o){
-            // console.log(o.daysSinceLogin >=
-			// $scope.daysSinceLoginFilterCount);
             return o.daysSinceLogin >= $scope.daysSinceLoginFilterCount;
           });
         }
@@ -219,18 +303,19 @@ console.log('nothing');
         filterByGrade();
         filterByMissingSubmissions();
         filterLastLoginCount();
-        
+
         if(currentDataList.length) {
           $scope.datalist = currentDataList;
           currentDataList = [];
         } else {
           $scope.datalist = $scope.currentCourse.students;
         }
+        
+        sumStudentsAtRisk();
       }
     }
     
     $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilter', 'daysSinceLoginFilterCount'], runFilters);
-    // $scope.$watchGroup(['daysSinceLoginFilter'], runFilters);
 
     $scope.handleEmail = function(o, bulk) {
       $scope.emailList = [];
@@ -251,8 +336,7 @@ console.log('nothing');
     }
 
 
-    function buildStudent(cid, sid) {
-      //console.log('building Student');
+    function buildStudent(cid, sid) {      
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === cid;
       })[0];
@@ -272,7 +356,6 @@ console.log('nothing');
     }
 
     function buildStudentList(id) {
-      // console.log('buildStudentList');
       var course = _.filter($scope.processedClasses, function(c){
         return c.id === id;
       })[0];
@@ -282,7 +365,181 @@ console.log('nothing');
       $scope.maxEvents = course.studentEventMax;
       buildActivityColorThreshold();
       runFilters();
+      
+      
+      buildWholeClassRiskChart();
     }
+    
+    function buildWholeClassRiskChart() {
+		    var chartData = {
+			                    labels: [],
+			                    datasets: []
+			            };
+		    var i = 0;
+		    
+		    var eventMax = $scope.currentCourse.studentEventTotalMax;
+		    
+		    
+		    _.each($scope.currentCourse.students, function (student) { 
+		       
+		       (student.activity/eventMax)*25;
+		                    chartData.labels.push(student.label);                                                           
+		                    chartData.datasets.push(
+		                    
+		                    {
+				                        label: [student.label],
+				                        data: [{x:i, y:student.risk, r:(student.activity/eventMax)*20}],		                        
+				                        backgroundColor: [$scope.colorCodeRiskForBubble(student.risk)],
+				                        borderColor: [$scope.colorCodeRiskForBubble(student.risk)]
+				                    }
+		                    
+		                    );
+		                    i++;
+		                })
+		
+					
+		/*
+		new Chart(document.getElementById("wholeClassRisk-chart"), {
+    type: 'bubble',
+    data: {
+      labels: "Africa",
+      datasets: [
+        {
+          label: ["China"],
+          backgroundColor: "rgba(255,221,50,0.2)",
+          borderColor: "rgba(255,221,50,1)",
+          data: [{
+            x: 21269017,
+            y: 5.245,
+            r: 15
+          }]
+        }, {
+          label: ["Denmark"],
+          backgroundColor: "rgba(60,186,159,0.2)",
+          borderColor: "rgba(60,186,159,1)",
+          data: [{
+            x: 258702,
+            y: 7.526,
+            r: 10
+          }]
+        }, {
+          label: ["Germany"],
+          backgroundColor: "rgba(0,0,0,0.2)",
+          borderColor: "#000",
+          data: [{
+            x: 3979083,
+            y: 6.994,
+            r: 15
+          }]
+        }, {
+          label: ["Japan"],
+          backgroundColor: "rgba(193,46,12,0.2)",
+          borderColor: "rgba(193,46,12,1)",
+          data: [{
+            x: 4931877,
+            y: 5.921,
+            r: 15
+          }]
+        }
+      ]
+    },
+    options: {
+    
+        tooltips: {
+            mode: 'nearest'
+        },
+    
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }, scales: {
+        yAxes: [{ 
+          scaleLabel: {
+            display: true,
+            labelString: "Happiness"
+          }
+        }],
+        xAxes: [{ 
+          scaleLabel: {
+            display: true,
+            labelString: "GDP (PPP)"
+          }
+        }]
+      }
+    }
+});
+		*/
+		
+		
+		
+		
+		new Chart(document.getElementById("wholeClassRisk-chart"), {
+					    type: 'bubble',
+					    data: chartData,
+					
+					    options: {
+
+					       tooltips: {
+					            mode: 'nearest'
+					        },
+					    
+					    
+					      title: {
+					        display: false,
+					        text: 'Probability of Success'
+					      }, scales: {
+					        yAxes: [{ 
+					          scaleLabel: {
+					            display: true,
+					            labelString: "Probability of Success"
+					          }
+					        }],
+					        xAxes: [{ 
+					          scaleLabel: {
+					            display: true,
+					            labelString: "Students"
+					          }
+					        }]
+					      }
+					    }
+				});
+				
+
+    }
+    
+    
+    
+    
+    
+    
+  $scope.$on('leafletDirectiveMarker.mouseover', function(event, args){
+      console.log('I am over!');
+      var popup = L.popup({ offset: L.point(0, -28)})
+                  .setLatLng([args.model.lat, args.model.lng])
+                  .setContent(args.model.message)
+      leafletData.getMap().then(function(map) {
+         popup.openOn(map);
+      });
+  });
+
+  $scope.$on('leafletDirectiveMarker.mouseout', function(event){
+    leafletData.getMap().then(function(map) {
+      map.closePopup();
+    });
+  });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     function addMissingData() {
       // set app optional data configs
@@ -291,40 +548,11 @@ console.log('nothing');
       $scope.config.hasEmail = $scope.config.hasEmail ? $scope.config.hasEmail : false;
       $scope.config.hasMissingSubmissions = $scope.config.hasMissingSubmissions ? $scope.config.hasMissingSubmissions : false;
       $scope.config.hasLastLogin = $scope.config.hasLastLogin ? $scope.config.hasLastLogin : false;
-
-      // $scope.config.hasRisk = true;
-      // $scope.config.hasGrade = true;
-      // $scope.config.hasEmail = true;
-      // $scope.config.hasMissingSubmissions = true;
-      // $scope.config.hasLastLogin = true;
-
-
-      // Grab max event count over all classes
-      // var maxEvents = 0;
-      // _.each($scope.processedClasses, function(c){
-      // _.each(c.events, function(event){
-      // if (maxEvents < event.eventCount) {
-      // maxEvents = event.eventCount;
-      // }
-      // });
-      // });
-      // console.log('maxEvents', maxEvents);
+      
       $scope.coursesMaxEvents = $scope.config.classEventMax;
-
-      // Set student activity class total maximum
-      // _.each($scope.processedClasses, function(c){
-      // var maxActivity = 0;
-      // _.each(c.students, function(s){
-      // if (maxActivity < s.activity) {
-      // maxActivity = s.activity;
-      // }
-      // });
-      // c.studentActivityMax = maxActivity;
-      // });
 
       // fake email data
       if ($scope.config.hasRisk && !$scope.processedClasses[0].students[0].email) {
-        // console.log('build fake email');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.email = s.email ? s.email : s.givenName + '@' + s.givenName+s.familyName + '.com';
@@ -334,7 +562,6 @@ console.log('nothing');
 
       // fake risk data
       if ($scope.config.hasGrade && !$scope.processedClasses[0].students[0].grade) {
-        // console.log('build fake grade data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.grade = s.grade ? s.grade : Math.round(Math.random() * (100 - 0));
@@ -345,7 +572,6 @@ console.log('nothing');
 
       // fake missing submission data
       if ($scope.config.hasMissingSubmissions && $scope.processedClasses[0].students[0].missingSubmission !== 0) {
-        // console.log('build fake submission data');
         _.each($scope.processedClasses, function(c){
           _.each(c.students, function(s){
             s.missingSubmission = s.missingSubmission ? s.missingSubmission : Math.round(Math.random() * (50 - 0));
@@ -375,18 +601,12 @@ console.log('nothing');
     }
 
     $scope.updateStudentCharts = function (data) {
-      // $timeout(function(){
         $scope.$broadcast('updateTable', data);
-      // });
     };
 
     function init() {
-      // console.log('init');
-      // $scope.$on('chart-change', handleChartChange);
-
       $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
         if (toState.name === "index.courselist" && toParams.groupId) {
-
           $scope.listType = 'students';
           $scope.orderByField = 'lastName';
           buildStudentList(toParams.groupId);
@@ -405,7 +625,6 @@ console.log('nothing');
         PulseApiService
         .getPulseData(currentUser.tenant_id, currentUser.user_id)
         .then(function(data){
-          // console.log(data);
 
           $scope.config = _.clone(data);
           delete $scope.config.pulseClassDetails;
@@ -548,13 +767,7 @@ console.log('nothing');
         }
 
 
-        function drawPlots(plots, o) {
-        	//console.log("****** INSIDE DRAWPLOTS ******");
-        	//console.log("o: %O", o);
-        	//console.log("o.students: " + o.students);
-        	//console.log("o.events: " + o.events);
-        	
-        	
+        function drawPlots(plots, o) {        	
           plots.selectAll('circle').remove();
           plots
             .selectAll('circle')
@@ -565,13 +778,11 @@ console.log('nothing');
             .attr('r', function (d) {
               var count;
 
-              //console.log("d: " + d);
               if (o.students) {
                 count = d.eventCount*100/scope.coursesMaxEvents/10+1;
               } else {
                 count = d.eventCount*100/scope.maxEvents/10+1;
               }
-              //console.log("COUNT: " + count);
 
               return count;
             })
@@ -590,12 +801,9 @@ console.log('nothing');
             })
             .on('mouseover', function (d, index, node) {
               d3.select(this).attr('opacity','1');
-              // console.log(d3.event);
               setEventToolTipPosition({
                 x: d3.event.pageX,
                 y: d3.event.pageY
-                // x: d3.event.clientX,
-                // y: d3.event.clientY
               });
               scope.$apply(function () {
                   scope.chartInfo = {
@@ -760,19 +968,12 @@ console.log('nothing');
                 .attr('transform','translate(0,'+tlhHeight/2+')')
                 .attr('class','plot');
             }
-            if (scope.listType === "students") {
-            	//console.log("*** from from drawtimeline student(s) ****");
-            	//console.log(scope.currentCourse);
-            	//console.log(overviewPlot );            	
+            if (scope.listType === "students") {            	     	
                 drawPlots(overviewPlot, scope.currentCourse);  
             }
             if (scope.listType === "student") {
-				//console.log("*** from drawtimeline student ****");
-				//console.log(scope.currentStudent);
-				//console.log(overviewPlot);
                drawPlots(overviewPlot, scope.currentStudent);  
             }
-            
           }
         }
 
@@ -783,12 +984,9 @@ console.log('nothing');
           var charts = {};
           var height, width;
 
-
           // set width n height
           _.each(scope.datalist, function(o, i){
-        	  
-        	  //console.log("inside for each... o.id: " + o.id);
-        	  
+     	  
             if (i==0) {
               height = $('#pulse-chart-' + o.id).height();
               width = $('#pulse-chart-' + o.id).width();
@@ -811,9 +1009,6 @@ console.log('nothing');
               .attr('class','plot');
             
             // dot
-				//console.log("**** from drawChart (this is the important single student ****");
-				//console.log(o);
-				//console.log(plots);
             drawPlots(plots, o);
           });
 
@@ -960,6 +1155,22 @@ console.log('nothing');
           });
 
         }
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         function handleResize() {
           alignTables();

@@ -45,9 +45,27 @@ body.application {
       }      
     }
 
-    .totals {
+    .legend {
+      z-index: 10;
       position: absolute;
-      right: 7px;
+      left: 7px;
+
+      table {
+        font-size: 1.2rem;
+        th {
+          font-weight: 600;
+        }
+        td {
+
+        }      /*right: 7px;*/
+      left: 500px;
+      }
+    }
+
+    .totals {
+      z-index: 10;
+      /*position: absolute;*/
+
 
       table {
         font-size: 1.2rem;
@@ -342,3 +360,54 @@ footer.footer {
   // position: relative;
   z-index: 7;
 }
+
+
+
+
+
+.popovert {
+  position: absolute;
+  z-index: 100000;
+  
+  background-color:white;    
+}
+.clickable {
+    cursor: pointer;
+}
+
+
+
+.student {
+	display: none;
+}
+
+.students {
+	display: block;
+}
+.wholeClassRiskDiv {
+	height:225px;
+}
+
+.totalsss {
+    padding: 10px 0 0;
+    text-align: center;
+    position: fixed;
+    background: #F1F0EB;
+    z-index: 5;
+    right: 25px;
+    left: 25px;
+
+      z-index: 10;
+      position: absolute;
+      width: inherit;
+	
+      table {
+        font-size: 1.2rem;
+        th {
+          font-weight: 600;
+        }
+        td {
+
+        }
+      }
+    }

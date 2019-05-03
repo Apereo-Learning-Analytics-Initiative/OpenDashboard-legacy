@@ -60,7 +60,7 @@ permissions and limitations under the License.
     <!-- </div> -->
 
     <div class="col-md-12">
-        <h3>Detail Activity</h3>
+        <h3 title="Activities charted by day">Detail Activity</h3>
         <div>
             <a href="" ng-click="$emit('updateTable', '7days')">Last 7 Days</a> | <a href="" ng-click="$emit('updateTable', '30days')">Last 30 Days</a> | <a href="" ng-click="$emit('updateTable', '90days')">Last 90 Days</a>
         </div>
@@ -89,7 +89,7 @@ permissions and limitations under the License.
                 </tbody>
             </table>
         </div>
-        <h3>Activity By Type</h3>
+        <h3 title="Displays the count of each activity performed by the student compared to the course average (in grey) ">Activity By Type Compared to Course Averages</h3>
         <!-- Chart -->
         <div class="activityByVerbChart" ng-show="studentFilters.displayMode=='chart'">
             <canvas id="activityByVerbChart" width="400" height="150"></canvas>

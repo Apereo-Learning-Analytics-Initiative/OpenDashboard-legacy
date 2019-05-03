@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
@@ -454,20 +455,6 @@ public class PulseController {
           int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
           allClassStudentEventCounts.add(classEventMax);
         }
-        
-         
-        
-        double cumulator = 0.0;
-        for(PulseStudentDetail studentDetail : pulseStudentDetails) {
-          if(!Double.isNaN(studentDetail.getRiskAsDouble()))
-          {
-            cumulator += studentDetail.getRiskAsDouble();
-          }
-        }
-        
-        DecimalFormat df = new DecimalFormat("###.###");
-        double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
-        
                                
         String modifiedClassId = PulseUtility.escapeForPulse(klass.getSourcedId());
         PulseClassDetail pulseClassDetail
@@ -493,10 +480,12 @@ public class PulseController {
             .withEvents(classPulseDateEventCounts)
             .withStudents(pulseStudentDetails)
             .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
+            .withMedianStudentEvents(getMedianStudentEvents(pulseStudentDetails))
             .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
             .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
-            .withMeanPassPercent(  averageRiskScore )
+            .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
+            .withMedianPassPercent(getMedianRiskScore(pulseStudentDetails))
             .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
             .build();
         
@@ -531,7 +520,13 @@ public class PulseController {
 
   
   
-  
+
+
+
+
+
+
+
   public PulseDetail pulseForStudent(Authentication authentication, @PathVariable("tenantId") final String tenantId,
 	      @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
 		  
@@ -928,14 +923,7 @@ public class PulseController {
 	            .withStudents(pulseStudentDetails)
 	            	            
 	            .withMeanStudentEvents(classEventStatistics.getMeanStudentEvents())
-	            .withMeanPassPercent(
-	                (Double)(pulseStudentDetails != null ? 
-	                    pulseStudentDetails.stream().
-	                    mapToDouble(PulseStudentDetail::getRiskAsDouble).average()
-	                    .orElse(Double.NaN) :
-	                      Double.NaN)
-	                
-	                )
+	            .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
 	            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
 	            .withEventTypeAverages(classEventStatistics.getEventTypeAverages())
 	            .withEventTypeTotals(classEventStatistics.getEventTypeTotals())
@@ -969,11 +957,72 @@ public class PulseController {
 	    return pulseDetail;
 	  }
   
+  private double getAverageRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+      double cumulator = 0.0;
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getRiskAsDouble()))
+      {
+        cumulator += studentDetail.getRiskAsDouble();
+      }
+    }
+    
+    DecimalFormat df = new DecimalFormat("###.###");
+    double averageRiskScore = Double.valueOf(df.format(cumulator/pulseStudentDetails.size()));
+    return averageRiskScore;
+  }
+  
+  private double getMedianRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+    
+    List<Double> allRiskScores = new ArrayList<>();
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getRiskAsDouble()))
+      {
+        allRiskScores.add(studentDetail.getRiskAsDouble());
+      }
+    }
+    
+    if (allRiskScores.size() <= 0) {
+      return Double.NaN;
+    }
+    
+    double[] riskArray = allRiskScores.stream().mapToDouble(Double::doubleValue).toArray();
+    
+    Arrays.sort(riskArray);
+    double median;
+    if (riskArray.length % 2 == 0)
+        median = ((double)riskArray[riskArray.length/2] + (double)riskArray[riskArray.length/2 - 1])/2;
+    else
+        median = (double) riskArray[riskArray.length/2];
+    
+    return median;
+}
   
   
   
-  
-  
+  private Long getMedianStudentEvents(List<PulseStudentDetail> pulseStudentDetails) {
+    List<Long> allActivityCount = new ArrayList<>();
+    for(PulseStudentDetail studentDetail : pulseStudentDetails) {
+      if(!Double.isNaN(studentDetail.getActivity()))
+      {
+        allActivityCount.add(studentDetail.getActivity());
+      }
+    }
+    
+    if (allActivityCount.size() <= 0) {
+      return 0l;
+    }
+    long[] studentEventsArray = allActivityCount.stream().mapToLong(l -> l).toArray();
+    //long[] riskArray =  allActivityCount.stream().mapToLong(Long::toLong).toArray();
+    
+    Arrays.sort(studentEventsArray);
+    double median;
+    if (studentEventsArray.length % 2 == 0)
+        median = ((long)studentEventsArray[studentEventsArray.length/2] + (long)studentEventsArray[studentEventsArray.length/2 - 1])/2;
+    else
+        median = (long) studentEventsArray[studentEventsArray.length/2];
+    
+    return (long) median;
+  }
   
   
   
