@@ -515,17 +515,6 @@ public class PulseController {
 
     return pulseDetail;
   }
-  
-  
-
-  
-  
-
-
-
-
-
-
 
   public PulseDetail pulseForStudent(Authentication authentication, @PathVariable("tenantId") final String tenantId,
 	      @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
