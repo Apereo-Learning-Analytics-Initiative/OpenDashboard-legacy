@@ -9,6 +9,16 @@ spring:
   # Mongo settings
   data:
     mongodb:
-      uri: mongodb://localhost/demo_od
+      uri: mongodb://localhost/opendash_db
+
+
+logging:
+  level:
+    org.springframework.web: ERROR
+    od: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file: log.log
 
   

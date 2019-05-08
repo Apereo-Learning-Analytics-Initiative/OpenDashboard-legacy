@@ -21,7 +21,9 @@ public class PulseClassDetail {
   private Integer studentEventMax;
   private Long studentEventTotalMax;
   private Integer meanStudentEvents;
+  private Long medianStudentEvents;
   private Double meanPassPercent;
+  private Double medianPassPercent;
   private Integer totalNumberOfEvents;
   
   private boolean hasRisk;
@@ -40,6 +42,14 @@ public class PulseClassDetail {
 
   public String getId() {
     return id;
+  }
+  
+  public Double getMedianPassPercent() {
+    return medianPassPercent;
+  }
+  
+  public Long getMedianStudentEvents() {
+    return medianStudentEvents;
   }
 
   public Integer getStudentsWithEvents() {
@@ -278,8 +288,18 @@ public class PulseClassDetail {
       return this;
     }
     
+    public Builder withMedianStudentEvents(Long medianStudentEvents) {
+      _pulseClassDetail.medianStudentEvents = medianStudentEvents;
+      return this;
+    }
+    
     public Builder withMeanPassPercent(Double meanPassPercent) {
       _pulseClassDetail.meanPassPercent = meanPassPercent;
+      return this;
+    }
+    
+    public Builder withMedianPassPercent(Double medianPassPercent) {
+      _pulseClassDetail.medianPassPercent = medianPassPercent;
       return this;
     }
     
