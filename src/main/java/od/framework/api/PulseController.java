@@ -440,8 +440,6 @@ public class PulseController {
 
           }
         }
-        
-        log.info("{}",pulseStudentDetails);
                 
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
@@ -490,9 +488,7 @@ public class PulseController {
             .build();
         
         pulseClassDetails.add(pulseClassDetail);
-      }
-      
-      log.info("{}",pulseClassDetails);
+      }      
       
       Integer classEventMax = 0;
       if (allClassStudentEventCounts != null && !allClassStudentEventCounts.isEmpty()) {
@@ -871,8 +867,6 @@ public class PulseController {
 	          }
 	        }
 	        
-	        log.info("{}",pulseStudentDetails);
-	        
 	        Integer studentEventMax = 0;
 	        if (!allStudentEventCounts.isEmpty()) {
 	          studentEventMax = Collections.max(allStudentEventCounts).intValue();
@@ -921,8 +915,6 @@ public class PulseController {
 	        
 	        pulseClassDetails.add(pulseClassDetail);
 	      }
-	      
-	      log.info("{}",pulseClassDetails);
 	      
 	      Integer classEventMax = 0;
 	      if (allClassStudentEventCounts != null && !allClassStudentEventCounts.isEmpty()) {
