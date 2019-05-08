@@ -313,7 +313,7 @@
 					<td ng-if="listType != 'classes'"><a href=""
 						ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
 					</td>
-					<td ng-if="listType != 'classes' && config.hasRisk">
+					<td ng-if="listType != 'classes' && config.hasRisk"  ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)" ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)">
 						<div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}
 
 						</div>
