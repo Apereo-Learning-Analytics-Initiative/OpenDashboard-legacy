@@ -393,8 +393,9 @@
                                     }
                                 }],
                                 xAxes: [{
+                                    display: false,
                                     scaleLabel: {
-                                        display: false,
+                                        display: true,
                                         labelString: "Students"
                                     }
                                 }]
