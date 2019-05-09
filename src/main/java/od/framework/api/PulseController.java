@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import od.providers.lineitem.LineItemProvider;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
+import od.repository.mongo.PulseCacheRepository;
 import od.utils.PulseUtility;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +69,11 @@ public class PulseController {
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
+  @Autowired private PulseCacheRepository pulseCacheRepository;
+  
+  final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
+  
+  
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
   @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId:.+}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
@@ -81,6 +88,16 @@ public class PulseController {
     if (hasRole("ROLE_STUDENT")) {        	
     	return pulseForStudent(authentication, tenantId, userId);
     } 
+    
+    
+    PulseDetail results = pulseCacheRepository.findByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
+    if(results!=null) {
+      boolean moreThanDay = Math.abs((new Date()).getTime() - results.getLastUpdated().getTime()) > MILLIS_PER_DAY;
+      if (!moreThanDay) {
+        return results;
+      }
+    }
+    
     
     String tempClassSourcedId = null;
     boolean isSakai = false;
@@ -304,6 +321,8 @@ public class PulseController {
               classPulseDateEventCounts.add(pulseDateEventCount);
             }
             
+            
+            //class event statistics could calculate this without having to go through the stream
             firstClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).min(LocalDate::compareTo).get();
             lastClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).max(LocalDate::compareTo).get();
           }
@@ -395,6 +414,8 @@ public class PulseController {
             
             Long activity = 0l;
             if (studentPulseDateEventCounts != null) {
+              
+              //class event statistics could calculate this without having to go through the stream (on the LRW side)
               activity = studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum();
             }
             else {
@@ -443,6 +464,8 @@ public class PulseController {
                 
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
+          
+          //class event statistics could calculate this without having to go through the entire stack
           studentEventMax = Collections.max(allStudentEventCounts).intValue();
         }
         
@@ -506,10 +529,14 @@ public class PulseController {
           .withHasLastLogin(false)
           .withHasEmail(false)
           .withPulseClassDetails(pulseClassDetails)
+          .withUserId(userId)
+          .withTenantId(tenantId)
+          .withUserRole("NONSTUDENT")
           .build();
     }
 
-    return pulseDetail;
+    PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
+    return retVal;
   }
 
   public PulseDetail pulseForStudent(Authentication authentication, @PathVariable("tenantId") final String tenantId,
