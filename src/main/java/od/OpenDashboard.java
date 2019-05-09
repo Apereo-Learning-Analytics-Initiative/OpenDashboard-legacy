@@ -17,6 +17,7 @@ package od;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +32,9 @@ import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +49,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @Configuration
 @EnableAutoConfiguration
 @EnableScheduling
+@EnableAsync
 public class OpenDashboard {
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboard.class);
@@ -129,6 +133,17 @@ public class OpenDashboard {
       }
   }
     
+  }
+  
+  @Bean
+  public Executor taskExecutor() {
+      ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+      executor.setCorePoolSize(10);
+      executor.setMaxPoolSize(10);
+      executor.setQueueCapacity(500);
+      executor.setThreadNamePrefix("GithubLookup-");
+      executor.initialize();
+      return executor;
   }
 
 }

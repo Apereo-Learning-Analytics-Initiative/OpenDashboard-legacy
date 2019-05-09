@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import lti.LaunchRequest;
@@ -44,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -76,8 +78,8 @@ public class PulseController {
   
   
   
-
-  public void pulseCache(@PathVariable("tenantId") final String tenantId,
+  @Async
+  public CompletableFuture pulseCache(@PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
 
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
@@ -86,7 +88,7 @@ public class PulseController {
     if(pulseResults!=null && pulseResults.size()==1) {      
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_HOUR;
       if (!moreThanDay) {
-        return;
+        return new CompletableFuture();
       }      
     }
     
@@ -513,7 +515,7 @@ public class PulseController {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
-    return;
+    return new CompletableFuture();
   }
   
   
