@@ -53,12 +53,15 @@ public class PulseCacheTask {
         } catch (ProviderException e) {
           System.out.println(e);
           e.printStackTrace();
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
       }           
     }
     
     @Async
-    public void syncPulse(String tenantId, String userId) {
+    public CompletableFuture<String> syncPulse(String tenantId, String userId)  throws InterruptedException {
       System.out.println("starting for userid: " + userId);
       try {
         pulseController.pulseCache(tenantId, userId);
@@ -67,6 +70,6 @@ public class PulseCacheTask {
         e.printStackTrace();
       }
       System.out.println("finished for userid: " + userId);
-      return;
+      return CompletableFuture.completedFuture("done");
     }
 }
