@@ -43,6 +43,7 @@ public class PulseCacheTask {
           }
           for(String userId: teacherIds) {            
             pulseController.pulseCache(tenant.getId(), userId);
+            System.out.println("finished for userid: " + userId);
           }
         
         } catch (ProviderDataConfigurationException e) {
