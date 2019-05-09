@@ -25,7 +25,7 @@ public class PulseCacheTask {
     @Autowired PulseController pulseController;
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
-    @Scheduled(fixedRate = 1000*60)//*60*1 )
+    @Scheduled(fixedRate = 60* 60 * 1000)//*60*1 )
     public void updatePulseCache() {
       
       System.out.println("Scheduler is running");
