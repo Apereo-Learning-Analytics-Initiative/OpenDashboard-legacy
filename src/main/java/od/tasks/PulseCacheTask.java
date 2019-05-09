@@ -38,6 +38,9 @@ public class PulseCacheTask {
         
           EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
           List<String> teacherIds = enrollmentProvider.getUniqueUsersWithRole(rosterProviderData, "teacher");
+          if (teacherIds != null) {
+            System.out.println("Cacheing pulsedetails for " + teacherIds.size() + " teachers");
+          }
           for(String userId: teacherIds) {            
             pulseController.pulseCache(tenant.getId(), userId);
           }
