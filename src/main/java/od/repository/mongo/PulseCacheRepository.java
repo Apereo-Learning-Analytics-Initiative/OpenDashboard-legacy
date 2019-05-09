@@ -6,6 +6,8 @@ package od.repository.mongo;
 import od.framework.model.PulseDetail;
 import od.framework.model.Tenant;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -14,5 +16,6 @@ import org.springframework.data.mongodb.repository.Query;
  *
  */
 public interface PulseCacheRepository extends MongoRepository<PulseDetail, String> {  
-  PulseDetail findByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
+  List<PulseDetail> findByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
+  void deleteByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
 }

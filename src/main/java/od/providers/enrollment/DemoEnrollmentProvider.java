@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -248,5 +249,11 @@ public class DemoEnrollmentProvider implements EnrollmentProvider {
   public Set<Enrollment> getEnrollmentsForUser(ProviderData providerData, String userSourcedId, boolean activeOnly) throws ProviderException {
     return staffEnrollments;  
   }
+  
+  @Override
+  public List<String> getUniqueUsersWithRole(ProviderData providerData, String role) throws ProviderException {
+    throw new ProviderException("getUniqueTeacherIds not implemented");
+  }
+  
 
 }

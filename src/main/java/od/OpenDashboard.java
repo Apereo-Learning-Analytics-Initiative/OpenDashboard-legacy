@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @ComponentScan(basePackages = { "od", "lti" })
 @Configuration
 @EnableAutoConfiguration
+@EnableScheduling
 public class OpenDashboard {
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboard.class);

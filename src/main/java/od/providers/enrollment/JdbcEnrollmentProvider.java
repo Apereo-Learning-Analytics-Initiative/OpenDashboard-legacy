@@ -9,6 +9,7 @@ package od.providers.enrollment;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -171,4 +172,7 @@ private Enrollment getEnrollmentFromRS(ResultSet Rs) throws SQLException
 	return staffEnrollments;
   }
 
+  public List<String> getUniqueUsersWithRole(ProviderData providerData, String role) throws ProviderException {
+    throw new ProviderException("getUniqueTeacherIds not implemented");
+  }
 }
