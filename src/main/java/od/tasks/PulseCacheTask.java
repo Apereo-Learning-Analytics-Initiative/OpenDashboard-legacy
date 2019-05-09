@@ -3,10 +3,12 @@ package od.tasks;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -41,9 +43,9 @@ public class PulseCacheTask {
           if (teacherIds != null) {
             System.out.println("Cacheing pulsedetails for " + teacherIds.size() + " teachers");
           }
-          for(String userId: teacherIds) {            
-            pulseController.pulseCache(tenant.getId(), userId);
-            System.out.println("finished for userid: " + userId);
+          for(String userId: teacherIds) { 
+            System.out.println("Sending off async request for " + userId);
+            syncPulse(tenant.getId(),userId);
           }
         
         } catch (ProviderDataConfigurationException e) {
@@ -53,5 +55,18 @@ public class PulseCacheTask {
           e.printStackTrace();
         }
       }           
+    }
+    
+    @Async
+    public void syncPulse(String tenantId, String userId) {
+      System.out.println("starting for userid: " + userId);
+      try {
+        pulseController.pulseCache(tenantId, userId);
+      } catch (ProviderDataConfigurationException | ProviderException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      System.out.println("finished for userid: " + userId);
+      return;
     }
 }

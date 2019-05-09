@@ -78,8 +78,8 @@ public class PulseController {
   
   
   
-  @Async
-  public CompletableFuture pulseCache(@PathVariable("tenantId") final String tenantId,
+
+  public void pulseCache(@PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
 
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
@@ -88,7 +88,7 @@ public class PulseController {
     if(pulseResults!=null && pulseResults.size()==1) {      
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_HOUR;
       if (!moreThanDay) {
-        return new CompletableFuture();
+        return;
       }      
     }
     
@@ -515,7 +515,7 @@ public class PulseController {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
-    return new CompletableFuture();
+    return;
   }
   
   
