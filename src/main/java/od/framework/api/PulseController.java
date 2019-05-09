@@ -1414,7 +1414,10 @@ public class PulseController {
 	  }
   
   private double getAverageRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
-      double cumulator = 0.0;
+    if (pulseStudentDetails == null) {
+      return 0;
+    }
+    double cumulator = 0.0;
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
       if(!Double.isNaN(studentDetail.getRiskAsDouble()))
       {
@@ -1428,6 +1431,9 @@ public class PulseController {
   }
   
   private double getMedianRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+    if (pulseStudentDetails == null) {
+      return 0;
+    }
     
     List<Double> allRiskScores = new ArrayList<>();
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
