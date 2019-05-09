@@ -21,15 +21,14 @@ import od.repository.mongo.MongoTenantRepository;
 
 @Component
 public class PulseCacheTask {
-  
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired PulseController pulseController;
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
-    @Scheduled(cron = "0 */3 * * *" )
-    public void reportCurrentTime() {
+    @Scheduled(fixedRate = 1000*60)//*60*1 )
+    public void updatePulseCache() {
       
+      System.out.println("Scheduler is running");
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
       for(Tenant tenant: tenants) {
