@@ -1456,6 +1456,11 @@ public class PulseController {
   
   
   private Long getMedianStudentEvents(List<PulseStudentDetail> pulseStudentDetails) {
+    
+    if (pulseStudentDetails == null) {
+      return 0l;
+    }
+    
     List<Long> allActivityCount = new ArrayList<>();
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
       if(!Double.isNaN(studentDetail.getActivity()))
