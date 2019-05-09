@@ -1,6 +1,7 @@
 package od.tasks;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import od.framework.api.PulseController;
 import od.framework.model.Tenant;
@@ -22,9 +24,10 @@ import od.providers.enrollment.EnrollmentProvider;
 import od.repository.mongo.MongoTenantRepository;
 
 @Component
+@Service
 public class PulseCacheTask {
 
-    @Autowired PulseController pulseController;
+    @Autowired PulseCacheService pulseCacheService;
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
     @Scheduled(fixedRate = 60* 60 * 1000)//*60*1 )
@@ -60,16 +63,17 @@ public class PulseCacheTask {
       }           
     }
     
-    @Async
+    
     public CompletableFuture<String> syncPulse(String tenantId, String userId)  throws InterruptedException {
       System.out.println("starting for userid: " + userId);
+      List<CompletableFuture<String>> results = new ArrayList<>();
       try {
-        pulseController.pulseCache(tenantId, userId);
+        results.add(pulseCacheService.pulseCache(tenantId, userId));
       } catch (ProviderDataConfigurationException | ProviderException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      }
-      System.out.println("finished for userid: " + userId);
+      }      
+      System.out.println("userid on The Queue: " + userId);
       return CompletableFuture.completedFuture("done");
     }
 }
