@@ -77,8 +77,7 @@ public class PulseCacheService {
   final static long MILLIS_PER_HOUR = 60 * 60 * 1000L;
 
   @Async
-  public CompletableFuture<String> pulseCache(@PathVariable("tenantId") final String tenantId,
-      @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
+  public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
 
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
     
@@ -90,12 +89,6 @@ public class PulseCacheService {
       }      
     }
     
-    
-    String tempClassSourcedId = null;
-    boolean isSakai = false;
-    
-    
-    final String classSourcedId = tempClassSourcedId;
     boolean hasRiskScore = false;
     
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
@@ -141,7 +134,18 @@ public class PulseCacheService {
     
     ProviderData rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
-    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
+    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
+    
+    //remove everything that isn't this class
+    //this basically means that user can only see the
+    //class that they are launching from. BUT... there is currently
+    //a bug in the system anyways, and this makes caching much nicer
+    for(Enrollment enrollment:enrollments) {
+      if(!enrollment.getKlass().getSourcedId().equals(classSourcedId))
+        enrollments.remove(enrollment);
+    }
+    //at this point, we only have a single enrollment for this cached object
+    
     
     PulseDetail pulseDetail = null;
     
@@ -232,7 +236,7 @@ public class PulseCacheService {
                 
         ClassEventStatistics classEventStatistics = null;
         try {
-          boolean studentsOnly = !isSakai;          
+          boolean studentsOnly = true;          
           classEventStatistics = eventProvider.getStatisticsForClass(tenantId, klass.getSourcedId(), studentsOnly);
         } 
         catch (Exception e1) {

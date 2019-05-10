@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import od.providers.ProviderService;
 import od.providers.config.ProviderDataConfigurationException;
 import od.providers.enrollment.EnrollmentProvider;
 import od.repository.mongo.MongoTenantRepository;
+import unicon.matthews.oneroster.Enrollment;
 
 @Component
 @Service
@@ -42,9 +44,9 @@ public class PulseCacheTask {
       for(Tenant tenant: tenants) {
         ProviderData rosterProviderData;
         try {
-          rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
-        
+          rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);        
           EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
+          
           List<String> teacherIds = enrollmentProvider.getUniqueUsersWithRole(rosterProviderData, "teacher");
           if (teacherIds != null) {
             System.out.println("Cacheing pulsedetails for " + teacherIds.size() + " teachers");
@@ -59,7 +61,10 @@ public class PulseCacheTask {
             syncPulse(tenant.getId(),userId);
             teacherIds.remove(index);
           }*/
-          syncPulse(tenant.getId(),"tmp00456@ncsu.edu");
+          Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, "tmp00456@ncsu.edu", true);
+          for(Enrollment enrollment: enrollments) {
+            syncPulse(tenant.getId(),"tmp00456@ncsu.edu",enrollment.getKlass().getSourcedId());
+          }
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
         } catch (ProviderException e) {
@@ -73,11 +78,12 @@ public class PulseCacheTask {
     }
     
     
-    public CompletableFuture<String> syncPulse(String tenantId, String userId)  throws InterruptedException {
-      System.out.println("starting for userid: " + userId);
+    public CompletableFuture<String> syncPulse(String tenantId, String userId, String classSourcedId)  throws InterruptedException {
+      System.out.println("starting for userid: " + userId + " and sourcedID: " + classSourcedId);
+
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
-        results.add(pulseCacheService.pulseCache(tenantId, userId));
+        results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
       } catch (ProviderDataConfigurationException | ProviderException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
