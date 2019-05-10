@@ -74,7 +74,7 @@ public class PulseCacheService {
   @Autowired private PulseCacheRepository pulseCacheRepository;
   
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
-  final static long MILLIS_PER_HOUR = 60* 60 * 1000L;
+  final static long MILLIS_PER_HOUR = 60 * 60 * 1000L;
 
   @Async
   public CompletableFuture<String> pulseCache(@PathVariable("tenantId") final String tenantId,
@@ -84,7 +84,7 @@ public class PulseCacheService {
     
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
-      boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_HOUR;
+      boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
       if (!moreThanDay) {
         return CompletableFuture.completedFuture("COMPLETED");
       }      

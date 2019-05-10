@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -30,7 +31,9 @@ public class PulseCacheTask {
     @Autowired PulseCacheService pulseCacheService;
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
-    @Scheduled(fixedRate = 60* 60 * 1000)//*60*1 )
+    
+    //scheduled every 12 hours
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     public void updatePulseCache() {
       
       System.out.println("Scheduler is running");
@@ -46,11 +49,16 @@ public class PulseCacheTask {
           if (teacherIds != null) {
             System.out.println("Cacheing pulsedetails for " + teacherIds.size() + " teachers");
           }
-          for(String userId: teacherIds) { 
-            System.out.println("Sending off async request for " + userId);
+          
+          //since this is a multi-server environment
+          //let's randomize the order in which we update. 
+          //This will make it far less likely that we step on each other's toes
+          while(teacherIds.size()>0) {
+            int index = new Random().nextInt(teacherIds.size());
+            String userId = teacherIds.get(index);
             syncPulse(tenant.getId(),userId);
+            teacherIds.remove(index);
           }
-        
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
         } catch (ProviderException e) {
