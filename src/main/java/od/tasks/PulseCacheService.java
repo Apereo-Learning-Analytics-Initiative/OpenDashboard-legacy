@@ -508,6 +508,7 @@ public class PulseCacheService {
           .withUserId(userId)
           .withTenantId(tenantId)
           .withUserRole("NONSTUDENT")
+          .withClassSourcedId(classSourcedId)
           .build();
     }    
     
@@ -515,7 +516,7 @@ public class PulseCacheService {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
-    System.out.println("ACTUALLY FINISHED UserId: " + userId);
+    System.out.println("ACTUALLY FINISHED UserId: " + userId + " CourseId: " + classSourcedId);
     return CompletableFuture.completedFuture("COMPLETED");
   }
   

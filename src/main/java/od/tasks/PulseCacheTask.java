@@ -81,8 +81,6 @@ public class PulseCacheTask {
     }    
     
     public CompletableFuture<String> syncPulse(String tenantId, String userId, String classSourcedId)  throws InterruptedException {
-      System.out.println("starting for userid: " + userId + " and sourcedID: " + classSourcedId);
-
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
         results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
@@ -90,7 +88,6 @@ public class PulseCacheTask {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }      
-      System.out.println("userid on The Queue: " + userId);
       return CompletableFuture.completedFuture("done");
     }
 }
