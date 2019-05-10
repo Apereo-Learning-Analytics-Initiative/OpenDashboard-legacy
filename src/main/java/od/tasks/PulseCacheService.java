@@ -81,11 +81,13 @@ public class PulseCacheService {
 
     System.out.println("Going to try to cache: " + tenantId + " " + userId + " " + classSourcedId);
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
+    System.out.println("pulseResults for: " + tenantId + " " + userId + " " + classSourcedId + "::: " + pulseResults);
     
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
       if (!moreThanDay) {
+        
         return CompletableFuture.completedFuture("COMPLETED");
       }      
     }
@@ -140,10 +142,16 @@ public class PulseCacheService {
     //this basically means that user can only see the
     //class that they are launching from. BUT... there is currently
     //a bug in the system anyways, and this makes caching much nicer
+    System.out.println(enrollments.size());
     for(Enrollment enrollment:enrollments) {
-      if(!enrollment.getKlass().getSourcedId().equals(classSourcedId))
+      if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
+        System.out.println("Removing Enrollment with classSourcedId: " + classSourcedId);
+        System.out.println("enrollment.getKlass().getSourcedId(): " + enrollment.getKlass().getSourcedId());
         enrollments.remove(enrollment);
+      }
     }
+    System.out.println(enrollments.size());
+    System.out.println(enrollments);
     //at this point, we only have a single enrollment for this cached object
     
     

@@ -55,7 +55,8 @@ public class PulseCacheTask {
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
-          while(teacherIds.size()>0) {
+          //while(teacherIds.size()>0) 
+          for(int i=0; i < 15; i++){
             int index = new Random().nextInt(teacherIds.size());
             String userId = teacherIds.get(index);
             
