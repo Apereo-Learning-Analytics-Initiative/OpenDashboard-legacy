@@ -64,6 +64,7 @@ public class PulseCacheTask {
               syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId());
             }
             
+            //remove the id
             teacherIds.remove(index);
           }
           
