@@ -120,14 +120,12 @@ public class PulseController {
     }
     final String classSourcedId = tempClassSourcedId;
     
-    System.out.println("Trying to find in Cache");
+
     List<PulseDetail> results = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     if(results!=null && results.size()==1) {
       
-      System.out.println("found something in Cache");
       boolean moreThanDay = Math.abs((new Date()).getTime() - results.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
-      if (!moreThanDay) {
-        System.out.println("found new enough to return from Cache");
+      if (!moreThanDay) {      
         return results.get(0);
       }
     }
@@ -135,41 +133,35 @@ public class PulseController {
     
     boolean hasRiskScore = false;
     
-    System.out.println("Getting all providers");
+
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
     EventProvider eventProvider = providerService.getEventProvider(tenant);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     UserProvider userProvider = providerService.getUserProvider(tenant);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
-    System.out.println("Got all providers");
+
     
     Map<String,Map<String,Object>> modelOutputMap = null;
     try {
       ModelOutputProvider modelOutputProvider = providerService.getModelOutputProvider(tenant);
       ProviderData modelOutputProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.MODELOUTPUT);
       
-      System.out.println("modelOutputProviderData: " + modelOutputProviderData);
-      
       if (modelOutputProviderData != null) {
         Page<ModelOutput> page
           = modelOutputProvider.getModelOutputForContext(modelOutputProviderData, tenantId, classSourcedId, null);
-        
-        System.out.println("ModelOutputForContext Elements: " + page.getTotalElements());
+
         
         List<ModelOutput> output = page.getContent();
         
         if (output != null) {
           modelOutputMap 
             = output.stream().collect(Collectors.toMap(ModelOutput::getUserSourcedId, ModelOutput::getOutput));
-          System.out.println("Streaming ModelData");
           if (modelOutputMap != null) {
             hasRiskScore = true;
           }
-        }
-        
+        }        
       }
-
     }
     catch (Exception e) {
       log.warn(e.getMessage());

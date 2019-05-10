@@ -78,16 +78,13 @@ public class PulseCacheService {
 
   @Async
   public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
-
-    System.out.println("Going to try to cache: " + tenantId + " " + userId + " " + classSourcedId);
+    
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
-    System.out.println("pulseResults for: " + tenantId + " " + userId + " " + classSourcedId + "::: " + pulseResults);
     
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
-      if (!moreThanDay) {
-        
+      if (!moreThanDay) {        
         return CompletableFuture.completedFuture("COMPLETED");
       }      
     }
@@ -122,7 +119,6 @@ public class PulseCacheService {
       }
     }
     catch (Exception e) {
-      System.out.println(e);
       log.warn(e.getMessage());
     }
     
@@ -142,16 +138,12 @@ public class PulseCacheService {
     //this basically means that user can only see the
     //class that they are launching from. BUT... there is currently
     //a bug in the system anyways, and this makes caching much nicer
-    System.out.println(enrollments.size());
+
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
-        System.out.println("Removing Enrollment with classSourcedId: " + classSourcedId);
-        System.out.println("enrollment.getKlass().getSourcedId(): " + enrollment.getKlass().getSourcedId());
         enrollments.remove(enrollment);
       }
     }
-    System.out.println(enrollments.size());
-    System.out.println(enrollments);
     //at this point, we only have a single enrollment for this cached object
     
     
@@ -526,7 +518,6 @@ public class PulseCacheService {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
-    System.out.println("ACTUALLY cached: " + tenantId + " " + userId + " " + classSourcedId);
     return CompletableFuture.completedFuture("COMPLETED");
   }
   
