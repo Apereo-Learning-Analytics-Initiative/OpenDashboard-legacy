@@ -76,7 +76,7 @@ public class MatthewsEnrollmentProvider extends MatthewsProvider implements Enro
     
     return new HashSet<>(Arrays.asList(enrollments));
   }
-
+ 
   @Override
   public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String classSourcedId, boolean activeOnly) throws ProviderException {
     String endpoint = providerData.findValueForKey("base_url").concat("/api/classes/").concat(classSourcedId).concat("/enrollments");
