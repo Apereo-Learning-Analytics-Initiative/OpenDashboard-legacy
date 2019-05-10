@@ -33,8 +33,12 @@ public class PulseDetail extends OpenDashboardModel {
   private Integer classEventMax;
   
   private List<PulseClassDetail> pulseClassDetails;
+
+  public String classSourcedId;
   
-  
+  public String getClassSourcedId() {
+    return classSourcedId;
+  }
   
   private PulseDetail() {}
   
@@ -220,6 +224,11 @@ public class PulseDetail extends OpenDashboardModel {
     
     public Builder withTenantId(String tenantId) {
       _pulseDetail.tenantId = tenantId;
+      return this;
+    }
+    
+    public Builder withClassSourcedId(String classSourcedId) {
+      _pulseDetail.classSourcedId = classSourcedId;
       return this;
     }
     

@@ -514,8 +514,7 @@ public class PulseController {
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
             .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
             .withMedianPassPercent(getMedianRiskScore(pulseStudentDetails))
-            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
-            .withClassSourcedId(classSourcedId)
+            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())            
             .build();
         
         pulseClassDetails.add(pulseClassDetail);
@@ -540,6 +539,7 @@ public class PulseController {
           .withUserId(userId)
           .withTenantId(tenantId)
           .withUserRole("NONSTUDENT")
+          .withClassSourcedId(classSourcedId)
           .build();
     }
     
