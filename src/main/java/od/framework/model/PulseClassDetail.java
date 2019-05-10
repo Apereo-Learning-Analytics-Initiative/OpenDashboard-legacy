@@ -37,11 +37,17 @@ public class PulseClassDetail {
   public Integer studentsWithEvents;
   public Map<String, Long> eventTypeTotals;
   public Map<String, Double> eventTypeAverages;
+  public String classSourcedId;
   
   private PulseClassDetail() {}
 
   public String getId() {
     return id;
+  }
+  
+  
+  public String getClassSourcedId() {
+    return classSourcedId;
   }
   
   public Double getMedianPassPercent() {
@@ -325,6 +331,11 @@ public class PulseClassDetail {
 
     public PulseClassDetail build() {
       return _pulseClassDetail;
+    }
+
+    public Builder withClassSourcedId(String classSourcedId) {
+      _pulseClassDetail.classSourcedId = classSourcedId;
+      return this;
     }
   }
 }

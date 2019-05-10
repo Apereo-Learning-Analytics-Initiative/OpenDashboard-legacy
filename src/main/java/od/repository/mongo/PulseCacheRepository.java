@@ -16,6 +16,8 @@ import org.springframework.data.mongodb.repository.Query;
  *
  */
 public interface PulseCacheRepository extends MongoRepository<PulseDetail, String> {  
-  List<PulseDetail> findByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
-  void deleteByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
+  //List<PulseDetail> findByUserIdAndTenantIdAndUserRole(String userId, String tenantId, String string);
+  void deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(String userId, String tenantId, String string, String classSourcedId);
+  List<PulseDetail> findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(String userId, String tenantId, String string,
+      String classSourcedId);
 }

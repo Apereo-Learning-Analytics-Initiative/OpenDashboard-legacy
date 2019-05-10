@@ -79,7 +79,7 @@ public class PulseCacheService {
   @Async
   public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
 
-    List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
+    List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
     
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
@@ -115,10 +115,8 @@ public class PulseCacheService {
           if (modelOutputMap != null) {
             hasRiskScore = true;
           }
-        }
-        
+        }        
       }
-
     }
     catch (Exception e) {
       log.warn(e.getMessage());
@@ -514,7 +512,7 @@ public class PulseCacheService {
     }    
     
     //delete them all if they exist
-    pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRole(userId, tenantId,"NONSTUDENT");
+    pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
     System.out.println("ACTUALLY FINISHED UserId: " + userId);
