@@ -36,9 +36,7 @@ public class PulseCacheTask {
     
     //scheduled every 12 hours
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
-    public void updatePulseCache() {
-      
-      System.out.println("Scheduler is running");
+    public void updatePulseCache() {      
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
       for(Tenant tenant: tenants) {
@@ -48,8 +46,8 @@ public class PulseCacheTask {
           EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
           
           List<String> teacherIds = enrollmentProvider.getUniqueUsersWithRole(rosterProviderData, "teacher");
-          if (teacherIds != null) {
-            System.out.println("Cacheing pulsedetails for " + teacherIds.size() + " teachers");
+          if (teacherIds == null) {
+            continue;
           }
           
           //since this is a multi-server environment
@@ -71,7 +69,6 @@ public class PulseCacheTask {
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
         } catch (ProviderException e) {
-          System.out.println(e);
           e.printStackTrace();
         } catch (InterruptedException e) {
           // TODO Auto-generated catch block
