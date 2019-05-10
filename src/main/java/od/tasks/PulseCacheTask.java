@@ -53,12 +53,13 @@ public class PulseCacheTask {
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
-          while(teacherIds.size()>0) {
+          /*while(teacherIds.size()>0) {
             int index = new Random().nextInt(teacherIds.size());
             String userId = teacherIds.get(index);
             syncPulse(tenant.getId(),userId);
             teacherIds.remove(index);
-          }
+          }*/
+          syncPulse(tenant.getId(),"tmp00456@ncsu.edu");
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
         } catch (ProviderException e) {
