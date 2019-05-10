@@ -36,20 +36,27 @@ public class PulseCacheTask {
     
     //scheduled every 12 hours
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
-    public void updatePulseCache() {      
+    public void updatePulseCache() {  
+      
+      System.out.println("****Updating Cache");
+      
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
       for(Tenant tenant: tenants) {
+        System.out.println("****Updating Cache - inside tenant");
         ProviderData rosterProviderData;
         try {
           rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);        
           EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
           
+          System.out.println("Going to get teachers");
           List<String> teacherIds = enrollmentProvider.getUniqueUsersWithRole(rosterProviderData, "teacher");
           if (teacherIds == null) {
+            System.out.println("Teachers are null");
             continue;
           }
           
+          System.out.println("There are: " + teacherIds.size());
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
@@ -59,6 +66,7 @@ public class PulseCacheTask {
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
             for(Enrollment enrollment: enrollments) {
+              System.out.println("Going to try to sync: " + enrollment);
               syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId());
             }
             
@@ -80,9 +88,11 @@ public class PulseCacheTask {
     public CompletableFuture<String> syncPulse(String tenantId, String userId, String classSourcedId)  throws InterruptedException {
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
+        System.out.println("Trying to write: " + tenantId + " " + userId+ " " + classSourcedId + " ");
         results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
       } catch (ProviderDataConfigurationException | ProviderException e) {
         // TODO Auto-generated catch block
+        System.out.println("Exeption writing: " + e);
         e.printStackTrace();
       }      
       return CompletableFuture.completedFuture("done");
