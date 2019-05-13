@@ -16,6 +16,7 @@ package od.providers.enrollment;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -231,4 +232,7 @@ public class LearningLockerEnrollmentProvider extends LearningLockerProvider imp
 //    return member;
   }
 
+  public List<String> getUniqueUsersWithRole(ProviderData providerData, String role) throws ProviderException {
+    throw new ProviderException("getUniqueTeacherIds not implemented");
+  }
 }

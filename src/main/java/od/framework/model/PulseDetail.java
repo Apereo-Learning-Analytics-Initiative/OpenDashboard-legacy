@@ -1,6 +1,7 @@
 package od.framework.model;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,7 +10,17 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(builder = PulseDetail.Builder.class)
-public class PulseDetail {
+public class PulseDetail extends OpenDashboardModel {
+
+  private static final long serialVersionUID = 1L;
+  
+  private String userId;
+  private String tenantId;
+  private String userRole;
+  
+  
+  private Date lastUpdated = new Date();
+  
   private LocalDate startDate;
   private LocalDate endDate;
   
@@ -22,8 +33,37 @@ public class PulseDetail {
   private Integer classEventMax;
   
   private List<PulseClassDetail> pulseClassDetails;
+
+  public String classSourcedId;
+  
+  public String getClassSourcedId() {
+    return classSourcedId;
+  }
   
   private PulseDetail() {}
+  
+  
+  public String getUserRole() {
+    return userRole;
+  }
+  
+  public String getUserId() {
+    return userId;
+  }
+
+
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+
+
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
+
+
 
   public LocalDate getStartDate() {
     return startDate;
@@ -169,6 +209,26 @@ public class PulseDetail {
     
     public Builder withPulseClassDetails(List<PulseClassDetail> pulseClassDetails) {
       _pulseDetail.pulseClassDetails = pulseClassDetails;
+      return this;
+    }
+    
+    public Builder withUserId(String userId) {
+      _pulseDetail.userId = userId;
+      return this;
+    }
+    
+    public Builder withUserRole(String userRole) {
+      _pulseDetail.userRole = userRole;
+      return this;
+    }
+    
+    public Builder withTenantId(String tenantId) {
+      _pulseDetail.tenantId = tenantId;
+      return this;
+    }
+    
+    public Builder withClassSourcedId(String classSourcedId) {
+      _pulseDetail.classSourcedId = classSourcedId;
       return this;
     }
     

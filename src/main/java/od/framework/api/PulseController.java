@@ -7,12 +7,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import lti.LaunchRequest;
@@ -33,6 +35,7 @@ import od.providers.lineitem.LineItemProvider;
 import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
+import od.repository.mongo.PulseCacheRepository;
 import od.utils.PulseUtility;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -67,12 +71,21 @@ public class PulseController {
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
+  @Autowired private PulseCacheRepository pulseCacheRepository;
+  
+  final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
+  final static long MILLIS_PER_HOUR = 60* 60 * 1000L;
+  
+  
+  
+  
+  
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
   @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId:.+}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public PulseDetail pulse(Authentication authentication, @PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
-	  
+    
     log.debug("tenantId: {}", tenantId);
     log.debug("userId: {}", userId);
     log.debug("Authentication: {}", authentication);
@@ -81,6 +94,7 @@ public class PulseController {
     if (hasRole("ROLE_STUDENT")) {        	
     	return pulseForStudent(authentication, tenantId, userId);
     } 
+    
     
     String tempClassSourcedId = null;
     boolean isSakai = false;
@@ -105,14 +119,28 @@ public class PulseController {
       }
     }
     final String classSourcedId = tempClassSourcedId;
+    
+
+    List<PulseDetail> results = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
+    if(results!=null && results.size()==1) {
+      
+      boolean moreThanDay = Math.abs((new Date()).getTime() - results.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
+      if (!moreThanDay) {      
+        return results.get(0);
+      }
+    }
+    
+    
     boolean hasRiskScore = false;
     
+
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
     EventProvider eventProvider = providerService.getEventProvider(tenant);
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     UserProvider userProvider = providerService.getUserProvider(tenant);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+
     
     Map<String,Map<String,Object>> modelOutputMap = null;
     try {
@@ -122,6 +150,7 @@ public class PulseController {
       if (modelOutputProviderData != null) {
         Page<ModelOutput> page
           = modelOutputProvider.getModelOutputForContext(modelOutputProviderData, tenantId, classSourcedId, null);
+
         
         List<ModelOutput> output = page.getContent();
         
@@ -131,10 +160,8 @@ public class PulseController {
           if (modelOutputMap != null) {
             hasRiskScore = true;
           }
-        }
-        
+        }        
       }
-
     }
     catch (Exception e) {
       log.warn(e.getMessage());
@@ -304,6 +331,8 @@ public class PulseController {
               classPulseDateEventCounts.add(pulseDateEventCount);
             }
             
+            
+            //class event statistics could calculate this without having to go through the stream
             firstClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).min(LocalDate::compareTo).get();
             lastClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).max(LocalDate::compareTo).get();
           }
@@ -395,6 +424,8 @@ public class PulseController {
             
             Long activity = 0l;
             if (studentPulseDateEventCounts != null) {
+              
+              //class event statistics could calculate this without having to go through the stream (on the LRW side)
               activity = studentPulseDateEventCounts.stream().mapToLong(PulseDateEventCount::getEventCount).sum();
             }
             else {
@@ -443,6 +474,8 @@ public class PulseController {
                 
         Integer studentEventMax = 0;
         if (!allStudentEventCounts.isEmpty()) {
+          
+          //class event statistics could calculate this without having to go through the entire stack
           studentEventMax = Collections.max(allStudentEventCounts).intValue();
         }
         
@@ -484,7 +517,7 @@ public class PulseController {
             .withStudentsWithEvents(classEventStatistics.getStudentsWithEvents())
             .withMeanPassPercent(getAverageRiskScore(pulseStudentDetails))
             .withMedianPassPercent(getMedianRiskScore(pulseStudentDetails))
-            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())
+            .withTotalNumberOfEvents(classEventStatistics.getTotalEvents())            
             .build();
         
         pulseClassDetails.add(pulseClassDetail);
@@ -506,9 +539,13 @@ public class PulseController {
           .withHasLastLogin(false)
           .withHasEmail(false)
           .withPulseClassDetails(pulseClassDetails)
+          .withUserId(userId)
+          .withTenantId(tenantId)
+          .withUserRole("NONSTUDENT")
+          .withClassSourcedId(classSourcedId)
           .build();
     }
-
+    
     return pulseDetail;
   }
 
@@ -939,7 +976,10 @@ public class PulseController {
 	  }
   
   private double getAverageRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
-      double cumulator = 0.0;
+    if (pulseStudentDetails == null) {
+      return 0;
+    }
+    double cumulator = 0.0;
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
       if(!Double.isNaN(studentDetail.getRiskAsDouble()))
       {
@@ -953,6 +993,9 @@ public class PulseController {
   }
   
   private double getMedianRiskScore(List<PulseStudentDetail> pulseStudentDetails) {
+    if (pulseStudentDetails == null) {
+      return 0;
+    }
     
     List<Double> allRiskScores = new ArrayList<>();
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
@@ -981,6 +1024,11 @@ public class PulseController {
   
   
   private Long getMedianStudentEvents(List<PulseStudentDetail> pulseStudentDetails) {
+    
+    if (pulseStudentDetails == null) {
+      return 0l;
+    }
+    
     List<Long> allActivityCount = new ArrayList<>();
     for(PulseStudentDetail studentDetail : pulseStudentDetails) {
       if(!Double.isNaN(studentDetail.getActivity()))

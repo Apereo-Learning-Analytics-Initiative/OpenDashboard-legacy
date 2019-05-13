@@ -3,8 +3,10 @@
  */
 package od.providers.enrollment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -74,7 +76,7 @@ public class MatthewsEnrollmentProvider extends MatthewsProvider implements Enro
     
     return new HashSet<>(Arrays.asList(enrollments));
   }
-
+ 
   @Override
   public Set<Enrollment> getEnrollmentsForClass(ProviderData providerData, String classSourcedId, boolean activeOnly) throws ProviderException {
     String endpoint = providerData.findValueForKey("base_url").concat("/api/classes/").concat(classSourcedId).concat("/enrollments");
@@ -87,4 +89,20 @@ public class MatthewsEnrollmentProvider extends MatthewsProvider implements Enro
     return fetch(endpoint, providerData);
   }
 
+  @Override
+  public List<String> getUniqueUsersWithRole(ProviderData providerData, String role) throws ProviderException {
+    String endpoint = providerData.findValueForKey("base_url").concat("/api/users/withrole/").concat(role).concat("/enrollments");
+    
+    MatthewsClient mc = new MatthewsClient(providerData.findValueForKey("base_url"), providerData.findValueForKey("key"), providerData.findValueForKey("secret"));
+    
+    RestTemplate restTemplate = mc.getRestTemplate();
+    HttpHeaders headers = mc.getHeaders();
+    
+    ResponseEntity<String[]> response 
+      = restTemplate.exchange(endpoint, HttpMethod.GET, new HttpEntity<>(headers), String[].class);
+    
+    String [] userIds = response.getBody();
+    
+    return new ArrayList<>(Arrays.asList(userIds));
+  }
 }

@@ -43,6 +43,7 @@ public class PulseClassDetail {
   public String getId() {
     return id;
   }
+
   
   public Double getMedianPassPercent() {
     return medianPassPercent;

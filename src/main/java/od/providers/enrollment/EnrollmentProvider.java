@@ -17,6 +17,7 @@
  */
 package od.providers.enrollment;
 
+import java.util.List;
 import java.util.Set;
 
 import od.providers.Provider;
@@ -33,4 +34,6 @@ public interface EnrollmentProvider extends Provider {
 	    boolean activeOnly) throws ProviderException;
 	Set<Enrollment> getEnrollmentsForUser(ProviderData providerData, String userSourcedId,
 	    boolean activeOnly) throws ProviderException;
+	 List<String> getUniqueUsersWithRole(ProviderData providerData, String role) throws ProviderException;
+	
 }
