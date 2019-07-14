@@ -351,10 +351,7 @@ public class DemoEventProvider implements EventProvider {
       
       classEventsStatsMap.put(classSourcedId, classEventsStats);
     }
-    
-    if (classEventsStats == null) {
-      System.out.println("Is Null");
-    }
+
     return classEventsStats;
   }
   
