@@ -102,18 +102,18 @@ public class DemoLineItemProvider implements LineItemProvider {
     Map<String, unicon.matthews.oneroster.Class> classes = new HashMap<>();
     
     Map<String, String> metadata1 = new HashMap<>();   
-    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 23).toString());
-    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 11).toString());
+    metadata1.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2019, 6, 1).toString());
+    metadata1.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2019, 8, 1).toString());
     metadata1.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     Map<String, String> metadata2 = new HashMap<>();
-    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 18).toString());
-    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 10).toString());
+    metadata2.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2019, 6, 1).toString());
+    metadata2.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2019, 8, 1).toString());
     metadata2.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
 
     Map<String, String> metadata3 = new HashMap<>();
-    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2017, 1, 28).toString());
-    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2017, 5, 27).toString());
+    metadata3.put(Vocabulary.CLASS_START_DATE, LocalDate.of(2019, 6, 1).toString());
+    metadata3.put(Vocabulary.CLASS_END_DATE, LocalDate.of(2019, 8, 1).toString());
     metadata3.put(Vocabulary.SOURCE_SYSTEM, "DEMO");
     
     unicon.matthews.oneroster.Class class1
@@ -323,8 +323,8 @@ public class DemoLineItemProvider implements LineItemProvider {
     .withStatus(Status.active)
     .withTitle("Hands-on Lab")
     .withDescription("Disection! The innards of ficus.")
-    .withAssignDate(LocalDateTime.of(2017, 2, 10,0,0))
-    .withDueDate(LocalDateTime.of(2017, 2, 15,0,0))
+    .withAssignDate(LocalDateTime.of(2019, 6, 10,0,0))
+    .withDueDate(LocalDateTime.of(2019, 6, 15,0,0))
     .withClass(class3)
     .withCategory(lab)
     .build();
@@ -335,8 +335,8 @@ LineItem class3_li1
   .withStatus(Status.active)
   .withTitle("Lab Report")
   .withDescription("Report on discection")
-  .withAssignDate(LocalDateTime.of(2017, 3, 10,0,0))
-  .withDueDate(LocalDateTime.of(2017, 4, 1,0,0))
+  .withAssignDate(LocalDateTime.of(2019, 6, 10,0,0))
+  .withDueDate(LocalDateTime.of(2019, 6, 1,0,0))
   .withClass(class3)
   .withCategory(report)
   .build();
@@ -347,8 +347,8 @@ LineItem class3_li1
     .withStatus(Status.active)
     .withTitle("Quiz #1")
     .withDescription("Knowledge check")
-    .withAssignDate(LocalDateTime.of(2017, 3, 19,0,0))
-    .withDueDate(LocalDateTime.of(2017, 4, 17,0,0))
+    .withAssignDate(LocalDateTime.of(2019, 7, 19,0,0))
+    .withDueDate(LocalDateTime.of(2019, 7, 17,0,0))
     .withClass(class3)
     .withCategory(report)
     .build();
@@ -360,8 +360,8 @@ LineItem class3_li1
       .withStatus(Status.active)
       .withTitle("Midterm Exam")
       .withDescription("Good luck!")
-      .withAssignDate(LocalDateTime.of(2017, 3, 17,0,0))
-      .withDueDate(LocalDateTime.of(2017, 4, 1,0,0))
+      .withAssignDate(LocalDateTime.of(2019, 6, 17,0,0))
+      .withDueDate(LocalDateTime.of(2019, 6, 1,0,0))
       .withClass(class3)
       .withCategory(exam)
       .build();
@@ -371,8 +371,8 @@ LineItem class3_li1
       .withSourcedId(UUID.randomUUID().toString())
       .withStatus(Status.active)
       .withTitle("Quiz #2")
-      .withAssignDate(LocalDateTime.of(2017, 4, 15,0,0))
-      .withDueDate(LocalDateTime.of(2017, 4, 15,0,0))
+      .withAssignDate(LocalDateTime.of(2019, 7, 15,0,0))
+      .withDueDate(LocalDateTime.of(2019, 7, 15,0,0))
       .withClass(class3)
       .withCategory(quiz)
       .build();
@@ -383,8 +383,8 @@ LineItem class3_li1
       .withStatus(Status.active)
       .withTitle("Final Exam")
       .withDescription("Enjoy break!")
-      .withAssignDate(LocalDateTime.of(2017, 4, 7, 0, 0))
-      .withDueDate(LocalDateTime.of(2017, 4, 9, 0, 0))
+      .withAssignDate(LocalDateTime.of(2019, 6, 7, 0, 0))
+      .withDueDate(LocalDateTime.of(2019, 6, 9, 0, 0))
       .withClass(class3)
       .withCategory(exam)
       .build();

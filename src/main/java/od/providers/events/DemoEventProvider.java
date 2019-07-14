@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.lai.Event;
 import org.apereo.lai.impl.EventImpl;
 import org.apereo.openlrs.model.event.v2.ClassEventStatistics;
+//import org.apereo.openlrw.caliper.service.repository.MongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -132,12 +134,12 @@ public class DemoEventProvider implements EventProvider {
     
     String [] classSourcedIds = {"demo-class-1","demo-class-2","demo-class-3"};
     
-    long demoClass1StartTime = Timestamp.valueOf("2017-01-23 00:00:00").getTime();
-    long demoClass1EndTime = Timestamp.valueOf("2017-05-11 00:00:00").getTime();
-    long demoClass2StartTime = Timestamp.valueOf("2017-01-18 00:00:00").getTime();
-    long demoClass2EndTime = Timestamp.valueOf("2017-05-10 00:00:00").getTime();
-    long demoClass3StartTime = Timestamp.valueOf("2017-01-28 00:00:00").getTime();
-    long demoClass3EndTime = Timestamp.valueOf("2017-05-27 00:00:00").getTime();
+    long demoClass1StartTime = Timestamp.valueOf("2019-06-01 00:00:00").getTime();
+    long demoClass1EndTime = Timestamp.valueOf("2019-08-01 00:00:00").getTime();
+    long demoClass2StartTime = Timestamp.valueOf("2019-06-01 00:00:00").getTime();
+    long demoClass2EndTime = Timestamp.valueOf("2019-08-01 00:00:00").getTime();
+    long demoClass3StartTime = Timestamp.valueOf("2019-06-01 00:00:00").getTime();
+    long demoClass3EndTime = Timestamp.valueOf("2019-08-01 00:00:00").getTime();
     
     List<Verb> verbs = new ArrayList<>();
     verbs.add(new Verb(3.0,"http://purl.imsglobal.org/vocab/caliper/v1/action#LoggedIn"));
@@ -274,6 +276,9 @@ public class DemoEventProvider implements EventProvider {
     
     Map<String,Map<String, Long>> eventCountGroupedByDateAndStudent = null;
     
+    Map<String, Long> eventTypeTotals = calculateEventTypeTotals(classEvents);
+    Map<String,Double> eventTypeAverages = calculateEventTypeAverages(eventTypeTotals,60);
+    
     if (eventsByStudent != null) {
       eventCountGroupedByDateAndStudent = new HashMap<>();
       for (String key : eventsByStudent.keySet()) {
@@ -300,6 +305,8 @@ public class DemoEventProvider implements EventProvider {
           .withTotalStudentEnrollments(studentsCounted.keySet().size())
           .withEventCountGroupedByDate(eventCountByDate)
           .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
+          .withEventTypeAverages(eventTypeAverages)
+          .withTotalStudentEnrollments(60)
           .build();
       
       classEventsStatsMap.put(classSourcedId, classEventsStats);
@@ -307,6 +314,50 @@ public class DemoEventProvider implements EventProvider {
     
     return classEventsStats;
   }
+  
+  
+  
+  /**
+   * Calculates the total number of events by action type
+   * Also cleans the URL off the verb completely
+   */
+  private Map<String, Long> calculateEventTypeTotals(Set<Event> classEvents) {
+    
+    List<Event> events = new ArrayList(classEvents);//
+    
+    Map<String, Long> eventTypeTotals = events.stream()
+    .collect(Collectors.groupingBy(Event::getVerb, Collectors.counting()));
+
+    eventTypeTotals = cleanVerbs(eventTypeTotals);    
+    return eventTypeTotals;
+  }
+  
+  /**
+   * Cleans the URL off the verbs
+   */
+  private Map<String, Long> cleanVerbs(Map<String, Long> events) {
+    
+    Set<String> keys = events.keySet();
+    String[] array = keys.toArray(new String[keys.size()]);
+    for (String origkey : array) {
+      String newKey = origkey.substring(origkey.lastIndexOf("#") + 1);
+      events.put(newKey, events.remove(origkey));
+    }    
+    return events;
+  }
+  
+  /**
+   * Calculates teh EventTypeAverages
+   */
+  private Map<String,Double> calculateEventTypeAverages(Map<String,Long> eventTypeTotals, Integer totalNumberStudents) {
+    HashMap<String, Double> eventTypeAverages = new HashMap<>(); 
+    for (Map.Entry<String, Long> eventTypeTotal: eventTypeTotals.entrySet()) {
+      eventTypeAverages.put(eventTypeTotal.getKey(), eventTypeTotal.getValue()/totalNumberStudents.doubleValue());
+    }
+    return eventTypeAverages;
+  }
+  
+  
 
   /* (non-Javadoc)
    * @see od.providers.events.EventProvider#getEventsForUser(java.lang.String, java.lang.String, org.springframework.data.domain.Pageable)

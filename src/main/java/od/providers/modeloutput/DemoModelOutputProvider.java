@@ -1,11 +1,13 @@
 package od.providers.modeloutput;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -72,6 +74,8 @@ public class DemoModelOutputProvider implements ModelOutputProvider {
   public Page<ModelOutput> getModelOutputForContext(ProviderData providerData, String tenantId, String contextId, Pageable page)
       throws ProviderException {
     
+    DecimalFormat df = new DecimalFormat(".00");
+    Random random = new Random();
     List<ModelOutput> modelOutput = new ArrayList<>();
     
     for (int s = 0; s < 60; s++) {
@@ -79,7 +83,11 @@ public class DemoModelOutputProvider implements ModelOutputProvider {
       Map<String, Object> outputParams = new HashMap<>();
       outputParams.put("ALTERNATIVE_ID", studentSourcedId);
       outputParams.put("CLASS_SOURCED_ID", contextId);
-      outputParams.put("RISK_SCORE", 50);
+      
+      Random r = new Random();
+      double randomValue = 1.0 * r.nextDouble();
+      
+      outputParams.put("RISK_SCORE", df.format(randomValue));
       
       ModelOutputImpl output = new ModelOutputImpl(outputParams,new Date());
       output.setUserSourcedId(studentSourcedId);
