@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -263,10 +264,51 @@ public class DemoEventProvider implements EventProvider {
     }
   }
 
+/**
+ * because they were randomly generated, for the most part... EACH USER 
+ * has roughly the same number of events. We need to have some users show 
+ * differing amounts of events. This is a hack random weighting function
+ * 
+ * Demo ids all end with a number... 
+ * so, if their id divisible by 2,  * I remove the event 20% of the time, 
+ * if it's divisible by 4, I remove the event 40 % of the time, and if 
+ * it's divisible by 8, I remove the event 80 % of the time.
+ * @param classEvents
+ * @return
+ */
+  private Set<Event> weightedThinClassEventsByUser(Set<Event> classEvents) {    
+    Set<Event> retVal = new HashSet<>();
+    Random rand = new Random();
+    for(Event event: classEvents) {
+      try {
+        int userId = Integer.parseInt(event.getActor().substring(event.getActor().length()-2));
+        if (userId % 2 == 0 && rand.nextInt(10) == 2) {
+          continue;
+        }      
+        else if (userId % 4 == 0 && rand.nextInt(10) < 4){
+          continue;
+        }    
+        else if (userId % 8 == 0 && rand.nextInt(10) < 8){
+          continue;
+        }    
+        else {
+          retVal.add(event);
+        }
+      } catch(Exception e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+    return retVal;
+  }
+  
   @Override
   public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
     
     Set<Event> classEvents = classEventsMap.get(classSourcedId);
+    System.out.println(classEvents.size());
+    classEvents = weightedThinClassEventsByUser(classEvents);
+    System.out.println(classEvents.size());
     
     Map<String, Long> studentsCounted = classEvents.stream()
         .collect(Collectors.groupingBy(event -> ((EventImpl)event).getActor(), Collectors.counting()));
@@ -312,6 +354,10 @@ public class DemoEventProvider implements EventProvider {
       classEventsStatsMap.put(classSourcedId, classEventsStats);
     }
     
+    System.out.println("Returning from classEventsStats");
+    if (classEventsStats == null) {
+      System.out.println("Is Null");
+    }
     return classEventsStats;
   }
   
