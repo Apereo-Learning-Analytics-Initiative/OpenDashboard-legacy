@@ -306,9 +306,7 @@ public class DemoEventProvider implements EventProvider {
   public ClassEventStatistics getStatisticsForClass(String tenantId, String classSourcedId, boolean studentsOnly) throws ProviderException {
     
     Set<Event> classEvents = classEventsMap.get(classSourcedId);
-    System.out.println(classEvents.size());
     classEvents = weightedThinClassEventsByUser(classEvents);
-    System.out.println(classEvents.size());
     
     Map<String, Long> studentsCounted = classEvents.stream()
         .collect(Collectors.groupingBy(event -> ((EventImpl)event).getActor(), Collectors.counting()));
@@ -354,7 +352,6 @@ public class DemoEventProvider implements EventProvider {
       classEventsStatsMap.put(classSourcedId, classEventsStats);
     }
     
-    System.out.println("Returning from classEventsStats");
     if (classEventsStats == null) {
       System.out.println("Is Null");
     }
