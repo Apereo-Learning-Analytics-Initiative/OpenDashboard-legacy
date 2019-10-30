@@ -1,0 +1,29 @@
+
+<div ng-if="true">
+       <h3>Activity By Time of Day</h3>
+        <!-- Chart -->
+        <div class="hourlyActivityChart" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="hourlyActivityChart" width="400" height="100"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="" ng-show="studentFilters.displayMode=='table'">
+            <table id="hourlyActivityTable" class="table">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in hourlyActivityChartData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in hourlyActivityChartData.labels">
+                            {{ hourlyActivityChartData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</div>
+
+

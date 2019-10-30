@@ -221,16 +221,17 @@
 		        <!-- Use the latest released version:
 		        https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
 		        <version>1.0</version>
+                <configuration>
+                    <nodeVersion>v6.6.0</nodeVersion>
+                    <npmVersion>3.10.3</npmVersion>
+                </configuration>        
 		        <executions>
                     <execution>
                         <id>install node and npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
-                        <configuration>
-                            <nodeVersion>v6.6.0</nodeVersion>
-                            <npmVersion>3.10.3</npmVersion>
-                        </configuration>
+		
                     </execution>
 
                     <execution>

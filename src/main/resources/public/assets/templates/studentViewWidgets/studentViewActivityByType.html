@@ -1,0 +1,29 @@
+
+<div ng-if="true">
+    <h3 title="Displays the count of each activity performed by the student compared to the course average (in grey) ">Activity By Type Compared to Course Averages</h3>
+        <!-- Chart -->
+        <div class="activityByVerbChart" ng-show="studentFilters.displayMode=='chart'">
+            <canvas id="activityByVerbChart" width="400" height="150"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="activityCard" ng-show="studentFilters.displayMode=='table'">
+            <table id="activityByVerbTable" class="activityTable">
+                <thead>
+                    <tr>
+                        <th ng-repeat="label in activityByVerbChartData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-repeat="label in activityByVerbChartData.labels">
+                            {{ activityByVerbChartData.datasets[0].data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</div>
+
+

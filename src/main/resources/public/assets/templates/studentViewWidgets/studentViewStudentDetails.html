@@ -1,0 +1,25 @@
+<!-- STUDENT DETAILS CHART -->
+<div class="student-details" ng-if="listType == 'student'">
+	<div class="col-sm-3 activityCard" ng-show="config.hasEmail">
+		<div class="heading">Contact</div>
+		<div class="body">
+			<a href="" class="fa fa-envelope"
+				ng-click="handleEmail(currentStudent)"></a>
+		</div>
+	</div>
+	<div class="col-xs-3 activityCard"
+		title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">
+		<div class="heading">{{ 'LABEL_ACTIVITY' | translate }}</div>
+		<div class="body">{{ currentStudent.activity }}</div>
+	</div>
+	<div class="col-xs-3 activityCard" ng-show="config.hasRisk"
+		title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">
+		<div class="heading">{{ 'LABEL_RISK_SCORE' | translate }}</div>
+		<div class="body">{{ currentStudent.risk }}</div>
+	</div>
+	<div class="col-xs-3 activityCard" ng-show="config.hasGrade">
+		<div class="heading">Grade</div>
+		<div class="body">{{ currentStudent.grade }}</div>
+	</div>
+</div>
+<!-- END STUDENT DETAILS CHART -->

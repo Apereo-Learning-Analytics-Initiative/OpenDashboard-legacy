@@ -1,0 +1,32 @@
+
+<div ng-if="true">
+		<h3>Activity By Day of Week</h3>
+        <!-- Chart -->
+        <div class="activityDayOfWeekChart" ng-show="studentFilters.displayMode=='chart'">
+        
+            <canvas id="activityDayOfWeekChart" width="400" height="200"></canvas>
+        </div>
+        <!-- Table -->
+        <div class="" ng-show="studentFilters.displayMode=='table'">
+            <table id="activityDayOfWeekTable" class="table table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th class="dateColumn">Activity</th>
+                        <th ng-repeat="label in activityDayOfWeekData.labels">
+                            {{ label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dataset in activityDayOfWeekData.datasets">
+                        <td>{{dataset.label}}</td>
+                        <td ng-repeat="label in activityDayOfWeekData.labels">
+                            {{ dataset.data[$index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</div>
+
+

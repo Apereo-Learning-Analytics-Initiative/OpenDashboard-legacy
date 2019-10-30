@@ -76,8 +76,29 @@ public class PulseController {
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
   final static long MILLIS_PER_HOUR = 60* 60 * 1000L;
   
+
   
+  /**
+   * TODO: REMOVE THIS METHOD, IT WAS MEANT ONLY AS A POC
+   */
+  @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/pulse/test", method = RequestMethod.GET, 
+      produces = "application/json;charset=utf-8")
+  public String TEST(Authentication authentication, @PathVariable("tenantId") final String tenantId) throws ProviderDataConfigurationException, ProviderException {
+
+	  return "<h3>WE DID IT!!!!!!</h3>"
+	  		+ "<div ng-include src=\"'/api/tenants/5ca78f0dccefe1372108311f/pulse/test2'\"></div>";
+  }
   
+  /**
+   * TODO: REMOVE THIS METHOD, IT WAS MEANT ONLY AS A POC
+   */
+  @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
+  @RequestMapping(value = "/api/tenants/{tenantId}/pulse/test2", method = RequestMethod.GET, 
+      produces = "application/json;charset=utf-8")
+  public String TEST2(Authentication authentication, @PathVariable("tenantId") final String tenantId) throws ProviderDataConfigurationException, ProviderException {
+	  return "<h3>WOW!!! WE ARE GREAT</h3>";
+  }
   
   
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})

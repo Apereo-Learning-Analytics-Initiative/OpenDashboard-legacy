@@ -1,0 +1,78 @@
+
+	<!-- start -->
+	<div id="pulse-data" class="hide-until-ready">
+		<table id="pulse-table-data"
+			class="table table-striped table-condensed table-pulse">
+			<thead id="hidden-header" ng-include="'table-header.html'">
+			</thead>
+			
+			<tbody>
+				<tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort"
+					ng-repeat-finish="draw-chart" watch-for-changes="datalist">
+					<td ng-if="listType == 'students' && config.hasEmail"><a
+						href="" class="fa fa-envelope" ng-click="handleEmail(item)"></a></td>
+					<td ng-if="listType == 'classes'"><a
+						ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
+					</td>
+					<td ng-if="listType != 'classes'"><a href=""
+						ui-sref="index.courselist.studentView({studentId: item.id})">{{item.firstName}}</a>
+					</td>
+					<td ng-if="listType != 'classes'"><a href=""
+						ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
+					</td>
+					<td ng-if="listType != 'classes' && config.hasRisk"
+						ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)"
+						ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)">
+						<div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}
+
+						</div>
+					</td>
+					<td ng-if="listType != 'classes' && config.hasGrade">
+						<!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
+						{{item.grade}} <!-- </div> -->
+					</td>
+					<td ng-if="listType != 'classes'"
+						ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)"
+						ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)"
+						ng-click="toggleActivityDetail('student-popup-'+item.id)">
+						<div class="badge clickable"
+							ng-class="colorCodeActivity(item.activity)">
+							{{item.activity}}</div>
+						<div id="student-popup-{{item.id}}"
+							class="popovert ng-hide popupstudenttotals">
+							<table>
+								<thead>
+									<th></th>
+									<th>{{item.firstName}} {{item.lastName}}</th>
+									<th title="Median for the entire course per student">{{
+										'LABEL_COURSE_MEDIAN' | translate }}</th>
+									<th title="{{'LABEL_COURSE_COMPARISON_TOOLTIP' | translate}}">{{
+										'LABEL_COURSE_COMPARISON' | translate }}</th>
+									<th></th>
+								</thead>
+								<tbody>
+									<tr>
+										<td title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">{{
+											'LABEL_ACTIVITY' | translate }}</td>
+										<td><div class="badge">{{item.activity}}</div></td>
+										<td><div class="badge">{{currentCourse.medianStudentEvents}}</div></td>
+										<td><div class="badge">{{item.activity/currentCourse.medianStudentEvents|number:2}}</div></td>
+										<td></td>
+									</tr>
+									<tr ng-if="config.hasRisk">
+										<td title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">{{
+											'LABEL_RISK_SCORE' | translate }}</td>
+										<td><div class="badge">{{item.risk}}</div></td>
+										<td><div class="badge">{{currentCourse.medianPassPercent}}</div></td>
+										<td><div class="badge">{{item.risk/currentCourse.medianPassPercent|number:3}}</div></td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+					<td id="pulse-chart-{{item.id}}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>

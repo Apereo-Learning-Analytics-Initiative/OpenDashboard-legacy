@@ -7,43 +7,136 @@
         When viewing from within a LMS the breadcrumb is to only provide navitation
         withing the selected class.
         -->
-        
-        
-        <div class="backlinks">
+
+		<div class="backlinks">
 
 			<!-- if we want to add a legend, we can do it here -->
 			<!-- p class="back-link">Understand this Data</p -->
 
 			<!-- Back link to class list -->
-			<a class="back-link" href=""
-				ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession"
-				ng-if="listType !== 'classes'"> <i class="fa fa-chevron-left"></i>
-				Class List
+			<a class="back-link" href="" ui-sref="index.courselist({groupId: null})" ng-show="!isLtiSession"
+				ng-if="listType !== 'classes'"> <i class="fa fa-chevron-left"></i> Class List
 			</a>
 
 			<!-- back link to single class -->
-			<a class="back-link" href=""
-				ui-sref="index.courselist({groupId: currentCourse.id})"
-				ng-if="listType === 'student'" title={{currentCourse.label}}> <i
-				class="fa fa-chevron-left"></i> {{ currentCourse.label.length > 20 ?
-				(( currentCourse.label | limitTo: 20) + ' ...' ) :
-				currentCourse.label}}
+			<a class="back-link" href="" ui-sref="index.courselist({groupId: currentCourse.id})" ng-if="listType === 'student'"
+				title={{currentCourse.label}}> <i class="fa fa-chevron-left"></i> {{ currentCourse.label.length > 20 ? ((
+				currentCourse.label | limitTo: 20) + ' ...' ) : currentCourse.label}}
 			</a>
 		</div>
 
-		
+
 
 		<!-- initial title for class list -->
-		<span class="title-dropdown" ng-if="listType == 'classes'"><a
-			href=""> Select Course </a></span>
+		<span class="title-dropdown" ng-if="listType == 'classes'"><a href=""> Select Course </a></span>
 
 		<!-- main title dropdown, filter settings popover -->
-		<span class="title-dropdown" ng-if="listType !== 'classes'""> <!-- filters and overlays popover -->
-			<span class="filters"> <a href="#"
-				uib-popover-template="'filters.html'" popover-placement="bottom"
-				popover-title="Filters &amp; Overlays"><i
-					class="fa fa-cog fa-lg"></i></a> <script type="text/ng-template"
-					id="filters.html">
+		<span class="title-dropdown" ng-if="listType !== 'classes'"> <!-- filters and overlays popover --> <span
+			class="filters"> <a href="#" uib-popover-template="'filters.html'" popover-placement="bottom"
+				popover-title="Filters &amp; Overlays"><i class="fa fa-cog fa-lg"></i></a>
+
+		</span> <!-- list of courses in main title --> <span class="dropdown" ng-show="!isLtiSession && listType == 'students'">
+				<a href="" data-toggle="dropdown">{{currentCourse.label}} <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li ng-repeat="course in classes"><a href="#" ui-sref="index.courselist({groupId: course.id})">{{course.label}}</a>
+					</li>
+				</ul>
+		</span> <!-- list of students in main title --> <span class="dropdown" ng-if="listType == 'student'"> <a href=""
+				data-toggle="dropdown">{{currentStudent.firstName}} {{currentStudent.lastName}} <span class="caret"></span>
+			</a>
+				<ul class="dropdown-menu">
+					<li ng-repeat="student in currentCourse.students" ng-class="{'active': student.id == currentStudent.id}"><a
+						href="#" ui-sref="index.courselist.studentView({studentId: student.id})">{{student.label}}</a></li>
+				</ul>
+		</span> <a href="" ng-show="isLtiSession && listType == 'students'"
+			ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})" title={{currentCourse.label}}>
+				{{ currentCourse.label.length > 20 ? (( currentCourse.label | limitTo: 20) + ' ...' ) : currentCourse.label}} </a>
+		</span>
+
+		<div ng-include src="'/assets/templates/courseViewWidgets/courseViewAtAGlance.html'" ng-if="true"></div>
+		<div ng-include src="'/assets/templates/studentViewWidgets/studentViewStudentDetails.html'" ng-if="true"></div>		
+
+
+
+        <!-- div ng-include src="'/assets/templates/courseViewWidgets/courseViewStudentListEventsHeader.html'" ng-if="true" /> -->
+        		<!-- header table -->
+		<table id="pulse-table-header" class="table table-striped table-condensed table-pulse">
+			<thead id="floating-header" ng-include="'table-header.html'">
+
+			</thead>
+		</table>
+
+		<div ng-show="assignmentOverlay" id="assignment-overlay" class="hide-until-ready">
+			<svg></svg>
+		</div>
+	</div>
+
+
+	<div ng-include src="'/assets/templates/courseViewWidgets/courseViewStudentList.html'" ng-if="true" />  
+
+
+	<div class="tooltips">
+		<div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
+			<!-- <i class="fa fa-info-circle"></i> -->
+			<span class="tooltip-lineitem"> <span class="info-label">Date:</span> <span class="info-value">{{chartInfo.date
+					| amDateFormat:'M-D'}}</span>
+			</span> <span class="tooltip-lineitem"> <span class="info-label">Events:</span> <span class="info-value">{{chartInfo.events}}</span>
+			</span>
+		</div>
+
+
+		<div class="tool-tip-info tool-tip-assignment-info" ng-show="assignmentInfo">
+			<!-- <i class="fa fa-info-circle"></i> -->
+			<span class="tooltip-lineitem"> <span class="info-label">Title:</span> <span class="info-value">{{assignmentInfo.label}}</span>
+			</span> <span class="tooltip-lineitem" ng-if="assignmentInfo.date"> <span class="info-label">Date:</span> <span
+				class="info-value">{{assignmentInfo.date | amDateFormat:'M-D'}}</span>
+			</span> <span class="tooltip-lineitem"> <span class="info-label">Type:</span> <span class="info-value">{{assignmentInfo.events}}</span>
+			</span>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Email</h4>
+					<div class="email-students">
+						<span class="label-repeat" ng-repeat="student in emailList"> <span class="label label-info">
+								{{student.label}} </span>
+						</span>
+					</div>
+				</div>
+				<div class="modal-body">
+					<div ng-if="sent" class="alert alert-success">Email sent to {{emailstudent.name}}.</div>
+					<form action="">
+						<div class="form-group">
+							<label for="exampleInputEmail1">message</label>
+							<textarea class="form-control"></textarea>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" ng-click="sent = 1">Send Email</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<!-- Sub-view for student details -->
+<div class="ui-view" ng-if="listType == 'student'"></div>
+
+
+
+
+<script type="text/ng-template" id="filters.html">
                     <span ng-if="listType!='student'">
                         <span class="checkbox filter-item" ng-if="config.hasLastLogin">
                             <label>
@@ -93,152 +186,11 @@
                             <span ng-show="assignmentsWithoutDueDates.length > 1">assignments missing due dates, not displayed.</span>
                         </span>
                     </span>
-<!--
-                    <span class="checkbox filter-item" ng-show="listType == 'students' && config.hasRisk">
-                        <label>
-                            <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.riskOverlay"> Show Risk Colors
-                        </label>
-                    </span>
--->
-<!--                     <span class="checkbox filter-item" ng-show="listType == 'students'">
-                        <label>
-                            <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.gradeOverlay"> Show Grade Colors
-                        </label>
-                    </span>
- -->
-<!--
-                     <span class="checkbox filter-item" ng-show="listType == 'students'">
-                         <label>
-                             <input id="risk-toggle" type="checkbox" ng-model="$parent.$parent.activityOverlay"> Show Activity Colors
-                         </label>
-                     </span>
---> 
-                </script>
+</script>
 
-		</span> <!-- list of courses in main title --> <span class="dropdown"
-			ng-show="!isLtiSession && listType == 'students'"> <a href=""
-				data-toggle="dropdown">{{currentCourse.label}} <span
-					class="caret"></span></a>
-				<ul class="dropdown-menu">
-					<li ng-repeat="course in classes"><a href="#"
-						ui-sref="index.courselist({groupId: course.id})">{{course.label}}</a>
-					</li>
-				</ul>
-		</span> <!-- list of students in main title --> 
-		<span class="dropdown"
-			ng-if="listType == 'student'"> <a href=""
-				data-toggle="dropdown">{{currentStudent.firstName}}
-					{{currentStudent.lastName}} <span class="caret"></span>
-			</a>
-				<ul class="dropdown-menu">
-					<li ng-repeat="student in currentCourse.students"
-						ng-class="{'active': student.id == currentStudent.id}"><a
-						href="#"
-						ui-sref="index.courselist.studentView({studentId: student.id})">{{student.label}}</a>
-					</li>
-				</ul>
-		</span> <a href="" ng-show="isLtiSession && listType == 'students'"
-			ng-click="$emit('chart-change', {id: currentCourse.id, type: 'course', notify: true})"
-			title={{currentCourse.label}}> {{ currentCourse.label.length > 20
-				? (( currentCourse.label | limitTo: 20) + ' ...' ) :
-				currentCourse.label}} </a>
-		</span>
-        
-        
-        
-        <!-- div class="clickable" ng-click="toggleActivityDetail('courseAtAGlance')">Course at a glance</div -->
-       <div id="courseAtAGlance" ng-class="listType">
-			<div class="totals">
-	            <table>
-	                <thead>
-	                    <th>Class Start Date</th>
-	                    <th>Class End Date</th>
-	                    <th>Enrollments</th>
-	                    <th ng-if="config.hasRisk"
-							title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{
-							'LABEL_AT_RISK_STUDENT_COUNT' | translate }}</th>
-	                    <th title="{{'LABEL_MAX_ACTIVITY_TOOLTIP' | translate}}">Max Activity</th>
-	                    <th title="{{'LABEL_MEDIAN_ACTIVITY_TOOLTIP' | translate}}">Median Activity</th>
-	                </thead>
-	                <tbody>
-	                    <td><div class="badge">{{currentCourse.startdate}}</div></td>
-	                    <td><div class="badge">{{currentCourse.enddate}}</div></td>
-	                    <td><div class="badge">{{currentCourse.students.length}}</div></td>
-	                    <td  ng-if="config.hasRisk"><div class="badge">{{numberOfAtRiskStudents}}</div></td>
-	                    <td><div class="badge">{{currentCourse.studentEventTotalMax}}</div></td>
-	                    <td><div class="badge" ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>	                    
-	                </tbody>
-	            </table>
-	        </div>
-	        <div ng-show="config.hasRisk">
-		        <h3>{{'LABEL_PROBABILITY_CHART_TITLE' | translate}}</h3>
-		        <ul>
-			        <li>Each bubble represents a student</li>
-			        <li>The size of the bubble represents the relative amount of activity the system has capture for that student.</li>
-			        <li>The verticle positions indicate the probability of success</li>
-		        </ul>
-		        <hr/>
-		        <div class="wholeClassRiskDiv">
-					<canvas   class="wholeClassRisk" id="wholeClassRisk-chart" height="55" ></canvas>
-				</div>
-			</div>			
-       </div>
-        
-        
-     	<!-- zoom link -->
-		<!-- div class="zoom-actions" ng-class="listType">
-			<i class="fa fa-search-minus zoom-out"></i>
-		</div -->
 
-		<!-- student details -->
-		<div class="student-details" ng-if="listType == 'student'">
 
-			<div class="col-sm-3 activityCard" ng-show="config.hasEmail">
-				<div class="heading">Contact</div>
-				<div class="body">
-					<a href="" class="fa fa-envelope"
-						ng-click="handleEmail(currentStudent)"></a>
-				</div>
-			</div>
-			<div class="col-xs-3 activityCard"
-				title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">
-				<div class="heading">{{ 'LABEL_ACTIVITY' | translate }}</div>
-				<div class="body">{{ currentStudent.activity }}</div>
-			</div>
-			<div class="col-xs-3 activityCard" ng-show="config.hasRisk"
-				title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">
-				<div class="heading">{{ 'LABEL_RISK_SCORE' | translate }}</div>
-				<div class="body">{{ currentStudent.risk }}</div>
-			</div>
-			<div class="col-xs-3 activityCard" ng-show="config.hasGrade">
-				<div class="heading">Grade</div>
-				<div class="body">{{ currentStudent.grade }}</div>
-			</div>
-		</div>
-
-		<!-- header table -->
-		<table id="pulse-table-header"
-			class="table table-striped table-condensed table-pulse">
-			<thead id="floating-header" ng-include="'table-header.html'">
-
-			</thead>
-		</table>
-
-		<div ng-show="assignmentOverlay" id="assignment-overlay"
-			class="hide-until-ready">
-			<svg></svg>
-		</div>
-
-	</div>
-
-	<!--  -->
-	<div id="pulse-data" class="hide-until-ready">
-		<table id="pulse-table-data"
-			class="table table-striped table-condensed table-pulse">
-			<thead id="hidden-header" ng-include="'table-header.html'">
-			</thead>
-
-			<script type="text/ng-template" id="table-header.html">
+<script type="text/ng-template" id="table-header.html">
             <tr>
                 <th class="actions" ng-if="listType == 'students' && config.hasEmail">
                     <a href="" class="fa fa-envelope"
@@ -297,140 +249,16 @@
                 </th>
             </tr>
             </script>
-
-			<tbody>
-				<tr ng-repeat="item in datalist|orderBy:orderByField:reverseSort"
-					ng-repeat-finish="draw-chart" watch-for-changes="datalist">
-					<td ng-if="listType == 'students' && config.hasEmail"><a
-						href="" class="fa fa-envelope" ng-click="handleEmail(item)"></a>
-					</td>
-					<td ng-if="listType == 'classes'"><a
-						ui-sref="index.courselist({groupId: item.id})">{{item.label}}</a>
-					</td>
-					<td ng-if="listType != 'classes'"><a href=""
-						ui-sref="index.courselist.studentView({studentId: item.id})">{{item.firstName}}</a>
-					</td>
-					<td ng-if="listType != 'classes'"><a href=""
-						ui-sref="index.courselist.studentView({studentId: item.id})">{{item.lastName}}</a>
-					</td>
-					<td ng-if="listType != 'classes' && config.hasRisk"  ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)" ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)">
-						<div class="badge" ng-class="colorCodeRisk(item.risk)">{{item.risk}}
-
-						</div>
-					</td>
-					<td ng-if="listType != 'classes' && config.hasGrade">
-						<!-- <div class="badge" ng-class="colorCodeGrade(item.risk)"> -->
-						{{item.grade}} <!-- </div> -->
-					</td>
-					<td ng-if="listType != 'classes'" ng-mouseleave="toggleActivityDetailOff('student-popup-'+item.id)" ng-mouseover="toggleActivityDetailOn('student-popup-'+item.id)"
-						ng-click="toggleActivityDetail('student-popup-'+item.id)">
-						<div class="badge clickable"
-							ng-class="colorCodeActivity(item.activity)">
-							{{item.activity}}</div>
-						<div id="student-popup-{{item.id}}"
-							class="popovert ng-hide popupstudenttotals">
-							<table>
-								<thead>
-									<th></th>
-									<th>{{item.firstName}} {{item.lastName}}</th>
-									<th title="Median for the entire course per student">{{
-										'LABEL_COURSE_MEDIAN' | translate }}</th>
-									<th title="{{'LABEL_COURSE_COMPARISON_TOOLTIP' | translate}}">{{
-										'LABEL_COURSE_COMPARISON' | translate }}</th>
-									<th></th>
-								</thead>
-								<tbody>
-									<tr>
-										<td title="{{'LABEL_ACTIVITY_TOOLTIP' | translate}}">{{
-											'LABEL_ACTIVITY' | translate }}</td>
-										<td><div class="badge">{{item.activity}}</div></td>
-										<td><div class="badge">{{currentCourse.medianStudentEvents}}</div></td>
-										<td><div class="badge">{{item.activity/currentCourse.medianStudentEvents|number:2}}</div></td>
-										<td></td>
-									</tr>
-									<tr ng-if="config.hasRisk">
-										<td title="{{'LABEL_RISK_SCORE_TOOLTIP' | translate}}">{{
-											'LABEL_RISK_SCORE' | translate }}</td>
-										<td><div class="badge">{{item.risk}}</div></td>
-										<td><div class="badge">{{currentCourse.medianPassPercent}}</div></td>
-										<td><div class="badge">{{item.risk/currentCourse.medianPassPercent|number:3}}</div></td>
-										<td></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</td>
-					<td id="pulse-chart-{{item.id}}"></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-	<div class="tooltips">
-		<div class="tool-tip-info tool-tip-event-info" ng-show="chartInfo">
-			<!-- <i class="fa fa-info-circle"></i> -->
-			<span class="tooltip-lineitem"> <span class="info-label">Date:</span>
-				<span class="info-value">{{chartInfo.date |
-					amDateFormat:'M-D'}}</span>
-			</span> <span class="tooltip-lineitem"> <span class="info-label">Events:</span>
-				<span class="info-value">{{chartInfo.events}}</span>
-			</span>
-		</div>
+	<!-- end -->
 
 
-		<div class="tool-tip-info tool-tip-assignment-info"
-			ng-show="assignmentInfo">
-			<!-- <i class="fa fa-info-circle"></i> -->
-			<span class="tooltip-lineitem"> <span class="info-label">Title:</span>
-				<span class="info-value">{{assignmentInfo.label}}</span>
-			</span> <span class="tooltip-lineitem" ng-if="assignmentInfo.date"> <span
-				class="info-label">Date:</span> <span class="info-value">{{assignmentInfo.date
-					| amDateFormat:'M-D'}}</span>
-			</span> <span class="tooltip-lineitem"> <span class="info-label">Type:</span>
-				<span class="info-value">{{assignmentInfo.events}}</span>
-			</span>
-		</div>
-	</div>
 
-	<div class="modal fade" id="emailModal" tabindex="-1" role="dialog"
-		aria-labelledby="myModalLabel">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title" id="myModalLabel">Email</h4>
-					<div class="email-students">
-						<span class="label-repeat" ng-repeat="student in emailList">
-							<span class="label label-info"> {{student.label}} </span>
-						</span>
-					</div>
-				</div>
-				<div class="modal-body">
-					<div ng-if="sent" class="alert alert-success">Email sent to
-						{{emailstudent.name}}.</div>
-					<form action="">
-						<div class="form-group">
-							<label for="exampleInputEmail1">message</label>
-							<textarea class="form-control"></textarea>
 
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-primary" ng-click="sent = 1">Send
-						Email</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
 
-<!-- Sub-view for student details -->
-<div class="ui-view" ng-if="listType == 'student'"></div>
+
+
+
+
 
 
 

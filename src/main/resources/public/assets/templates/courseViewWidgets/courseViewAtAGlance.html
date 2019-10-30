@@ -1,0 +1,47 @@
+<div id="courseAtAGlance" ng-class="listType">
+	<!--  Rollup Table -->
+	<div class="totals">
+		<table>
+			<thead>
+				<th>Class Start Date</th>
+				<th>Class End Date</th>
+				<th>Enrollments</th>
+				<th ng-if="config.hasRisk"
+					title="{{'LABEL_AT_RISK_STUDENT_COUNT_TOOLTIP' | translate}}">{{
+					'LABEL_AT_RISK_STUDENT_COUNT' | translate }}</th>
+				<th title="{{'LABEL_MAX_ACTIVITY_TOOLTIP' | translate}}">Max
+					Activity</th>
+				<th title="{{'LABEL_MEDIAN_ACTIVITY_TOOLTIP' | translate}}">Median
+					Activity</th>
+			</thead>
+			<tbody>
+				<td><div class="badge">{{currentCourse.startdate}}</div></td>
+				<td><div class="badge">{{currentCourse.enddate}}</div></td>
+				<td><div class="badge">{{currentCourse.students.length}}</div></td>
+				<td ng-if="config.hasRisk"><div class="badge">{{numberOfAtRiskStudents}}</div></td>
+				<td><div class="badge">{{currentCourse.studentEventTotalMax}}</div></td>
+				<td><div class="badge"
+						ng-class="colorCodeActivity(item.activity)">{{currentCourse.medianStudentEvents}}</div></td>
+			</tbody>
+		</table>
+	</div>
+	<!--  END Rollup Table -->
+
+
+
+	<!--  BUBBLE CHART -->
+	<div ng-show="config.hasRisk">
+		<h3>{{'LABEL_PROBABILITY_CHART_TITLE' | translate}}</h3>
+		<ul>
+			<li>Each bubble represents a student</li>
+			<li>The size of the bubble represents the relative amount of
+				activity the system has capture for that student.</li>
+			<li>The verticle positions indicate the probability of success</li>
+		</ul>
+		<hr />
+		<div class="wholeClassRiskDiv">
+			<canvas class="wholeClassRisk" id="wholeClassRisk-chart" height="55"></canvas>
+		</div>
+	</div>
+	<!-- END BUBBLE CHART -->
+</div>

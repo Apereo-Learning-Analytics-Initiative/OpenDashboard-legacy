@@ -1,0 +1,34 @@
+
+<div ng-if="true">
+    <h3 title="Activities charted by day">Detail Activity</h3>
+    <div>
+        <a href="" ng-click="$emit('updateTable', '7days')">Last 7 Days</a> | <a href="" ng-click="$emit('updateTable', '30days')">Last 30 Days</a> | <a href="" ng-click="$emit('updateTable', '90days')">Last 90 Days</a>
+    </div>
+    <!-- Chart -->
+    <div class="activityOverTime" ng-show="studentFilters.displayMode=='chart'">
+        <canvas id="activityOverTime" width="400" height="300"></canvas>
+    </div>
+    <!-- Table -->
+    <div class="" ng-show="studentFilters.displayMode=='table'">
+        <table id="activityOverTimeTable" class="table table-hover dataTable">
+            <thead>
+                <tr>
+                    <th class="dateColumn">Date</th>
+                    <th ng-repeat="dataset in activityOverTimeData.datasets">
+                        {{ dataset.label }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="label in activityOverTimeData.labels">
+                    <td>{{label}}</td>
+                    <td ng-repeat="dataset in activityOverTimeData.datasets">
+                        {{ dataset.data[$parent.$index] }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -33,7 +33,7 @@ var paths = [
     'node_modules/angular-hotkeys/build/hotkeys.js'
 ];
 
-gulp.task('default', ['minify-app', 'minify-libraries', 'minify-cards', 'sass', 'copy-html']);
+gulp.task('default', [ 'minify-app','minify-libraries', 'minify-cards', 'sass', 'copy-html']);
 
 gulp.task('minify-libraries', function (callback) {
   pump([
@@ -54,6 +54,7 @@ gulp.task('minify-libraries', function (callback) {
 });
 
 gulp.task('minify-app', function (callback) {
+
   pump([
         gulp.src([
             'src/main/resources/public/assets/js/**/*.js',
