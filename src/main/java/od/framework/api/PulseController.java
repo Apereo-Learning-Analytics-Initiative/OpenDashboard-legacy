@@ -546,6 +546,8 @@ public class PulseController {
           .build();
     }
     
+    pulseCacheRepository.save(pulseDetail);
+    
     return pulseDetail;
   }
 

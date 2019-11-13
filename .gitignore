@@ -24,3 +24,4 @@ LOG_FILE_IS_UNDEFINED*
 /node
 od.log
 od.log*
+/npm-debug.log

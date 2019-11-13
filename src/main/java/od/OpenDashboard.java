@@ -145,5 +145,10 @@ public class OpenDashboard {
       executor.initialize();
       return executor;
   }
+  
+  @Bean(name = "threadPoolTaskExecutor")
+  public Executor threadPoolTaskExecutor() {
+	  return new ThreadPoolTaskExecutor();
+  }
 
 }

@@ -29,7 +29,7 @@ public class PulseCacheTask {
     @Autowired private MongoTenantRepository mongoTenantRepository;
     
     //scheduled every 12 hours
-    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)    
     public void updatePulseCache() {  
       
       List<Tenant> tenants = mongoTenantRepository.findAll();
@@ -49,18 +49,23 @@ public class PulseCacheTask {
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
           //******* Uncomment when we are ready to start caching
-          /*while(teacherIds.size()>0)           
+          while(teacherIds.size()>0) {       
             int index = new Random().nextInt(teacherIds.size());
             String userId = teacherIds.get(index);
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
             for(Enrollment enrollment: enrollments) {
-              syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId());
+            	try {
+            		syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
             
             //remove the id
             teacherIds.remove(index);
-          }*/
+          }
           
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
@@ -73,7 +78,8 @@ public class PulseCacheTask {
     public void syncPulse(String tenantId, String userId, String classSourcedId)  throws InterruptedException {
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
-        results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
+    	  //pulseCacheService.pulseCache(tenantId, userId, classSourcedId);
+          results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
       } catch (ProviderDataConfigurationException | ProviderException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
