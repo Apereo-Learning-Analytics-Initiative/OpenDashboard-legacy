@@ -195,8 +195,8 @@
 				<!-- Use the latest released version: https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
 				<version>1.0</version>
 				<configuration>
-					<nodeVersion>v8.9.3</nodeVersion>
-					<npmVersion>6.12.1</npmVersion>
+					<nodeVersion>v6.6.0</nodeVersion>
+					<npmVersion>3.10.3</npmVersion>
 				</configuration>
 				<executions>
 					<execution>
