@@ -139,10 +139,15 @@ public class PulseCacheService {
     //class that they are launching from. BUT... there is currently
     //a bug in the system anyways, and this makes caching much nicer
 
+    Set<Enrollment> t = new HashSet<>();
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
         enrollments.remove(enrollment);
+        t.add(enrollment);
       }
+    }
+    for(Enrollment enrollment:t) {
+        enrollments.remove(enrollment);        
     }
     //at this point, we only have a single enrollment for this cached object
     

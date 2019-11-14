@@ -48,8 +48,8 @@ public class PulseCacheTask {
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
-          //******* Uncomment when we are ready to start caching
-          /*while(teacherIds.size()>0)           
+          while(teacherIds.size()>0)  
+          {
             int index = new Random().nextInt(teacherIds.size());
             String userId = teacherIds.get(index);
             
@@ -60,7 +60,7 @@ public class PulseCacheTask {
             
             //remove the id
             teacherIds.remove(index);
-          }*/
+          }
           
         } catch (ProviderDataConfigurationException e) {
           e.printStackTrace();
@@ -70,15 +70,16 @@ public class PulseCacheTask {
       }           
     }    
     
-    public void syncPulse(String tenantId, String userId, String classSourcedId)  throws InterruptedException {
+    public void syncPulse(String tenantId, String userId, String classSourcedId)  {
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
         results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
       } catch (ProviderDataConfigurationException | ProviderException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (RuntimeException e) {
         e.printStackTrace();
-      }      
+      } catch (Exception e) {
+          e.printStackTrace();
+        }           
     }
 }

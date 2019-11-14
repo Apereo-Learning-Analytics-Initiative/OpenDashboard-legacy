@@ -26,12 +26,6 @@ auth:
     key: opendash
     secret: opendash
 
-# Logging settings
-logging:
-  level:
-    od: DEBUG
-  file: od.log
-
 # Spring settings
 spring:
   thymeleaf:
@@ -39,7 +33,7 @@ spring:
   # Mongo settings
   data:
     mongodb:
-      uri: mongodb://localhost/marist_od
+      uri: mongodb://localhost/opendash_od
   jackson:
     serialization:
       write_dates_as_timestamps: false
