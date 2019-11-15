@@ -31,7 +31,7 @@ public class PulseCacheTask {
     //scheduled every 12 hours
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
     public void updatePulseCache() {  
-      
+      /*
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
       for(Tenant tenant: tenants) {
@@ -67,7 +67,8 @@ public class PulseCacheTask {
         } catch (ProviderException e) {
           e.printStackTrace();
         } 
-      }           
+      }     
+      */      
     }    
     
     public void syncPulse(String tenantId, String userId, String classSourcedId)  {
