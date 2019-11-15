@@ -94,8 +94,7 @@ public class PulseController {
     if (hasRole("ROLE_STUDENT")) {        	
     	return pulseForStudent(authentication, tenantId, userId);
     } 
-    
-    
+
     String tempClassSourcedId = null;
     boolean isSakai = false;
     
