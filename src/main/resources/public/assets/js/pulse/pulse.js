@@ -288,6 +288,9 @@
                 $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilter', 'daysSinceLoginFilterCount'], runFilters);
 
                 $scope.handleEmail = function(o, bulk) {
+
+                    $window.open("mailto:o.email"+ o.email + "?subject=A Message from the OpenDashboard"+"&body="+message,"_self");
+/*
                     $scope.emailList = [];
                     if (bulk) {
                         _.each($scope.datalist, function(s) {
@@ -303,6 +306,7 @@
                         });
                     }
                     $('#emailModal').modal('show');
+*/                    
                 }
 
 
