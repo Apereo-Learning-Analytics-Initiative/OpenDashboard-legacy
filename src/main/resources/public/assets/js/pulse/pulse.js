@@ -290,7 +290,7 @@
 
                 $scope.handleEmail = function(o, bulk) {
 
-                    $window.open("mailto:o.email"+ o.email + "?subject=A Message from the OpenDashboard"+"&body="+message,"_self");
+                    $window.open("mailto:o.email"+ o.email + "?subject=A Message from the OpenDashboard"+"&body=","_self");
 /*
                     $scope.emailList = [];
                     if (bulk) {
