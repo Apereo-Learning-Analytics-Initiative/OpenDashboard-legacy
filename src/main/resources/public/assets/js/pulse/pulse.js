@@ -15,6 +15,7 @@
             'EventService',
             'LineItemDataService',
             'PulseApiService',
+            '$window',
             function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService, $window) {
                 "use strict";
                 
