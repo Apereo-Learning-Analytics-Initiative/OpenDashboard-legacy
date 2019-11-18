@@ -510,7 +510,7 @@ public class PulseCacheService {
           .withHasRisk(hasRiskScore)
           .withHasMissingSubmissions(false)
           .withHasLastLogin(false)
-          .withHasEmail(false)
+          .withHasEmail(true)
           .withPulseClassDetails(pulseClassDetails)
           .withUserId(userId)
           .withTenantId(tenantId)

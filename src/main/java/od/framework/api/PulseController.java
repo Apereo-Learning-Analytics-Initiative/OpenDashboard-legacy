@@ -537,7 +537,7 @@ public class PulseController {
           .withHasRisk(hasRiskScore)
           .withHasMissingSubmissions(false)
           .withHasLastLogin(false)
-          .withHasEmail(false)
+          .withHasEmail(true)
           .withPulseClassDetails(pulseClassDetails)
           .withUserId(userId)
           .withTenantId(tenantId)
@@ -969,7 +969,7 @@ public class PulseController {
 	          .withHasRisk(hasRiskScore)
 	          .withHasMissingSubmissions(false)
 	          .withHasLastLogin(false)
-	          .withHasEmail(false)
+	          .withHasEmail(true)
 	          .withPulseClassDetails(pulseClassDetails)
 	          .build();
 	    }
