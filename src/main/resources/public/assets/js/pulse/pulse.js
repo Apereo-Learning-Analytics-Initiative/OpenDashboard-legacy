@@ -15,7 +15,7 @@
             'EventService',
             'LineItemDataService',
             'PulseApiService',
-            function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService) {
+            function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService, $window) {
                 "use strict";
                 
                 var processedClasses = [];
