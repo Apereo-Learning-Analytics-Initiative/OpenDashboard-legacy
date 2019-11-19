@@ -15,7 +15,8 @@
             'EventService',
             'LineItemDataService',
             'PulseApiService',
-            function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService) {
+            '$window',
+            function($scope, $rootScope, $http, $q, $timeout, $state, SessionService, EnrollmentDataService, UserDataService, EventService, LineItemDataService, PulseApiService, $window) {
                 "use strict";
                 
                 var processedClasses = [];
@@ -288,6 +289,9 @@
                 $scope.$watchGroup(['submissionFilterScore', 'submissionFilter', 'gradeFilterScore', 'gradeFilter', 'daysSinceLoginFilter', 'daysSinceLoginFilterCount'], runFilters);
 
                 $scope.handleEmail = function(o, bulk) {
+
+                    $window.open("mailto:"+ o.email + "?subject=A Message from the NCSU Dashboard"+"&body=","_blank");
+/*
                     $scope.emailList = [];
                     if (bulk) {
                         _.each($scope.datalist, function(s) {
@@ -303,6 +307,7 @@
                         });
                     }
                     $('#emailModal').modal('show');
+*/                    
                 }
 
 
