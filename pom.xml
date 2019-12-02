@@ -168,6 +168,17 @@
 			<artifactId>openpojo</artifactId>
 			<version>0.6.2</version>
 		</dependency>
+		
+		
+		
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.2</version>
+</dependency>
+
+		
 
 	</dependencies>
   <repositories>

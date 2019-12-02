@@ -19,6 +19,7 @@ package od;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -31,12 +32,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.oauth.OAuthFilter;
+import od.added.AuthenticationSuccessHandler;
+import od.added.CookieAuthenticationFilter;
+import od.added.JwtTokenUtil;
 import od.auth.OpenDashboardAuthenticationProvider;
 import od.auth.OpenDashboardUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+//import org.springframework.boot.context.embedded.FilterRegistrationBean;
+//import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -51,11 +58,16 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -86,6 +98,7 @@ public class SecurityConfig {
 
     protected void configure(HttpSecurity http) throws Exception {
       http
+      .cors().and()
         .antMatcher("/lti")
           .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/lti").permitAll()
@@ -104,21 +117,45 @@ public class SecurityConfig {
     @Autowired private OpenDashboardUserDetailsService userDetailsService;
     @Autowired private OpenDashboardAuthenticationProvider authenticationProvider;
 
+    
+    @Bean
+    public FilterRegistrationBean oAuthFilterBean() {
+      FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+      registrationBean.setFilter(getCookieAuthenticationFilter(
+    		  new AndRequestMatcher( new AntPathRequestMatcher( "/api/**" ) ))
+    				  );
+      List<String> urls = new ArrayList<>(1);
+      urls.add("/api/**");
+      registrationBean.setUrlPatterns(urls);
+      registrationBean.setOrder(2);
+      return registrationBean;
+    }
+    
+    
+    
+    
+    
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
           .antMatchers("/assets/**", "/favicon.ico", "/cards/**", "/tenant/**", "/jwtlogin/**");
     }
 
+    
+    @Autowired 
+    AuthenticationSuccessHandler authSuccessHandler;
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-      http
+      http      
       .httpBasic()
         .authenticationEntryPoint(new NoWWWAuthenticate401ResponseEntryPoint("opendashboard"))
       .and()
+      .cors().and()
       .authorizeRequests()
         .antMatchers("/features/**", "/", "/login", "/err/**").permitAll()
-        .antMatchers("/api/tenants/{tenantId}/**").access("@methodSecurity.checkTenant(authentication,#tenantId)")
+        .antMatchers("/api/tenants/{tenantId}/**").access("@methodSecurity.checkTenant(authentication,#tenantId)")  
+        
         .anyRequest().authenticated()
       .and()
         .logout()
@@ -141,8 +178,29 @@ public class SecurityConfig {
        * @link https://github.com/dsyer/spring-security-angular/issues/15
        * 
        * */
-      .and().addFilterAfter(csrfHeaderFilter(), SessionManagementFilter.class);
+      .and().addFilterAfter(csrfHeaderFilter(), SessionManagementFilter.class)
+      
+      // JWT cookie filter
+      .addFilterAfter( cookieAuthenticationFilter )
+      ) , UsernamePasswordAuthenticationFilter.class );
     }
+    
+    @Bean
+    CookieAuthenticationFilter getCookieAuthenticationFilter() {
+
+    	return new CookieAuthenticationFilter();
+    }
+	
+    
+    @Autowired
+    SimpleUrlAuthenticationFailureHandler authFailureHandler;
+    
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+	
+
+    
+    
     
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -240,5 +298,7 @@ public class SecurityConfig {
 		}
 
 	}
+	
+
 
 }

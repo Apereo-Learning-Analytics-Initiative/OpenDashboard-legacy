@@ -45,3 +45,7 @@ opendashboard:
   # posssible values - JiscAuthenticator, DemoAuthenticator
   authenticator: JiscAuthenticator
   
+jwt:
+   secret: 1234  
+   expiration: 100000000
+  

@@ -18,11 +18,16 @@
 package od.entrypoints;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
+import od.added.JwtTokenUtil;
 import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.Tenant;
 import od.providers.ProviderException;
@@ -48,6 +53,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @author ggilbert
@@ -61,12 +67,14 @@ public class LTIEntryPointController {
   @Autowired private ContextMappingRepository contextMappingRepository;
   @Autowired private ProviderService providerService;
   
+  @Autowired private JwtTokenUtil jwtTokenUtil;
+  
   @Autowired
   //@Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
   
   @RequestMapping(value = { "/lti", "/lti/" }, method = RequestMethod.POST)
-  public String lti(HttpServletRequest request) throws ProviderException, ProviderDataConfigurationException {
+  public RedirectView lti(HttpServletRequest request, HttpServletResponse response) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
     
     logger.debug("{}",launchRequest);
@@ -193,7 +201,24 @@ public class LTIEntryPointController {
       cmUrl = "/direct/courselist";
     }
     
-    return "redirect:"+cmUrl;
+    
+    
+    
+    //return "redirect:"+cmUrl;
+    
+        
+    //Set the JWT Token here
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("tenantId", tenant.getId());
+    claims.put("userSourceId", userSourcedId);
+    claims.put("classSourceId", launchRequest.getContext_id());
+    claims.put("launchRequest", launchRequest.toJSON());
+    final String jwtToken = jwtTokenUtil.generateToken(claims);
+    
+    Cookie cookie = new Cookie("securityToken", jwtToken);    
+    response.addCookie(cookie);
+
+    return new RedirectView("http://localhost:3000/courselist/" + launchRequest.getContext_id());
   }
 
   private static boolean hasLearnerRole(List<String> studentRoles, String roles) {

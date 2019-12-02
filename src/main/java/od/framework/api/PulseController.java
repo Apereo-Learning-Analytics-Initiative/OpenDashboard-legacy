@@ -17,6 +17,8 @@ import java.util.SortedMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import lti.LaunchRequest;
 import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.PulseClassDetail;
@@ -50,6 +52,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,11 +82,11 @@ public class PulseController {
   
   
   
-  
+  @CrossOrigin
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
   @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId:.+}", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
-  public PulseDetail pulse(Authentication authentication, @PathVariable("tenantId") final String tenantId,
+  public PulseDetail pulse(HttpServletResponse response, Authentication authentication, @PathVariable("tenantId") final String tenantId,
       @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
     
     log.debug("tenantId: {}", tenantId);
@@ -545,7 +548,7 @@ public class PulseController {
           .build();
     }
     
-    pulseCacheRepository.save(pulseDetail);
+    //pulseCacheRepository.save(pulseDetail);
     
     return pulseDetail;
   }
