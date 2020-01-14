@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class PulseCacheTask {
     @Autowired private MongoTenantRepository mongoTenantRepository;
     
     //scheduled every 12 hours
-    @Scheduled(fixedRate = 12 * 60 * 60 * 1000)
+    @Scheduled(cron = "${cacheProcess.cronExpression}")    
     public void updatePulseCache() {  
       
       List<Tenant> tenants = mongoTenantRepository.findAll();
@@ -50,7 +51,9 @@ public class PulseCacheTask {
           //This will make it far less likely that we step on each other's toes
           while(teacherIds.size()>0)  
           {
+        	  
             int index = new Random().nextInt(teacherIds.size());
+            System.out.println("updating for teacher: " + teacherIds.get(index));
             String userId = teacherIds.get(index);
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
@@ -71,6 +74,7 @@ public class PulseCacheTask {
         
     }    
     
+    //TODO: We could make this @Async
     public void syncPulse(String tenantId, String userId, String classSourcedId)  {
       List<CompletableFuture<String>> results = new ArrayList<>();
       try {
@@ -80,7 +84,7 @@ public class PulseCacheTask {
       } catch (RuntimeException e) {
         e.printStackTrace();
       } catch (Exception e) {
-          e.printStackTrace();
-        }           
+        e.printStackTrace();
+      }           
     }
 }

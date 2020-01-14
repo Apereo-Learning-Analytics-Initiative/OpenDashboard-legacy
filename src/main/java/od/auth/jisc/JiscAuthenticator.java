@@ -75,7 +75,8 @@ public class JiscAuthenticator implements Authenticator {
                 odToken.getTenantId(), 
                 odToken.getLaunchRequest()), 
             uuid,
-            odToken.getAuthorities());
+            odToken.getAuthorities(),
+            odToken.getUserEmail());
       }
       else {
         log.debug("is jwt");
@@ -128,7 +129,8 @@ public class JiscAuthenticator implements Authenticator {
                   odToken.getTenantId(), 
                   null), 
               uuid,
-              AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"));
+              AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"),
+              odToken.getUserEmail());
 
         } 
         catch (Exception e) {
@@ -152,7 +154,8 @@ public class JiscAuthenticator implements Authenticator {
                 null, 
                 null), 
             uuid,
-            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"));
+            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"),
+            "NA");
       }
       
     }

@@ -142,7 +142,7 @@ public class PulseCacheService {
     Set<Enrollment> t = new HashSet<>();
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
-        enrollments.remove(enrollment);
+        //enrollments.remove(enrollment);
         t.add(enrollment);
       }
     }

@@ -43,7 +43,8 @@ public class DemoAuthenticator implements Authenticator {
                 odToken.getTenantId(), 
                 odToken.getLaunchRequest()), 
             uuid,
-            odToken.getAuthorities());
+            odToken.getAuthorities(),
+            odToken.getUserEmail());
       }
       else {
         authToken = new OpenDashboardAuthenticationToken(null, 
@@ -55,7 +56,8 @@ public class DemoAuthenticator implements Authenticator {
                 odToken.getTenantId(), 
                 null), 
             uuid,
-            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"));
+            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR"),
+            odToken.getUserEmail());
 
       }
     }
@@ -74,7 +76,8 @@ public class DemoAuthenticator implements Authenticator {
                 null, 
                 null), 
             uuid,
-            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"));
+            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"),
+            "NA");
       }
       
     }

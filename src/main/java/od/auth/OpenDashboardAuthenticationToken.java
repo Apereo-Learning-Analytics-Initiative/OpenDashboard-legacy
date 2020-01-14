@@ -39,12 +39,16 @@ public class OpenDashboardAuthenticationToken extends UsernamePasswordAuthentica
   private LaunchRequest launchRequest;
   private String jwtToken;
   private String tenantId;
+  private String userId;
+  private String userEmail;
 
-  public OpenDashboardAuthenticationToken(LaunchRequest launchRequest, String jwtToken, String tenantId, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+  public OpenDashboardAuthenticationToken(LaunchRequest launchRequest, String jwtToken, String tenantId, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities, String userEmail) {
     super(principal, credentials, authorities);
     this.launchRequest = launchRequest;
     this.jwtToken = jwtToken;
     this.tenantId = tenantId;
+    this.userId = principal.toString();
+    this.userEmail = userEmail;
   }
 
   public LaunchRequest getLaunchRequest() {
@@ -54,9 +58,17 @@ public class OpenDashboardAuthenticationToken extends UsernamePasswordAuthentica
   public String getTenantId() {
     return tenantId;
   }
+  
+  public String getUserId() {
+	  return userId;
+  }
 
   public String getJwtToken() {
-    return jwtToken;
+      return jwtToken;
+  }
+  
+  public String getUserEmail() {
+	  return userEmail;
   }
 
 }

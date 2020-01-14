@@ -28,6 +28,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import od.auth.SecurityConfig;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {OpenDashboard.class, SecurityConfig.class})
 @WebAppConfiguration

@@ -84,7 +84,8 @@ public class MatthewsAuthenticator implements Authenticator {
                 odToken.getTenantId(), 
                 odToken.getLaunchRequest()), 
                 userSourcedId,
-                odToken.getAuthorities());
+                odToken.getAuthorities(),
+                odToken.getUserEmail());
       }
       else {
         throw new AuthenticationServiceException("Non-LTI access not permitted");
@@ -105,7 +106,8 @@ public class MatthewsAuthenticator implements Authenticator {
                 null, 
                 null), 
                 adminUsername,
-            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"));
+            AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_INSTRUCTOR,ROLE_ADMIN"),
+            "NA");
       }
       
     }

@@ -79,7 +79,7 @@ public class JiscEntryPointProcessor implements EntryPointProcessor {
     
     // Create a token using spring provided class :
     // org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-    OpenDashboardAuthenticationToken authToken = new OpenDashboardAuthenticationToken(null, token, tenantId, null, null, null);
+    OpenDashboardAuthenticationToken authToken = new OpenDashboardAuthenticationToken(null, token, tenantId, null, null, null, null);
 
     // generate session if one doesn't exist
     request.getSession();

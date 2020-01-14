@@ -19,6 +19,11 @@ package org.apereo.lai.impl;
 
 import od.framework.model.OpenDashboardModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apereo.lai.Event;
 
 /**
@@ -36,6 +41,7 @@ public class EventImpl extends OpenDashboardModel implements Event  {
   private String organization;
   private String timestamp;
   private String eventFormatType;
+  private String hourOfDay;
   private String raw;
   
   public String getSourcedId() {
@@ -99,5 +105,42 @@ public class EventImpl extends OpenDashboardModel implements Event  {
     this.raw = raw;
   }
   
-
+  public String getDayOfWeek() {
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	  Date date;
+	try {
+		date = sdf.parse(this.timestamp);
+	} catch (ParseException e) {
+		return "NA";
+	}
+	  SimpleDateFormat simpleDateformat = new SimpleDateFormat("EEEE"); // the day of the week spelled out completely
+	  return simpleDateformat.format(date);
+  }
+  
+  public String getShortVerb() {
+	  return verb.substring(verb.indexOf("#")+1);
+  }
+  
+  public String getHourOfDay() {
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	  Date date;
+	try {
+		date = sdf.parse(this.timestamp);
+	} catch (ParseException e) {
+		return "NA";
+	}
+	  SimpleDateFormat simpleDateformat = new SimpleDateFormat("HH"); // the hour of the day
+	  return simpleDateformat.format(date);
+  }
+  
+  public Date getDate() {
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	  Date date;
+	try {
+		date = sdf.parse(this.timestamp);
+	} catch (ParseException e) {
+		return null;		
+	}
+	return date;
+  }
 }

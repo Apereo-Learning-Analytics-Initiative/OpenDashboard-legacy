@@ -20,4 +20,6 @@ public interface PulseCacheRepository extends MongoRepository<PulseDetail, Strin
   
   List<PulseDetail> findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(String userId, String tenantId, String string,
       String classSourcedId);
+  
+  List<PulseDetail> findByTenantIdAndClassSourcedId(String tenantId, String classSourcedId);
 }

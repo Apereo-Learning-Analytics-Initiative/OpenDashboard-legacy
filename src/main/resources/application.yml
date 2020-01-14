@@ -17,6 +17,14 @@ server:
   port: 8081
   use-forward-headers: true
   
+  ##Added new
+  mail:
+     host: t
+     port: t
+     username: t
+     password: t
+
+  
 features:
   saml: false
   
@@ -44,8 +52,15 @@ opendashboard:
   entrypoint: JiscEntryPointProcessor
   # posssible values - JiscAuthenticator, DemoAuthenticator
   authenticator: JiscAuthenticator
+  # Base url from ux
+  baseurl: http://localhost:8081 
+  uxbaseurl: http://localhost:3000
   
 jwt:
-   secret: 1234  
+   secret: thisistest  
    expiration: 100000000
+   
+# When do we want to cache results
+cacheProcess:
+   cronExpression: 0 25 16 * * ?     
   

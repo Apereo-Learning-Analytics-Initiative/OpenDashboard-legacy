@@ -19,15 +19,17 @@ package od.entrypoints;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
-import od.added.JwtTokenUtil;
+import od.auth.JwtTokenUtil;
 import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.Tenant;
 import od.providers.ProviderException;
@@ -43,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -54,6 +57,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
+import od.auth.OpenDashboardAuthenticationToken;
 
 /**
  * @author ggilbert
@@ -72,6 +76,12 @@ public class LTIEntryPointController {
   @Autowired
   //@Qualifier(value="LTIAuthenticationManager")
   private AuthenticationManager authenticationManager;
+  
+  @Value("${opendashboard.baseurl}")
+  private String baseUrl;
+
+  @Value("${opendashboard.uxbaseurl}")
+  private String uxBaseUrl;
   
   @RequestMapping(value = { "/lti", "/lti/" }, method = RequestMethod.POST)
   public RedirectView lti(HttpServletRequest request, HttpServletResponse response) throws ProviderException, ProviderDataConfigurationException {
@@ -167,31 +177,7 @@ public class LTIEntryPointController {
     // also an ugly but effective workaround
     launchRequest.setContext_id(classSourcedId);
 
-    OpenDashboardAuthenticationToken token = new OpenDashboardAuthenticationToken(launchRequest, 
-        null,
-        tenant.getId(), 
-        null, 
-        null,
-        AuthorityUtils.commaSeparatedStringToAuthorityList(role));
-
-    // generate session if one doesn't exist
-    request.getSession();
-
-    // save details as WebAuthenticationDetails records the remote address and
-    // will also set the session Id if a session already exists (it won't create
-    // one).
-    token.setDetails(new WebAuthenticationDetails(request));
-
-    // authenticationManager injected as spring bean, : LTIAuthenticationProvider
-    Authentication authentication = authenticationManager.authenticate(token);
-
-    // Need to set this as thread locale as available throughout
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    // Set SPRING_SECURITY_CONTEXT attribute in session as Spring identifies
-    // context through this attribute
-    request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-
+    
     //return "index";
     String cmUrl = null;
     if (StringUtils.isNotBlank(classSourcedId)) {
@@ -202,26 +188,62 @@ public class LTIEntryPointController {
     }
     
     
+	Map<String, Object> claims = new HashMap<>();
+	Set<String> authoritiesSet = new HashSet<>();
+	
+	Cookie[] cookies = request.getCookies();
+	Cookie sessionCookie = null;
+	if (cookies != null) {
+		for (Cookie cookie : cookies) {
+			if (("securityToken").equals(cookie.getName())) {
+				sessionCookie = cookie;
+				break;
+			}
+		}
+	}
+
+	//we look for the existing token because they might have already logged in via
+	//the administration portal ('/login')... in which case we don't want to wipe away that
+	//authority.
+	if (sessionCookie != null && !StringUtils.isEmpty(sessionCookie.getValue())) {
+		String jwtToken = sessionCookie.getValue();
+		claims = jwtTokenUtil.getClaimsFromToken(jwtToken);
+		List<String> authoritiesList = (List<String>) claims.get("Authorities");
+		authoritiesSet = new HashSet<String>(authoritiesList);
+	}
     
-    
-    //return "redirect:"+cmUrl;
+    //currently, users are only launching via LTI with a instructor or student role.
+    if (LTIEntryPointController.hasInstructorRole(null, launchRequest.getRoles())) {
+    	authoritiesSet.add("ROLE_INSTRUCTOR");
+    } 
+    else if (LTIEntryPointController.hasLearnerRole(null, launchRequest.getRoles())) {
+    	authoritiesSet.add("ROLE_STUDENT");
+    }     
+    else {
+      throw new UnauthorizedUserException("Does not have the instructor or learner role");
+    }
     
         
     //Set the JWT Token here
-    Map<String, Object> claims = new HashMap<>();
+    claims = new HashMap<>();
     claims.put("tenantId", tenant.getId());
-    claims.put("userSourceId", userSourcedId);
+    claims.put("userSourcedId", userSourcedId);
     claims.put("classSourceId", launchRequest.getContext_id());
     claims.put("launchRequest", launchRequest.toJSON());
+    claims.put("userEmail", launchRequest.getLis_person_contact_email_primary());
+    claims.put("Authorities", authoritiesSet);
+    
     final String jwtToken = jwtTokenUtil.generateToken(claims);
     
     Cookie cookie = new Cookie("securityToken", jwtToken);    
     response.addCookie(cookie);
-
-    return new RedirectView("http://localhost:3000/courselist/" + launchRequest.getContext_id());
+    Cookie baseUrlCookie = new Cookie("dashboardBaseURL", baseUrl);    
+    response.addCookie(baseUrlCookie);
+String courseId = PulseUtility.escapeForPulse(launchRequest.getContext_id());
+    return new RedirectView(uxBaseUrl + "/courselist/" + courseId);
   }
 
-  private static boolean hasLearnerRole(List<String> studentRoles, String roles) {
+  public static boolean hasLearnerRole(List<String> studentRoles, String roles) {
 
 	    if (studentRoles == null) {
 	    	studentRoles = new ArrayList<>();

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
@@ -46,6 +47,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.view.RedirectView;
 
 @ComponentScan(basePackages = { "od", "lti" })
 @Configuration
@@ -53,6 +55,8 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @EnableScheduling
 @EnableAsync
 public class OpenDashboard {
+	
+
 
   final static Logger log = LoggerFactory.getLogger(OpenDashboard.class);
   
@@ -81,9 +85,18 @@ public class OpenDashboard {
       return "index";
     }
     
-    @RequestMapping(value = { "/", "/login", "/err/**" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/", "/logintt", "/err/**" }, method = RequestMethod.GET)
     public String openRoutes() {
       return "index";
+    }
+    
+    
+	  @Value("${opendashboard.uxbaseurl}")
+	  private String uxBaseUrl;
+     
+    @RequestMapping(value = { "/loginaaa" }, method = RequestMethod.GET)
+    public RedirectView openLoginRoutes() {
+      return new RedirectView(uxBaseUrl + "/admin/tenants");
     }
 
   }
