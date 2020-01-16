@@ -239,6 +239,8 @@ public class LTIEntryPointController {
     response.addCookie(cookie);
     Cookie baseUrlCookie = new Cookie("dashboardBaseURL", baseUrl);    
     response.addCookie(baseUrlCookie);
+    response.addHeader("Access-Control-Allow-Origin", "*");
+    
 String courseId = PulseUtility.escapeForPulse(launchRequest.getContext_id());
     return new RedirectView(uxBaseUrl + "/courselist/" + courseId);
   }
