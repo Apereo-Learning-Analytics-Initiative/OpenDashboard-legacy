@@ -83,6 +83,9 @@ public class LTIEntryPointController {
   @Value("${opendashboard.uxbaseurl}")
   private String uxBaseUrl;
   
+  @Value("${opendashboard.basedomain}")
+  private String baseDomain;
+  
   @RequestMapping(value = { "/lti", "/lti/" }, method = RequestMethod.POST)
   public RedirectView lti(HttpServletRequest request, HttpServletResponse response) throws ProviderException, ProviderDataConfigurationException {
     LaunchRequest launchRequest = new LaunchRequest(request.getParameterMap());
@@ -236,9 +239,11 @@ public class LTIEntryPointController {
     final String jwtToken = jwtTokenUtil.generateToken(claims);
     
     Cookie cookie = new Cookie("securityToken", jwtToken);    
+    cookie.setDomain(baseDomain);
     response.addCookie(cookie);
-    Cookie baseUrlCookie = new Cookie("dashboardBaseURL", baseUrl);    
-    response.addCookie(baseUrlCookie);
+    //Cookie baseUrlCookie = new Cookie("dashboardBaseURL", baseUrl);    
+    //response.addCookie(baseUrlCookie);
+    ;
     response.addHeader("Access-Control-Allow-Origin", "*");
     
 String courseId = PulseUtility.escapeForPulse(launchRequest.getContext_id());
