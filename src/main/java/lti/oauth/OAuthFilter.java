@@ -61,7 +61,11 @@ public class OAuthFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res
 		  							, FilterChain fc) throws ServletException, IOException {
-    logger.debug("In OAuthFilter");
+    
+	System.out.println("In OauthFilter******************************");
+	System.out.println(req.getMethod());
+	  
+	logger.debug("In OAuthFilter");
     logger.debug(req.getMethod());
     
     // Only apply the filter to LTI tool launches (HTTP POSTS)
