@@ -74,12 +74,18 @@ public class OAuthFilter extends OncePerRequestFilter {
     if (HttpMethod.POST.toString().equalsIgnoreCase(req.getMethod())) {
       LaunchRequest launchRequest = new LaunchRequest(req.getParameterMap());
       SortedMap<String, String> alphaSortedMap = launchRequest.toSortedMap();
-      String signature = alphaSortedMap.remove(OAuthUtil.SIGNATURE_PARAM);
-      
+      String signature = alphaSortedMap.remove(OAuthUtil.SIGNATURE_PARAM);      
       String consumerKey = alphaSortedMap.get(OAuthUtil.CONSUMER_KEY_PARAM);
+      
+      System.out.println("Signature: " + signature);
+      System.out.println("consumerKey: " + consumerKey);
+      
       Tenant tenant = tenantRepository.findByConsumersOauthConsumerKey(consumerKey);
       
+      
+      
       if (tenant == null) {
+    	  System.out.println("No Tenant Found");
         res.sendRedirect("/errorpage");
         return;
         //throw new MissingTenantException("NO TENANT");
@@ -88,6 +94,7 @@ public class OAuthFilter extends OncePerRequestFilter {
       Set<Consumer> consumers = tenant.getConsumers();
       
       if (consumers == null || consumers.isEmpty()) {
+    	  System.out.println("No Consumers");
         throw new MissingTenantException("OAUTH_MISSING_KEY");
       }
       
