@@ -29,7 +29,7 @@ public class PulseCacheTask {
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
     
-    //scheduled every 12 hours
+    //scheduled every 24 hours
     @Scheduled(cron = "${cacheProcess.cronExpression}")    
     public void updatePulseCache() {  
       
