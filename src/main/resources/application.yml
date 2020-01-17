@@ -62,5 +62,6 @@ jwt:
    
 # When do we want to cache results
 cacheProcess:
+   runCaching: false
    cronExpression: 0 0 3 * * ?     
   
