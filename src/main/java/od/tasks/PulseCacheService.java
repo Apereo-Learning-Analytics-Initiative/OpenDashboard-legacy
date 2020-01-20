@@ -142,13 +142,13 @@ public class PulseCacheService {
     
     ProviderData rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
-    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
-    
+    //Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
+    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, classSourcedId, false);
     //remove everything that isn't this class
     //this basically means that user can only see the
     //class that they are launching from. BUT... there is currently
     //a bug in the system anyways, and this makes caching much nicer
-
+/*
     Set<Enrollment> t = new HashSet<>();
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
@@ -159,6 +159,7 @@ public class PulseCacheService {
     for(Enrollment enrollment:t) {
         enrollments.remove(enrollment);        
     }
+    */
     //at this point, we only have a single enrollment for this cached object
     
     
