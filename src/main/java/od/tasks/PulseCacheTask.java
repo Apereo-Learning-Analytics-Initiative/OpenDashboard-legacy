@@ -32,7 +32,7 @@ public class PulseCacheTask {
     
     //scheduled every 24 hours
     //@Scheduled(cron = "${cacheProcess.cronExpression}")  
-    @ConditionalOnProperty("${cacheProcess.runCaching}")
+    @ConditionalOnProperty(value = "cacheProcess.runCaching", havingValue = "true")
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000) 
     public void updatePulseCache() {  
       System.out.println("Started Caching");
