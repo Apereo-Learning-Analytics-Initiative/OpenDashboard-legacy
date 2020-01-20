@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
@@ -32,11 +33,20 @@ public class PulseCacheTask {
     @Autowired private ProviderService providerService;
     @Autowired private MongoTenantRepository mongoTenantRepository;
     
+    @Value("${cacheProcess.runCaching}")
+    private boolean shouldCache ;
+    
+    
     //scheduled every 24 hours
     //@Scheduled(cron = "${cacheProcess.cronExpression}")  
     @ConditionalOnProperty(value = "cacheProcess.runCaching", havingValue = "true")
     @Scheduled(fixedRate = 12 * 60 * 60 * 1000) 
     public void updatePulseCache() {  
+    	if(!shouldCache) {
+    		return;
+    	}
+    	
+    	
       System.out.println("Started Caching");
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
