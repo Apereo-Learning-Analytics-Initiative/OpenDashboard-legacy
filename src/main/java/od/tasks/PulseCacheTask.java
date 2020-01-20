@@ -32,7 +32,7 @@ public class PulseCacheTask {
     
     //scheduled every 24 hours
     @Scheduled(cron = "${cacheProcess.cronExpression}")  
-    @ConditionalOnProperty("${cacheProcess.runCaching}")
+    //@ConditionalOnProperty("${cacheProcess.runCaching}")
     public void updatePulseCache() {  
       
       List<Tenant> tenants = mongoTenantRepository.findAll();
