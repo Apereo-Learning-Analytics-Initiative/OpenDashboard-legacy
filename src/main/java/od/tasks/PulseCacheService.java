@@ -76,9 +76,11 @@ public class PulseCacheService {
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
   final static long MILLIS_PER_HOUR = 60 * 60 * 1000L;
 
-  @Async
+  @Async("taskExecutor")
   public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
     
+	  long startTime = System.currentTimeMillis();  
+	  
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
     
     //if there is more then one cached pulseResult, we are in a weird state
@@ -531,7 +533,8 @@ public class PulseCacheService {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
-    System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching finished");
+    long endTime = System.currentTimeMillis();    
+    System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching finished" + "That took " + (endTime - startTime) + " milliseconds");
     return CompletableFuture.completedFuture("COMPLETED");
   }
   
