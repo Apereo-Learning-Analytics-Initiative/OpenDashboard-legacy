@@ -22,6 +22,7 @@ import od.providers.enrollment.EnrollmentProvider;
 import od.repository.mongo.MongoTenantRepository;
 import unicon.matthews.oneroster.Enrollment;
 
+@Configuration
 @Component
 @Service
 public class PulseCacheTask {
