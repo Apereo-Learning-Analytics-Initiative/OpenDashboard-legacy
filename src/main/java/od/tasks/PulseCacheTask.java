@@ -63,7 +63,7 @@ public class PulseCacheTask {
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
             for(Enrollment enrollment: enrollments) {
-              syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId());
+              syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId(), enrollments);
             }
             
             //remove the id
@@ -80,10 +80,10 @@ public class PulseCacheTask {
     }    
     
     //TODO: We could make this @Async
-    public void syncPulse(String tenantId, String userId, String classSourcedId)  {
-      List<CompletableFuture<String>> results = new ArrayList<>();
+    List<CompletableFuture<String>> results = new ArrayList<>();
+    public void syncPulse(String tenantId, String userId, String classSourcedId, Set<Enrollment> enrollments)  {      
       try {
-        results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId));
+        results.add(pulseCacheService.pulseCache(tenantId, userId, classSourcedId, enrollments));
       } catch (ProviderDataConfigurationException | ProviderException e) {
         e.printStackTrace();
       } catch (RuntimeException e) {
