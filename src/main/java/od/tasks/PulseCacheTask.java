@@ -53,11 +53,12 @@ public class PulseCacheTask {
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
           //This will make it far less likely that we step on each other's toes
+          int i = 0; 
           while(teacherIds.size()>0)  
           {
         	  
             int index = new Random().nextInt(teacherIds.size());
-            System.out.println("updating for teacher: " + teacherIds.get(index));
+            System.out.println("updating for teacher: " + teacherIds.get(index) + " number " + i++ + teacherIds.size());
             String userId = teacherIds.get(index);
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);

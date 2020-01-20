@@ -83,9 +83,11 @@ public class PulseCacheService {
     
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
+      System.out.println("Amount of Time Since Last Updated: " +  Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()));
+      System.out.println("Amount of MILLIS_PER_DATE: " + MILLIS_PER_DAY);
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
       if (!moreThanDay) {
-    	System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " was recently updated on " + pulseResults.get(0).getLastUpdated().getTime() + ", bypassing update");  
+    	System.out.println("**************** Recently Updated UserID: " + userId + " CourseId: " + classSourcedId + " was recently updated on " + pulseResults.get(0).getLastUpdated().getTime() + ", bypassing update");  
         return CompletableFuture.completedFuture("COMPLETED");
       }
       else {
