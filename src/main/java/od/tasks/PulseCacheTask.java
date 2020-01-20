@@ -31,10 +31,11 @@ public class PulseCacheTask {
     @Autowired private MongoTenantRepository mongoTenantRepository;
     
     //scheduled every 24 hours
-    @Scheduled(cron = "${cacheProcess.cronExpression}")  
+    //@Scheduled(cron = "${cacheProcess.cronExpression}")  
     //@ConditionalOnProperty("${cacheProcess.runCaching}")
+    @Scheduled(fixedRate = 12 * 60 * 60 * 1000) 
     public void updatePulseCache() {  
-      
+      System.out.println("Started Caching");
       List<Tenant> tenants = mongoTenantRepository.findAll();
       
       for(Tenant tenant: tenants) {
@@ -47,6 +48,7 @@ public class PulseCacheTask {
           if (teacherIds == null) {
             continue;
           }
+          System.out.println("Started Caching");
 
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
