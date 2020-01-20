@@ -159,10 +159,10 @@ public class OpenDashboard {
   @Bean
   public Executor taskExecutor() {
       ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-      executor.setCorePoolSize(20);
-      executor.setMaxPoolSize(20);
-      executor.setQueueCapacity(500);
-      executor.setThreadNamePrefix("GithubLookup-");
+      executor.setCorePoolSize(5);
+      executor.setMaxPoolSize(10);
+      executor.setQueueCapacity(1000);
+      executor.setThreadNamePrefix("taskExecutor");
       executor.initialize();
       return executor;
   }

@@ -80,11 +80,8 @@ public class JwtTokenUtil implements Serializable {
 		Claims claims;
 		try {
 			boolean t = Jwts.parser().isSigned(token);
-			System.out.println("Token signed?: " + t);
 			
-			//claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-			claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-			
+			claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();			
 		} catch (Exception e) {
 			claims = null;
 		}

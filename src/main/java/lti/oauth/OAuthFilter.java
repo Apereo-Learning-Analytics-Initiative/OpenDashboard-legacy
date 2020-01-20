@@ -61,10 +61,7 @@ public class OAuthFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res
 		  							, FilterChain fc) throws ServletException, IOException {
-    
-	System.out.println("In OauthFilter******************************");
-	System.out.println(req.getMethod());
-	  
+    	  
 	logger.debug("In OAuthFilter");
     logger.debug(req.getMethod());
     
@@ -76,9 +73,6 @@ public class OAuthFilter extends OncePerRequestFilter {
       SortedMap<String, String> alphaSortedMap = launchRequest.toSortedMap();
       String signature = alphaSortedMap.remove(OAuthUtil.SIGNATURE_PARAM);      
       String consumerKey = alphaSortedMap.get(OAuthUtil.CONSUMER_KEY_PARAM);
-      
-      System.out.println("Signature: " + signature);
-      System.out.println("consumerKey: " + consumerKey);
       
       Tenant tenant = tenantRepository.findByConsumersOauthConsumerKey(consumerKey);
       
