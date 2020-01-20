@@ -76,7 +76,7 @@ public class PulseCacheService {
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
   final static long MILLIS_PER_HOUR = 60 * 60 * 1000L;
 
-  @Async
+  //@Async
   public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
     
 	  long startTime = System.currentTimeMillis();  
