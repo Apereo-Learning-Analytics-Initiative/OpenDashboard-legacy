@@ -84,10 +84,16 @@ public class PulseCacheService {
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
-      if (!moreThanDay) {        
+      if (!moreThanDay) {
+    	System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " was recently updated on " + pulseResults.get(0).getLastUpdated().getTime() + ", bypassing update");  
         return CompletableFuture.completedFuture("COMPLETED");
-      }      
+      }
+      else {
+    	  System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching commenced");
+      }
     }
+    
+    
     
     boolean hasRiskScore = false;
     
@@ -523,6 +529,7 @@ public class PulseCacheService {
     pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     
     PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
+    System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching finished");
     return CompletableFuture.completedFuture("COMPLETED");
   }
   
