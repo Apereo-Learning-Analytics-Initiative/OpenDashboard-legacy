@@ -76,7 +76,7 @@ public class PulseCacheService {
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
   final static long MILLIS_PER_HOUR = 60 * 60 * 1000L;
 
-  @Async("taskExecutor")
+  @Async
   public CompletableFuture<String> pulseCache(final String tenantId, final String userId, final String classSourcedId) throws ProviderDataConfigurationException, ProviderException {
     
 	  long startTime = System.currentTimeMillis();  
@@ -142,8 +142,11 @@ public class PulseCacheService {
     
     ProviderData rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
-    //Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
-    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, classSourcedId, false);
+    System.out.println("Before Get Enrollments");
+    Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
+    //Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, classSourcedId, true);
+    
+    System.out.println("after Get Enrollments");
     //remove everything that isn't this class
     //this basically means that user can only see the
     //class that they are launching from. BUT... there is currently
