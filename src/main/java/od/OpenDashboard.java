@@ -160,8 +160,8 @@ public class OpenDashboard {
   public Executor taskExecutor() {
       ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
       executor.setCorePoolSize(5);
-      executor.setMaxPoolSize(10);
-      executor.setQueueCapacity(1000);
+      executor.setMaxPoolSize(20);
+      executor.setQueueCapacity(15000);
       executor.setThreadNamePrefix("taskExecutor");
       executor.initialize();
       return executor;
