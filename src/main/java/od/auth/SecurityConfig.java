@@ -66,6 +66,9 @@ import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -120,6 +123,11 @@ public class SecurityConfig {
 					.and().frameOptions().disable().and().csrf().disable();
 		}
 	}
+	
+	
+
+	
+	
 
 	@Configuration
 	@Order(2)
@@ -144,7 +152,7 @@ public class SecurityConfig {
 		@Override
 		protected void configure(HttpSecurity httpSecurity) throws Exception {
 			httpSecurity.csrf().disable()
-			
+			.cors().and()
 				.authorizeRequests()
 					.antMatchers("/modules").permitAll()
 					// all other requests need to be authenticated

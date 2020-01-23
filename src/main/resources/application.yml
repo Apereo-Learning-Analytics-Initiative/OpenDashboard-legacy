@@ -55,6 +55,7 @@ opendashboard:
   # Base url from ux
   baseurl: http://localhost:8081 
   uxbaseurl: http://localhost:3000
+  basedomain: localhost
   
 jwt:
    secret: thisistest  

@@ -67,7 +67,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		
 
 		// **********************************
-		String userSourcedId = claims.get("userSourcedId").toString();
+		String userSourcedId = null;
+		if(claims.get("userSourcedId") == null) {
+			userSourcedId = "ADMIN";
+		}
+		else {
+			userSourcedId = claims.get("userSourcedId").toString();
+		}
+		
+		String tenantId = null;
+		if(claims.get("tenantId") == null) {
+			tenantId = "ADMIN";
+		}
+		else {
+			tenantId = claims.get("tenantId").toString();
+		}
+		
+		LaunchRequest launchRequest = null;
+		if(claims.get("launchRequest") == null) {
+			launchRequest = null;
+		}
+		else {
+			launchRequest = LaunchRequest.fromJSON(claims.get("launchRequest").toString());
+		}
+		
+		String userEmail = null;
+		if(launchRequest == null) 
+		{
+			userEmail = "ADMIN_NOEMAIL";
+		}
+		else {			
+			userEmail = launchRequest.getLis_person_contact_email_primary();
+		}
 
 		// Once we get the token validate it.
 		if (userSourcedId != null && SecurityContextHolder.getContext().getAuthentication() == null) {			
@@ -78,9 +109,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 				// authorities.add(GrantedAuthority);
+								
 				
-				LaunchRequest launchRequest = LaunchRequest.fromJSON(claims.get("launchRequest").toString());
 				
+				/*
 			    // Get the role of this guy
 			    String role;
 			    if (LTIEntryPointController.hasInstructorRole(null, launchRequest.getRoles())) {
@@ -90,15 +122,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			    } else {
 			      throw new UnauthorizedUserException("Does not have the instructor or learner role");
 			    }
-			    
+			    */
 			    List<String> authoritiesString = (List<String>) claims.get("Authorities");
 
 				OpenDashboardAuthenticationToken oda = new OpenDashboardAuthenticationToken(launchRequest, jwtToken,
-						claims.get("tenantId").toString(), claims.get("userSourcedId"), claims.get("userSourcedId"),
+						tenantId, userSourcedId, userSourcedId,
 						AuthorityUtils.commaSeparatedStringToAuthorityList(
 								authoritiesString.stream()
                                 .collect(Collectors.joining(","))),
-						launchRequest.getLis_person_contact_email_primary());
+						userEmail);
 
 				// After setting the Authentication in the context, we specify
 				// that the current user is authenticated. So it passes the
