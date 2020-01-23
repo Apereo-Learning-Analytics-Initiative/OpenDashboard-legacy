@@ -564,6 +564,8 @@ public class PulseControllerAdded {
           .build();
     }
     
+    //delete them all if they exist
+    pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
     pulseCacheRepository.save(pulseDetail);
     
     return pulseDetail;
