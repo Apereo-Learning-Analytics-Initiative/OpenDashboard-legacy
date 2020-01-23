@@ -136,9 +136,9 @@ public class PulseControllerAdded {
     if(results!=null && results.size()==1) {
       
       boolean moreThanDay = Math.abs((new Date()).getTime() - results.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
-      if (!moreThanDay) {      
-        return results.get(0);
-      }
+      //if (!moreThanDay) {      
+      //  return results.get(0);
+      //}
     }
     
     boolean hasRiskScore = false;
