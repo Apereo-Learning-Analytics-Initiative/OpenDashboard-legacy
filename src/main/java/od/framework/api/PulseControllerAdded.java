@@ -130,7 +130,7 @@ public class PulseControllerAdded {
       }
     }
     
-    System.out.println("+++++++++tempClassSourcedId: " + tempClassSourcedId);
+
     final String classSourcedId = tempClassSourcedId;
     
 
@@ -190,35 +190,21 @@ public class PulseControllerAdded {
     ProviderData rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
     Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
-    System.out.println("*******All Enrollments for userId: " + userId);
-    for (Enrollment enrollment: enrollments) {  
-    	System.out.println("----");
-    	System.out.println("Klass Sourced Id: " + enrollment.getKlass().getSourcedId());
-    	System.out.println("ROLE: " + enrollment.getRole().toString());
-    	System.out.println(enrollment.toString());
-    	System.out.println("----end");
-    }
-    System.out.println("*******END All Enrollments");
     
     
     PulseDetail pulseDetail = null;
     
     if (enrollments != null && !enrollments.isEmpty()) {
-      System.out.println("Enrollments not null or empty");
-      System.out.println("Looking for enrollment with ClassSourcedId: " + classSourcedId);
-    	
     	
       if (StringUtils.isNotBlank(classSourcedId)) {
         Enrollment foundEnrollment
           = enrollments.stream().filter(e -> e.getKlass().getSourcedId().equals(classSourcedId))
               .findFirst().orElse(null);  
     	
-        System.out.println("Using enrollment: " + foundEnrollment.toString());
-        
+
         Class klass = courseProvider.getClass(tenant, classSourcedId);  
         
         if (foundEnrollment == null) {
-        	System.out.println("foundEnrollment was null, simply returning the class: "  + klass.toString());
           foundEnrollment
             = new Enrollment.Builder()
                 .withKlass(klass)
@@ -239,7 +225,6 @@ public class PulseControllerAdded {
         }
         
         enrollments = Collections.singleton(foundEnrollment);
-        System.out.println("Enrollment we will use: " + enrollments.toString());
       }
       else {
         Set<Enrollment> tempEnrollments = new HashSet<>();
@@ -257,7 +242,6 @@ public class PulseControllerAdded {
           tempEnrollments.add(copyOfEnrollment);
         }
         enrollments = tempEnrollments;
-        System.out.println("Enrollments are : " + enrollments.toString());
       }
       
       List<PulseClassDetail> pulseClassDetails = new ArrayList<>();
@@ -267,11 +251,9 @@ public class PulseControllerAdded {
       Set<Integer> allClassStudentEventCounts = new HashSet<>();
       Set<Long> allStudentEventCounts = new HashSet<>();
       
-      System.out.println("*******All Enrollments");
       for (Enrollment enrollment: enrollments) {
     	  System.out.println(enrollment.getSourcedId());
       }
-      System.out.println("*******END All Enrollments");
 
       for (Enrollment enrollment: enrollments) {
         
