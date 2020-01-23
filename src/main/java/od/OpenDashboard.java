@@ -162,7 +162,7 @@ public class OpenDashboard {
       executor.setCorePoolSize(5);
       executor.setMaxPoolSize(10);
       executor.setQueueCapacity(150000);
-      executor.setThreadNamePrefix("taskExecutor");
+      executor.setThreadNamePrefix("taskExecutor-");
       executor.initialize();
       return executor;
   }
