@@ -1,6 +1,8 @@
 package od.tasks;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -83,6 +85,9 @@ public class PulseCacheService {
 	  
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
     
+    
+    
+    
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
       System.out.println("Amount of Time Since Last Updated: " +  Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()));
@@ -107,6 +112,27 @@ public class PulseCacheService {
     LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
     UserProvider userProvider = providerService.getUserProvider(tenant);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    
+    
+    /**
+     * Bug out if the class end date is after todays date
+     */
+    Class klassCheck = courseProvider.getClass(tenant, classSourcedId);
+    String endDate = klassCheck.getMetadata().get(Vocabulary.CLASS_END_DATE);
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Date classDate;
+	try {
+		classDate = sdf.parse(klassCheck.getMetadata().get(Vocabulary.CLASS_END_DATE));
+	} catch (ParseException e2) {
+		System.out.println("Error parsing start date, not caching");
+    	return CompletableFuture.completedFuture("COMPLETED");
+	}
+    if(classDate.before(new Date())) {
+    	System.out.println("Bipassing old class: " + classSourcedId);
+    	return CompletableFuture.completedFuture("COMPLETED");
+    } 
+    
+    
     
     Map<String,Map<String,Object>> modelOutputMap = null;
     try {
@@ -155,7 +181,6 @@ public class PulseCacheService {
     Set<Enrollment> t = new HashSet<>();
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
-        //enrollments.remove(enrollment);
         t.add(enrollment);
       }
     }

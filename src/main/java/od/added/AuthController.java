@@ -5,11 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,7 +96,25 @@ public class AuthController {
 	public String login(HttpServletResponse response, HttpServletRequest request, Authentication authentication) {// ,
 		// @RequestParam("user") String user, @RequestParam("pass") String pass)
 
-		// get token from a Cookie
+		// get token from a Cookie		
+		//Iterator<String> itr = request.getHeaderNames()
+		String auth = request.getHeader("Authorization");
+		auth = auth.replaceAll("Basic ", "");		
+		String decoded = new String(Base64.getDecoder().decode(auth.getBytes()));
+		String username = decoded.substring(0,decoded.indexOf(':'));
+		String password = decoded.substring(decoded.indexOf(':')+1,decoded.length());
+
+		
+		if(!(username.equals(adminUsername) && password.equals(adminPassword)))  
+		{ 
+			//remove existing cookie and start over :)
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+		    Cookie cookie = new Cookie("securityToken", "");
+		    cookie.setMaxAge(0);
+		    response.addCookie(cookie);
+			return "401";
+		}	
+		
 		
 		Map<String, Object> claims = new HashMap<>();
 		Set<String> authoritiesSet = new HashSet<>();
@@ -127,3 +147,4 @@ public class AuthController {
 		return "OK";
 	}
 }
+
