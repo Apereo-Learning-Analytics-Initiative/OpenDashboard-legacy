@@ -40,7 +40,7 @@ public class PulseCacheTask {
     //scheduled every 24 hours
     //@Scheduled(cron = "${cacheProcess.cronExpression}")  
     @ConditionalOnProperty(value = "cacheProcess.runCaching", havingValue = "true")
-    @Scheduled(fixedRate = 12 * 60 * 60 * 1000) 
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000) 
     public void updatePulseCache() {  
     	if(!shouldCache) {
     		return;
@@ -59,8 +59,7 @@ public class PulseCacheTask {
           List<String> teacherIds = enrollmentProvider.getUniqueUsersWithRole(rosterProviderData, "teacher");
           if (teacherIds == null) {
             continue;
-          }
-          System.out.println("Started Caching");
+          }          
 
           //since this is a multi-server environment
           //let's randomize the order in which we update. 
@@ -70,11 +69,12 @@ public class PulseCacheTask {
           {
             index_orig = index_orig+1;  
             int index = new Random().nextInt(teacherIds.size());
-            System.out.println("updating for teacher: " + teacherIds.get(index) + " number " + index_orig + " of " + teacherIds.size());
+            
             String userId = teacherIds.get(index);
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
             for(Enrollment enrollment: enrollments) {
+              System.out.println("updating for teacher: " + teacherIds.get(index) + " with classID: " + enrollment.getKlass().getSourcedId());
               syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId(), enrollments);
             }
             
