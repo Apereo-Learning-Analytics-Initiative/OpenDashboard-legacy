@@ -85,20 +85,15 @@ public class PulseCacheService {
 	  
     List<PulseDetail> pulseResults = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId, "NONSTUDENT", classSourcedId);
     
-    
-    
-    
     //if there is more then one cached pulseResult, we are in a weird state
     if(pulseResults!=null && pulseResults.size()==1) {      
-      System.out.println("Amount of Time Since Last Updated: " +  Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()));
-      System.out.println("Amount of MILLIS_PER_DATE: " + MILLIS_PER_DAY);
       boolean moreThanDay = Math.abs((new Date()).getTime() - pulseResults.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
       if (!moreThanDay) {
-    	System.out.println("**************** Recently Updated UserID: " + userId + " CourseId: " + classSourcedId + " was recently updated on " + pulseResults.get(0).getLastUpdated().getTime() + ", bypassing update");  
+    	  log.info("Recently Updated UserID: " + userId + " CourseId: " + classSourcedId + " was recently updated on " + pulseResults.get(0).getLastUpdated().getTime() + ", bypassing update");  
         return CompletableFuture.completedFuture("COMPLETED");
       }
       else {
-    	  System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching commenced");
+    	  log.info("UserID: " + userId + " CourseId: " + classSourcedId + " caching commenced");
       }
     }
     
@@ -124,11 +119,11 @@ public class PulseCacheService {
 	try {
 		classDate = sdf.parse(klassCheck.getMetadata().get(Vocabulary.CLASS_END_DATE));
 	} catch (ParseException e2) {
-		System.out.println("Error parsing start date, not caching");
+		log.error("Error parsing start date, not caching");
     	return CompletableFuture.completedFuture("COMPLETED");
 	}
     if(classDate.before(new Date())) {
-    	System.out.println("Bipassing old class: " + classSourcedId);
+    	log.info("Bipassing old class: " + classSourcedId);
     	return CompletableFuture.completedFuture("COMPLETED");
     } 
     
@@ -168,16 +163,6 @@ public class PulseCacheService {
     
     ProviderData rosterProviderData = providerService.getConfiguredProviderDataByType(tenant, ProviderService.ROSTER);
     
-    //System.out.println("Before Get Enrollments");
-    //Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);    
-    //Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForClass(rosterProviderData, classSourcedId, true);
-    
-    //System.out.println("after Get Enrollments");
-    //remove everything that isn't this class
-    //this basically means that user can only see the
-    //class that they are launching from. BUT... there is currently
-    //a bug in the system anyways, and this makes caching much nicer
-
     Set<Enrollment> t = new HashSet<>();
     for(Enrollment enrollment:enrollments) {
       if(!enrollment.getKlass().getSourcedId().equals(classSourcedId)) {
@@ -372,8 +357,6 @@ public class PulseCacheService {
             }
 
             lastAssignmentDueDate = assignmentDueDates.stream().max(LocalDate::compareTo).get();
-//            classLineItems
-//              = classLineItems.stream().filter(li -> li.getStatus().equals(Status.active)).collect(Collectors.toSet());
           }
         }
         
@@ -559,11 +542,10 @@ public class PulseCacheService {
     }    
     
     //delete them all if they exist
-    pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
-    
-    PulseDetail retVal = pulseCacheRepository.save(pulseDetail);
+    pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);    
+    pulseCacheRepository.save(pulseDetail);
     long endTime = System.currentTimeMillis();    
-    System.out.println("UserID: " + userId + " CourseId: " + classSourcedId + " caching finished" + "That took " + (endTime - startTime) + " milliseconds");
+    log.info("UserID: " + userId + " CourseId: " + classSourcedId + " caching finished" + "That took " + (endTime - startTime) + " milliseconds");
     return CompletableFuture.completedFuture("COMPLETED");
   }
   
