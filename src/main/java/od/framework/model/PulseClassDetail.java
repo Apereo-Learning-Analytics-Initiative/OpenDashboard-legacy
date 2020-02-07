@@ -25,6 +25,7 @@ public class PulseClassDetail {
   private Double meanPassPercent;
   private Double medianPassPercent;
   private Integer totalNumberOfEvents;
+  private Integer classEventMax;
   
   private boolean hasRisk;
   private boolean hasGrade;
@@ -40,6 +41,10 @@ public class PulseClassDetail {
   
   private PulseClassDetail() {}
 
+  public void setId(String str) {
+	    id= str;
+	  }
+  
   public String getId() {
     return id;
   }
@@ -56,6 +61,10 @@ public class PulseClassDetail {
   public Integer getStudentsWithEvents() {
     return studentsWithEvents;
   }
+  
+  public Integer getClassEventMax() {
+	    return classEventMax;
+	  }
 
   public Map<String, Long> getEventTypeTotals() {
     return eventTypeTotals;
@@ -313,6 +322,11 @@ public class PulseClassDetail {
       _pulseClassDetail.studentsWithEvents = studentsWithEvents;
       return this;
     }
+    
+    public Builder withClassEventMax(Integer classEventMax) {
+        _pulseClassDetail.classEventMax = classEventMax;
+        return this;
+      }
 
     public Builder withEventTypeTotals(Map<String, Long> eventTypeTotals) {
       _pulseClassDetail.eventTypeTotals = eventTypeTotals;

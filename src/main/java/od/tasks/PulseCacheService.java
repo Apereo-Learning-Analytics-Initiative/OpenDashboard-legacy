@@ -103,10 +103,19 @@ public class PulseCacheService {
     
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
-    EventProvider eventProvider = providerService.getEventProvider(tenant);
-    LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
+    EventProvider eventProvider = providerService.getEventProvider(tenant);       
     UserProvider userProvider = providerService.getUserProvider(tenant);
-    CourseProvider courseProvider = providerService.getCourseProvider(tenant);
+    CourseProvider courseProvider = providerService.getCourseProvider(tenant);  
+    
+    LineItemProvider lineItemProvider = null;
+    try {
+    	lineItemProvider = providerService.getLineItemProvider(tenant);
+    }
+    catch(ProviderDataConfigurationException e) {
+    	log.warn("Line Item Provider not configured");
+    }
+    
+    
     
     
     /**
@@ -338,7 +347,7 @@ public class PulseCacheService {
         Set<LineItem> classLineItems = null;
         LocalDate lastAssignmentDueDate = null;
         boolean hasAssignments = false;
-        if (lineitemProviderData != null) {
+        if (lineitemProviderData != null && lineItemProvider != null) {
           try {
             classLineItems = lineItemProvider.getLineItemsForClass(lineitemProviderData, klass.getSourcedId());
           }

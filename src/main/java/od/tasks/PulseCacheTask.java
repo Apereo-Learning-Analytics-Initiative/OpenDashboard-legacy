@@ -1,6 +1,7 @@
 package od.tasks;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -70,13 +71,30 @@ public class PulseCacheTask {
             index_orig = index_orig+1;  
             int index = new Random().nextInt(teacherIds.size());
             
+            
             String userId = teacherIds.get(index);
+            
+            /*
+            if(!userId.equals("schakr22@ncsu.edu")) {
+            	teacherIds.remove(index);
+            	System.out.println("not the right user: " + userId);
+            	continue;
+            } else {
+            	System.out.println("BAck to: " + userId);
+            }*/
             
             Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
             for(Enrollment enrollment: enrollments) {
               System.out.println("updating for teacher: " + teacherIds.get(index) + " with classID: " + enrollment.getKlass().getSourcedId());
-              syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId(), enrollments);
+              Set<Enrollment> newSet = new HashSet<Enrollment>();
+              newSet.add(enrollment);
+              syncPulse(tenant.getId(),userId,enrollment.getKlass().getSourcedId(), newSet);
+              
+              //.enrollment.schakr22@ncsu.edu with classID: WW:SIS:2020:1:1:TE:533:001
+              //syncPulse(tenant.getId(),"schakr22@ncsu.edu","WW:SIS:2020:1:1:TE:533:001", enrollments);
             }
+            System.out.println("done");
+            System.out.println("did some stuff");
             
             //remove the id
             teacherIds.remove(index);
@@ -86,7 +104,9 @@ public class PulseCacheTask {
           e.printStackTrace();
         } catch (ProviderException e) {
           e.printStackTrace();
-        } 
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
       }     
         
     }    

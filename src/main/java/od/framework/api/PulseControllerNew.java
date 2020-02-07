@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import lti.LaunchRequest;
-import od.auth.OpenDashboardAuthenticationToken;
 import od.framework.model.PulseClassDetail;
 import od.framework.model.PulseDateEventCount;
 import od.framework.model.PulseDetail;
@@ -38,6 +37,7 @@ import od.providers.modeloutput.ModelOutputProvider;
 import od.providers.user.UserProvider;
 import od.repository.mongo.MongoTenantRepository;
 import od.repository.mongo.PulseCacheRepository;
+import od.repository.mongo.PulseClassCacheRepository;
 import od.utils.PulseUtility;
 
 import org.apache.commons.lang3.StringUtils;
@@ -66,15 +66,19 @@ import unicon.matthews.oneroster.Role;
 import unicon.matthews.oneroster.User;
 import unicon.oneroster.Vocabulary;
 
+import od.auth.OpenDashboardAuthenticationToken;
+
 @RestController
-public class PulseController {
+public class PulseControllerNew {
   
-  private static final Logger log = LoggerFactory.getLogger(PulseController.class);
+  private static final Logger log = LoggerFactory.getLogger(PulseControllerNew.class);
   
   @Autowired private ProviderService providerService;
   @Autowired private MongoTenantRepository mongoTenantRepository;
   
   @Autowired private PulseCacheRepository pulseCacheRepository;
+  @Autowired private PulseClassCacheRepository pulseClassCacheRepository;
+  
   
   final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
   final static long MILLIS_PER_HOUR = 60* 60 * 1000L;
@@ -84,30 +88,34 @@ public class PulseController {
   
   @CrossOrigin
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
-  @RequestMapping(value = "/api/tenants/{tenantId}/pulse/{userId:.+}", method = RequestMethod.GET, 
+  @RequestMapping(value = "/api/tenants", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
-  public PulseDetail pulse(HttpServletResponse response, Authentication authentication, @PathVariable("tenantId") final String tenantId,
-      @PathVariable("userId") final String userId) throws ProviderDataConfigurationException, ProviderException {
-    
-    log.debug("tenantId: {}", tenantId);
-    log.debug("userId: {}", userId);
-    log.debug("Authentication: {}", authentication);
-    
+  public PulseDetail pulseWithAuth(HttpServletResponse response) throws ProviderDataConfigurationException, ProviderException {
+	  
+		OpenDashboardAuthenticationToken authentication = (OpenDashboardAuthenticationToken) SecurityContextHolder
+				.getContext().getAuthentication();
+	  
+	 String tenantId = "not yet set";
+     String userId = "not yet set";
+
     //Handle Student
     if (hasRole("ROLE_STUDENT")) {        	
     	return pulseForStudent(authentication, tenantId, userId);
     } 
-
-    String tempClassSourcedId = null;
-    boolean isSakai = false;
     
+    String tempClassSourcedId = "notsetyet";
+    
+    boolean isSakai = false;    
     if (authentication != null && authentication instanceof OpenDashboardAuthenticationToken) {
       OpenDashboardAuthenticationToken openDashboardAuthenticationToken
         = (OpenDashboardAuthenticationToken)authentication;
       
+      tenantId = openDashboardAuthenticationToken.getTenantId();
+      userId = openDashboardAuthenticationToken.getUserId();
+      
       LaunchRequest launchRequest = openDashboardAuthenticationToken.getLaunchRequest();
       if (launchRequest != null) {
-        tempClassSourcedId = launchRequest.getContext_id();
+    	  tempClassSourcedId = launchRequest.getContext_id();
         
         SortedMap<String, String> allParams = launchRequest.toSortedMap();
         if (allParams != null && !allParams.isEmpty()) {
@@ -120,26 +128,48 @@ public class PulseController {
         }
       }
     }
+    
     final String classSourcedId = tempClassSourcedId;
     
-
-    List<PulseDetail> results = pulseCacheRepository.findByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
-    if(results!=null && results.size()==1) {
-      
-      boolean moreThanDay = Math.abs((new Date()).getTime() - results.get(0).getLastUpdated().getTime()) > MILLIS_PER_DAY;
-      if (!moreThanDay) {      
-        return results.get(0);
-      }
+    log.debug("tenantId: {}", tenantId);
+    log.debug("userId: {}", userId);
+    log.debug("Authentication: {}", authentication);    
+    
+    List<PulseClassDetail> pulseClassCache = pulseClassCacheRepository.findById(classSourcedId);
+    System.out.println(pulseClassCache);
+    String _modifiedClassId = PulseUtility.escapeForPulse(pulseClassCache.get(0).getId());
+    pulseClassCache.get(0).setId(_modifiedClassId);
+    if(pulseClassCache.size()>0) {
+    	PulseDetail pulseDetail
+        = new PulseDetail.Builder()
+          .withEndDate(pulseClassCache.get(0).getEnddate())
+          .withStartDate(pulseClassCache.get(0).getStartdate())
+          .withHasGrade(false)
+          .withHasRisk(true)
+          .withHasMissingSubmissions(false)
+          .withHasLastLogin(false)
+          .withHasEmail(true)
+          .withPulseClassDetails(pulseClassCache) //////MODIFIED HERE
+          .withUserId(userId)
+          .withTenantId(tenantId)
+          .withUserRole("NONSTUDENT")
+          .withClassSourcedId(classSourcedId)
+          .build();
+    	return pulseDetail;
     }
     
-    
-    boolean hasRiskScore = false;
-    
+    boolean hasRiskScore = false;    
 
     Tenant tenant = mongoTenantRepository.findOne(tenantId);
     EnrollmentProvider enrollmentProvider = providerService.getRosterProvider(tenant);
     EventProvider eventProvider = providerService.getEventProvider(tenant);
-    LineItemProvider lineItemProvider = providerService.getLineItemProvider(tenant);
+    LineItemProvider lineItemProvider = null;
+    try {
+    	lineItemProvider = providerService.getLineItemProvider(tenant);
+    }
+    catch(Exception e) {
+    	//no
+    }
     UserProvider userProvider = providerService.getUserProvider(tenant);
     CourseProvider courseProvider = providerService.getCourseProvider(tenant);
 
@@ -181,15 +211,17 @@ public class PulseController {
     
     Set<Enrollment> enrollments = enrollmentProvider.getEnrollmentsForUser(rosterProviderData, userId, true);
     
+    
     PulseDetail pulseDetail = null;
     
     if (enrollments != null && !enrollments.isEmpty()) {
-      
+    	
       if (StringUtils.isNotBlank(classSourcedId)) {
         Enrollment foundEnrollment
           = enrollments.stream().filter(e -> e.getKlass().getSourcedId().equals(classSourcedId))
               .findFirst().orElse(null);  
     	
+
         Class klass = courseProvider.getClass(tenant, classSourcedId);  
         
         if (foundEnrollment == null) {
@@ -238,6 +270,10 @@ public class PulseController {
       Set<LocalDate> allClassEndDates = new HashSet<>();
       Set<Integer> allClassStudentEventCounts = new HashSet<>();
       Set<Long> allStudentEventCounts = new HashSet<>();
+      
+      for (Enrollment enrollment: enrollments) {
+    	  System.out.println(enrollment.getSourcedId());
+      }
 
       for (Enrollment enrollment: enrollments) {
         
@@ -481,11 +517,13 @@ public class PulseController {
           studentEventMax = Collections.max(allStudentEventCounts).intValue();
         }
         
+        
+        int classEventMax = 0;
         if (classPulseDateEventCounts == null) {
           classPulseDateEventCounts = new ArrayList<>();
         }
         else {
-          int classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
+          classEventMax = classPulseDateEventCounts.stream().mapToInt(PulseDateEventCount::getEventCount).max().getAsInt();
           allClassStudentEventCounts.add(classEventMax);
         }
                                
@@ -500,6 +538,7 @@ public class PulseController {
             .withHasGrade(false)
             .withHasMissingSubmissions(false)
             .withHasRisk(hasRiskScore)
+            .withClassEventMax(classEventMax)
             
             .withStartdate(classStartDate)
             .withEnddate(classEndDate)
@@ -540,7 +579,7 @@ public class PulseController {
           .withHasMissingSubmissions(false)
           .withHasLastLogin(false)
           .withHasEmail(true)
-          .withPulseClassDetails(pulseClassDetails)
+          .withPulseClassDetails(pulseClassCache) //////MODIFIED HERE
           .withUserId(userId)
           .withTenantId(tenantId)
           .withUserRole("NONSTUDENT")
@@ -548,7 +587,9 @@ public class PulseController {
           .build();
     }
     
-    //pulseCacheRepository.save(pulseDetail);
+    //delete them all if they exist
+    // pulseCacheRepository.deleteByUserIdAndTenantIdAndUserRoleAndClassSourcedId(userId, tenantId,"NONSTUDENT",classSourcedId);
+    // pulseCacheRepository.save(pulseDetail);
     
     return pulseDetail;
   }
@@ -881,7 +922,7 @@ public class PulseController {
 	            
 	            Long daysSinceLogin = 0l;
 	            if (!allStudentEventDates.isEmpty()) {
-	              daysSinceLogin = java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
+	              daysSinceLogin = 0L;//java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
 	            }
 	            
 	            String modifiedStudentId = PulseUtility.escapeForPulse(studentEnrollment.getUser().getSourcedId());

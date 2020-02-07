@@ -85,7 +85,7 @@ public class PulseControllerAdded {
   
   @CrossOrigin
   @Secured({"ROLE_ADMIN","ROLE_INSTRUCTOR","ROLE_STUDENT"})
-  @RequestMapping(value = "/api/tenants", method = RequestMethod.GET, 
+  @RequestMapping(value = "/api/tenants/OLD", method = RequestMethod.GET, 
       produces = "application/json;charset=utf-8")
   public PulseDetail pulseWithAuth(HttpServletResponse response) throws ProviderDataConfigurationException, ProviderException {
 	  
@@ -452,7 +452,7 @@ public class PulseControllerAdded {
             
             Long daysSinceLogin = 0l;
             if (!allStudentEventDates.isEmpty()) {
-              daysSinceLogin = java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
+              daysSinceLogin = 0L;//java.time.temporal.ChronoUnit.DAYS.between(allStudentEventDates.stream().max(LocalDate::compareTo).get(), LocalDate.now());
             }
 
             String modifiedStudentId = PulseUtility.escapeForPulse(studentEnrollment.getUser().getSourcedId());
@@ -800,8 +800,8 @@ public class PulseControllerAdded {
 	              classPulseDateEventCounts.add(pulseDateEventCount);
 	            }
 	            
-	            firstClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).min(LocalDate::compareTo).get();
-	            lastClassEventDate = classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).max(LocalDate::compareTo).get();
+	            firstClassEventDate = LocalDate.now();//classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).min(LocalDate::compareTo).get();
+	            lastClassEventDate = LocalDate.now();//classPulseDateEventCounts.stream().map(PulseDateEventCount::getDate).max(LocalDate::compareTo).get();
 	          }
 	        }
 	        
