@@ -4,21 +4,27 @@ A web application that provides a framework for displaying visualizations and da
 
 *************************************************************************************
 
+## New version as of February 12th, 2020
+Until now, the Dashboard served up both the UX and the Api's required to display the data. 
+In keeping with a true Service Oriented Architecture, the two applications are now separate and exist in two repositories. The source code in This repository will not display anything. It is responsible for security, and serving the appropriate UX.
+
+The two repo's required are:
+1. This repository
+2. OpenDashboard-ux (https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard-ux)
+
+To enhance scalability, if the dashboard is being used with the apereo project OpenLRW (https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW), it is now recommended that they are both configured with the same database.
+
 ## Installation
 ### Prerequisites
 * git
-* MongoDB 2.6+ [(install instructions)](https://docs.mongodb.com/manual/installation/)
+* MongoDB 3.6+ [(install instructions)](https://docs.mongodb.com/manual/installation/)
 * Maven 3 [(download)](https://maven.apache.org/download.cgi)
 * Java 8 [(jdk)](http://openjdk.java.net/)
 ### Run in Demo mode
 #### Using Maven for development purposes
 ~~~~
-mvn clean package spring-boot:run -Drun.profiles=demo
+Demo can now be seen completely with JUST the OpenDashboard-ux
 ~~~~
-
-This will start the application and enable the demo data providers. By default the application uses port 8081 so you can access the login screen at [http://localhost:8081](http://localhost:8081). You will still need to configure the application to use the demo data providers. This [video](https://youtu.be/tNi50DEtbn0) shows how to configure the demo data providers. If you didn't catch it during the video the default username and password is admin / admin .
-
-These instructions also assume that you are running MongoDB on the same machine as the dashboard application (i.e., MongoDB is accessible at localhost:27017). If you need to configure the application to connect to a different MongoDB address see the [Spring-Boot & MongoDB configuration](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) properties.
 
 #### Using a more production-like setup
 ##### Directory Structure

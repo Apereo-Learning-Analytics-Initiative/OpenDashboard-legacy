@@ -79,16 +79,13 @@ public class OAuthFilter extends OncePerRequestFilter {
       
       
       if (tenant == null) {
-    	  System.out.println("No Tenant Found");
         res.sendRedirect("/errorpage");
         return;
-        //throw new MissingTenantException("NO TENANT");
       }
       
       Set<Consumer> consumers = tenant.getConsumers();
       
       if (consumers == null || consumers.isEmpty()) {
-    	  System.out.println("No Consumers");
         throw new MissingTenantException("OAUTH_MISSING_KEY");
       }
       
