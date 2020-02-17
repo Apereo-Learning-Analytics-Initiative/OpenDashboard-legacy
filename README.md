@@ -4,6 +4,12 @@ A web application that provides a framework for displaying visualizations and da
 
 *************************************************************************************
 
+## Disclaimer
+> [OpenDashboard](https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard) is no longer supported [OpenDashboard-API](https://github.com/Apereo-Learning-Analytics-Initiative/OpenDashboard-api) is currently supported until now, the Dashboard served up both the UX and the Api's required to display the data. <br><br>
+In keeping with a true Service Oriented Architecture, the two applications are now separate and exist in two repositories.
+
+
+
 ## Installation
 ### Prerequisites
 * git
